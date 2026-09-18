@@ -240,9 +240,13 @@ BEGIN
   INSERT INTO public.services (workspace_id, name, duration_minutes, price_cents, active)
   VALUES (v_ws_a, 'Corte pausado', 30, 5000, false)
   RETURNING id INTO v_service_inactive;
-  INSERT INTO public.services (workspace_id, name, duration_minutes, price_cents, active, archived_at)
-  VALUES (v_ws_a, 'Corte arquivo', 20, 4000, false, clock_timestamp())
+  INSERT INTO public.services (workspace_id, name, duration_minutes, price_cents, active)
+  VALUES (v_ws_a, 'Corte arquivo', 20, 4000, true)
   RETURNING id INTO v_service_archived;
+  UPDATE public.services
+  SET archived_at = clock_timestamp(),
+      active = false
+  WHERE id = v_service_archived;
   UPDATE public.professional_profiles SET display_name = 'Ana Aurora', booking_enabled = true WHERE member_id = v_member_a;
   UPDATE public.professional_profiles SET display_name = 'Bia Admin', booking_enabled = true WHERE member_id = v_member_admin;
   UPDATE public.professional_profiles SET display_name = 'Cris Pro', booking_enabled = false WHERE member_id = v_member_pro;

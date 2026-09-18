@@ -112,18 +112,22 @@ export const workspaceSettingsSchema = z.object({
 export type WorkspaceSettingsInput = z.infer<typeof workspaceSettingsSchema>;
 
 export function parseWorkspaceSettingsForm(formData: FormData) {
+  const text = (key: string) => {
+    const value = formData.get(key);
+    return typeof value === "string" ? value : "";
+  };
   return workspaceSettingsSchema.safeParse({
-    name: formData.get("name"),
-    slug: formData.get("slug"),
-    businessPhone: formData.get("businessPhone"),
-    businessEmail: formData.get("businessEmail"),
-    description: formData.get("description"),
-    address: formData.get("address"),
-    city: formData.get("city"),
-    state: formData.get("state"),
-    postalCode: formData.get("postalCode"),
-    instagram: formData.get("instagram"),
-    timezone: formData.get("timezone"),
+    name: text("name"),
+    slug: text("slug"),
+    businessPhone: text("businessPhone"),
+    businessEmail: text("businessEmail"),
+    description: text("description"),
+    address: text("address"),
+    city: text("city"),
+    state: text("state"),
+    postalCode: text("postalCode"),
+    instagram: text("instagram"),
+    timezone: text("timezone"),
     clearLogo: formData.get("clearLogo") === "true" || formData.get("clearLogo") === "on",
   });
 }
