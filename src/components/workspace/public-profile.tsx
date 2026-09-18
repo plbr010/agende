@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand/logo";
 import { formatCentsToReais } from "@/lib/validation/money";
 import type { PublicWorkspaceProfile } from "@/lib/workspace/public";
+import { Button } from "@/components/ui/button";
 
 function servicePriceLabel(min: number, max: number) {
   if (min !== max) {
@@ -64,14 +65,13 @@ export function PublicWorkspacePage({ profile }: { profile: PublicWorkspaceProfi
 
         <section className="rounded-[2rem] bg-secondary/50 px-5 py-6 text-center ring-1 ring-border sm:px-8">
           <p className="text-xs tracking-[0.18em] text-primary uppercase">Agenda</p>
-          <h2 className="mt-2 font-serif text-3xl">Agendamento online em breve</h2>
+          <h2 className="mt-2 font-serif text-3xl">Escolha um horário</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Você já pode conhecer o salão, as profissionais e os serviços. Escolher horário entra
-            na próxima etapa — sem simular um fluxo que ainda não existe.
+            Serviço, profissional, dia e horário — sem criar conta para a primeira reserva.
           </p>
-          <div className="mt-5 inline-flex h-12 items-center rounded-full bg-primary/20 px-5 text-sm text-primary">
-            Reservar horário em breve
-          </div>
+          <Button className="mt-5 h-12 rounded-full px-6" render={<Link href={`/p/${profile.slug}/agendar`} />}>
+            Agendar horário
+          </Button>
         </section>
 
         <section className="grid gap-4">
