@@ -75,15 +75,16 @@ export function InviteAcceptance({
                 Papel: <span className="font-medium">{roleLabel}</span>
               </p>
             ) : null}
-            {peek.emailBound ? (
+            {peek.status !== "not_found" && peek.emailBound ? (
               <p className="text-sm text-muted-foreground">
                 Este convite está vinculado a um e-mail específico. A conta autenticada precisa ser a mesma.
               </p>
-            ) : (
+            ) : null}
+            {peek.status !== "not_found" && !peek.emailBound ? (
               <p className="text-sm text-muted-foreground">
                 Este é um link secreto. Quem tiver o endereço e uma conta confirmada pode aceitar.
               </p>
-            )}
+            ) : null}
             {peek.expiresAt && peek.status === "valid" ? (
               <p className="text-sm text-muted-foreground">Válido até {formatDate(peek.expiresAt)}</p>
             ) : null}
