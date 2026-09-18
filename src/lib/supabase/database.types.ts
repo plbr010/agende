@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          client_id: string;
+          created_at: string;
+          created_by: string | null;
+          duration_minutes: number;
+          ends_at: string;
+          id: string;
+          notes: string | null;
+          price_cents: number;
+          professional_member_id: string;
+          service_id: string;
+          starts_at: string;
+          status: Database["public"]["Enums"]["appointment_status"];
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          client_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          duration_minutes: number;
+          ends_at: string;
+          id?: string;
+          notes?: string | null;
+          price_cents: number;
+          professional_member_id: string;
+          service_id: string;
+          starts_at: string;
+          status?: Database["public"]["Enums"]["appointment_status"];
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          client_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          duration_minutes?: number;
+          ends_at?: string;
+          id?: string;
+          notes?: string | null;
+          price_cents?: number;
+          professional_member_id?: string;
+          service_id?: string;
+          starts_at?: string;
+          status?: Database["public"]["Enums"]["appointment_status"];
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
       client_profiles: {
         Row: {
           created_at: string;
@@ -54,6 +105,45 @@ export type Database = {
           monthly_price_cents?: number;
           name?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      professional_breaks: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          end_time: string;
+          id: string;
+          label: string | null;
+          professional_member_id: string;
+          start_time: string;
+          updated_at: string;
+          weekday: number;
+          workspace_id: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          end_time: string;
+          id?: string;
+          label?: string | null;
+          professional_member_id: string;
+          start_time: string;
+          updated_at?: string;
+          weekday: number;
+          workspace_id: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          end_time?: string;
+          id?: string;
+          label?: string | null;
+          professional_member_id?: string;
+          start_time?: string;
+          updated_at?: string;
+          weekday?: number;
+          workspace_id?: string;
         };
         Relationships: [];
       };
@@ -119,6 +209,78 @@ export type Database = {
           professional_member_id?: string;
           service_id?: string;
           updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
+      professional_time_blocks: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          ends_at: string;
+          id: string;
+          professional_member_id: string;
+          reason: string | null;
+          starts_at: string;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          ends_at: string;
+          id?: string;
+          professional_member_id: string;
+          reason?: string | null;
+          starts_at: string;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          ends_at?: string;
+          id?: string;
+          professional_member_id?: string;
+          reason?: string | null;
+          starts_at?: string;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
+      professional_working_hours: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          end_time: string;
+          id: string;
+          professional_member_id: string;
+          start_time: string;
+          updated_at: string;
+          weekday: number;
+          workspace_id: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          end_time: string;
+          id?: string;
+          professional_member_id: string;
+          start_time: string;
+          updated_at?: string;
+          weekday: number;
+          workspace_id: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          end_time?: string;
+          id?: string;
+          professional_member_id?: string;
+          start_time?: string;
+          updated_at?: string;
+          weekday?: number;
           workspace_id?: string;
         };
         Relationships: [];
@@ -470,6 +632,17 @@ export type Database = {
     };
     Functions: {
       accept_workspace_invite: { Args: { p_token: string }; Returns: Json };
+      create_appointment: {
+        Args: {
+          p_client_id: string;
+          p_notes?: string | null;
+          p_professional_member_id: string;
+          p_service_id: string;
+          p_starts_at: string;
+          p_workspace_id: string;
+        };
+        Returns: string;
+      };
       create_client_profile: { Args: Record<PropertyKey, never>; Returns: string };
       create_workspace: {
         Args: { p_name: string; p_slug?: string };
@@ -492,6 +665,15 @@ export type Database = {
         Args: { p_workspace_id: string };
         Returns: Json;
       };
+      list_available_slots: {
+        Args: {
+          p_local_date: string;
+          p_professional_member_id: string;
+          p_service_id: string;
+          p_workspace_id: string;
+        };
+        Returns: { starts_at: string }[];
+      };
       peek_workspace_invite: { Args: { p_token: string }; Returns: Json };
       reactivate_workspace_member: {
         Args: { p_member_id: string; p_workspace_id: string };
@@ -501,9 +683,26 @@ export type Database = {
         Args: { p_member_id: string; p_workspace_id: string };
         Returns: Json;
       };
+      reschedule_appointment: {
+        Args: {
+          p_appointment_id: string;
+          p_notes?: string | null;
+          p_professional_member_id: string;
+          p_service_id: string;
+          p_starts_at: string;
+        };
+        Returns: string;
+      };
       revoke_workspace_invite: {
         Args: { p_invite_id: string; p_workspace_id: string };
         Returns: Json;
+      };
+      set_appointment_status: {
+        Args: {
+          p_appointment_id: string;
+          p_status: Database["public"]["Enums"]["appointment_status"];
+        };
+        Returns: string;
       };
       update_workspace_member_role: {
         Args: {
@@ -534,6 +733,13 @@ export type Database = {
       };
     };
     Enums: {
+      appointment_status:
+        | "scheduled"
+        | "confirmed"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+        | "no_show";
       member_role: "owner" | "admin" | "professional" | "receptionist";
       member_status: "invited" | "active" | "inactive" | "removed";
       signup_intent: "client" | "professional";

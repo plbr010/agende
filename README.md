@@ -1,6 +1,6 @@
 # Agendê
 
-SaaS para profissionais da beleza e clientes finais. A fundação (autenticação, workspaces, trial, convites, seats e RLS) está pronta. Esta etapa adiciona **equipe/profissionais, serviços e clientes do estabelecimento**.
+SaaS para profissionais da beleza e clientes finais. A fundação e o catálogo (equipe, serviços, clientes) estão prontos. Esta etapa adiciona **jornada, pausas, bloqueios, disponibilidade e agenda interna**.
 
 ## Stack
 
@@ -27,7 +27,9 @@ Uma pessoa tem **uma conta** (`auth.users` + `profiles`). Capacidades são compo
 | `/cadastro` `/login` `/verificar-email` | autenticação |
 | `/onboarding` | e-mail confirmado, sem workspace |
 | `/app` | membro de workspace |
+| `/app/agenda` | agenda interna (dia/semana) |
 | `/app/equipe` | cadastro de profissionais da equipe |
+| `/app/equipe/[member]/disponibilidade` | jornada, pausas e bloqueios |
 | `/app/servicos` | catálogo de serviços do workspace |
 | `/app/clientes` | clientes internos do estabelecimento |
 | `/cliente` | `client_profiles` |
@@ -106,3 +108,19 @@ Catálogo (equipe, serviços, clientes do estabelecimento):
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/helpers.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/catalog.sql
 ```
+
+Agenda (jornada, conflitos, snapshots e IDOR):
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/helpers.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/agenda.sql
+```
+
+## Agenda
+
+- `weekday` 0–6 = domingo–sábado (`EXTRACT(DOW)` / `Date.getDay()`).
+- Fuso único: `app.product_timezone()` e `src/lib/time/timezone.ts` (`America/Sao_Paulo`).
+- Conflito: `EXCLUDE USING gist` em appointments ativos + `pg_advisory_xact_lock` no profissional. `cancelled` e `no_show` não ocupam horário.
+- `price_cents` e `duration_minutes` são snapshot; override de `professional_services` ganha do catálogo. O browser não define preço, duração nem `ends_at`.
+- Receptionist agenda e bloqueia horários, mas não edita jornada nem preços.
+- Slots são calculados (não pré-gerados), passo de 15 minutos.

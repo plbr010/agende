@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
@@ -135,7 +136,7 @@ export function TeamDirectory({
                     </CardAction>
                   ) : null}
                 </CardHeader>
-                <CardContent className="flex flex-wrap gap-2">
+                <CardContent className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{roleLabel[member.role]}</Badge>
                   <Badge variant="outline">{statusLabel[member.status]}</Badge>
                   {member.hasProfessionalProfile ? (
@@ -146,6 +147,14 @@ export function TeamDirectory({
                     <Badge variant="outline">Sem perfil de atendimento</Badge>
                   )}
                   <Badge variant="ghost">{member.serviceCount} serviços</Badge>
+                  {member.hasProfessionalProfile ? (
+                    <Link
+                      href={`/app/equipe/${member.memberId}/disponibilidade`}
+                      className="text-sm text-primary underline-offset-4 hover:underline"
+                    >
+                      Jornada
+                    </Link>
+                  ) : null}
                 </CardContent>
               </Card>
             );

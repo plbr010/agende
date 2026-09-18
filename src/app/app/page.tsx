@@ -97,10 +97,13 @@ export default async function AppPage() {
           <CardHeader>
             <CardTitle>Agenda</CardTitle>
             <CardDescription>
-              A agenda, o financeiro e o estoque ficam para as próximas etapas.
+              Jornada, pausas e agendamentos internos do estabelecimento.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            <Button className="h-11" render={<Link href="/app/agenda" />}>
+              Abrir agenda
+            </Button>
             {!session.context.hasClientProfile ? (
               <form action={enableClientProfileAction}>
                 <Button variant="outline" type="submit" className="h-11">
