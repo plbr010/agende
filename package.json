@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "tsx --test src/lib/validation/phone.test.ts src/lib/auth/redirects.test.ts src/lib/validation/catalog.test.ts"
+    "test": "tsx --test src/lib/validation/phone.test.ts src/lib/auth/redirects.test.ts src/lib/validation/catalog.test.ts src/lib/time/timezone.test.ts src/lib/validation/agenda.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
