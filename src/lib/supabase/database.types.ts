@@ -57,6 +57,72 @@ export type Database = {
         };
         Relationships: [];
       };
+      professional_profiles: {
+        Row: {
+          bio: string | null;
+          booking_enabled: boolean;
+          created_at: string;
+          display_name: string;
+          member_id: string;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          bio?: string | null;
+          booking_enabled?: boolean;
+          created_at?: string;
+          display_name: string;
+          member_id: string;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          bio?: string | null;
+          booking_enabled?: boolean;
+          created_at?: string;
+          display_name?: string;
+          member_id?: string;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
+      professional_services: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          duration_override_minutes: number | null;
+          id: string;
+          price_override_cents: number | null;
+          professional_member_id: string;
+          service_id: string;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          duration_override_minutes?: number | null;
+          id?: string;
+          price_override_cents?: number | null;
+          professional_member_id: string;
+          service_id: string;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          duration_override_minutes?: number | null;
+          id?: string;
+          price_override_cents?: number | null;
+          professional_member_id?: string;
+          service_id?: string;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
       professional_trial_claims: {
         Row: {
           claimed_at: string;
@@ -111,6 +177,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      services: {
+        Row: {
+          active: boolean;
+          archived_at: string | null;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          duration_minutes: number;
+          id: string;
+          name: string;
+          price_cents: number;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          active?: boolean;
+          archived_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          duration_minutes: number;
+          id?: string;
+          name: string;
+          price_cents: number;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          active?: boolean;
+          archived_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          duration_minutes?: number;
+          id?: string;
+          name?: string;
+          price_cents?: number;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
           canceled_at: string | null;
@@ -148,6 +256,51 @@ export type Database = {
           status?: Database["public"]["Enums"]["subscription_status"];
           trial_ends_at?: string | null;
           trial_started_at?: string | null;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
+      workspace_clients: {
+        Row: {
+          archived_at: string | null;
+          birth_date: string | null;
+          created_at: string;
+          created_by: string | null;
+          email: string | null;
+          full_name: string;
+          id: string;
+          linked_user_id: string | null;
+          notes: string | null;
+          phone: string | null;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          birth_date?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          email?: string | null;
+          full_name: string;
+          id?: string;
+          linked_user_id?: string | null;
+          notes?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          birth_date?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          email?: string | null;
+          full_name?: string;
+          id?: string;
+          linked_user_id?: string | null;
+          notes?: string | null;
+          phone?: string | null;
           updated_at?: string;
           workspace_id?: string;
         };
