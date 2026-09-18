@@ -61,7 +61,7 @@ BEGIN
     0,
     'client has no trial claim'
   );
-  v_passed := v_passed || 'client_no_subscription_no_trial';
+  v_passed := array_append(v_passed, 'client_no_subscription_no_trial');
 
   -- 2. Professional confirmation does not start trial.
   v_pro := test_helpers.create_auth_user('pro@agende-foundation.test', 'professional', true);
@@ -77,7 +77,7 @@ BEGIN
     0,
     'professional has no subscription before workspace'
   );
-  v_passed := v_passed || 'professional_no_trial_before_workspace';
+  v_passed := array_append(v_passed, 'professional_no_trial_before_workspace');
 
   -- 3. create_workspace is atomic: workspace + owner + subscription + 7-day trial.
   PERFORM test_helpers.login_as(v_pro);
@@ -116,7 +116,7 @@ BEGIN
     'trial claim recorded'
   );
   PERFORM test_helpers.assert_eq(v_created->>'trial_started', 'true', 'RPC reports trial_started');
-  v_passed := v_passed || 'create_workspace_atomic_7_day_trial';
+  v_passed := array_append(v_passed, 'create_workspace_atomic_7_day_trial');
 
   -- 4. User B cannot SELECT workspace A (RLS).
   v_outsider := test_helpers.create_auth_user('outsider@agende-foundation.test', 'professional', true);
@@ -125,7 +125,7 @@ BEGIN
   EXECUTE 'SELECT count(*)::integer FROM public.workspaces WHERE id = $1' INTO v_visible USING v_ws;
   EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_visible, 0, 'outsider cannot select foreign workspace');
-  v_passed := v_passed || 'rls_cannot_select_foreign_workspace';
+  v_passed := array_append(v_passed, 'rls_cannot_select_foreign_workspace');
 
   -- 5. User cannot alter subscription.
   PERFORM test_helpers.login_as(v_pro);
@@ -134,7 +134,7 @@ BEGIN
     '42501',
     'owner cannot update subscription plan'
   );
-  v_passed := v_passed || 'cannot_update_subscription';
+  v_passed := array_append(v_passed, 'cannot_update_subscription');
 
   -- 6. User cannot alter trial_ends_at.
   PERFORM test_helpers.login_as(v_pro);
@@ -148,7 +148,7 @@ BEGIN
     v_sub.trial_ends_at,
     'trial_ends_at unchanged'
   );
-  v_passed := v_passed || 'cannot_update_trial_ends_at';
+  v_passed := array_append(v_passed, 'cannot_update_trial_ends_at');
 
   -- 7. User cannot alter own role.
   PERFORM test_helpers.login_as(v_pro);
@@ -162,7 +162,7 @@ BEGIN
     'owner'::public.member_role,
     'owner role unchanged'
   );
-  v_passed := v_passed || 'cannot_update_own_role';
+  v_passed := array_append(v_passed, 'cannot_update_own_role');
 
   -- 8. Unconfirmed email cannot create workspace.
   v_unconfirmed := test_helpers.create_auth_user('unconfirmed@agende-foundation.test', 'professional', false);
@@ -172,7 +172,7 @@ BEGIN
     'email_not_confirmed',
     'unconfirmed email cannot create workspace'
   );
-  v_passed := v_passed || 'unconfirmed_email_cannot_create_workspace';
+  v_passed := array_append(v_passed, 'unconfirmed_email_cannot_create_workspace');
 
   -- 9. Phone need not be confirmed (phone_confirmed_at is NULL on v_pro).
   PERFORM test_helpers.assert_true(
@@ -180,7 +180,7 @@ BEGIN
     'professional phone is not confirmed'
   );
   PERFORM test_helpers.assert_true(v_ws IS NOT NULL, 'workspace created without phone confirmation');
-  v_passed := v_passed || 'phone_need_not_be_confirmed';
+  v_passed := array_append(v_passed, 'phone_need_not_be_confirmed');
 
   -- 10. Second workspace of the same user does not get a new trial.
   PERFORM test_helpers.login_as(v_pro);
@@ -203,7 +203,7 @@ BEGIN
     1,
     'still a single trial claim'
   );
-  v_passed := v_passed || 'second_workspace_no_new_trial';
+  v_passed := array_append(v_passed, 'second_workspace_no_new_trial');
 
   -- Phone: DDD 55 must be kept; short/ambiguous values rejected.
   PERFORM test_helpers.assert_eq(app.normalize_phone('(55) 99999-9999'), '+5555999999999', 'ddd 55 mobile');
@@ -218,7 +218,7 @@ BEGIN
   PERFORM test_helpers.assert_true(app.normalize_phone('+1 202 555 0100') IS NULL, 'reject non-BR');
   PERFORM test_helpers.assert_true(app.normalize_phone('55') IS NULL, 'reject bare 55');
   PERFORM test_helpers.assert_true(app.normalize_phone('(00) 99999-9999') IS NULL, 'reject DDD 00');
-  v_passed := v_passed || 'phone_normalize_ddd_55';
+  v_passed := array_append(v_passed, 'phone_normalize_ddd_55');
 
   -- Invite email bind: mismatch denied, match allowed, NULL email is a secret link.
   v_match := test_helpers.create_auth_user('invite-match@agende-foundation.test', 'professional', true);
@@ -246,7 +246,7 @@ BEGIN
   EXECUTE 'SELECT public.accept_workspace_invite($1)' INTO v_created USING v_invite->>'token';
   EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_created->>'role', 'receptionist', 'matching email accepted bound invite');
-  v_passed := v_passed || 'invite_email_must_match_confirmed_auth_email';
+  v_passed := array_append(v_passed, 'invite_email_must_match_confirmed_auth_email');
 
   PERFORM test_helpers.login_as(v_pro);
   EXECUTE 'SET ROLE authenticated';
@@ -261,7 +261,7 @@ BEGIN
   EXECUTE 'SELECT public.accept_workspace_invite($1)' INTO v_created USING v_invite->>'token';
   EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_created->>'role', 'receptionist', 'null-email invite works as secret link');
-  v_passed := v_passed || 'invite_null_email_secret_link';
+  v_passed := array_append(v_passed, 'invite_null_email_secret_link');
 
   -- Seat limit: FOR UPDATE + constraint trigger. Solo is already full (owner).
   PERFORM test_helpers.login_as(v_pro);
@@ -345,7 +345,7 @@ BEGIN
     5,
     'equipe cap of 5 professionals held after race'
   );
-  v_passed := v_passed || 'seat_limit_accept_serialized';
+  v_passed := array_append(v_passed, 'seat_limit_accept_serialized');
 
   -- Constraint trigger still blocks a direct INSERT even with protected-column bypass.
   PERFORM set_config('app.bypass_protected_columns', 'on', true);
@@ -359,7 +359,7 @@ BEGIN
     false
   );
   PERFORM set_config('app.bypass_protected_columns', 'off', true);
-  v_passed := v_passed || 'seat_limit_constraint_trigger';
+  v_passed := array_append(v_passed, 'seat_limit_constraint_trigger');
 
   -- Least privilege: authenticated cannot EXECUTE internal app RPCs.
   PERFORM test_helpers.assert_true(
@@ -386,7 +386,7 @@ BEGIN
     has_function_privilege('authenticated', 'app.has_workspace_role(uuid, public.member_role[])', 'execute'),
     'authenticated can execute RLS helper has_workspace_role'
   );
-  v_passed := v_passed || 'least_privilege_execute_grants';
+  v_passed := array_append(v_passed, 'least_privilege_execute_grants');
 
   PERFORM test_helpers.cleanup();
   RETURN array_to_string(v_passed, E'\n');
