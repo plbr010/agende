@@ -5,45 +5,59 @@ import { INVITE_ROLES, type InviteRole } from "@/lib/workspace/labels";
 import { slugError, slugifyPreview } from "@/lib/workspace/slug";
 import { isWorkspaceTimezone, DEFAULT_TIMEZONE } from "@/lib/workspace/timezone";
 
+/** FormData.get() returns null when a field is omitted. Zod string() rejects null. */
+const omittedToUndefined = (value: unknown) => (value == null ? undefined : value);
+
 const optionalText = (max: number) =>
+  z.preprocess(
+    omittedToUndefined,
+    z
+      .string()
+      .trim()
+      .max(max, `Pode ter no máximo ${max} caracteres.`)
+      .optional()
+      .transform((value) => (value ? value : null)),
+  );
+
+const optionalTrimmed = z.preprocess(
+  omittedToUndefined,
   z
     .string()
     .trim()
-    .max(max, `Pode ter no máximo ${max} caracteres.`)
     .optional()
-    .transform((value) => (value ? value : null));
+    .transform((value) => (value ? value : undefined)),
+);
 
 export const workspaceSettingsSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Informe o nome do estabelecimento (2 a 80 caracteres).")
-    .max(80, "Informe o nome do estabelecimento (2 a 80 caracteres)."),
-  slug: z
-    .string()
-    .trim()
-    .transform((value) => slugifyPreview(value))
-    .superRefine((value, ctx) => {
-      const error = slugError(value);
-      if (error) {
-        ctx.addIssue({ code: "custom", message: error });
-      }
-    }),
-  businessPhone: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => (value ? value : null))
+  name: z.preprocess(
+    omittedToUndefined,
+    z
+      .string()
+      .trim()
+      .min(2, "Informe o nome do estabelecimento (2 a 80 caracteres).")
+      .max(80, "Informe o nome do estabelecimento (2 a 80 caracteres)."),
+  ),
+  slug: z.preprocess(
+    omittedToUndefined,
+    z
+      .string()
+      .trim()
+      .transform((value) => slugifyPreview(value))
+      .superRefine((value, ctx) => {
+        const error = slugError(value);
+        if (error) {
+          ctx.addIssue({ code: "custom", message: error });
+        }
+      }),
+  ),
+  businessPhone: optionalTrimmed
     .superRefine((value, ctx) => {
       if (value && !isValidPhone(value)) {
         ctx.addIssue({ code: "custom", message: "Informe um telefone brasileiro válido, com DDD." });
       }
     })
     .transform((value) => (value ? normalizePhone(value) : null)),
-  businessEmail: z
-    .string()
-    .trim()
-    .optional()
+  businessEmail: optionalTrimmed
     .transform((value) => (value ? normalizeEmail(value) : null))
     .superRefine((value, ctx) => {
       if (value && !isValidEmail(value)) {
@@ -52,31 +66,28 @@ export const workspaceSettingsSchema = z.object({
     }),
   description: optionalText(1000),
   address: optionalText(160),
-  city: z
-    .string()
-    .trim()
-    .max(80, "Cidade muito longa.")
-    .optional()
-    .transform((value) => (value ? value : null))
-    .superRefine((value, ctx) => {
-      if (value && value.length < 2) {
-        ctx.addIssue({ code: "custom", message: "Informe uma cidade com pelo menos 2 letras." });
-      }
-    }),
-  state: z
-    .string()
-    .trim()
-    .optional()
+  city: z.preprocess(
+    omittedToUndefined,
+    z
+      .string()
+      .trim()
+      .max(80, "Cidade muito longa.")
+      .optional()
+      .transform((value) => (value ? value : null))
+      .superRefine((value, ctx) => {
+        if (value && value.length < 2) {
+          ctx.addIssue({ code: "custom", message: "Informe uma cidade com pelo menos 2 letras." });
+        }
+      }),
+  ),
+  state: optionalTrimmed
     .transform((value) => (value ? value.toUpperCase() : null))
     .superRefine((value, ctx) => {
       if (value && !/^[A-Z]{2}$/.test(value)) {
         ctx.addIssue({ code: "custom", message: "Escolha um estado válido." });
       }
     }),
-  postalCode: z
-    .string()
-    .trim()
-    .optional()
+  postalCode: optionalTrimmed
     .transform((value) => {
       if (!value) return null;
       const digits = value.replace(/\D/g, "");
@@ -87,10 +98,7 @@ export const workspaceSettingsSchema = z.object({
         ctx.addIssue({ code: "custom", message: "Informe um CEP com 8 dígitos." });
       }
     }),
-  instagram: z
-    .string()
-    .trim()
-    .optional()
+  instagram: optionalTrimmed
     .transform((value) => {
       if (!value) return null;
       return value.replace(/^@+/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
@@ -101,33 +109,36 @@ export const workspaceSettingsSchema = z.object({
         ctx.addIssue({ code: "custom", message: "Informe um usuário de Instagram válido." });
       }
     }),
-  timezone: z
-    .string()
-    .trim()
-    .optional()
-    .transform((value) => (value && isWorkspaceTimezone(value) ? value : DEFAULT_TIMEZONE)),
+  timezone: z.preprocess(
+    omittedToUndefined,
+    z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => (value && isWorkspaceTimezone(value) ? value : DEFAULT_TIMEZONE)),
+  ),
   clearLogo: z.boolean().optional(),
 });
 
 export type WorkspaceSettingsInput = z.infer<typeof workspaceSettingsSchema>;
 
 export function parseWorkspaceSettingsForm(formData: FormData) {
-  const text = (key: string) => {
+  const field = (key: string) => {
     const value = formData.get(key);
-    return typeof value === "string" ? value : "";
+    return typeof value === "string" ? value : null;
   };
   return workspaceSettingsSchema.safeParse({
-    name: text("name"),
-    slug: text("slug"),
-    businessPhone: text("businessPhone"),
-    businessEmail: text("businessEmail"),
-    description: text("description"),
-    address: text("address"),
-    city: text("city"),
-    state: text("state"),
-    postalCode: text("postalCode"),
-    instagram: text("instagram"),
-    timezone: text("timezone"),
+    name: field("name"),
+    slug: field("slug"),
+    businessPhone: field("businessPhone"),
+    businessEmail: field("businessEmail"),
+    description: field("description"),
+    address: field("address"),
+    city: field("city"),
+    state: field("state"),
+    postalCode: field("postalCode"),
+    instagram: field("instagram"),
+    timezone: field("timezone"),
     clearLogo: formData.get("clearLogo") === "true" || formData.get("clearLogo") === "on",
   });
 }

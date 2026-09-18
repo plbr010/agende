@@ -26,6 +26,23 @@ test("settings form normalizes slug, phone, instagram and CEP", () => {
   }
 });
 
+test("omitted optional settings fields become null", () => {
+  const form = new FormData();
+  form.set("name", "Studio Luna");
+  form.set("slug", "luna-studio");
+  const parsed = parseWorkspaceSettingsForm(form);
+  assert.equal(parsed.success, true);
+  if (parsed.success) {
+    assert.equal(parsed.data.businessPhone, null);
+    assert.equal(parsed.data.businessEmail, null);
+    assert.equal(parsed.data.instagram, null);
+    assert.equal(parsed.data.postalCode, null);
+    assert.equal(parsed.data.state, null);
+    assert.equal(parsed.data.address, null);
+    assert.equal(parsed.data.timezone, "America/Sao_Paulo");
+  }
+});
+
 test("reserved slug is rejected in the form", () => {
   const form = new FormData();
   form.set("name", "Studio");
