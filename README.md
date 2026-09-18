@@ -1,6 +1,6 @@
 # Agendê
 
-SaaS para profissionais da beleza e clientes finais. Esta etapa entrega a **fundação**: autenticação, confirmação de e-mail, multi-tenancy, workspaces, trial, planos e RLS.
+SaaS para profissionais da beleza e clientes finais. A fundação (autenticação, workspaces, trial, convites, seats e RLS) está pronta. Esta etapa adiciona **equipe/profissionais, serviços e clientes do estabelecimento**.
 
 ## Stack
 
@@ -27,6 +27,9 @@ Uma pessoa tem **uma conta** (`auth.users` + `profiles`). Capacidades são compo
 | `/cadastro` `/login` `/verificar-email` | autenticação |
 | `/onboarding` | e-mail confirmado, sem workspace |
 | `/app` | membro de workspace |
+| `/app/equipe` | cadastro de profissionais da equipe |
+| `/app/servicos` | catálogo de serviços do workspace |
+| `/app/clientes` | clientes internos do estabelecimento |
 | `/cliente` | `client_profiles` |
 | `/auth/callback` `/auth/confirm` | troca de código / token de e-mail |
 
@@ -96,3 +99,10 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/foundation.sql
 ```
 
 O segundo arquivo imprime a lista de casos que passaram. Usuários de teste usam o domínio `@agende-foundation.test` e são removidos ao final (também em caso de falha).
+
+Catálogo (equipe, serviços, clientes do estabelecimento):
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/helpers.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/catalog.sql
+```
