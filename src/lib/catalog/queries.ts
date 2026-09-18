@@ -17,6 +17,7 @@ export type TeamMember = {
   bookingEnabled: boolean | null;
   hasProfessionalProfile: boolean;
   serviceCount: number;
+  joinedAt: string;
 };
 
 export type ServiceRow = {
@@ -64,8 +65,9 @@ export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
   const supabase = await createClient();
   const { data: members } = await supabase
     .from("workspace_members")
-    .select("id, user_id, role, status")
+    .select("id, user_id, role, status, created_at")
     .eq("workspace_id", workspaceId)
+    .neq("status", "removed")
     .order("created_at", { ascending: true });
 
   const rows = members ?? [];
@@ -120,6 +122,7 @@ export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
         bookingEnabled: profile?.booking_enabled ?? null,
         hasProfessionalProfile: Boolean(profile),
         serviceCount: counts.get(row.id) ?? 0,
+        joinedAt: row.created_at,
       },
     ];
   });

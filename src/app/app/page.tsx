@@ -6,39 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "America/Sao_Paulo",
-  }).format(new Date(value));
-}
-
-const planLabel = {
-  solo: "Solo",
-  equipe: "Equipe",
-  salao: "Salão",
-} as const;
-
-const statusLabel = {
-  trialing: "Em trial",
-  active: "Ativa",
-  past_due: "Pagamento pendente",
-  expired: "Expirada",
-  canceled: "Cancelada",
-} as const;
+import { formatDateTime } from "@/lib/workspace/timezone";
+import { PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 
 export default async function AppPage() {
   const session = await requireConfirmedSession("/app");
   const workspace = session.workspaces[0];
-  const [team, services, clients] = workspace
+  const [team, services, clients, settings] = workspace
     ? await Promise.all([
         loadTeam(workspace.id),
         loadServices(workspace.id),
         loadClients(workspace.id),
+        loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug),
       ])
-    : [[], [], []];
+    : [[], [], [], null];
+  const timezone = settings?.timezone;
 
   return (
     <>
@@ -94,15 +77,19 @@ export default async function AppPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex flex-wrap gap-2">
-              <Badge>{planLabel[session.subscription?.plan ?? "solo"]}</Badge>
+              <Badge>{PLAN_LABEL[session.subscription?.plan ?? "solo"]}</Badge>
               <Badge variant="secondary">
-                {statusLabel[session.subscription?.status ?? "expired"]}
+                {SUBSCRIPTION_STATUS_LABEL[session.subscription?.status ?? "expired"]}
               </Badge>
             </div>
-            <p className="text-sm">Trial iniciado: {formatDate(session.subscription?.trialStartedAt ?? null)}</p>
-            <p className="text-sm">Trial termina: {formatDate(session.subscription?.trialEndsAt ?? null)}</p>
+            <p className="text-sm">
+              Trial iniciado: {formatDateTime(session.subscription?.trialStartedAt ?? null, timezone)}
+            </p>
+            <p className="text-sm">
+              Trial termina: {formatDateTime(session.subscription?.trialEndsAt ?? null, timezone)}
+            </p>
             <p className="text-sm text-muted-foreground">
-              Papel: {workspace?.role ?? "—"}. Slug público futuro: /{workspace?.slug}
+              Papel: {workspace?.role ?? "—"}. Página pública: /p/{workspace?.slug}
             </p>
           </CardContent>
         </Card>

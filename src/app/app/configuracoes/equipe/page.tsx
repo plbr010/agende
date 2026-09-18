@@ -1,19 +1,20 @@
 import { requireConfirmedSession } from "@/lib/auth/session";
-import { TeamDirectory } from "@/components/catalog/directories";
+import { canManageAllProfiles, loadTeam } from "@/lib/catalog/queries";
 import {
+  MemberManagementList,
   PendingInvitesList,
   SeatUsageCard,
   TeamInviteCard,
 } from "@/components/workspace/team-admin";
-import { canManageAllProfiles, loadTeam } from "@/lib/catalog/queries";
 import {
+  isManagerRole,
   loadPendingInvites,
   loadSeatUsage,
   loadWorkspaceSettings,
 } from "@/lib/workspace/queries";
 
-export default async function TeamPage() {
-  const session = await requireConfirmedSession("/app/equipe");
+export default async function TeamSettingsPage() {
+  const session = await requireConfirmedSession("/app/configuracoes/equipe");
   const workspace = session.workspaces[0];
   if (!workspace) {
     return null;
@@ -28,21 +29,14 @@ export default async function TeamPage() {
 
   return (
     <>
-      <div>
-        <p className="text-sm text-muted-foreground">Equipe</p>
-        <h1 className="font-serif text-3xl">Quem faz parte do negócio</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Perfis de atendimento existem só para dono, admin e profissional. Recepção não ocupa
-          vaga e não aparece como quem realiza serviços.
-        </p>
-      </div>
       {seats ? <SeatUsageCard seats={seats} /> : null}
       <TeamInviteCard canManage={canManage} />
       <PendingInvitesList invites={invites} canManage={canManage} timezone={settings.timezone} />
-      <TeamDirectory
+      <MemberManagementList
         members={team}
+        canManage={isManagerRole(workspace.role)}
         currentUserId={session.user.id}
-        canManage={canManage}
+        timezone={settings.timezone}
       />
     </>
   );

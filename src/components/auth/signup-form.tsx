@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 const initial: ActionState = {};
 
-export function SignupForm() {
+export function SignupForm({ next }: { next?: string | null }) {
   const [state, action, pending] = useActionState(signUpAction, initial);
   const [intent, setIntent] = useState<"client" | "professional" | "">("");
   const [phone, setPhone] = useState("");
@@ -23,6 +23,7 @@ export function SignupForm() {
 
   return (
     <form action={action} className="space-y-6">
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />
       <input type="hidden" name="termsAccepted" value={terms ? "true" : "false"} />
 

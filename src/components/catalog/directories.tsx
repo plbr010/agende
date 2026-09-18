@@ -109,20 +109,6 @@ export function TeamDirectory({
 
   return (
     <div className="grid gap-4">
-      <Card className="border-none bg-secondary/40 ring-1 ring-border">
-        <CardHeader>
-          <CardTitle>Convite de equipe</CardTitle>
-          <CardDescription>
-            O envio de convites já existe no banco (token, e-mail e vagas). O botão desta tela
-            entra na próxima iteração — sem um segundo fluxo de convite.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button type="button" disabled className="h-11">
-            Convidar por e-mail
-          </Button>
-        </CardContent>
-      </Card>
       {members.length === 0 ? (
         <Card className="border-none ring-1 ring-border">
           <CardContent className="py-8 text-sm text-muted-foreground">

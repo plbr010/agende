@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDefaultDestination } from "@/lib/auth/redirects";
+import { getDefaultDestination, sanitizeNextPath } from "@/lib/auth/redirects";
 import { loadAppSession } from "@/lib/auth/session";
 
 export async function GET(request: NextRequest) {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       const destination = session
         ? getDefaultDestination(session.context)
         : "/verificar-email?status=error";
-      const path = next && next.startsWith("/") ? next : destination;
+      const path = sanitizeNextPath(next) ?? destination;
       return NextResponse.redirect(`${origin}${path}`);
     }
   }

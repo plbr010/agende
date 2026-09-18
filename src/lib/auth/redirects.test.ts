@@ -4,6 +4,7 @@ import {
   canAccessPath,
   getDefaultDestination,
   getFallbackForDeniedPath,
+  sanitizeNextPath,
 } from "../auth/redirects";
 
 test("unconfirmed users always go to email verification", () => {
@@ -53,4 +54,11 @@ test("professional with workspace lands on /app", () => {
   assert.equal(getDefaultDestination(ctx), "/app");
   assert.equal(canAccessPath("/app", ctx), true);
   assert.equal(canAccessPath("/cliente", ctx), false);
+});
+
+test("sanitizeNextPath keeps invite return URLs and rejects open redirects", () => {
+  assert.equal(sanitizeNextPath("/convite/abc"), "/convite/abc");
+  assert.equal(sanitizeNextPath("//evil.com"), null);
+  assert.equal(sanitizeNextPath("https://evil.com"), null);
+  assert.equal(sanitizeNextPath("/login"), null);
 });
