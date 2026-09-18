@@ -494,6 +494,113 @@ BEGIN
   );
   v_passed := array_append(v_passed, '24_idor_cross_tenant_blocked');
 
+  PERFORM test_helpers.assert_true(
+    EXISTS (
+      SELECT 1 FROM storage.buckets b
+      WHERE b.id = 'workspace-logos'
+        AND b.public
+        AND b.file_size_limit = 2097152
+        AND b.allowed_mime_types @> ARRAY['image/jpeg', 'image/png', 'image/webp']::text[]
+    ),
+    'workspace-logos bucket is public, 2MB, jpeg/png/webp'
+  );
+  PERFORM test_helpers.assert_eq(
+    (
+      SELECT count(*)::int
+      FROM pg_policies p
+      WHERE p.schemaname = 'storage'
+        AND p.tablename = 'objects'
+        AND p.policyname IN (
+          'workspace_logos_select',
+          'workspace_logos_insert',
+          'workspace_logos_update',
+          'workspace_logos_delete'
+        )
+    ),
+    4,
+    'logo storage policies exist'
+  );
+
+  PERFORM test_helpers.login_as(v_owner_a);
+  PERFORM test_helpers.assert_error(
+    format(
+      'SELECT public.update_workspace_settings(%L,%L,%L,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,%L)',
+      v_ws_a,
+      'Aurora Studio',
+      'aurora-studio',
+      v_ws_b::text || '/logo.webp'
+    ),
+    'invalid_logo_path',
+    'logo path must belong to the workspace'
+  );
+
+  PERFORM test_helpers.login_as(v_pro);
+  PERFORM test_helpers.assert_error(
+    format(
+      'INSERT INTO storage.objects (bucket_id, name) VALUES (%L, %L)',
+      'workspace-logos',
+      v_ws_a::text || '/logo-pro.webp'
+    ),
+    '42501',
+    'professional cannot upload workspace logo'
+  );
+
+  PERFORM test_helpers.login_as(v_owner_b);
+  PERFORM test_helpers.assert_error(
+    format(
+      'INSERT INTO storage.objects (bucket_id, name) VALUES (%L, %L)',
+      'workspace-logos',
+      v_ws_a::text || '/logo-cross.webp'
+    ),
+    '42501',
+    'cross-tenant cannot upload into another workspace logo folder'
+  );
+
+  -- INSERT is allowed; DELETE on storage.objects is blocked by storage.protect_delete().
+  -- Keep the owner upload in a subtransaction and roll it back.
+  BEGIN
+    PERFORM test_helpers.login_as(v_owner_a);
+    EXECUTE 'SET ROLE authenticated';
+    INSERT INTO storage.objects (bucket_id, name)
+    VALUES ('workspace-logos', v_ws_a::text || '/logo-owner.webp');
+    EXECUTE 'RESET ROLE';
+    PERFORM test_helpers.assert_true(
+      EXISTS (
+        SELECT 1 FROM storage.objects o
+        WHERE o.bucket_id = 'workspace-logos'
+          AND o.name = v_ws_a::text || '/logo-owner.webp'
+      ),
+      'owner can upload workspace logo'
+    );
+
+    PERFORM test_helpers.login_as(v_pro);
+    EXECUTE 'SET ROLE authenticated';
+    UPDATE storage.objects
+    SET metadata = jsonb_build_object('tamper', true)
+    WHERE bucket_id = 'workspace-logos'
+      AND name = v_ws_a::text || '/logo-owner.webp';
+    GET DIAGNOSTICS v_visible = ROW_COUNT;
+    EXECUTE 'RESET ROLE';
+    PERFORM test_helpers.assert_eq(v_visible, 0, 'professional cannot update workspace logo');
+
+    RAISE EXCEPTION 'rollback_owner_logo_insert';
+  EXCEPTION
+    WHEN OTHERS THEN
+      EXECUTE 'RESET ROLE';
+      IF SQLERRM NOT ILIKE '%rollback_owner_logo_insert%' THEN
+        RAISE;
+      END IF;
+  END;
+  PERFORM test_helpers.assert_true(
+    NOT EXISTS (
+      SELECT 1 FROM storage.objects o
+      WHERE o.bucket_id = 'workspace-logos'
+        AND o.name = v_ws_a::text || '/logo-owner.webp'
+    ),
+    'owner logo insert was rolled back without storage.objects DELETE'
+  );
+  v_passed := array_append(v_passed, '25_logo_storage_rls');
+
   PERFORM test_helpers.cleanup('%@agende-settings.test');
   RETURN array_to_string(v_passed, E'\n');
 EXCEPTION
