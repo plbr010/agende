@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { AUDIENCE, MARKETING_CTAS } from "@/lib/marketing/content";
 import { BookingPreview } from "@/components/marketing/booking-preview";
+import { MarketingLinkButton } from "@/components/marketing/link-button";
 
 export function MarketingHero() {
   return (
@@ -20,19 +19,19 @@ export function MarketingHero() {
             lugar.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button
+            <MarketingLinkButton
+              href={MARKETING_CTAS.primary.href}
               className="h-12 min-h-12 w-full rounded-full px-6 text-base sm:w-auto"
-              render={<Link href={MARKETING_CTAS.primary.href} />}
             >
               {MARKETING_CTAS.primary.label}
-            </Button>
-            <Button
+            </MarketingLinkButton>
+            <MarketingLinkButton
+              href={MARKETING_CTAS.secondary.href}
               variant="outline"
               className="h-12 min-h-12 w-full rounded-full px-6 text-base sm:w-auto"
-              render={<Link href={MARKETING_CTAS.secondary.href} />}
             >
               {MARKETING_CTAS.secondary.label}
-            </Button>
+            </MarketingLinkButton>
           </div>
           <p className="text-sm text-muted-foreground">
             7 dias grátis · sem cartão para começar · feito para o celular

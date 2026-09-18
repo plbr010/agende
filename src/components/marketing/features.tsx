@@ -23,7 +23,7 @@ const ICONS = {
 
 export function MarketingFeatures() {
   return (
-    <section id="funcionalidades" className="scroll-mt-24">
+    <section id="funcionalidades" className="scroll-mt-32">
       <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-14 sm:py-20">
         <div className="max-w-2xl space-y-3">
           <p className="text-[0.7rem] font-medium tracking-[0.2em] text-primary uppercase">

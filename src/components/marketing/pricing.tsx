@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { MARKETING_CTAS, PLANS } from "@/lib/marketing/content";
+import { MarketingLinkButton } from "@/components/marketing/link-button";
 import { cn } from "@/lib/utils";
 
 export function MarketingPricing() {
   return (
-    <section id="planos" className="scroll-mt-24">
+    <section id="planos" className="scroll-mt-32">
       <div className="mx-auto w-full min-w-0 max-w-6xl px-4 py-14 sm:py-20">
         <div className="mx-auto max-w-2xl space-y-3 text-center">
           <p className="text-[0.7rem] font-medium tracking-[0.2em] text-primary uppercase">
@@ -31,10 +30,12 @@ export function MarketingPricing() {
               )}
             >
               {plan.popular ? (
-                <p className="absolute top-4 right-4 rounded-full bg-accent px-3 py-1 text-[0.65rem] font-medium tracking-[0.12em] text-accent-foreground uppercase">
+                <p className="mb-3 w-fit rounded-full bg-accent px-3 py-1 text-[0.65rem] font-medium tracking-[0.12em] text-accent-foreground uppercase">
                   Mais popular
                 </p>
-              ) : null}
+              ) : (
+                <p className="mb-3 hidden h-[1.4rem] lg:block" />
+              )}
               <h3 className="font-serif text-3xl">{plan.name}</h3>
               <p
                 className={cn(
@@ -67,13 +68,13 @@ export function MarketingPricing() {
                 <li>Sem cartão para começar</li>
                 <li>Agenda e link de agendamento</li>
               </ul>
-              <Button
+              <MarketingLinkButton
+                href={MARKETING_CTAS.primary.href}
                 variant={plan.popular ? "secondary" : "default"}
                 className="mt-8 h-12 min-h-12 w-full rounded-full text-base"
-                render={<Link href={MARKETING_CTAS.primary.href} />}
               >
                 {MARKETING_CTAS.primary.label}
-              </Button>
+              </MarketingLinkButton>
             </article>
           ))}
         </div>

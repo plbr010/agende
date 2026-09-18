@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { BrandLogo } from "@/components/brand/logo";
+import { MarketingHashLink } from "@/components/marketing/hash-link";
 import { FOOTER_LINKS } from "@/lib/marketing/content";
 
 export function MarketingFooter() {
@@ -19,13 +19,13 @@ export function MarketingFooter() {
             className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-1 sm:text-right"
           >
             {FOOTER_LINKS.map((item) => (
-              <Link
+              <MarketingHashLink
                 key={item.href}
                 href={item.href}
                 className="min-h-11 py-2 text-muted-foreground transition-colors hover:text-foreground sm:min-h-0 sm:py-0"
               >
                 {item.label}
-              </Link>
+              </MarketingHashLink>
             ))}
           </nav>
         </div>

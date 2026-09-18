@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { MARKETING_CTAS } from "@/lib/marketing/content";
+import { MarketingLinkButton } from "@/components/marketing/link-button";
 
 export function MarketingFinalCta() {
   return (
@@ -15,19 +14,19 @@ export function MarketingFinalCta() {
             sozinhas. Você volta a atender — o Agendê organiza o resto.
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
-            <Button
+            <MarketingLinkButton
+              href={MARKETING_CTAS.primary.href}
               className="h-12 min-h-12 w-full rounded-full px-6 text-base sm:w-auto"
-              render={<Link href={MARKETING_CTAS.primary.href} />}
             >
               {MARKETING_CTAS.primary.label}
-            </Button>
-            <Button
+            </MarketingLinkButton>
+            <MarketingLinkButton
+              href={MARKETING_CTAS.secondary.href}
               variant="outline"
               className="h-12 min-h-12 w-full rounded-full bg-background/70 px-6 text-base sm:w-auto"
-              render={<Link href={MARKETING_CTAS.secondary.href} />}
             >
               {MARKETING_CTAS.secondary.label}
-            </Button>
+            </MarketingLinkButton>
           </div>
         </div>
       </div>
