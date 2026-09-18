@@ -1,27 +1,50 @@
-export function normalizePhone(input: string): string | null {
+export function isValidBrNational(national: string): boolean {
+  if (national.length === 11) {
+    return /^[1-9]\d9\d{8}$/.test(national);
+  }
+  if (national.length === 10) {
+    return /^[1-9]\d[2-9]\d{7}$/.test(national);
+  }
+  return false;
+}
+
+export function extractBrNationalDigits(input: string): string | null {
   const digits = input.replace(/\D/g, "");
   if (!digits) {
     return null;
   }
-  if (digits.startsWith("55") && digits.length >= 12 && digits.length <= 13) {
-    return `+${digits}`;
+
+  if (digits.startsWith("55") && digits.length >= 12) {
+    const national = digits.slice(2);
+    if (isValidBrNational(national)) {
+      return national;
+    }
   }
-  if (digits.length === 10 || digits.length === 11) {
-    return `+55${digits}`;
+
+  if (isValidBrNational(digits)) {
+    return digits;
   }
-  if (digits.length >= 8 && digits.length <= 15) {
-    return `+${digits}`;
-  }
+
   return null;
 }
 
+export function normalizePhone(input: string): string | null {
+  const national = extractBrNationalDigits(input);
+  if (!national) {
+    return null;
+  }
+  return `+55${national}`;
+}
+
 export function isValidPhone(input: string): boolean {
-  const normalized = normalizePhone(input);
-  return normalized !== null && /^\+[1-9]\d{7,14}$/.test(normalized);
+  return normalizePhone(input) !== null;
 }
 
 export function formatPhoneBr(input: string): string {
-  const digits = input.replace(/\D/g, "").replace(/^55/, "").slice(0, 11);
+  const national =
+    extractBrNationalDigits(input) ?? input.replace(/\D/g, "").slice(0, 11);
+  const digits = national.slice(0, 11);
+
   if (digits.length <= 2) {
     return digits;
   }

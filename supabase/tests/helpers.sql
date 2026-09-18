@@ -1,11 +1,16 @@
--- Foundation security tests. Intended to run as a privileged role, then SET ROLE authenticated.
--- Cleanup uses the agende.test email suffix.
+-- Setup helpers for foundation tests. Privileged connection required (postgres / service_role).
+-- Safe to re-run. Does not grant EXECUTE to anon/authenticated.
+--
+-- Usage:
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/helpers.sql
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/foundation.sql
 
 CREATE SCHEMA IF NOT EXISTS test_helpers;
 
 CREATE OR REPLACE FUNCTION test_helpers.login_as(p_user_id uuid)
 RETURNS void
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
   PERFORM set_config('request.jwt.claim.sub', p_user_id::text, true);
@@ -19,6 +24,81 @@ BEGIN
     )::text,
     true
   );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION test_helpers.become(p_user_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  EXECUTE 'RESET ROLE';
+  PERFORM test_helpers.login_as(p_user_id);
+  EXECUTE 'SET ROLE authenticated';
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION test_helpers.reset_role()
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  EXECUTE 'RESET ROLE';
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION test_helpers.assert_true(p_cond boolean, p_label text)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  IF p_cond IS NOT TRUE THEN
+    RAISE EXCEPTION 'FAIL: %', p_label;
+  END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION test_helpers.assert_eq(p_got anyelement, p_want anyelement, p_label text)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  IF p_got IS DISTINCT FROM p_want THEN
+    RAISE EXCEPTION 'FAIL: % (got %, want %)', p_label, p_got, p_want;
+  END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION test_helpers.assert_error(p_sql text, p_fragment text, p_label text)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  v_caught boolean := false;
+  v_msg text;
+  v_state text;
+BEGIN
+  BEGIN
+    EXECUTE p_sql;
+  EXCEPTION
+    WHEN OTHERS THEN
+      v_caught := true;
+      v_msg := SQLERRM;
+      v_state := SQLSTATE;
+  END;
+
+  IF NOT v_caught THEN
+    RAISE EXCEPTION 'FAIL: % — expected error containing "%"', p_label, p_fragment;
+  END IF;
+
+  IF v_msg NOT ILIKE '%' || p_fragment || '%' AND v_state <> p_fragment THEN
+    RAISE EXCEPTION 'FAIL: % — expected "%", got % (%)', p_label, p_fragment, v_msg, v_state;
+  END IF;
 END;
 $$;
 
@@ -52,7 +132,8 @@ BEGIN
     email_change_token_new,
     email_change,
     is_sso_user,
-    is_anonymous
+    is_anonymous,
+    phone_confirmed_at
   ) VALUES (
     '00000000-0000-0000-0000-000000000000',
     v_id,
@@ -71,13 +152,42 @@ BEGIN
     ),
     now(),
     now(),
-    encode(extensions.gen_random_bytes(16), 'hex'),
+    '',
     '',
     '',
     '',
     false,
-    false
+    false,
+    NULL
   );
   RETURN v_id;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION test_helpers.cleanup(p_email_pattern text DEFAULT '%@agende-foundation.test')
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  EXECUTE 'RESET ROLE';
+  PERFORM set_config('app.bypass_protected_columns', 'on', true);
+  ALTER TABLE public.professional_trial_claims DISABLE TRIGGER professional_trial_claims_protect;
+
+  DELETE FROM public.professional_trial_claims
+  WHERE user_id IN (SELECT id FROM auth.users WHERE email LIKE p_email_pattern);
+
+  DELETE FROM public.workspaces
+  WHERE owner_user_id IN (SELECT id FROM auth.users WHERE email LIKE p_email_pattern);
+
+  DELETE FROM auth.users WHERE email LIKE p_email_pattern;
+
+  ALTER TABLE public.professional_trial_claims ENABLE TRIGGER professional_trial_claims_protect;
+  PERFORM set_config('app.bypass_protected_columns', 'off', true);
+END;
+$$;
+
+REVOKE ALL ON SCHEMA test_helpers FROM PUBLIC, anon, authenticated;
+GRANT USAGE ON SCHEMA test_helpers TO postgres, service_role;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO postgres, service_role;

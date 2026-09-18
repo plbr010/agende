@@ -81,3 +81,18 @@ npm run build
 ## Banco
 
 Migrations versionadas em `supabase/migrations`. Schema `app` não é exposto na Data API.
+
+Não reescreva migrations já aplicadas no projeto remoto. Correções de banco entram em uma **nova** migration.
+
+## Testes SQL da fundação
+
+Os arquivos em `supabase/tests/` são executáveis: falham com `RAISE EXCEPTION` se uma regra quebrar.
+
+Requerem uma conexão privilegiada (`postgres` / `service_role`), porque criam usuários em `auth.users`.
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/helpers.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/foundation.sql
+```
+
+O segundo arquivo imprime a lista de casos que passaram. Usuários de teste usam o domínio `@agende-foundation.test` e são removidos ao final (também em caso de falha).
