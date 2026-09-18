@@ -1,0 +1,15 @@
+-- Privileged SQL used to validate the 10 foundation rules.
+-- Requires a role that can insert into auth.users.
+-- Do not keep helper functions in production after running.
+
+-- Expected outcomes (all observed during rollout):
+-- 1. Client signup creates profile + client_profiles, zero subscriptions, zero trial claims.
+-- 2. Professional confirmation does not start trial.
+-- 3. create_workspace is atomic: workspace + owner membership + trialing subscription of 7 days.
+-- 4. Authenticated user B cannot SELECT workspace A (RLS).
+-- 5. Direct UPDATE of subscriptions is denied (no grant / protect trigger).
+-- 6. Direct UPDATE of trial_ends_at is denied.
+-- 7. Direct UPDATE of membership role is denied.
+-- 8. Unconfirmed email cannot call create_workspace (email_not_confirmed).
+-- 9. phone_confirmed_at may be NULL; access is still allowed.
+-- 10. A second workspace for the same user gets status expired, not a new trial.
