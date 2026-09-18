@@ -37,7 +37,15 @@ export default async function AgendaPage({
     loadCurrentMemberId(workspace.id, session.user.id),
   ]);
 
-  const professionals = team.filter((member) => member.hasProfessionalProfile);
+  const professionals = team.filter((member) => {
+    if (!member.hasProfessionalProfile) {
+      return false;
+    }
+    if (workspace.role === "professional") {
+      return member.memberId === currentMemberId;
+    }
+    return true;
+  });
 
   return (
     <>

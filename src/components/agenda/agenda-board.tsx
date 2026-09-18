@@ -174,7 +174,7 @@ export function AgendaBoard({
           onOpen={setEditing}
         />
       ) : (
-        <div className="grid gap-3 md:grid-cols-7 md:gap-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-7 lg:gap-2">
           {weekDates.map((day, index) => (
             <DayColumn
               key={day}
@@ -258,12 +258,11 @@ function DayColumn({
               </p>
               <p className="truncate font-serif text-base">{item.clientName}</p>
               <p className="truncate text-sm text-muted-foreground">{item.serviceName}</p>
-              {!compact ? (
-                <p className="truncate text-sm text-muted-foreground">{item.professionalName}</p>
-              ) : null}
+              <p className="truncate text-sm text-muted-foreground">{item.professionalName}</p>
               <div className="mt-2 flex flex-wrap gap-1">
                 <Badge variant={statusVariant[item.status]}>{STATUS_LABEL[item.status]}</Badge>
-                {!compact ? <Badge variant="ghost">{item.durationMinutes} min</Badge> : null}
+                <Badge variant="ghost">{item.durationMinutes} min</Badge>
+                <Badge variant="ghost">{formatCentsToReais(item.priceCents)}</Badge>
               </div>
             </button>
           ))}
