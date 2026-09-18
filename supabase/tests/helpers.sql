@@ -73,7 +73,14 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION test_helpers.assert_error(p_sql text, p_fragment text, p_label text)
+DROP FUNCTION IF EXISTS test_helpers.assert_error(text, text, text);
+
+CREATE OR REPLACE FUNCTION test_helpers.assert_error(
+  p_sql text,
+  p_fragment text,
+  p_label text,
+  p_as_authenticated boolean DEFAULT true
+)
 RETURNS void
 LANGUAGE plpgsql
 SET search_path = ''
@@ -83,6 +90,9 @@ DECLARE
   v_msg text;
   v_state text;
 BEGIN
+  IF p_as_authenticated THEN
+    EXECUTE 'SET ROLE authenticated';
+  END IF;
   BEGIN
     EXECUTE p_sql;
   EXCEPTION
@@ -91,6 +101,9 @@ BEGIN
       v_msg := SQLERRM;
       v_state := SQLSTATE;
   END;
+  IF p_as_authenticated THEN
+    EXECUTE 'RESET ROLE';
+  END IF;
 
   IF NOT v_caught THEN
     RAISE EXCEPTION 'FAIL: % — expected error containing "%"', p_label, p_fragment;
@@ -171,7 +184,6 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 BEGIN
-  EXECUTE 'RESET ROLE';
   PERFORM set_config('app.bypass_protected_columns', 'on', true);
   ALTER TABLE public.professional_trial_claims DISABLE TRIGGER professional_trial_claims_protect;
 

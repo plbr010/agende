@@ -32,11 +32,11 @@ DECLARE
   v_invite jsonb;
   v_invite_a jsonb;
   v_invite_b jsonb;
-  v_count integer;
   v_visible integer;
   v_duration interval;
   v_passed text[] := ARRAY[]::text[];
 BEGIN
+  EXECUTE 'RESET ROLE';
   PERFORM test_helpers.cleanup();
 
   -- 1. Client signup: profile + client_profiles, no subscription, no trial.
@@ -80,9 +80,10 @@ BEGIN
   v_passed := v_passed || 'professional_no_trial_before_workspace';
 
   -- 3. create_workspace is atomic: workspace + owner + subscription + 7-day trial.
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace($1)' INTO v_created USING 'Salao Fundacao';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
   v_ws := (v_created->>'workspace_id')::uuid;
   PERFORM test_helpers.assert_true(v_ws IS NOT NULL, 'workspace id returned');
@@ -119,30 +120,29 @@ BEGIN
 
   -- 4. User B cannot SELECT workspace A (RLS).
   v_outsider := test_helpers.create_auth_user('outsider@agende-foundation.test', 'professional', true);
-  PERFORM test_helpers.become(v_outsider);
+  PERFORM test_helpers.login_as(v_outsider);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT count(*)::integer FROM public.workspaces WHERE id = $1' INTO v_visible USING v_ws;
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_visible, 0, 'outsider cannot select foreign workspace');
   v_passed := v_passed || 'rls_cannot_select_foreign_workspace';
 
   -- 5. User cannot alter subscription.
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
   PERFORM test_helpers.assert_error(
     format('UPDATE public.subscriptions SET plan = %L WHERE workspace_id = %L', 'salao', v_ws),
     '42501',
     'owner cannot update subscription plan'
   );
-  PERFORM test_helpers.reset_role();
   v_passed := v_passed || 'cannot_update_subscription';
 
   -- 6. User cannot alter trial_ends_at.
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
   PERFORM test_helpers.assert_error(
     format('UPDATE public.subscriptions SET trial_ends_at = clock_timestamp() + interval ''30 days'' WHERE workspace_id = %L', v_ws),
     '42501',
     'owner cannot update trial_ends_at'
   );
-  PERFORM test_helpers.reset_role();
   PERFORM test_helpers.assert_eq(
     (SELECT s.trial_ends_at FROM public.subscriptions s WHERE s.workspace_id = v_ws),
     v_sub.trial_ends_at,
@@ -151,13 +151,12 @@ BEGIN
   v_passed := v_passed || 'cannot_update_trial_ends_at';
 
   -- 7. User cannot alter own role.
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
   PERFORM test_helpers.assert_error(
     format('UPDATE public.workspace_members SET role = %L WHERE workspace_id = %L AND user_id = %L', 'admin', v_ws, v_pro),
     '42501',
     'owner cannot change own role'
   );
-  PERFORM test_helpers.reset_role();
   PERFORM test_helpers.assert_eq(
     (SELECT m.role FROM public.workspace_members m WHERE m.workspace_id = v_ws AND m.user_id = v_pro),
     'owner'::public.member_role,
@@ -167,13 +166,12 @@ BEGIN
 
   -- 8. Unconfirmed email cannot create workspace.
   v_unconfirmed := test_helpers.create_auth_user('unconfirmed@agende-foundation.test', 'professional', false);
-  PERFORM test_helpers.become(v_unconfirmed);
+  PERFORM test_helpers.login_as(v_unconfirmed);
   PERFORM test_helpers.assert_error(
     'SELECT public.create_workspace(''Negocio Sem Email'')',
     'email_not_confirmed',
     'unconfirmed email cannot create workspace'
   );
-  PERFORM test_helpers.reset_role();
   v_passed := v_passed || 'unconfirmed_email_cannot_create_workspace';
 
   -- 9. Phone need not be confirmed (phone_confirmed_at is NULL on v_pro).
@@ -185,9 +183,10 @@ BEGIN
   v_passed := v_passed || 'phone_need_not_be_confirmed';
 
   -- 10. Second workspace of the same user does not get a new trial.
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace($1)' INTO v_created USING 'Segundo Negocio';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
   v_ws2 := (v_created->>'workspace_id')::uuid;
   PERFORM test_helpers.assert_eq(v_created->>'trial_started', 'false', 'second workspace trial_started is false');
   PERFORM test_helpers.assert_eq(
@@ -226,48 +225,52 @@ BEGIN
   v_mismatch := test_helpers.create_auth_user('invite-mismatch@agende-foundation.test', 'professional', true);
   v_secret := test_helpers.create_auth_user('invite-secret@agende-foundation.test', 'professional', true);
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE
     'SELECT public.create_workspace_invite($1, $2, $3)'
     INTO v_invite
     USING v_ws, 'receptionist'::public.member_role, 'invite-mismatch@agende-foundation.test';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_match);
+  PERFORM test_helpers.login_as(v_match);
   PERFORM test_helpers.assert_error(
     format('SELECT public.accept_workspace_invite(%L)', v_invite->>'token'),
     'invite_email_mismatch',
     'different confirmed email cannot accept bound invite'
   );
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_mismatch);
+  PERFORM test_helpers.login_as(v_mismatch);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' INTO v_created USING v_invite->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_created->>'role', 'receptionist', 'matching email accepted bound invite');
   v_passed := v_passed || 'invite_email_must_match_confirmed_auth_email';
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE
     'SELECT public.create_workspace_invite($1, $2, $3)'
     INTO v_invite
     USING v_ws, 'receptionist'::public.member_role, NULL;
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_secret);
+  PERFORM test_helpers.login_as(v_secret);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' INTO v_created USING v_invite->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_eq(v_created->>'role', 'receptionist', 'null-email invite works as secret link');
   v_passed := v_passed || 'invite_null_email_secret_link';
 
   -- Seat limit: FOR UPDATE + constraint trigger. Solo is already full (owner).
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
   PERFORM test_helpers.assert_error(
     format('SELECT public.create_workspace_invite(%L, %L, NULL)', v_ws, 'professional'),
     'plan_professional_limit_reached',
     'solo cannot invite another professional'
   );
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
   -- Upgrade to equipe (max 5). Owner + 3 professionals = 4, one seat left, two competing invites.
   PERFORM set_config('app.bypass_protected_columns', 'on', true);
@@ -283,26 +286,32 @@ BEGIN
   v_seat4 := test_helpers.create_auth_user('seat4@agende-foundation.test', 'professional', true);
   v_overflow := test_helpers.create_auth_user('overflow@agende-foundation.test', 'professional', true);
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace_invite($1, $2, NULL)' INTO v_invite USING v_ws, 'professional'::public.member_role;
-  PERFORM test_helpers.reset_role();
-  PERFORM test_helpers.become(v_seat1);
+  EXECUTE 'RESET ROLE';
+  PERFORM test_helpers.login_as(v_seat1);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' USING v_invite->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace_invite($1, $2, NULL)' INTO v_invite USING v_ws, 'professional'::public.member_role;
-  PERFORM test_helpers.reset_role();
-  PERFORM test_helpers.become(v_seat2);
+  EXECUTE 'RESET ROLE';
+  PERFORM test_helpers.login_as(v_seat2);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' USING v_invite->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace_invite($1, $2, NULL)' INTO v_invite USING v_ws, 'professional'::public.member_role;
-  PERFORM test_helpers.reset_role();
-  PERFORM test_helpers.become(v_seat3);
+  EXECUTE 'RESET ROLE';
+  PERFORM test_helpers.login_as(v_seat3);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' USING v_invite->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
   PERFORM test_helpers.assert_eq(
     app.workspace_professional_seats(v_ws),
@@ -310,24 +319,26 @@ BEGIN
     'four professional seats occupied before race'
   );
 
-  PERFORM test_helpers.become(v_pro);
+  PERFORM test_helpers.login_as(v_pro);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_workspace_invite($1, $2, NULL)' INTO v_invite_a USING v_ws, 'professional'::public.member_role;
   EXECUTE 'SELECT public.create_workspace_invite($1, $2, NULL)' INTO v_invite_b USING v_ws, 'professional'::public.member_role;
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
   -- Simulated race: two outstanding professional invites, one remaining seat.
   -- Accept is serialized by SELECT ... FOR UPDATE on subscriptions, then re-counted.
-  PERFORM test_helpers.become(v_seat4);
+  PERFORM test_helpers.login_as(v_seat4);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.accept_workspace_invite($1)' USING v_invite_a->>'token';
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
-  PERFORM test_helpers.become(v_overflow);
+  PERFORM test_helpers.login_as(v_overflow);
   PERFORM test_helpers.assert_error(
     format('SELECT public.accept_workspace_invite(%L)', v_invite_b->>'token'),
     'plan_professional_limit_reached',
     'second concurrent-style accept is rejected'
   );
-  PERFORM test_helpers.reset_role();
+  EXECUTE 'RESET ROLE';
 
   PERFORM test_helpers.assert_eq(
     app.workspace_professional_seats(v_ws),
@@ -344,7 +355,8 @@ BEGIN
       v_ws, v_overflow, 'professional', 'active'
     ),
     'plan_professional_limit_reached',
-    'constraint trigger blocks overflow insert'
+    'constraint trigger blocks overflow insert',
+    false
   );
   PERFORM set_config('app.bypass_protected_columns', 'off', true);
   v_passed := v_passed || 'seat_limit_constraint_trigger';
@@ -380,6 +392,7 @@ BEGIN
   RETURN array_to_string(v_passed, E'\n');
 EXCEPTION
   WHEN OTHERS THEN
+    EXECUTE 'RESET ROLE';
     PERFORM test_helpers.cleanup();
     RAISE;
 END;
