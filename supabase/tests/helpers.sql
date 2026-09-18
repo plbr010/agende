@@ -200,6 +200,24 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION test_helpers.become_anon()
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  EXECUTE 'RESET ROLE';
+  PERFORM set_config('request.jwt.claim.sub', '', true);
+  PERFORM set_config('request.jwt.claim.role', 'anon', true);
+  PERFORM set_config(
+    'request.jwt.claims',
+    '{"role":"anon","email_verified":false}'::text,
+    true
+  );
+  EXECUTE 'SET ROLE anon';
+END;
+$$;
+
 REVOKE ALL ON SCHEMA test_helpers FROM PUBLIC, anon, authenticated;
 GRANT USAGE ON SCHEMA test_helpers TO postgres, service_role;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO postgres, service_role;

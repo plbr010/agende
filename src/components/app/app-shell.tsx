@@ -13,6 +13,7 @@ const links = [
   { href: "/app/equipe", label: "Equipe" },
   { href: "/app/servicos", label: "Serviços" },
   { href: "/app/clientes", label: "Clientes" },
+  { href: "/app/configuracoes", label: "Configurações" },
 ];
 
 export function AppShell({
@@ -45,7 +46,9 @@ export function AppShell({
             const current =
               link.href === "/app"
                 ? pathname === "/app"
-                : pathname === link.href || pathname.startsWith(`${link.href}/`);
+                : link.href === "/app/configuracoes"
+                  ? pathname === "/app/configuracoes" || pathname.startsWith("/app/configuracoes/")
+                  : pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
               <Link
                 key={link.href}

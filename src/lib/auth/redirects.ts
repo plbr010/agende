@@ -48,3 +48,24 @@ export function getFallbackForDeniedPath(path: string, ctx: AuthContext): string
   }
   return getDefaultDestination(ctx);
 }
+
+export function sanitizeNextPath(raw: string | null | undefined): string | null {
+  if (!raw) {
+    return null;
+  }
+  const value = raw.trim();
+  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) {
+    return null;
+  }
+  if (value.includes("://") || value.includes("\\")) {
+    return null;
+  }
+  if (
+    value.startsWith("/login") ||
+    value.startsWith("/cadastro") ||
+    value.startsWith("/auth")
+  ) {
+    return null;
+  }
+  return value;
+}

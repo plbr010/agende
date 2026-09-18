@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 
 const initial: ActionState = {};
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string | null }) {
   const [state, action, pending] = useActionState(signInAction, initial);
 
   return (
     <form action={action} className="grid gap-4">
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <div className="grid gap-2">
         <Label htmlFor="email">E-mail</Label>
         <Input id="email" name="email" type="email" autoComplete="email" required className="h-11" />

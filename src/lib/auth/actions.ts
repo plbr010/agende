@@ -1,11 +1,11 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getDefaultDestination } from "@/lib/auth/redirects";
+import { getDefaultDestination, sanitizeNextPath } from "@/lib/auth/redirects";
 import { loadAppSession } from "@/lib/auth/session";
-import { getSiteUrl } from "@/lib/supabase/env";
+import { getRequestOrigin } from "@/lib/http/origin";
 import { normalizeEmail } from "@/lib/validation/email";
 import { loginSchema, parseSignupForm } from "@/lib/validation/signup";
 
@@ -14,13 +14,7 @@ const RESEND_AT_COOKIE = "agende_resend_at";
 const RESEND_COOLDOWN_MS = 60_000;
 
 async function resolveOrigin(): Promise<string> {
-  const hdrs = await headers();
-  const forwardedHost = hdrs.get("x-forwarded-host");
-  if (forwardedHost) {
-    const proto = hdrs.get("x-forwarded-proto") ?? "http";
-    return `${proto}://${forwardedHost}`;
-  }
-  return hdrs.get("origin") ?? getSiteUrl();
+  return getRequestOrigin();
 }
 
 async function setPendingEmail(email: string) {
@@ -64,12 +58,16 @@ export async function signUpAction(
   const input = parsed.data;
   const supabase = await createClient();
   const origin = await resolveOrigin();
+  const next = sanitizeNextPath(String(formData.get("next") ?? ""));
+  const emailRedirectTo = next
+    ? `${origin}/auth/callback?next=${encodeURIComponent(next)}`
+    : `${origin}/auth/callback`;
 
   const { error } = await supabase.auth.signUp({
     email: input.email,
     password: input.password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo,
       data: {
         full_name: input.fullName,
         phone: input.phone,
@@ -123,7 +121,8 @@ export async function signInAction(
   if (!session) {
     return { error: "Não foi possível autenticar. Tente novamente." };
   }
-  redirect(getDefaultDestination(session.context));
+  const next = sanitizeNextPath(String(formData.get("next") ?? ""));
+  redirect(next ?? getDefaultDestination(session.context));
 }
 
 export async function signOutAction() {

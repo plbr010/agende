@@ -4,6 +4,7 @@ import {
   canAccessPath,
   getDefaultDestination,
   getFallbackForDeniedPath,
+  sanitizeNextPath,
   type AuthContext,
 } from "@/lib/auth/redirects";
 
@@ -25,6 +26,8 @@ export type SubscriptionSummary = {
   status: "trialing" | "active" | "past_due" | "expired" | "canceled";
   trialStartedAt: string | null;
   trialEndsAt: string | null;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
 };
 
 export type AppSession = {
@@ -113,7 +116,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
   if (primaryWorkspace) {
     const { data: sub } = await supabase
       .from("subscriptions")
-      .select("plan, status, trial_started_at, trial_ends_at")
+      .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
       .eq("workspace_id", primaryWorkspace.id)
       .maybeSingle();
     if (sub) {
@@ -122,6 +125,8 @@ export async function loadAppSession(): Promise<AppSession | null> {
         status: sub.status,
         trialStartedAt: sub.trial_started_at,
         trialEndsAt: sub.trial_ends_at,
+        currentPeriodStart: sub.current_period_start,
+        currentPeriodEnd: sub.current_period_end,
       };
     }
   }
@@ -162,9 +167,13 @@ export async function requireConfirmedSession(path: string): Promise<AppSession>
   return session;
 }
 
-export async function requireAnonymous(): Promise<void> {
+export async function requireAnonymous(next?: string | null): Promise<void> {
   const session = await loadAppSession();
+  const safeNext = sanitizeNextPath(next);
   if (session?.context.emailConfirmed) {
+    if (safeNext?.startsWith("/convite/")) {
+      redirect(safeNext);
+    }
     redirect(getDefaultDestination(session.context));
   }
   if (session && !session.context.emailConfirmed) {

@@ -551,6 +551,54 @@ export type Database = {
           },
         ];
       };
+      workspace_settings: {
+        Row: {
+          address: string | null;
+          business_email: string | null;
+          business_phone: string | null;
+          city: string | null;
+          created_at: string;
+          description: string | null;
+          instagram: string | null;
+          logo_path: string | null;
+          postal_code: string | null;
+          state: string | null;
+          timezone: string;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          business_email?: string | null;
+          business_phone?: string | null;
+          city?: string | null;
+          created_at?: string;
+          description?: string | null;
+          instagram?: string | null;
+          logo_path?: string | null;
+          postal_code?: string | null;
+          state?: string | null;
+          timezone?: string;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          address?: string | null;
+          business_email?: string | null;
+          business_phone?: string | null;
+          city?: string | null;
+          created_at?: string;
+          description?: string | null;
+          instagram?: string | null;
+          logo_path?: string | null;
+          postal_code?: string | null;
+          state?: string | null;
+          timezone?: string;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [];
+      };
       workspaces: {
         Row: {
           created_at: string;
@@ -608,6 +656,15 @@ export type Database = {
         };
         Returns: Json;
       };
+      deactivate_workspace_member: {
+        Args: { p_member_id: string; p_workspace_id: string };
+        Returns: Json;
+      };
+      get_public_workspace_profile: { Args: { p_slug: string }; Returns: Json };
+      get_workspace_seat_usage: {
+        Args: { p_workspace_id: string };
+        Returns: Json;
+      };
       list_available_slots: {
         Args: {
           p_local_date: string;
@@ -616,6 +673,15 @@ export type Database = {
           p_workspace_id: string;
         };
         Returns: { starts_at: string }[];
+      };
+      peek_workspace_invite: { Args: { p_token: string }; Returns: Json };
+      reactivate_workspace_member: {
+        Args: { p_member_id: string; p_workspace_id: string };
+        Returns: Json;
+      };
+      remove_workspace_member: {
+        Args: { p_member_id: string; p_workspace_id: string };
+        Returns: Json;
       };
       reschedule_appointment: {
         Args: {
@@ -627,12 +693,43 @@ export type Database = {
         };
         Returns: string;
       };
+      revoke_workspace_invite: {
+        Args: { p_invite_id: string; p_workspace_id: string };
+        Returns: Json;
+      };
       set_appointment_status: {
         Args: {
           p_appointment_id: string;
           p_status: Database["public"]["Enums"]["appointment_status"];
         };
         Returns: string;
+      };
+      update_workspace_member_role: {
+        Args: {
+          p_member_id: string;
+          p_role: Database["public"]["Enums"]["member_role"];
+          p_workspace_id: string;
+        };
+        Returns: Json;
+      };
+      update_workspace_settings: {
+        Args: {
+          p_address?: string | null;
+          p_business_email?: string | null;
+          p_business_phone?: string | null;
+          p_city?: string | null;
+          p_clear_logo?: boolean;
+          p_description?: string | null;
+          p_instagram?: string | null;
+          p_logo_path?: string | null;
+          p_name: string;
+          p_postal_code?: string | null;
+          p_slug: string;
+          p_state?: string | null;
+          p_timezone?: string | null;
+          p_workspace_id: string;
+        };
+        Returns: Json;
       };
     };
     Enums: {

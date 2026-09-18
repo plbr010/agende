@@ -1,7 +1,7 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDefaultDestination } from "@/lib/auth/redirects";
+import { getDefaultDestination, sanitizeNextPath } from "@/lib/auth/redirects";
 import { loadAppSession } from "@/lib/auth/session";
 
 export async function GET(request: NextRequest) {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         ? getDefaultDestination(session.context)
         : "/verificar-email?status=error";
       const redirectTo = request.nextUrl.clone();
-      redirectTo.pathname = next && next.startsWith("/") ? next : destination;
+      redirectTo.pathname = sanitizeNextPath(next) ?? destination;
       redirectTo.search = "";
       return NextResponse.redirect(redirectTo);
     }
