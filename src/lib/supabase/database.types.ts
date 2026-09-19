@@ -18,6 +18,7 @@ export type Database = {
           ends_at: string;
           id: string;
           notes: string | null;
+          customer_note: string | null;
           price_cents: number;
           professional_member_id: string;
           service_id: string;
@@ -34,6 +35,7 @@ export type Database = {
           ends_at: string;
           id?: string;
           notes?: string | null;
+          customer_note?: string | null;
           price_cents: number;
           professional_member_id: string;
           service_id: string;
@@ -50,6 +52,7 @@ export type Database = {
           ends_at?: string;
           id?: string;
           notes?: string | null;
+          customer_note?: string | null;
           price_cents?: number;
           professional_member_id?: string;
           service_id?: string;
@@ -632,6 +635,7 @@ export type Database = {
     };
     Functions: {
       accept_workspace_invite: { Args: { p_token: string }; Returns: Json };
+      cancel_my_appointment: { Args: { p_appointment_id: string }; Returns: Json };
       create_appointment: {
         Args: {
           p_client_id: string;
@@ -644,6 +648,20 @@ export type Database = {
         Returns: string;
       };
       create_client_profile: { Args: Record<PropertyKey, never>; Returns: string };
+      create_public_appointment: {
+        Args: {
+          p_customer_note?: string | null;
+          p_email: string;
+          p_full_name: string;
+          p_ip_hash?: string | null;
+          p_phone: string;
+          p_professional_member_id?: string | null;
+          p_service_id: string;
+          p_slug: string;
+          p_starts_at: string;
+        };
+        Returns: Json;
+      };
       create_workspace: {
         Args: { p_name: string; p_slug?: string };
         Returns: Json;
@@ -674,6 +692,17 @@ export type Database = {
         };
         Returns: { starts_at: string }[];
       };
+      list_my_appointments: { Args: Record<PropertyKey, never>; Returns: Json };
+      list_public_available_slots: {
+        Args: {
+          p_local_date: string;
+          p_professional_member_id?: string | null;
+          p_service_id: string;
+          p_slug: string;
+        };
+        Returns: { starts_at: string }[];
+      };
+      list_public_booking_catalog: { Args: { p_slug: string }; Returns: Json };
       peek_workspace_invite: { Args: { p_token: string }; Returns: Json };
       reactivate_workspace_member: {
         Args: { p_member_id: string; p_workspace_id: string };

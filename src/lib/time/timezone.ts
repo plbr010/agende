@@ -169,4 +169,71 @@ export function parseTimeInput(value: string): string | null {
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
 
-export { dateTimePartFormatter };
+export function formatDateInTimeZone(value: Date | string, timeZone: string): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+export function formatTimeInTimeZone(value: Date | string, timeZone: string): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(date);
+}
+
+export function todayInTimeZone(timeZone: string, now: Date = new Date()): string {
+  return formatDateInTimeZone(now, timeZone);
+}
+
+export function weekdayInTimeZone(value: Date | string, timeZone: string): number {
+  const date = typeof value === "string" ? new Date(value) : value;
+  const short = new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short" }).format(date);
+  const map: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+  };
+  return map[short] ?? -1;
+}
+
+export function formatDateTimeInTimeZone(value: Date | string, timeZone: string): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone,
+    dateStyle: "full",
+    timeStyle: "short",
+  }).format(date);
+}
+
+export function isSlotTooSoon(
+  startsAtIso: string,
+  minLeadMinutes: number,
+  now: Date = new Date(),
+): boolean {
+  return new Date(startsAtIso).getTime() < now.getTime() + minLeadMinutes * 60_000;
+}
+
+export function isDateInHorizon(
+  localDate: string,
+  timeZone: string,
+  horizonDays: number,
+  now: Date = new Date(),
+): boolean {
+  const today = todayInTimeZone(timeZone, now);
+  if (localDate < today) {
+    return false;
+  }
+  return localDate <= addDaysIso(today, horizonDays);
+}

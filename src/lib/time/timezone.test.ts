@@ -5,7 +5,11 @@ import {
   addMinutesIso,
   compareTime,
   formatDateInProductTz,
+  formatDateInTimeZone,
   formatTimeInProductTz,
+  formatTimeInTimeZone,
+  isDateInHorizon,
+  isSlotTooSoon,
   startOfLocalDayUtc,
   startOfNextLocalDayUtc,
   todayInProductTz,
@@ -41,7 +45,22 @@ test("local day bounds do not leak into the previous or next date", () => {
   assert.equal(formatDateInProductTz(new Date(next.getTime() - 1)), "2026-09-18");
 });
 
-test("addDaysIso and today helper keep ISO dates", () => {
+test("Manaus wall midnight is 04:00 UTC", () => {
+  const utc = zonedWallTimeToUtc("2026-09-18", "00:00", "America/Manaus");
+  assert.equal(utc.toISOString(), "2026-09-18T04:00:00.000Z");
+  assert.equal(formatDateInTimeZone(utc, "America/Manaus"), "2026-09-18");
+  assert.equal(formatTimeInTimeZone(utc, "America/Manaus"), "00:00");
+});
+
+test("lead buffer and horizon use workspace timezone", () => {
+  const now = new Date("2026-09-18T17:10:00.000Z");
+  assert.equal(isSlotTooSoon("2026-09-18T17:15:00.000Z", 30, now), true);
+  assert.equal(isSlotTooSoon("2026-09-18T17:50:00.000Z", 30, now), false);
+  assert.equal(isDateInHorizon("2026-09-18", "America/Sao_Paulo", 90, now), true);
+  assert.equal(isDateInHorizon("2026-12-20", "America/Sao_Paulo", 90, now), false);
+});
+
+test("date arithmetic helpers stay calendar-safe", () => {
   assert.equal(addDaysIso("2026-09-30", 1), "2026-10-01");
   assert.match(todayInProductTz(zonedWallTimeToUtc("2026-09-18", "00:30")), /^\d{4}-\d{2}-\d{2}$/);
   assert.equal(compareTime("08:00", "12:00") < 0, true);

@@ -30,12 +30,15 @@ export default async function ClientePage() {
         </div>
         <Card className="border-none ring-1 ring-border">
           <CardHeader>
-            <CardTitle>Em breve</CardTitle>
+            <CardTitle>Meus agendamentos</CardTitle>
             <CardDescription>
-              Encontrar profissionais, ver serviços e agendar. Nesta etapa a fundação de identidade já está pronta.
+              Veja horários à frente, histórico e cancele com até 2 horas de antecedência.
             </CardDescription>
           </CardHeader>
         </Card>
+        <Button className="h-11 w-fit rounded-full" render={<Link href="/cliente/agendamentos" />}>
+          Abrir agendamentos
+        </Button>
         {session.context.hasWorkspace ? (
           <Button variant="outline" className="w-fit" render={<Link href="/app" />}>
             Ir para o meu negócio
