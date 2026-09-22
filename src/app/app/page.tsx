@@ -45,7 +45,11 @@ export default async function AppPage() {
   const completedAppointments = appointments.filter((appointment) => appointment.status === "completed");
   const expectedRevenue = activeAppointments.reduce((sum, appointment) => sum + appointment.priceCents, 0);
   const nextAppointments = appointments
-    .filter((appointment) => appointment.status !== "cancelled" && appointment.status !== "no_show")
+    .filter((appointment) =>
+      appointment.status === "scheduled" ||
+      appointment.status === "confirmed" ||
+      appointment.status === "in_progress",
+    )
     .slice(0, 5);
   const firstName = session.profile.fullName.split(/\s+/)[0] || "profissional";
 
