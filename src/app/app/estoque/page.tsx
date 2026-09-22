@@ -2,9 +2,13 @@ import { Boxes } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { InventoryDashboard } from "@/components/inventory/inventory-dashboard";
+import { operationalModuleLoaders } from "@/lib/modules/operational-loaders";
 
 export default async function InventoryPage() {
-  await requireConfirmedSession("/app/estoque");
+  const session = await requireConfirmedSession("/app/estoque");
+  const workspace = session.workspaces[0];
+  if (!workspace) return null;
+  const snapshot = await operationalModuleLoaders.inventory(workspace.id);
 
   return (
     <>
@@ -14,7 +18,7 @@ export default async function InventoryPage() {
         description="Enxergue o que entra, o que sai e o que precisa de reposição antes de impactar seus atendimentos."
         icon={Boxes}
       />
-      <InventoryDashboard snapshot={null} />
+      <InventoryDashboard snapshot={snapshot} />
     </>
   );
 }
