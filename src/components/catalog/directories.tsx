@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, UserRound } from "lucide-react";
 import type { ActionState } from "@/lib/auth/actions";
 import {
   archiveClientAction,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/catalog/actions";
 import type { ClientRow, MemberRole, ServiceRow, TeamMember } from "@/lib/catalog/queries";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -50,6 +52,15 @@ const statusLabel = {
   inactive: "Inativo",
   removed: "Removido",
 };
+
+function initials(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
 
 function FormFields({
   state,
@@ -117,26 +128,33 @@ export function TeamDirectory({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-4 md:grid-cols-2">
           {members.map((member) => {
             const canEdit =
               member.hasProfessionalProfile && (canManage || member.userId === currentUserId);
             return (
-              <Card key={member.memberId} className="border-none ring-1 ring-border">
-                <CardHeader>
-                  <CardTitle className="truncate pr-16">
+              <Card key={member.memberId} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <CardHeader className="grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3">
+                  <Avatar size="lg" className="row-span-2">
+                    <AvatarFallback className="bg-secondary text-primary">
+                      {initials(member.displayName ?? member.fullName)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <CardTitle className="col-start-2 truncate">
                     {member.displayName ?? member.fullName}
                   </CardTitle>
-                  <CardDescription className="truncate">{member.email}</CardDescription>
+                  <CardDescription className="col-start-2 flex items-center gap-1 truncate">
+                    <Mail className="size-3" /> {member.email}
+                  </CardDescription>
                   {canEdit ? (
-                    <CardAction>
-                      <Button variant="outline" size="sm" onClick={() => setEditing(member)}>
-                        Editar perfil
+                    <CardAction className="col-start-3">
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(member)}>
+                        Editar
                       </Button>
                     </CardAction>
                   ) : null}
                 </CardHeader>
-                <CardContent className="flex flex-wrap items-center gap-2">
+                <CardContent className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
                   <Badge variant="secondary">{roleLabel[member.role]}</Badge>
                   <Badge variant="outline">{statusLabel[member.status]}</Badge>
                   {member.hasProfessionalProfile ? (
@@ -150,9 +168,9 @@ export function TeamDirectory({
                   {member.hasProfessionalProfile ? (
                     <Link
                       href={`/app/equipe/${member.memberId}/disponibilidade`}
-                      className="text-sm text-primary underline-offset-4 hover:underline"
+                      className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
                     >
-                      Jornada
+                      <CalendarDays className="size-3.5" /> Jornada
                     </Link>
                   ) : null}
                 </CardContent>
@@ -252,16 +270,21 @@ export function ServiceCatalog({
           </CardContent>
         </Card>
       ) : (
-        services.map((service) => {
+        <div className="grid gap-4 md:grid-cols-2">
+        {services.map((service) => {
           const performs = currentMemberId
             ? service.professionalMemberIds.includes(currentMemberId)
             : false;
           return (
-            <Card key={service.id} className="border-none ring-1 ring-border">
+            <Card key={service.id} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
               <CardHeader>
-                <CardTitle className="pr-16">{service.name}</CardTitle>
-                <CardDescription>
-                  {service.durationMinutes} min · {formatCentsToReais(service.priceCents)}
+                <div className="mb-3 flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
+                  <Scissors className="size-4" />
+                </div>
+                <CardTitle className="pr-16 text-lg">{service.name}</CardTitle>
+                <CardDescription className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="inline-flex items-center gap-1"><Clock3 className="size-3" /> {service.durationMinutes} min</span>
+                  <span className="font-medium text-foreground">{formatCentsToReais(service.priceCents)}</span>
                 </CardDescription>
                 {canManage ? (
                   <CardAction>
@@ -271,7 +294,7 @@ export function ServiceCatalog({
                   </CardAction>
                 ) : null}
               </CardHeader>
-              <CardContent className="flex flex-wrap items-center gap-2">
+              <CardContent className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
                 <Badge variant={service.active ? "default" : "outline"}>
                   {service.active ? "Ativo" : "Pausado"}
                 </Badge>
@@ -298,7 +321,8 @@ export function ServiceCatalog({
               </CardContent>
             </Card>
           );
-        })
+        })}
+        </div>
       )}
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
@@ -418,16 +442,22 @@ export function ClientDirectory({
           </CardContent>
         </Card>
       ) : (
-        clients.map((client) => (
-          <Card key={client.id} className="border-none ring-1 ring-border">
-            <CardHeader>
-              <CardTitle className="truncate pr-24">{client.fullName}</CardTitle>
-              <CardDescription className="truncate">
-                {client.phone ? formatPhoneBr(client.phone) : "Sem telefone"}
-                {client.email ? ` · ${client.email}` : ""}
+        <div className="grid gap-4 md:grid-cols-2">
+        {clients.map((client) => (
+          <Card key={client.id} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+            <CardHeader className="grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3">
+              <Avatar size="lg" className="row-span-2">
+                <AvatarFallback className="bg-secondary text-primary">
+                  {initials(client.fullName)}
+                </AvatarFallback>
+              </Avatar>
+              <CardTitle className="col-start-2 truncate">{client.fullName}</CardTitle>
+              <CardDescription className="col-start-2 flex flex-wrap gap-x-3 gap-y-1">
+                <span className="inline-flex items-center gap-1"><Phone className="size-3" /> {client.phone ? formatPhoneBr(client.phone) : "Sem telefone"}</span>
+                {client.email ? <span className="inline-flex items-center gap-1 truncate"><Mail className="size-3" /> {client.email}</span> : null}
               </CardDescription>
               {canEdit ? (
-                <CardAction>
+                <CardAction className="col-start-3">
                   <div className="flex flex-wrap justify-end gap-1">
                     <Button variant="outline" size="sm" onClick={() => setEditing(client)}>
                       Editar
@@ -443,12 +473,19 @@ export function ClientDirectory({
               ) : null}
             </CardHeader>
             {client.notes ? (
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{client.notes}</p>
+              <CardContent className="border-t border-border/60 pt-4">
+                <p className="flex items-start gap-2 text-sm leading-6 text-muted-foreground">
+                  <NotebookText className="mt-1 size-3.5 shrink-0" /> {client.notes}
+                </p>
               </CardContent>
-            ) : null}
+            ) : (
+              <CardContent className="border-t border-border/60 pt-4">
+                <p className="flex items-center gap-2 text-xs text-muted-foreground"><UserRound className="size-3.5" /> Cadastro pronto para agendamentos</p>
+              </CardContent>
+            )}
           </Card>
-        ))
+        ))}
+        </div>
       )}
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">

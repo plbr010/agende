@@ -1,8 +1,12 @@
+import { Clock3, Search, Sparkles, WalletCards, WandSparkles } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { ServiceCatalog } from "@/components/catalog/directories";
+import { PageHeader } from "@/components/app/page-header";
+import { MetricCard } from "@/components/app/metric-card";
 import { canManageServices, loadServices, loadTeam } from "@/lib/catalog/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatCentsToReais } from "@/lib/validation/money";
 
 export default async function ServicesPage({
   searchParams,
@@ -19,24 +23,36 @@ export default async function ServicesPage({
     loadServices(workspace.id, q),
     loadTeam(workspace.id),
   ]);
+  const activeServices = services.filter((service) => service.active);
+  const averagePrice = activeServices.length
+    ? Math.round(activeServices.reduce((sum, service) => sum + service.priceCents, 0) / activeServices.length)
+    : 0;
+  const averageDuration = activeServices.length
+    ? Math.round(activeServices.reduce((sum, service) => sum + service.durationMinutes, 0) / activeServices.length)
+    : 0;
 
   return (
     <>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm text-muted-foreground">Serviços</p>
-          <h1 className="font-serif text-3xl">Catálogo do salão</h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            Duração e preço ficam no servidor. O valor que você vê em reais é gravado em centavos.
-          </p>
-        </div>
-        <form className="flex w-full gap-2 sm:max-w-sm">
-          <Input name="q" defaultValue={q ?? ""} placeholder="Buscar serviço" className="h-11" />
-          <Button type="submit" variant="outline" className="h-11">
-            Buscar
+      <PageHeader
+        eyebrow="Seu catálogo"
+        title="Serviços"
+        description="Apresente com clareza o que você faz, quanto tempo leva e o valor de cada experiência."
+        icon={WandSparkles}
+        actions={
+          <form className="flex w-full gap-2 sm:w-auto sm:min-w-sm">
+          <Input name="q" defaultValue={q ?? ""} placeholder="Buscar serviço" className="h-11 bg-background/80" />
+          <Button type="submit" variant="outline" className="h-11 rounded-xl" aria-label="Buscar serviços">
+            <Search className="size-4" /> <span className="hidden sm:inline">Buscar</span>
           </Button>
         </form>
-      </div>
+        }
+      />
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo de serviços">
+        <MetricCard label="Serviços" value={services.length} hint="itens no catálogo" icon={Sparkles} />
+        <MetricCard label="Ativos" value={activeServices.length} hint="disponíveis para agenda" icon={WandSparkles} tone="success" />
+        <MetricCard label="Ticket médio" value={formatCentsToReais(averagePrice)} hint="entre serviços ativos" icon={WalletCards} tone="warning" />
+        <MetricCard label="Duração média" value={`${averageDuration} min`} hint="tempo por atendimento" icon={Clock3} tone="neutral" />
+      </section>
       <ServiceCatalog
         services={services}
         professionals={team}

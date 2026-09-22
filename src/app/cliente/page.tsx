@@ -1,54 +1,81 @@
 import Link from "next/link";
+import { CalendarCheck2, CalendarDays, ChevronRight, Clock3, Heart, Sparkles, Star } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
-import { signOutAction } from "@/lib/auth/actions";
-import { BrandLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { loadMyAppointments } from "@/lib/booking/queries";
+import { partitionClientAppointments } from "@/lib/booking/validation";
+import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
 
 export default async function ClientePage() {
   const session = await requireConfirmedSession("/cliente");
+  const appointments = await loadMyAppointments();
+  const { upcoming, past } = partitionClientAppointments(appointments);
+  const next = upcoming[0];
+  const firstName = session.profile.fullName.split(/\s+/)[0] || "cliente";
+  const metrics = [
+    { icon: CalendarCheck2, label: "Próximos", value: upcoming.length, hint: "horários à frente" },
+    { icon: Clock3, label: "Histórico", value: past.length, hint: "atendimentos anteriores" },
+    { icon: Star, label: "Avaliações", value: "—", hint: "sincronização pendente" },
+  ];
 
   return (
-    <div className="agende-bloom min-h-full">
-      <header className="border-b border-border/70 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
-          <BrandLogo size="sm" />
-          <form action={signOutAction}>
-            <Button variant="ghost" type="submit">
-              Sair
-            </Button>
-          </form>
+    <>
+      <section className="relative overflow-hidden rounded-[2rem] bg-primary px-5 py-8 text-primary-foreground shadow-xl shadow-primary/15 sm:px-8 sm:py-10">
+        <div className="pointer-events-none absolute -top-20 -right-12 size-56 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-primary-foreground/70 uppercase"><Sparkles className="size-3.5" /> Área da cliente</p>
+            <h1 className="mt-3 text-4xl leading-none font-semibold tracking-tight sm:text-5xl">Seu momento de cuidado, {firstName}.</h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-primary-foreground/75 sm:text-base">Acompanhe seus horários e volte aos lugares que fazem você se sentir bem.</p>
+          </div>
+          <Button variant="secondary" size="lg" className="h-11 w-fit rounded-full px-5" render={<Link href="/cliente/agendamentos" />}>
+            <CalendarDays className="size-4" /> Meus agendamentos
+          </Button>
         </div>
-      </header>
-      <main className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8">
-        <div>
-          <p className="text-sm text-muted-foreground">Área do cliente</p>
-          <h1 className="font-serif text-3xl">Olá, {session.profile.fullName}</h1>
-          <p className="mt-2 text-muted-foreground">
-            Esta área é gratuita. Sem mensalidade, sem trial e sem assinatura.
-          </p>
-        </div>
-        <Card className="border-none ring-1 ring-border">
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-3">
+        {metrics.map(({ icon: MetricIcon, label, value, hint }) => (
+            <Card key={label} className="rounded-3xl border-border/70 bg-card/85 p-1 shadow-sm">
+              <CardContent className="flex items-center gap-4 py-4">
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-secondary text-primary"><MetricIcon className="size-4" /></div>
+                <div><p className="text-sm text-muted-foreground">{label}</p><p className="font-serif text-3xl leading-none">{value}</p><p className="mt-1 text-xs text-muted-foreground">{hint}</p></div>
+              </CardContent>
+            </Card>
+        ))}
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
           <CardHeader>
-            <CardTitle>Meus agendamentos</CardTitle>
-            <CardDescription>
-              Veja horários à frente, histórico e cancele com até 2 horas de antecedência.
-            </CardDescription>
+            <CardTitle className="text-xl">Seu próximo cuidado</CardTitle>
+            <CardDescription>O compromisso mais próximo na sua agenda.</CardDescription>
           </CardHeader>
+          <CardContent>
+            {next ? (
+              <Link href="/cliente/agendamentos" className="group flex items-center gap-4 rounded-2xl bg-secondary/60 p-4 transition-colors hover:bg-secondary">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-background text-primary ring-1 ring-border"><CalendarDays className="size-5" /></div>
+                <div className="min-w-0 flex-1"><p className="truncate font-medium">{next.serviceName}</p><p className="truncate text-sm text-muted-foreground">{next.workspaceName} · {next.professionalName}</p><p className="mt-1 text-xs">{formatDateTimeInTimeZone(next.startsAt, next.timezone)}</p></div>
+                <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            ) : (
+              <div className="grid place-items-center gap-3 rounded-2xl bg-secondary/45 px-4 py-10 text-center"><Heart className="size-6 text-primary" /><div><p className="font-medium">Nada marcado por enquanto</p><p className="mt-1 text-sm text-muted-foreground">Explore o perfil de um estabelecimento para reservar.</p></div></div>
+            )}
+          </CardContent>
         </Card>
-        <Button className="h-11 w-fit rounded-full" render={<Link href="/cliente/agendamentos" />}>
-          Abrir agendamentos
-        </Button>
-        {session.context.hasWorkspace ? (
-          <Button variant="outline" className="w-fit" render={<Link href="/app" />}>
-            Ir para o meu negócio
-          </Button>
-        ) : (
-          <Button variant="outline" className="w-fit" render={<Link href="/onboarding" />}>
-            Quero também ser profissional
-          </Button>
-        )}
-      </main>
-    </div>
+        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
+          <CardHeader><CardTitle className="text-xl">Também é profissional?</CardTitle><CardDescription>Use a mesma conta para cuidar do seu negócio.</CardDescription></CardHeader>
+          <CardContent>
+            {session.context.hasWorkspace ? (
+              <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/app" />}>Ir para área profissional</Button>
+            ) : (
+              <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/onboarding" />}>Criar meu espaço profissional</Button>
+            )}
+            <p className="mt-4 text-center text-xs text-muted-foreground">Sua área de cliente continua gratuita.</p>
+          </CardContent>
+        </Card>
+      </section>
+    </>
   );
 }
