@@ -24,8 +24,8 @@ export function InventoryDashboard({ snapshot }: { snapshot: InventorySnapshot |
     <>
       <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo real do estoque">
         <MetricCard label="Produtos" value={summary.products} hint="itens retornados pelo backend" icon={PackageOpen} />
-        <MetricCard label="Estoque baixo" value={summary.lowStock} hint="quantidade no mínimo ou abaixo" icon={CircleAlert} tone="warning" />
-        <MetricCard label="Custo em estoque" value={formatCentsToReais(summary.totalCostCents)} hint="quantidade × custo" icon={WalletCards} tone="neutral" />
+        <MetricCard label="Estoque baixo" value={summary.lowStock} hint={`${summary.outOfStock} sem saldo`} icon={CircleAlert} tone="warning" />
+        <MetricCard label="Custo em estoque" value={formatCentsToReais(summary.estimatedCostCents)} hint="estimativa do backend" icon={WalletCards} tone="neutral" />
       </section>
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
@@ -35,7 +35,7 @@ export function InventoryDashboard({ snapshot }: { snapshot: InventorySnapshot |
               const low = product.quantity <= product.minimumQuantity;
               return (
                 <article key={product.id} className="grid gap-3 rounded-2xl bg-secondary/45 p-4 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-                  <div><p className="font-medium">{product.name}</p><p className="text-xs text-muted-foreground">Custo {formatCentsToReais(product.costCents)}</p></div>
+                  <div><p className="font-medium">{product.name}</p><p className="text-xs text-muted-foreground">{product.costCents === null ? "Custo não informado" : `Custo ${formatCentsToReais(product.costCents)}`}</p></div>
                   <div className="text-sm"><span className="font-serif text-2xl">{product.quantity}</span> em estoque</div>
                   <Badge variant={low ? "destructive" : "secondary"}>{low ? "Repor" : `Mín. ${product.minimumQuantity}`}</Badge>
                 </article>

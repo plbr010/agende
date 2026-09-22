@@ -1,50 +1,32 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createInventoryQueries, summarizeInventory } from "./queries";
+import { inventoryUiRpcFixture } from "@/test-fixtures/operational-rpcs";
 
-test("inventory query validates the normalized backend contract", async () => {
+test("inventory query adapts the exact get_inventory_ui response", async () => {
   const queries = createInventoryQueries({
     async loadInventory(workspaceId) {
       assert.equal(workspaceId, "workspace-1");
-      return {
-        products: [
-          {
-            id: "product-1",
-            name: "Coloração",
-            quantity: 2,
-            minimumQuantity: 3,
-            costCents: 2500,
-            updatedAt: "2026-09-22T10:00:00Z",
-          },
-        ],
-        recentMovements: [
-          {
-            id: "movement-1",
-            productId: "product-1",
-            productName: "Coloração",
-            quantityDelta: -1,
-            label: "Consumo",
-            occurredAt: "2026-09-22T09:00:00Z",
-            note: null,
-          },
-        ],
-      };
+      return inventoryUiRpcFixture;
     },
   });
 
   const snapshot = await queries.load("workspace-1");
   assert.equal(snapshot.products[0]?.name, "Coloração");
+  assert.equal(snapshot.products[0]?.costCents, null);
+  assert.equal(snapshot.recentMovements[0]?.quantityDelta, -1);
   assert.deepEqual(summarizeInventory(snapshot), {
     products: 1,
     lowStock: 1,
-    totalCostCents: 5000,
+    outOfStock: 0,
+    estimatedCostCents: 0,
   });
 });
 
 test("inventory query rejects incomplete remote payloads", async () => {
   const queries = createInventoryQueries({
     async loadInventory() {
-      return { products: [{ id: "missing-fields" }], recentMovements: [] };
+      return { summary: {}, products: [{ id: "missing-fields" }], recent_movements: [] };
     },
   });
 

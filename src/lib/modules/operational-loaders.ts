@@ -1,4 +1,4 @@
-import { createFinanceQueries, type FinanceBackend, type FinancialSnapshot } from "@/lib/finance/queries";
+import { createFinanceQueries, type FinanceBackend, type FinancePeriodInput, type FinancialSnapshot } from "@/lib/finance/queries";
 import { createInventoryQueries, type InventoryBackend, type InventorySnapshot } from "@/lib/inventory/queries";
 import { createPackagesQueries, type PackagesBackend, type PackagesSnapshot } from "@/lib/packages/queries";
 import { createReportsQueries, type AdvancedReport, type AdvancedReportInput, type ReportsBackend } from "@/lib/reports/queries";
@@ -20,9 +20,9 @@ export function createOperationalModuleLoaders(adapters: OperationalBackendAdapt
       if (!adapters.packages) return null;
       return createPackagesQueries(adapters.packages).load(workspaceId);
     },
-    async finance(workspaceId: string): Promise<FinancialSnapshot | null> {
+    async finance(input: FinancePeriodInput): Promise<FinancialSnapshot | null> {
       if (!adapters.finance) return null;
-      return createFinanceQueries(adapters.finance).load(workspaceId);
+      return createFinanceQueries(adapters.finance).load(input);
     },
     async reports(input: AdvancedReportInput): Promise<AdvancedReport | null> {
       if (!adapters.reports) return null;
@@ -30,9 +30,3 @@ export function createOperationalModuleLoaders(adapters: OperationalBackendAdapt
     },
   };
 }
-
-/**
- * Ponto único de composição. Os adaptadores Supabase reais entram aqui após
- * validar nomes de tabelas/RPCs, argumentos, RLS e formatos de retorno.
- */
-export const operationalModuleLoaders = createOperationalModuleLoaders({});

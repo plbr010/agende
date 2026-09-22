@@ -2,7 +2,7 @@ import { ChartNoAxesCombined } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { AdvancedReportDashboard } from "@/components/reports/advanced-report-dashboard";
-import { operationalModuleLoaders } from "@/lib/modules/operational-loaders";
+import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
 import { todayInProductTz } from "@/lib/time/timezone";
 
 export default async function ReportsPage() {

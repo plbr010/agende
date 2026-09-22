@@ -2,13 +2,19 @@ import { CircleDollarSign } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { FinanceDashboard } from "@/components/finance/finance-dashboard";
-import { operationalModuleLoaders } from "@/lib/modules/operational-loaders";
+import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
+import { todayInProductTz } from "@/lib/time/timezone";
 
 export default async function FinancePage() {
   const session = await requireConfirmedSession("/app/financeiro");
   const workspace = session.workspaces[0];
   if (!workspace) return null;
-  const snapshot = await operationalModuleLoaders.finance(workspace.id);
+  const today = todayInProductTz();
+  const snapshot = await operationalModuleLoaders.finance({
+    workspaceId: workspace.id,
+    startDate: `${today.slice(0, 7)}-01`,
+    endDate: today,
+  });
 
   return (
     <>

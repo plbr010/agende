@@ -635,6 +635,14 @@ export type Database = {
     };
     Functions: {
       accept_workspace_invite: { Args: { p_token: string }; Returns: Json };
+      cancel_client_package: {
+        Args: { p_client_package_id: string; p_workspace_id: string };
+        Returns: string;
+      };
+      cancel_financial_entry: {
+        Args: { p_entry_id: string; p_workspace_id: string };
+        Returns: string;
+      };
       cancel_my_appointment: { Args: { p_appointment_id: string }; Returns: Json };
       create_appointment: {
         Args: {
@@ -648,6 +656,18 @@ export type Database = {
         Returns: string;
       };
       create_client_profile: { Args: Record<PropertyKey, never>; Returns: string };
+      create_financial_entry: {
+        Args: {
+          p_amount_cents: number;
+          p_category_id?: string;
+          p_description: string;
+          p_due_date?: string;
+          p_entry_type: Database["public"]["Enums"]["financial_entry_type"];
+          p_idempotency_key?: string;
+          p_workspace_id: string;
+        };
+        Returns: string;
+      };
       create_public_appointment: {
         Args: {
           p_customer_note?: string | null;
@@ -678,7 +698,17 @@ export type Database = {
         Args: { p_member_id: string; p_workspace_id: string };
         Returns: Json;
       };
+      get_finance_ui: {
+        Args: { p_end_date: string; p_start_date: string; p_workspace_id: string };
+        Returns: Json;
+      };
+      get_inventory_ui: { Args: { p_workspace_id: string }; Returns: Json };
+      get_packages_ui: { Args: { p_workspace_id: string }; Returns: Json };
       get_public_workspace_profile: { Args: { p_slug: string }; Returns: Json };
+      get_workspace_advanced_report: {
+        Args: { p_end_date: string; p_start_date: string; p_workspace_id: string };
+        Returns: Json;
+      };
       get_workspace_seat_usage: {
         Args: { p_workspace_id: string };
         Returns: Json;
@@ -703,10 +733,35 @@ export type Database = {
         Returns: { starts_at: string }[];
       };
       list_public_booking_catalog: { Args: { p_slug: string }; Returns: Json };
+      mark_financial_entry_paid: {
+        Args: {
+          p_entry_id: string;
+          p_paid_at?: string;
+          p_payment_method: Database["public"]["Enums"]["payment_method"];
+          p_workspace_id: string;
+        };
+        Returns: string;
+      };
       peek_workspace_invite: { Args: { p_token: string }; Returns: Json };
       reactivate_workspace_member: {
         Args: { p_member_id: string; p_workspace_id: string };
         Returns: Json;
+      };
+      refund_financial_entry: {
+        Args: {
+          p_amount_cents: number;
+          p_entry_id: string;
+          p_idempotency_key?: string;
+          p_payment_method: Database["public"]["Enums"]["payment_method"];
+          p_reason: string;
+          p_refunded_at?: string;
+          p_workspace_id: string;
+        };
+        Returns: string;
+      };
+      reopen_financial_entry: {
+        Args: { p_entry_id: string; p_workspace_id: string };
+        Returns: string;
       };
       remove_workspace_member: {
         Args: { p_member_id: string; p_workspace_id: string };
@@ -725,6 +780,14 @@ export type Database = {
       revoke_workspace_invite: {
         Args: { p_invite_id: string; p_workspace_id: string };
         Returns: Json;
+      };
+      reverse_package_redemption: {
+        Args: { p_reason: string; p_redemption_id: string; p_workspace_id: string };
+        Returns: Json;
+      };
+      sell_service_package: {
+        Args: { p_client_id: string; p_package_id: string; p_workspace_id: string };
+        Returns: string;
       };
       set_appointment_status: {
         Args: {
@@ -769,9 +832,23 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show";
+      billing_interval: "monthly" | "annual";
+      client_package_status: "active" | "exhausted" | "cancelled" | "expired";
+      financial_entry_source: "manual" | "appointment" | "package_sale";
+      financial_entry_status: "pending" | "paid" | "cancelled";
+      financial_entry_type: "income" | "expense";
+      inventory_movement_type: "entry" | "exit" | "adjustment";
+      inventory_unit: "unidade" | "ml" | "g";
       member_role: "owner" | "admin" | "professional" | "receptionist";
       member_status: "invited" | "active" | "inactive" | "removed";
       signup_intent: "client" | "professional";
+      payment_method:
+        | "cash"
+        | "pix"
+        | "debit_card"
+        | "credit_card"
+        | "bank_transfer"
+        | "other";
       subscription_plan: "solo" | "equipe" | "salao";
       subscription_status:
         | "trialing"

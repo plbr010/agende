@@ -2,7 +2,7 @@ import { Boxes } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { InventoryDashboard } from "@/components/inventory/inventory-dashboard";
-import { operationalModuleLoaders } from "@/lib/modules/operational-loaders";
+import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
 
 export default async function InventoryPage() {
   const session = await requireConfirmedSession("/app/estoque");

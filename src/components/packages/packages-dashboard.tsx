@@ -42,13 +42,12 @@ export function PackagesDashboard({ snapshot }: { snapshot: PackagesSnapshot | n
         <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
           <CardHeader><CardTitle className="flex items-center gap-2 text-xl"><CalendarClock className="size-5 text-primary" /> Pacotes de clientes</CardTitle><CardDescription>Consumo, validade e reversões retornados pelo backend.</CardDescription></CardHeader>
           <CardContent className="grid gap-3">
-            {snapshot.clientPackages.map((sale) => {
-              const used = sale.usage.reduce((total, item) => total + item.used, 0);
-              const included = sale.usage.reduce((total, item) => total + item.included, 0);
+            {snapshot.sales.map((sale) => {
+              const statusLabel = { active: "Ativo", exhausted: "Esgotado", cancelled: "Cancelado", expired: "Expirado" }[sale.status];
               return (
                 <article key={sale.id} className="rounded-2xl border border-border/70 p-4">
-                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{sale.clientName}</p><p className="text-xs text-muted-foreground">{sale.packageName}</p></div><Badge variant={sale.reversedAt ? "destructive" : "outline"}>{sale.stateLabel}</Badge></div>
-                  <div className="mt-3 flex items-center justify-between text-sm"><span>{used} de {included} sessões usadas</span>{sale.reversedAt ? <span className="flex items-center gap-1 text-destructive"><Undo2 className="size-3.5" /> Revertido</span> : null}</div>
+                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{sale.clientName}</p><p className="text-xs text-muted-foreground">{sale.packageName}</p></div><Badge variant={sale.status === "cancelled" ? "destructive" : "outline"}>{statusLabel}</Badge></div>
+                  <div className="mt-3 flex items-center justify-between text-sm"><span>{sale.usedTotal} de {sale.includedTotal} sessões usadas</span>{sale.status === "cancelled" ? <span className="flex items-center gap-1 text-destructive"><Undo2 className="size-3.5" /> Cancelado</span> : null}</div>
                 </article>
               );
             })}
