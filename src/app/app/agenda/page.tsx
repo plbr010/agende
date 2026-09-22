@@ -1,8 +1,12 @@
+import { CalendarCheck2, CalendarDays, CircleDollarSign, Clock3 } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { AgendaBoard } from "@/components/agenda/agenda-board";
+import { PageHeader } from "@/components/app/page-header";
+import { MetricCard } from "@/components/app/metric-card";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
 import { loadAgendaRange, loadCurrentMemberId } from "@/lib/agenda/queries";
 import { addDaysIso, todayInProductTz, weekdayInProductTz, zonedWallTimeToUtc } from "@/lib/time/timezone";
+import { formatCentsToReais } from "@/lib/validation/money";
 
 function weekStart(date: string): string {
   const weekday = weekdayInProductTz(zonedWallTimeToUtc(date, "12:00"));
@@ -46,17 +50,27 @@ export default async function AgendaPage({
     }
     return true;
   });
+  const visibleAppointments = appointments.filter(
+    (appointment) => appointment.status !== "cancelled" && appointment.status !== "no_show",
+  );
+  const confirmed = appointments.filter((appointment) => appointment.status === "confirmed").length;
+  const inProgress = appointments.filter((appointment) => appointment.status === "in_progress").length;
+  const revenue = visibleAppointments.reduce((sum, appointment) => sum + appointment.priceCents, 0);
 
   return (
     <>
-      <div>
-        <p className="text-sm text-muted-foreground">Agenda interna</p>
-        <h1 className="font-serif text-3xl">Atendimentos</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Horários em America/Sao_Paulo. No celular a agenda é uma lista do dia; a semana aparece em
-          colunas só quando a tela comporta.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Agenda interna"
+        title="Atendimentos"
+        description="Visualize o ritmo do dia, filtre por profissional e conduza cada atendimento do agendamento à conclusão."
+        icon={CalendarDays}
+      />
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo da agenda">
+        <MetricCard label="Na agenda" value={visibleAppointments.length} hint={view === "week" ? "na semana selecionada" : "no dia selecionado"} icon={CalendarCheck2} />
+        <MetricCard label="Confirmados" value={confirmed} hint="clientes confirmados" icon={Clock3} tone="success" />
+        <MetricCard label="Em atendimento" value={inProgress} hint="acontecendo agora" icon={Clock3} tone="warning" />
+        <MetricCard label="Valor previsto" value={formatCentsToReais(revenue)} hint="sem cancelamentos e faltas" icon={CircleDollarSign} tone="neutral" />
+      </section>
       <AgendaBoard
         view={view}
         date={date}

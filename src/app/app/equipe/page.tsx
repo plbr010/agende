@@ -1,5 +1,8 @@
+import { CalendarClock, Sparkles, UserRoundCheck, UsersRound } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { TeamDirectory } from "@/components/catalog/directories";
+import { PageHeader } from "@/components/app/page-header";
+import { MetricCard } from "@/components/app/metric-card";
 import {
   PendingInvitesList,
   SeatUsageCard,
@@ -25,17 +28,23 @@ export default async function TeamPage() {
     loadPendingInvites(workspace.id),
     loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug),
   ]);
+  const activeMembers = team.filter((member) => member.status === "active").length;
+  const bookableMembers = team.filter((member) => member.bookingEnabled).length;
+  const linkedServices = team.reduce((sum, member) => sum + member.serviceCount, 0);
 
   return (
     <>
-      <div>
-        <p className="text-sm text-muted-foreground">Equipe</p>
-        <h1 className="font-serif text-3xl">Quem faz parte do negócio</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Perfis de atendimento existem só para dono, admin e profissional. Recepção não ocupa
-          vaga e não aparece como quem realiza serviços.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Pessoas"
+        title="Equipe"
+        description="Organize quem atende, os serviços de cada profissional e a disponibilidade que move a agenda."
+        icon={UsersRound}
+      />
+      <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo da equipe">
+        <MetricCard label="Pessoas ativas" value={activeMembers} hint="membros no workspace" icon={UserRoundCheck} />
+        <MetricCard label="Na agenda" value={bookableMembers} hint="profissionais com reservas" icon={CalendarClock} tone="success" />
+        <MetricCard label="Vínculos de serviço" value={linkedServices} hint="especialidades configuradas" icon={Sparkles} tone="neutral" />
+      </section>
       {seats ? <SeatUsageCard seats={seats} /> : null}
       <TeamInviteCard canManage={canManage} />
       <PendingInvitesList invites={invites} canManage={canManage} timezone={settings.timezone} />
