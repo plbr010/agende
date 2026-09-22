@@ -1,6 +1,6 @@
 # Agendê
 
-SaaS para profissionais da beleza e clientes finais. A fundação e o catálogo (equipe, serviços, clientes) estão prontos. Esta etapa adiciona **jornada, pausas, bloqueios, disponibilidade e agenda interna**.
+SaaS para profissionais da beleza e clientes finais. O produto reúne agenda, catálogo, clientes, equipe, gestão operacional e uma experiência própria para a cliente.
 
 ## Stack
 
@@ -8,6 +8,7 @@ SaaS para profissionais da beleza e clientes finais. A fundação e o catálogo 
 - Tailwind CSS 4 + shadcn/ui
 - Supabase Auth + PostgreSQL + Row Level Security
 - Deploy previsto na Vercel
+- Node.js 22 ou superior
 
 ## Identidade
 
@@ -32,7 +33,12 @@ Uma pessoa tem **uma conta** (`auth.users` + `profiles`). Capacidades são compo
 | `/app/equipe/[member]/disponibilidade` | jornada, pausas e bloqueios |
 | `/app/servicos` | catálogo de serviços do workspace |
 | `/app/clientes` | clientes internos do estabelecimento |
+| `/app/estoque` `/app/pacotes` | módulos operacionais preparados para sincronização remota |
+| `/app/financeiro` `/app/relatorios` | visão financeira e indicadores dos agendamentos |
+| `/app/avaliacoes` | estrutura de avaliações, aguardando schema remoto |
 | `/cliente` | `client_profiles` |
+| `/cliente/agendamentos` | próximos horários e histórico da cliente |
+| `/cliente/avaliacoes` | preparação de avaliações de atendimentos concluídos |
 | `/auth/callback` `/auth/confirm` | troca de código / token de e-mail |
 
 Rotas privadas são barradas no **servidor** (proxy + `getUser()` + RLS).
@@ -55,7 +61,7 @@ Rotas privadas são barradas no **servidor** (proxy + `getUser()` + RLS).
 
 ```bash
 cp .env.example .env.local
-npm install
+npm ci
 npm run dev
 ```
 
