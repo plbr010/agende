@@ -12,6 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       workspaceSlug={workspace?.slug ?? ""}
       userName={session.profile.fullName}
       roleLabel={workspace ? MEMBER_ROLE_LABEL[workspace.role] : "Profissional"}
+      role={workspace?.role}
     >
       {children}
     </AppShell>
