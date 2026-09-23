@@ -18,4 +18,3 @@ export function canAccessWorkspacePath(path: string, role: WorkspaceRole | null 
     .find(([route]) => pathname === route || pathname.startsWith(`${route}/`));
   return !permission || (role != null && permission[1].includes(role));
 }
-

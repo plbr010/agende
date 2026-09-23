@@ -25,4 +25,3 @@ export function createConfirmedSessionGuard(
     return session;
   };
 }
-
