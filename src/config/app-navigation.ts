@@ -12,6 +12,7 @@ import {
   WandSparkles,
   type LucideIcon,
 } from "lucide-react";
+import { canAccessWorkspacePath, type WorkspaceRole } from "@/lib/auth/permissions";
 
 export type AppNavigationItem = {
   href: string;
@@ -55,6 +56,15 @@ export const settingsNavigationItem: AppNavigationItem = {
   description: "Perfil e preferências",
   icon: Settings2,
 };
+
+export function getAppNavigation(role: WorkspaceRole | null | undefined): AppNavigationGroup[] {
+  return appNavigation
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => canAccessWorkspacePath(item.href, role)),
+    }))
+    .filter((group) => group.items.length > 0);
+}
 
 export function isNavigationItemCurrent(pathname: string, href: string): boolean {
   if (href === "/app") {

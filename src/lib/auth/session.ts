@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
-  canAccessPath,
   getDefaultDestination,
-  getFallbackForDeniedPath,
   sanitizeNextPath,
   type AuthContext,
 } from "@/lib/auth/redirects";
+import { createConfirmedSessionGuard } from "@/lib/auth/session-guard";
+import type { WorkspaceRole } from "@/lib/auth/permissions";
 
 export type CurrentUser = {
   id: string;
@@ -18,7 +18,7 @@ export type WorkspaceSummary = {
   id: string;
   name: string;
   slug: string;
-  role: "owner" | "admin" | "professional" | "receptionist";
+  role: WorkspaceRole;
 };
 
 export type SubscriptionSummary = {
@@ -153,19 +153,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
   };
 }
 
-export async function requireConfirmedSession(path: string): Promise<AppSession> {
-  const session = await loadAppSession();
-  if (!session) {
-    redirect(`/login?next=${encodeURIComponent(path)}`);
-  }
-  if (!session.context.emailConfirmed) {
-    redirect("/verificar-email");
-  }
-  if (!canAccessPath(path, session.context)) {
-    redirect(getFallbackForDeniedPath(path, session.context));
-  }
-  return session;
-}
+export const requireConfirmedSession = createConfirmedSessionGuard(loadAppSession, redirect);
 
 export async function requireAnonymous(next?: string | null): Promise<void> {
   const session = await loadAppSession();

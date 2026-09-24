@@ -1,0 +1,332 @@
+[
+  {
+    "version": "20260918150334",
+    "name": "foundation_types_and_tables",
+    "statement_count": 1,
+    "sql_md5": "0fc545d155dcd036df4832f38b5cd783"
+  },
+  {
+    "version": "20260918150401",
+    "name": "foundation_functions",
+    "statement_count": 1,
+    "sql_md5": "0ce0e65ae9c0699e04d2e20930f8b87c"
+  },
+  {
+    "version": "20260918150422",
+    "name": "foundation_guards",
+    "statement_count": 1,
+    "sql_md5": "a037c6cffba29c4e8693061d72fc3abb"
+  },
+  {
+    "version": "20260918150434",
+    "name": "foundation_auth_sync",
+    "statement_count": 1,
+    "sql_md5": "bd72fc890ef371f561ae3e7cc50de9d8"
+  },
+  {
+    "version": "20260918150443",
+    "name": "foundation_workspace_rpc",
+    "statement_count": 1,
+    "sql_md5": "b12bcd7139edeb2a22307b7aa2af6d1d"
+  },
+  {
+    "version": "20260918150456",
+    "name": "foundation_invites",
+    "statement_count": 1,
+    "sql_md5": "c5ea28d0f682b313e2ae8df0b66db0fa"
+  },
+  {
+    "version": "20260918150505",
+    "name": "foundation_rpc_wrappers_and_triggers",
+    "statement_count": 1,
+    "sql_md5": "6a0b9a9449140c4dd1079430b2ffa9ce"
+  },
+  {
+    "version": "20260918150516",
+    "name": "foundation_rls",
+    "statement_count": 1,
+    "sql_md5": "287e32a72d0717bc4bdd7a446beda681"
+  },
+  {
+    "version": "20260918150607",
+    "name": "foundation_fk_indexes",
+    "statement_count": 1,
+    "sql_md5": "8406f87bfa84a5673ef1c71207634128"
+  },
+  {
+    "version": "20260918183729",
+    "name": "foundation_hardening",
+    "statement_count": 1,
+    "sql_md5": "773d0b59690c996cb147d8116d582886"
+  },
+  {
+    "version": "20260918183827",
+    "name": "foundation_hardening_seats_invites",
+    "statement_count": 1,
+    "sql_md5": "056d7e36b4be2f2bdac13f6f4eccb956"
+  },
+  {
+    "version": "20260918183848",
+    "name": "foundation_hardening_invites_grants",
+    "statement_count": 1,
+    "sql_md5": "5a66923fe8e9111e97f9b4d8d40fd91c"
+  },
+  {
+    "version": "20260918191634",
+    "name": "catalog_professionals_services_clients",
+    "statement_count": 1,
+    "sql_md5": "2c31cb649898239f0303953e8ee79d35"
+  },
+  {
+    "version": "20260918191706",
+    "name": "catalog_professionals_services_clients_rls",
+    "statement_count": 1,
+    "sql_md5": "552988726b06c551cfaf1f3f2b012bba"
+  },
+  {
+    "version": "20260918192038",
+    "name": "catalog_indexes_and_policy_merge",
+    "statement_count": 1,
+    "sql_md5": "960332f9d8d425ff84cc33f2315b53e0"
+  },
+  {
+    "version": "20260918194255",
+    "name": "workspace_settings_schema",
+    "statement_count": 1,
+    "sql_md5": "65dd5dad02bf132a9b8bfc2498d5d7d1"
+  },
+  {
+    "version": "20260918194304",
+    "name": "agenda_types_and_tables",
+    "statement_count": 1,
+    "sql_md5": "3a0c2322461ccae1429177c75048ad93"
+  },
+  {
+    "version": "20260918194355",
+    "name": "agenda_functions",
+    "statement_count": 1,
+    "sql_md5": "f94e5b501176e76b94dbf1d30da818b3"
+  },
+  {
+    "version": "20260918194427",
+    "name": "workspace_settings_rpcs",
+    "statement_count": 1,
+    "sql_md5": "ab87f0ffc40f4ff4040703a9e73b584c"
+  },
+  {
+    "version": "20260918194437",
+    "name": "agenda_availability_helpers",
+    "statement_count": 1,
+    "sql_md5": "27498b00f65bbbd792b2c67cce60ae07"
+  },
+  {
+    "version": "20260918194446",
+    "name": "workspace_settings_rls_storage",
+    "statement_count": 1,
+    "sql_md5": "3d8fc4bafb1fe9ae92cc43f50057789e"
+  },
+  {
+    "version": "20260918194454",
+    "name": "agenda_list_available_slots",
+    "statement_count": 1,
+    "sql_md5": "4f65201929bb69b1008138fa6cdb98d3"
+  },
+  {
+    "version": "20260918194510",
+    "name": "agenda_appointment_rpcs",
+    "statement_count": 1,
+    "sql_md5": "d7d2fda04e35bd9ef505d5a311eba2dc"
+  },
+  {
+    "version": "20260918194527",
+    "name": "agenda_triggers",
+    "statement_count": 1,
+    "sql_md5": "8ecb3d407f466aaeb2db235b3a4fa9a0"
+  },
+  {
+    "version": "20260918194551",
+    "name": "agenda_rls",
+    "statement_count": 1,
+    "sql_md5": "3de460e0ca008899b160088cb822ed09"
+  },
+  {
+    "version": "20260918194708",
+    "name": "agenda_indexes_and_policy_split",
+    "statement_count": 1,
+    "sql_md5": "3f4e6f241669b31f12d363cafe7af065"
+  },
+  {
+    "version": "20260918194722",
+    "name": "agenda_write_policies",
+    "statement_count": 1,
+    "sql_md5": "b9ac40bd56122efcd2404492d225472d"
+  },
+  {
+    "version": "20260918195354",
+    "name": "agenda_snapshot_professional_and_select",
+    "statement_count": 1,
+    "sql_md5": "f666a6d04479a72fb325ff0e0e778bb9"
+  },
+  {
+    "version": "20260918203839",
+    "name": "public_booking_schema",
+    "statement_count": 1,
+    "sql_md5": "7e16265f90a9023e435e27a0da53cff0"
+  },
+  {
+    "version": "20260918203840",
+    "name": "public_booking_functions",
+    "statement_count": 1,
+    "sql_md5": "7e16265f90a9023e435e27a0da53cff0"
+  },
+  {
+    "version": "20260918203841",
+    "name": "public_booking_rpcs_rls",
+    "statement_count": 1,
+    "sql_md5": "7e16265f90a9023e435e27a0da53cff0"
+  },
+  {
+    "version": "20260919201138",
+    "name": "hardening_snapshot_owner_timezone",
+    "statement_count": 0,
+    "sql_md5": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  {
+    "version": "20260919201409",
+    "name": "inventory_schema",
+    "statement_count": 1,
+    "sql_md5": "2c6735bb7a1cecf522d7893dca3729a2"
+  },
+  {
+    "version": "20260919201432",
+    "name": "inventory_rpcs",
+    "statement_count": 1,
+    "sql_md5": "304acc2557d32cc997704bf4a992620b"
+  },
+  {
+    "version": "20260919201509",
+    "name": "inventory_rls",
+    "statement_count": 1,
+    "sql_md5": "2a2cd2ba366a9a5ad8e0be1d01515cf6"
+  },
+  {
+    "version": "20260921165035",
+    "name": "inventory_fk_indexes",
+    "statement_count": 1,
+    "sql_md5": "bdbbf1885866e1cfd3df2fc2bfa7bc74"
+  },
+  {
+    "version": "20260921171533",
+    "name": "packages_core",
+    "statement_count": 1,
+    "sql_md5": "c585ffd09b8ce87f2adca4a632073309"
+  },
+  {
+    "version": "20260921171751",
+    "name": "finance_core",
+    "statement_count": 1,
+    "sql_md5": "4e7bc1105160d58b12a066efb41bd35e"
+  },
+  {
+    "version": "20260921171949",
+    "name": "reports_core",
+    "statement_count": 1,
+    "sql_md5": "4f125f7039a637788591dc6b4b5e4bde"
+  },
+  {
+    "version": "20260921172021",
+    "name": "packages_finance_fk_indexes",
+    "statement_count": 1,
+    "sql_md5": "f442f3780f9a78dc049285381e9b3abd"
+  },
+  {
+    "version": "20260921172331",
+    "name": "secure_public_default_privileges",
+    "statement_count": 1,
+    "sql_md5": "56524ddd08da5d58e8c133cac5937153"
+  },
+  {
+    "version": "20260921174123",
+    "name": "subscription_entitlement_enforcement",
+    "statement_count": 1,
+    "sql_md5": "2f8ba1eebfd1b6232420e24ee349431a"
+  },
+  {
+    "version": "20260921174239",
+    "name": "audit_events",
+    "statement_count": 1,
+    "sql_md5": "ee0254eae90b45b7701d63ed5a454e51"
+  },
+  {
+    "version": "20260921174332",
+    "name": "finance_refunds_package_hardening",
+    "statement_count": 1,
+    "sql_md5": "e70cbbdb1e25ec25ee1c6b7e2dc45fda"
+  },
+  {
+    "version": "20260921174537",
+    "name": "billing_intervals_annual_ready",
+    "statement_count": 1,
+    "sql_md5": "1564807c5750fb8828e712d26219c2fa"
+  },
+  {
+    "version": "20260921174547",
+    "name": "database_maintenance_cron",
+    "statement_count": 1,
+    "sql_md5": "35879dba2beaade00f4c61a5524987c2"
+  },
+  {
+    "version": "20260921175259",
+    "name": "package_lifecycle_hardening",
+    "statement_count": 1,
+    "sql_md5": "02efe75415ae7035440fe9ff5e561766"
+  },
+  {
+    "version": "20260921175525",
+    "name": "finance_categories_idempotency",
+    "statement_count": 1,
+    "sql_md5": "697ce5049d35594498d764b78261d496"
+  },
+  {
+    "version": "20260921175704",
+    "name": "agenda_client_reschedule_deadlock_hardening",
+    "statement_count": 1,
+    "sql_md5": "7d0ccfe993dc5cd43304db070a5fe3ad"
+  },
+  {
+    "version": "20260921175824",
+    "name": "advanced_reports",
+    "statement_count": 1,
+    "sql_md5": "c68169735dae1e50dd54042303f65e3c"
+  },
+  {
+    "version": "20260921175927",
+    "name": "privacy_requests_export_audit_expansion",
+    "statement_count": 1,
+    "sql_md5": "676f29f39e7333fc013b276d5c77cb58"
+  },
+  {
+    "version": "20260921180139",
+    "name": "public_booking_duplicate_concurrency_guard",
+    "statement_count": 1,
+    "sql_md5": "e0c9f30bdabca4506d87a7b3b9c598c7"
+  },
+  {
+    "version": "20260921180256",
+    "name": "client_packages_and_billing_foundation",
+    "statement_count": 1,
+    "sql_md5": "5637da497b01f8854d2cf652d4c2bcb7"
+  },
+  {
+    "version": "20260921181255",
+    "name": "frontend_read_models",
+    "statement_count": 1,
+    "sql_md5": "97ae00f420a5355abb525e6a383081ce"
+  },
+  {
+    "version": "20260921181317",
+    "name": "frontend_read_models_inventory_fix",
+    "statement_count": 1,
+    "sql_md5": "b58893e75169eb55cd2277085dac419b"
+  }
+]
