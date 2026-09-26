@@ -364,5 +364,11 @@
     "name": "stripe_api_key_vault_access",
     "statement_count": 1,
     "sha256": "d695c7f4d3b5623dfa07183378943758c16bdfc0acdbd0e4bac75e370a000f85"
+  },
+  {
+    "version": "20260926194038",
+    "name": "trial_selected_plan",
+    "statement_count": 1,
+    "sha256": "3fb3c3cf7322e96ca9cef8c7de83d63dc0485cd237b228e5eef8e49b685268d4"
   }
 ]

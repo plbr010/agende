@@ -7,7 +7,7 @@ Branch nova: `codex/trial-management-ux`. Nenhum merge realizado.
 
 ## Entregas
 
-- Nova migration `20260925201418_trial_selected_plan.sql`: plano selecionado,
+- Nova migration `20260926194038_trial_selected_plan.sql`: plano selecionado,
   teste único de 168 horas, troca durante teste sem alterar datas, bloqueio de
   downgrade acima da capacidade e preços anuais. Preserva claims, RLS e guards.
 - Onboarding com Solo/Equipe/Salão, destaque Equipe, preços e aviso dos 7 dias.
@@ -135,4 +135,4 @@ Arquivos alterados nesta branch:
 - `src/lib/modules/periods.ts`
 - `src/lib/supabase/database.types.ts`
 - `src/lib/workspace/labels.ts`
-- `supabase/migrations/20260925201418_trial_selected_plan.sql`
+- `supabase/migrations/20260926194038_trial_selected_plan.sql`

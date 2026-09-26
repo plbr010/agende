@@ -8,7 +8,7 @@
 - Branch recuperada do bundle validado no HEAD `937ee3422be003fa7681d3f1451c4e53cc340037`.
 - Backup adicional: branch local `backup/trial-management-ux-937ee342-20260926` e bundle completo `trial-management-before-rebase-937ee342-new.bundle` na pasta da tarefa.
 - Os seis commits foram rebaseados sem conflitos. `git range-diff` confirmou equivalência dos seis patches.
-- As seis migrations Stripe e as duas Edge Functions da main permanecem idênticas. A migration `20260925201418_trial_selected_plan.sql` permanece idêntica à versão recuperada.
+- As seis migrations Stripe e as duas Edge Functions da main permanecem idênticas. A migration `20260926194038_trial_selected_plan.sql` foi reconciliada com o histórico remoto; a única diferença textual são dois comentários e a formatação de fim de linha, sem mudança funcional.
 - Tipos regenerados usando o gerador existente e todas as migrations em PostgreSQL local em memória: 31 tabelas, 61 funções e 16 enums. Foram acrescentadas as cinco RPCs Stripe da nova main, sem alterar contratos por suposição.
 
 ## Validação
@@ -27,6 +27,6 @@ Cobertura existente executada: seleção e troca de plano, trial único de 168 h
 
 Nenhuma alteração no Supabase remoto, execução de db push/db reset, migration remota ou redeploy de Edge Functions. Stripe frontend continua com `checkout: false` e `portal: false`. Nenhum merge realizado.
 
-Nenhuma regressão detectada pelas verificações executadas. Não foi realizado teste fim a fim autenticado no ambiente remoto nem teste de concorrência com múltiplas conexões. A aplicação remota da migration de trial continua fora do escopo e é necessária antes do uso dessas novas RPCs em produção.
+Nenhuma regressão detectada pelas verificações executadas. Não foi realizado teste fim a fim autenticado no ambiente remoto nem teste de concorrência com múltiplas conexões. A migration de trial já consta no histórico remoto como `20260926194038_trial_selected_plan`; esta reconciliação realizou somente leitura remota.
 
 Permanecem as limitações funcionais já documentadas: comparação com os ZIPs de referência indisponíveis, backend de Avaliações e limites das listas carregadas (100 lançamentos, 30 vendas, 20 movimentos). Os bloqueios antigos de publicação e a ausência dos arquivos Stripe citados no registro histórico não descrevem o estado desta integração.

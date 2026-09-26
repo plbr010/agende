@@ -22,7 +22,6 @@ BEGIN
   IF p_plan IS NULL OR p_plan NOT IN ('solo', 'equipe', 'salao') THEN
     RAISE EXCEPTION 'invalid_plan' USING ERRCODE = '22023';
   END IF;
-  -- Serialize eligibility across concurrent creations by the same person.
   PERFORM pg_advisory_xact_lock(hashtextextended(v_uid::text, 0));
   v_now := clock_timestamp();
   v_name := btrim(p_name);
@@ -100,7 +99,6 @@ BEGIN
   IF p_plan IS NULL OR p_plan NOT IN ('solo', 'equipe', 'salao') THEN
     RAISE EXCEPTION 'invalid_plan' USING ERRCODE = '22023';
   END IF;
-  -- Same row lock as professional membership mutations.
   PERFORM app.lock_workspace_billing(p_workspace_id);
   SELECT * INTO v_subscription FROM public.subscriptions WHERE workspace_id = p_workspace_id;
   IF v_subscription.status <> 'trialing' OR v_subscription.trial_ends_at IS NULL
