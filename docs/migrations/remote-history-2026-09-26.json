@@ -1,0 +1,82 @@
+{
+  "project": "wohimauqgywshbbejjcl",
+  "base_sha": "70749924d4e3d3f30481ed4d32c12e8eb4d740f7",
+  "migrations": [
+    {
+      "version": "20260926062411",
+      "name": "stripe_billing_sync_foundation",
+      "statement_count": 1,
+      "sha256": "3122323936de97fa3d71df75c35de388dd69f78e07f0fd9387e24303edfdf984"
+    },
+    {
+      "version": "20260926062835",
+      "name": "stripe_webhook_hardening",
+      "statement_count": 1,
+      "sha256": "9149a13a0f0d8b7ab83e3995cf02c8d259f5fafa570ffc04e316315e4ed7ab6e"
+    },
+    {
+      "version": "20260926063106",
+      "name": "stripe_billing_resubscribe_hardening",
+      "statement_count": 1,
+      "sha256": "0bb141301ad8d4ba6949f2b3b456b0ab87558d54f794d3f3bbbb1c57c06f9bac"
+    },
+    {
+      "version": "20260926063212",
+      "name": "stripe_billing_sync_reconcile",
+      "statement_count": 1,
+      "sha256": "5d286e451826e3ddc53fdce9ea27abfa6ec7287ab7ff4e2d29060578b92e5d96"
+    },
+    {
+      "version": "20260926063514",
+      "name": "stripe_checkout_resubscribe_hardening",
+      "statement_count": 1,
+      "sha256": "3d3f6f46f5a5bcbbe1e77a49561c38055114d75946d5d6172a10c96933b8f68a"
+    },
+    {
+      "version": "20260926063534",
+      "name": "stripe_api_key_vault_access",
+      "statement_count": 1,
+      "sha256": "d695c7f4d3b5623dfa07183378943758c16bdfc0acdbd0e4bac75e370a000f85"
+    }
+  ],
+  "functions": [
+    {
+      "id": "dd167730-0cea-460e-a1ea-318f8fbf3eb3",
+      "slug": "stripe-webhook",
+      "name": "stripe-webhook",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790404203398,
+      "updated_at": 1790404203398,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_wohimauqgywshbbejjcl_dd167730-0cea-460e-a1ea-318f8fbf3eb3_1/source/index.ts",
+      "ezbr_sha256": "04cef8bb06272c30ecc04ec8a5240b41d4d86ac42d38e6a37574090cd1fc2877",
+      "source_files": [
+        {
+          "path": "supabase/functions/stripe-webhook/index.ts",
+          "sha256": "b0429683f67193ca3f64b84ad11583a4937161c147086cf447d7adc06043828d"
+        }
+      ]
+    },
+    {
+      "id": "c7972292-0aa4-437d-953b-e2720d6cce2e",
+      "slug": "stripe-billing",
+      "name": "stripe-billing",
+      "status": "ACTIVE",
+      "version": 1,
+      "created_at": 1790404666192,
+      "updated_at": 1790404666192,
+      "verify_jwt": true,
+      "import_map": false,
+      "entrypoint_path": "/tmp/user_fn_wohimauqgywshbbejjcl_c7972292-0aa4-437d-953b-e2720d6cce2e_1/source/index.ts",
+      "ezbr_sha256": "913670a607037092744f7bfca5df6ab9f218c97a0073f21913cdb2e2fe6b7a99",
+      "source_files": [
+        {
+          "path": "supabase/functions/stripe-billing/index.ts",
+          "sha256": "b95126b377830ba033eb81838ebc5c88e3dc68446649dc96992c4f30fdf6249a"
+        }
+      ]
+    }
+  ]
+}

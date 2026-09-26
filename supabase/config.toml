@@ -4,6 +4,15 @@
 # working directory name when running `supabase init`.
 project_id = "agende"
 
+# Recovered deployed settings; no deployment is performed by this configuration.
+[functions.stripe-webhook]
+verify_jwt = false
+entrypoint = "./functions/stripe-webhook/index.ts"
+
+[functions.stripe-billing]
+verify_jwt = true
+entrypoint = "./functions/stripe-billing/index.ts"
+
 [api]
 enabled = true
 # Port to use for the API URL.
