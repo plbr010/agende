@@ -26,7 +26,7 @@ export const PLAN_LABEL: Record<SubscriptionPlan, string> = {
 };
 
 export const SUBSCRIPTION_STATUS_LABEL: Record<SubscriptionStatus, string> = {
-  trialing: "Em trial",
+  trialing: "Em teste",
   active: "Ativa",
   past_due: "Pagamento pendente",
   expired: "Expirada",

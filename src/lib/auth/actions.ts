@@ -1,5 +1,7 @@
 "use server";
 
+import { planSchema } from "@/lib/billing/plans";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -178,6 +180,8 @@ export async function createWorkspaceAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const plan = planSchema.safeParse(formData.get("plan"));
+  if (!plan.success) return { error: "Escolha um plano válido." };
   const name = String(formData.get("name") ?? "").trim();
   if (name.length < 2 || name.length > 80) {
     return { error: "Informe o nome do negócio (2 a 80 caracteres).", fieldErrors: { name: "Nome inválido." } };
@@ -194,7 +198,7 @@ export async function createWorkspaceAction(
     redirect("/verificar-email");
   }
 
-  const { error } = await supabase.rpc("create_workspace", { p_name: name });
+  const { error } = await supabase.rpc("create_workspace", { p_name: name, p_plan: plan.data });
   if (error) {
     if (error.message.includes("email_not_confirmed")) {
       redirect("/verificar-email");
