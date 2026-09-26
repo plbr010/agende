@@ -1312,6 +1312,8 @@ export type Database = {
       archive_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null }; Returns: string };
       archive_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
       archive_service_package: { Args: { p_workspace_id: string | null; p_package_id: string | null }; Returns: string };
+      bind_billing_customer: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null }; Returns: undefined };
+      bind_stripe_checkout: { Args: { p_workspace_id: string | null; p_payer_email: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_external_event_id: string | null; p_event_type: string | null; p_event_status?: string | null; p_occurred_at?: string | null }; Returns: undefined };
       cancel_client_package: { Args: { p_workspace_id: string | null; p_client_package_id: string | null }; Returns: string };
       cancel_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null }; Returns: string };
       cancel_my_appointment: { Args: { p_appointment_id: string | null }; Returns: Json };
@@ -1333,6 +1335,8 @@ export type Database = {
       get_inventory_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_packages_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_public_workspace_profile: { Args: { p_slug: string | null }; Returns: Json };
+      get_stripe_api_key: { Args: Record<PropertyKey, never>; Returns: string };
+      get_stripe_webhook_secret: { Args: Record<PropertyKey, never>; Returns: string };
       get_workspace_advanced_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_seat_usage: { Args: { p_workspace_id: string | null }; Returns: Json };
@@ -1357,6 +1361,7 @@ export type Database = {
       revoke_workspace_invite: { Args: { p_workspace_id: string | null; p_invite_id: string | null }; Returns: Json };
       sell_service_package: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_package_id: string | null }; Returns: string };
       set_appointment_status: { Args: { p_appointment_id: string | null; p_status: Database["public"]["Enums"]["appointment_status"] | null }; Returns: string };
+      sync_billing_subscription: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_status: Database["public"]["Enums"]["subscription_status"] | null; p_current_period_start?: string | null; p_current_period_end?: string | null; p_canceled_at?: string | null }; Returns: undefined };
       update_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null; p_name: string | null }; Returns: string };
       update_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_description: string | null; p_amount_cents: number | null; p_due_date: string | null }; Returns: string };
       update_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null; p_name: string | null; p_description?: string | null; p_sku?: string | null; p_unit?: Database["public"]["Enums"]["inventory_unit"] | null; p_minimum_quantity?: number | null; p_cost_cents?: number | null; p_active?: boolean | null }; Returns: Json };

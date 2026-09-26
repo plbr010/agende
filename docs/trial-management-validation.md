@@ -1,3 +1,5 @@
+> Registro histórico da implementação anterior ao rebase. O resultado atualizado
+> da recuperação e integração está em [trial-management-rebase-validation.md](trial-management-rebase-validation.md).
 # Trial e gestão — validação local
 
 Base: `70749924d4e3d3f30481ed4d32c12e8eb4d740f7`, após fetch e fast-forward de main.
