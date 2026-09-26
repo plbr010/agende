@@ -1,7 +1,7 @@
 import { CloudCog, ShieldCheck } from "lucide-react";
 
 export function IntegrationBanner({
-  title = "Interface pronta para os dados reais",
+  title = "Disponível em breve",
   description,
 }: {
   title?: string;
@@ -18,7 +18,7 @@ export function IntegrationBanner({
           <p className="font-semibold">{title}</p>
           <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">{description}</p>
           <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary">
-            <ShieldCheck className="size-3.5" /> Nenhuma migration local foi criada para substituir o remoto.
+            <ShieldCheck className="size-3.5" /> Estamos preparando esta novidade para seu negócio.
           </p>
         </div>
       </div>

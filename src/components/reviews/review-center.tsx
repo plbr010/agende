@@ -70,7 +70,7 @@ export function ReviewCenter({ appointments }: { appointments: MyAppointment[] }
             </div>
             <div className="flex items-start gap-2 rounded-2xl bg-secondary/60 p-4 text-xs leading-5 text-muted-foreground">
               <LockKeyhole className="mt-0.5 size-3.5 shrink-0 text-primary" />
-              O envio permanece bloqueado até validarmos elegibilidade, unicidade e publicação no Supabase remoto.
+              O envio de avaliações estará disponível em breve.
             </div>
           </div>
           <DialogFooter>

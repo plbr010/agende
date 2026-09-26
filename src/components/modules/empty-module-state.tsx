@@ -32,7 +32,7 @@ export function EmptyModuleState({
           </div>
         ))}
         <p className="col-span-full mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <LockKeyhole className="size-3.5" /> Controles de escrita permanecem bloqueados até validar o schema remoto.
+          <LockKeyhole className="size-3.5" /> Esta funcionalidade estará disponível em breve.
         </p>
       </CardContent>
     </Card>

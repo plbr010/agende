@@ -1,3 +1,4 @@
+import { resolvePeriod, todayInTimezone } from "@/lib/modules/periods";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
@@ -38,20 +39,23 @@ function loadServerPage(
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
   });
-  const exports: { default?: () => Promise<unknown> } = {};
+  const exports: { default?: (props: {searchParams: Promise<object>}) => Promise<unknown> } = {};
   runInNewContext(outputText, {
     exports,
     require(name: string) {
       if (name === "@/lib/auth/session") return { requireConfirmedSession: requireSession };
       if (name === "@/lib/modules/operational-loaders.server") return { operationalModuleLoaders: loaders };
       if (name === "@/lib/time/timezone") return { todayInProductTz: () => "2026-09-23" };
+      if (name === "@/lib/modules/periods") return { resolvePeriod, todayInTimezone };
+      if (name === "@/lib/workspace/queries") return { loadWorkspaceSettings: async () => ({ timezone: "America/Sao_Paulo" }) };
+      if (name === "@/lib/catalog/queries") return { loadServices: async () => [], loadClients: async () => [] };
       if (name === "react/jsx-runtime") return { jsx: () => ({}), jsxs: () => ({}), Fragment: "fragment" };
       if (name === "lucide-react" || name.startsWith("@/components/")) return {};
       throw new Error(`Unexpected page dependency: ${name}`);
     },
   });
   assert.ok(exports.default);
-  return exports.default;
+  return () => exports.default!({searchParams: Promise.resolve({})});
 }
 
 for (const role of ["owner", "admin", "professional", "receptionist"] as const) {

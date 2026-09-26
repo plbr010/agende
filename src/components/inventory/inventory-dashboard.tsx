@@ -1,60 +1,85 @@
-import { Boxes, CircleAlert, History, PackageOpen, WalletCards } from "lucide-react";
-import { BackendContractNotice } from "@/components/modules/backend-contract-notice";
-import { MetricCard } from "@/components/app/metric-card";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InventorySnapshot } from "@/lib/inventory/queries";
-import { summarizeInventory } from "@/lib/inventory/queries";
-import { formatCentsToReais } from "@/lib/validation/money";
-
-export function InventoryDashboard({ snapshot }: { snapshot: InventorySnapshot | null }) {
-  if (!snapshot) {
-    return (
-      <BackendContractNotice
-        title="Contrato de estoque pronto para conexão"
-        description="A tela não exibe saldos simulados. Assim que o adaptador remoto for mapeado, produtos e movimentações entram neste mesmo fluxo validado."
-        fields={["Produtos e quantidades", "Estoque mínimo", "Custo por unidade", "Movimentações recentes"]}
-      />
-    );
-  }
-
-  const summary = summarizeInventory(snapshot);
-
-  return (
-    <>
-      <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo real do estoque">
-        <MetricCard label="Produtos" value={summary.products} hint="itens retornados pelo backend" icon={PackageOpen} />
-        <MetricCard label="Estoque baixo" value={summary.lowStock} hint={`${summary.outOfStock} sem saldo`} icon={CircleAlert} tone="warning" />
-        <MetricCard label="Custo em estoque" value={formatCentsToReais(summary.estimatedCostCents)} hint="estimativa do backend" icon={WalletCards} tone="neutral" />
-      </section>
-      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
-          <CardHeader><CardTitle className="flex items-center gap-2 text-xl"><Boxes className="size-5 text-primary" /> Produtos</CardTitle><CardDescription>Saldo, ponto de reposição e custo real.</CardDescription></CardHeader>
-          <CardContent className="grid gap-2">
-            {snapshot.products.map((product) => {
-              const low = product.quantity <= product.minimumQuantity;
-              return (
-                <article key={product.id} className="grid gap-3 rounded-2xl bg-secondary/45 p-4 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-                  <div><p className="font-medium">{product.name}</p><p className="text-xs text-muted-foreground">{product.costCents === null ? "Custo não informado" : `Custo ${formatCentsToReais(product.costCents)}`}</p></div>
-                  <div className="text-sm"><span className="font-serif text-2xl">{product.quantity}</span> em estoque</div>
-                  <Badge variant={low ? "destructive" : "secondary"}>{low ? "Repor" : `Mín. ${product.minimumQuantity}`}</Badge>
-                </article>
-              );
-            })}
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
-          <CardHeader><CardTitle className="flex items-center gap-2 text-xl"><History className="size-5 text-primary" /> Movimentações</CardTitle><CardDescription>Últimas alterações recebidas do backend.</CardDescription></CardHeader>
-          <CardContent className="grid gap-3">
-            {snapshot.recentMovements.map((movement) => (
-              <article key={movement.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border/70 p-4">
-                <div><p className="font-medium">{movement.productName}</p><p className="text-xs text-muted-foreground">{movement.label}</p></div>
-                <span className={movement.quantityDelta < 0 ? "font-medium text-destructive" : "font-medium text-primary"}>{movement.quantityDelta > 0 ? "+" : ""}{movement.quantityDelta}</span>
-              </article>
-            ))}
-          </CardContent>
-        </Card>
-      </section>
-    </>
-  );
+"use client";
+import { useState } from "react";
+import type { InventorySnapshot, InventoryProduct } from "@/lib/inventory/queries";
+import { formatCentsInput, formatCentsToReais } from "@/lib/validation/money";
+import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
+function ProductFields({ product }: {
+    product?: InventoryProduct;
+}) {
+    return <>
+    <Field label="Nome do produto" name="name" value={product?.name}/>
+    <Field label="Descrição" name="description" value={product?.description ?? ""} required={false}/>
+    <Field label="Código / SKU" name="sku" value={product?.sku ?? ""} required={false}/>
+    <SelectField label="Unidade" name="unit" value={product?.unit ?? "unidade"}>
+    <option value="unidade">Unidade</option>
+    <option value="ml">ml</option>
+    <option value="g">g</option>
+    </SelectField>
+    <Field label="Estoque mínimo" name="minimum" type="number" min={0} step="0.001" value={product?.minimumQuantity ?? 0}/>
+    <Field label="Custo por unidade (R$)" name="cost" value={product?.costCents == null ? "" : formatCentsInput(product.costCents)} required={false}/>{product ? <input type="hidden" name="active" value={String(product.active)}/> : <Field label="Quantidade inicial" name="quantity" type="number" min={0} step="0.001" value={0}/>}</>;
+}
+export function InventoryDashboard({ snapshot }: {
+    snapshot: InventorySnapshot | null;
+}) {
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("all");
+    if (!snapshot)
+        return <p>Não foi possível carregar o estoque. Atualize a página para tentar novamente.</p>;
+    const products = snapshot.products.filter(p => p.name.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")) && (filter === "archived" ? !!p.archivedAt : !p.archivedAt && (filter === "all" || (filter === "low" ? p.quantity > 0 && p.quantity <= p.minimumQuantity : p.quantity === 0))));
+    return <div className="grid gap-5">
+    <div className="grid gap-3 sm:grid-cols-3">{[["Produtos", snapshot.summary.products], ["Estoque baixo", snapshot.summary.lowStock], ["Custo em estoque", formatCentsToReais(snapshot.summary.estimatedCostCents)]].map(([label, value]) => <div className="rounded-2xl border bg-card p-5" key={label}>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="font-serif text-3xl">{value}</p>
+        </div>)}</div>
+ <ActionPanel title="+ Novo produto">
+    <ManagementForm action="product-create" label="Criar produto">
+    <ProductFields />
+    </ManagementForm>
+    </ActionPanel>
+ <div className="flex flex-wrap gap-3">
+    <label>Buscar produto<input className="ml-2 rounded-lg border p-2" value={search} onChange={e => setSearch(e.target.value)}/>
+    </label>
+    <label>Exibir<select className="ml-2 rounded-lg border p-2" value={filter} onChange={e => setFilter(e.target.value)}>
+    <option value="all">Todos</option>
+    <option value="low">Estoque baixo</option>
+    <option value="zero">Sem estoque</option>
+    <option value="archived">Arquivados</option>
+    </select>
+    </label>
+    </div>
+ {products.length === 0 && <p className="rounded-2xl bg-secondary p-5">Nenhum produto encontrado. Cadastre seu primeiro produto ou ajuste a busca.</p>}
+ <div className="grid gap-4 lg:grid-cols-2">{products.map(p => <article key={p.id} className="grid content-start gap-3 rounded-2xl border bg-card p-5">
+        <h2 className="text-lg font-semibold">{p.name}</h2>
+        <p>{p.quantity} {p.unit} · Mínimo {p.minimumQuantity} · <strong>{p.archivedAt ? "Arquivado" : p.quantity === 0 ? "Sem estoque" : p.quantity <= p.minimumQuantity ? "Baixo" : "Normal"}</strong>
+        </p>
+        <p className="text-sm text-muted-foreground">{p.costCents === null ? "Custo não informado" : formatCentsToReais(p.costCents)}</p>
+ {p.archivedAt ? <ManagementForm action="product-reactivate" id={p.id} label="Reativar produto"/> : <>
+            <ActionPanel title="Entrada / Saída / Ajustar estoque">
+            <ManagementForm action="movement" id={p.id} label="Registrar movimentação">
+            <SelectField name="type" label="Movimentação">
+            <option value="entry">Entrada</option>
+            <option value="exit">Saída</option>
+            <option value="adjustment">Ajustar estoque</option>
+            </SelectField>
+            <Field name="quantity" label="Quantidade (no ajuste, informe o saldo final)" type="number" min={0} step="0.001"/>
+            <Field name="reason" label="Motivo"/>
+            </ManagementForm>
+            </ActionPanel>
+            <ActionPanel title="Editar produto">
+            <ManagementForm action="product-update" id={p.id} label="Salvar produto">
+            <ProductFields product={p}/>
+            </ManagementForm>
+            </ActionPanel>
+            <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? O histórico será preservado."}/>
+            </>}
+ </article>)}</div>
+    <section className="rounded-2xl border bg-card p-5">
+    <h2 className="mb-4 text-xl font-semibold">Histórico recente</h2>{!snapshot.recentMovements.length && <p>As entradas, saídas e ajustes aparecerão aqui.</p>}{snapshot.recentMovements.map(m => <div key={m.id} className="flex justify-between gap-4 border-b py-3">
+        <div>
+        <p>{m.productName} · {m.label}</p>
+        <p className="text-xs text-muted-foreground">{new Date(m.occurredAt).toLocaleString("pt-BR")} · {m.note}</p>
+        </div>
+        <strong>{m.quantityDelta > 0 ? "+" : ""}{m.quantityDelta}</strong>
+        </div>)}</section>
+    </div>;
 }
