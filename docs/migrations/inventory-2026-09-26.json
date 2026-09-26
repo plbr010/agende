@@ -1,0 +1,368 @@
+[
+  {
+    "version": "20260918150334",
+    "name": "foundation_types_and_tables",
+    "statement_count": 1,
+    "sha256": "315dee784236a5eb1a7c69cdc86a24e3d5af60d0363afa583d79d2fdfaf632ed"
+  },
+  {
+    "version": "20260918150401",
+    "name": "foundation_functions",
+    "statement_count": 1,
+    "sha256": "629700117e661bef1492261203a846e2a16ba18fccd7fd12393cc5e9a1f9e572"
+  },
+  {
+    "version": "20260918150422",
+    "name": "foundation_guards",
+    "statement_count": 1,
+    "sha256": "a5817caf24868a853615f11f32f62feecdceab1f493be35240e20e1af993b902"
+  },
+  {
+    "version": "20260918150434",
+    "name": "foundation_auth_sync",
+    "statement_count": 1,
+    "sha256": "717cc98b6fbacbcd2306552f73459c51b6c5a57fa9dd23c2012778f5d21c4194"
+  },
+  {
+    "version": "20260918150443",
+    "name": "foundation_workspace_rpc",
+    "statement_count": 1,
+    "sha256": "c41f3a826b76ef038fd81cc02012d2ebfad933607f72ee7e331a6825b018c52f"
+  },
+  {
+    "version": "20260918150456",
+    "name": "foundation_invites",
+    "statement_count": 1,
+    "sha256": "7f94cba90fc7d88e6fb3ff475a340b5af7fe3f795be1d35cc3841ebedceb7a70"
+  },
+  {
+    "version": "20260918150505",
+    "name": "foundation_rpc_wrappers_and_triggers",
+    "statement_count": 1,
+    "sha256": "6ffb03000cd2efe45dc9f255f9f90a6b59eac18f6892d976acd617b111377334"
+  },
+  {
+    "version": "20260918150516",
+    "name": "foundation_rls",
+    "statement_count": 1,
+    "sha256": "a36f81e36cf9a0d3b41ec29ae1c9f18f97e9a2fc55fa5f7b64fd8c99b5985ebb"
+  },
+  {
+    "version": "20260918150607",
+    "name": "foundation_fk_indexes",
+    "statement_count": 1,
+    "sha256": "33f11e9a09fe703ad79a6fad8b108f0b84d37c9a8dacd5aa94249f6ab2ad8eb0"
+  },
+  {
+    "version": "20260918183729",
+    "name": "foundation_hardening",
+    "statement_count": 1,
+    "sha256": "ea61e229b54cfa2fb01c4ccb151d38a071f2e87b9af0c5c4264bf4b534eebf4e"
+  },
+  {
+    "version": "20260918183827",
+    "name": "foundation_hardening_seats_invites",
+    "statement_count": 1,
+    "sha256": "657059dc19a04f452af21ec0a23f1becd6fc1ad48946acb81a55b7cac0031000"
+  },
+  {
+    "version": "20260918183848",
+    "name": "foundation_hardening_invites_grants",
+    "statement_count": 1,
+    "sha256": "b91e31877eb4383cd4cff53686362119d9d977841b2b7d2118815ba8051aa2ce"
+  },
+  {
+    "version": "20260918191634",
+    "name": "catalog_professionals_services_clients",
+    "statement_count": 1,
+    "sha256": "b87cbcf353443063321d40e4f6131e2048d3bfd9540ad72a4bc1944f0c6fe2e1"
+  },
+  {
+    "version": "20260918191706",
+    "name": "catalog_professionals_services_clients_rls",
+    "statement_count": 1,
+    "sha256": "f3c8f29e630d44617a02adaddf3e85fb76c0fa0a94f8c37134744b6442cdc90c"
+  },
+  {
+    "version": "20260918192038",
+    "name": "catalog_indexes_and_policy_merge",
+    "statement_count": 1,
+    "sha256": "34ef43c61bd5b3e789532e0f9932a89c69198da7d836a7d63e41621479148758"
+  },
+  {
+    "version": "20260918194255",
+    "name": "workspace_settings_schema",
+    "statement_count": 1,
+    "sha256": "7c3a0421fc78e9885b2dd169fcc927a7b014057bcf24136d70613de81a9afc50"
+  },
+  {
+    "version": "20260918194304",
+    "name": "agenda_types_and_tables",
+    "statement_count": 1,
+    "sha256": "9d235691f4b4b876088faef6abedff280f367fba5e6b082c651d5fb2df01a0e0"
+  },
+  {
+    "version": "20260918194355",
+    "name": "agenda_functions",
+    "statement_count": 1,
+    "sha256": "9aa137a85a0fac89f691bcbfe5977cc4af5adbb5d45a2533c4b7cd21eef36758"
+  },
+  {
+    "version": "20260918194427",
+    "name": "workspace_settings_rpcs",
+    "statement_count": 1,
+    "sha256": "52d6a580744bc0f34925384d3518ec1fd452037512606928eac7d138236e5b5c"
+  },
+  {
+    "version": "20260918194437",
+    "name": "agenda_availability_helpers",
+    "statement_count": 1,
+    "sha256": "7d74a38fa690c7112306e39e581de80da9ceace38cb1e20fa221f7e2ca154a50"
+  },
+  {
+    "version": "20260918194446",
+    "name": "workspace_settings_rls_storage",
+    "statement_count": 1,
+    "sha256": "895bfd74770bf5bdfb8e95dbbef1db79894c29db798d7ae7d7846dd09f94b66f"
+  },
+  {
+    "version": "20260918194454",
+    "name": "agenda_list_available_slots",
+    "statement_count": 1,
+    "sha256": "a9120b247e03506bad212bd80e24798a215de62b8077a772f792952967691c00"
+  },
+  {
+    "version": "20260918194510",
+    "name": "agenda_appointment_rpcs",
+    "statement_count": 1,
+    "sha256": "75399f462525108e6a39b4278d65a395cff92a81e4b4adffb8eafa5861650f66"
+  },
+  {
+    "version": "20260918194527",
+    "name": "agenda_triggers",
+    "statement_count": 1,
+    "sha256": "203d482dc298b40e98f41fb2323139efaba9cf3690fff4dec0530590980929f4"
+  },
+  {
+    "version": "20260918194551",
+    "name": "agenda_rls",
+    "statement_count": 1,
+    "sha256": "86812143b47ccd7b28abdb786c3bf9d94eec1299621016f702ee4da8182741cc"
+  },
+  {
+    "version": "20260918194708",
+    "name": "agenda_indexes_and_policy_split",
+    "statement_count": 1,
+    "sha256": "0e5f474b0d52b497a74434ee0dd07f843506c94493f4eef28a5cb74a50453047"
+  },
+  {
+    "version": "20260918194722",
+    "name": "agenda_write_policies",
+    "statement_count": 1,
+    "sha256": "f5c64518c7fdc2485d5cfdd1c715b69851cb29f02c90fc7e7da3571cf5ff015a"
+  },
+  {
+    "version": "20260918195354",
+    "name": "agenda_snapshot_professional_and_select",
+    "statement_count": 1,
+    "sha256": "7a53ea6bdd5ee04a6ada3ebec1647077aea1113a39c4b12b7ed77d88c382b6a3"
+  },
+  {
+    "version": "20260918203839",
+    "name": "public_booking_schema",
+    "statement_count": 1,
+    "sha256": "d04bdfb5f1b178bf91b1e4e27382a85db7ae89f46ce33cbcfdfdc92a7befcc13"
+  },
+  {
+    "version": "20260918203840",
+    "name": "public_booking_functions",
+    "statement_count": 1,
+    "sha256": "d04bdfb5f1b178bf91b1e4e27382a85db7ae89f46ce33cbcfdfdc92a7befcc13"
+  },
+  {
+    "version": "20260918203841",
+    "name": "public_booking_rpcs_rls",
+    "statement_count": 1,
+    "sha256": "d04bdfb5f1b178bf91b1e4e27382a85db7ae89f46ce33cbcfdfdc92a7befcc13"
+  },
+  {
+    "version": "20260919201138",
+    "name": "hardening_snapshot_owner_timezone",
+    "statement_count": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "version": "20260919201409",
+    "name": "inventory_schema",
+    "statement_count": 1,
+    "sha256": "5542aa9490ee0ec5612f7912ba36efdf01c00ed412724555237f30c8194aaf0d"
+  },
+  {
+    "version": "20260919201432",
+    "name": "inventory_rpcs",
+    "statement_count": 1,
+    "sha256": "67737909d3e0347eab503242bbde5ffd91aab5545767158a11130479deda0d67"
+  },
+  {
+    "version": "20260919201509",
+    "name": "inventory_rls",
+    "statement_count": 1,
+    "sha256": "89e8f5f3f9c0d498b37997a07606d532ae3d86ba1250b3709e0d6140f3a2703f"
+  },
+  {
+    "version": "20260921165035",
+    "name": "inventory_fk_indexes",
+    "statement_count": 1,
+    "sha256": "1eef715a227f4c0c88c4a5bea3ca89a4f29a6ba03099de96ea4dd215a8faf275"
+  },
+  {
+    "version": "20260921171533",
+    "name": "packages_core",
+    "statement_count": 1,
+    "sha256": "735a2f30b49666c3d6bebcb622d964d7ecef8681dfa74bab63b3c2e57e7e9db9"
+  },
+  {
+    "version": "20260921171751",
+    "name": "finance_core",
+    "statement_count": 1,
+    "sha256": "57418061ededc41bf0c3dd310445c4a82185e53efeeeb5557c4eb2b53c37f233"
+  },
+  {
+    "version": "20260921171949",
+    "name": "reports_core",
+    "statement_count": 1,
+    "sha256": "1f3e030285321d25e4be0b3889f578f8170a063491eca151627300c12f563b11"
+  },
+  {
+    "version": "20260921172021",
+    "name": "packages_finance_fk_indexes",
+    "statement_count": 1,
+    "sha256": "d25034efcb229e0c38069f6c0652e78356dc37b4327807155e667d7ba39707a0"
+  },
+  {
+    "version": "20260921172331",
+    "name": "secure_public_default_privileges",
+    "statement_count": 1,
+    "sha256": "697c905a8fa23bdf8f1d970b50ca2649957ea652be3ead91217f011dd7e38753"
+  },
+  {
+    "version": "20260921174123",
+    "name": "subscription_entitlement_enforcement",
+    "statement_count": 1,
+    "sha256": "f1c04dadf7b925ba0db6167ab66e196b7835229af27941d9f253cdd89a7dc24e"
+  },
+  {
+    "version": "20260921174239",
+    "name": "audit_events",
+    "statement_count": 1,
+    "sha256": "aa8dce6d661cdb25617e4623b43ed8f80cad0cd7868e1f62c791881fcd121e6d"
+  },
+  {
+    "version": "20260921174332",
+    "name": "finance_refunds_package_hardening",
+    "statement_count": 1,
+    "sha256": "b8234b343712c36a9cc1528382752ddfbb6785e4c82ea4d137a0ef96101162bf"
+  },
+  {
+    "version": "20260921174537",
+    "name": "billing_intervals_annual_ready",
+    "statement_count": 1,
+    "sha256": "36965b439473c3d0a62b45324b6c488fecfc7c5e054e0732ed278ae876ce60ad"
+  },
+  {
+    "version": "20260921174547",
+    "name": "database_maintenance_cron",
+    "statement_count": 1,
+    "sha256": "f41869ade591f084b4297a60ec43cd8c8ab5bfc4980bdc844f367f0dd4e245c0"
+  },
+  {
+    "version": "20260921175259",
+    "name": "package_lifecycle_hardening",
+    "statement_count": 1,
+    "sha256": "7a13528f5cb5f50ed4729cfae72d62685550c153540372ab1082b900046ac713"
+  },
+  {
+    "version": "20260921175525",
+    "name": "finance_categories_idempotency",
+    "statement_count": 1,
+    "sha256": "7de02c5a9892412e84de840569911681bdf5d21f3988310dc8d0f2239b4e9e17"
+  },
+  {
+    "version": "20260921175704",
+    "name": "agenda_client_reschedule_deadlock_hardening",
+    "statement_count": 1,
+    "sha256": "a95fe3e4f1648b59d889c4c3e73e1ba60b8f9f958665f6124c246e5601c6d6d9"
+  },
+  {
+    "version": "20260921175824",
+    "name": "advanced_reports",
+    "statement_count": 1,
+    "sha256": "2f6125a45f801bfc5687bd32e896e392f7330993496b6d29c8327c428a2959f0"
+  },
+  {
+    "version": "20260921175927",
+    "name": "privacy_requests_export_audit_expansion",
+    "statement_count": 1,
+    "sha256": "ac1b84b254d242e7d8c6709bbd7cb6594823b0308d47eebb09c8bd7fe5e8d506"
+  },
+  {
+    "version": "20260921180139",
+    "name": "public_booking_duplicate_concurrency_guard",
+    "statement_count": 1,
+    "sha256": "7de07d368724c7602bccdddc7e8648951f34c9d6fef618422c078b112c8b3986"
+  },
+  {
+    "version": "20260921180256",
+    "name": "client_packages_and_billing_foundation",
+    "statement_count": 1,
+    "sha256": "7bfd5af51ca65dff8b2f9693b4e3b96c8da9896ccefae518e1a67a0d500ea8a0"
+  },
+  {
+    "version": "20260921181255",
+    "name": "frontend_read_models",
+    "statement_count": 1,
+    "sha256": "0289d31ca274122a782f8c494295df4345c8b98812d4d6ea20ce6839d3a2d60b"
+  },
+  {
+    "version": "20260921181317",
+    "name": "frontend_read_models_inventory_fix",
+    "statement_count": 1,
+    "sha256": "ed1f600af9effce8e175a280d526ed9a8343723db22feadba088706518b5c2bd"
+  },
+  {
+    "version": "20260926062411",
+    "name": "stripe_billing_sync_foundation",
+    "statement_count": 1,
+    "sha256": "3122323936de97fa3d71df75c35de388dd69f78e07f0fd9387e24303edfdf984"
+  },
+  {
+    "version": "20260926062835",
+    "name": "stripe_webhook_hardening",
+    "statement_count": 1,
+    "sha256": "9149a13a0f0d8b7ab83e3995cf02c8d259f5fafa570ffc04e316315e4ed7ab6e"
+  },
+  {
+    "version": "20260926063106",
+    "name": "stripe_billing_resubscribe_hardening",
+    "statement_count": 1,
+    "sha256": "0bb141301ad8d4ba6949f2b3b456b0ab87558d54f794d3f3bbbb1c57c06f9bac"
+  },
+  {
+    "version": "20260926063212",
+    "name": "stripe_billing_sync_reconcile",
+    "statement_count": 1,
+    "sha256": "5d286e451826e3ddc53fdce9ea27abfa6ec7287ab7ff4e2d29060578b92e5d96"
+  },
+  {
+    "version": "20260926063514",
+    "name": "stripe_checkout_resubscribe_hardening",
+    "statement_count": 1,
+    "sha256": "3d3f6f46f5a5bcbbe1e77a49561c38055114d75946d5d6172a10c96933b8f68a"
+  },
+  {
+    "version": "20260926063534",
+    "name": "stripe_api_key_vault_access",
+    "statement_count": 1,
+    "sha256": "d695c7f4d3b5623dfa07183378943758c16bdfc0acdbd0e4bac75e370a000f85"
+  }
+]
