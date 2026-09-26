@@ -82,3 +82,55 @@ node scripts/generate-database-types.mjs
 **Nenhuma escrita no Supabase remoto foi realizada.** Não foram executados db
 push, db reset, db pull, migration repair ou DDL/DML remoto. Nenhuma migration
 antiga foi editada. Nenhum merge será feito neste PR.
+
+## Publicação e arquivos
+
+A tentativa de publicação pelo conector GitHub foi bloqueada: a criação da
+árvore Git exige aprovação, mas a política do ambiente é `never`. O Git local
+também não conseguiu acessar github.com:443. Portanto, os commits estão somente
+locais, não houve push, nenhum PR foi criado e nenhum merge foi feito.
+Um bundle Git acompanha a entrega para preservar todos os commits.
+
+Arquivos alterados nesta branch:
+
+- `docs/trial-management-validation.md`
+- `package-lock.json`
+- `package.json`
+- `scripts/database.test.mjs`
+- `scripts/generate-database-types.mjs`
+- `scripts/local-database.mjs`
+- `scripts/run-tests.mjs`
+- `src/app/app/avaliacoes/page.tsx`
+- `src/app/app/financeiro/page.tsx`
+- `src/app/app/pacotes/page.tsx`
+- `src/app/app/relatorios/page.tsx`
+- `src/app/fonts/OFL.txt`
+- `src/app/fonts/cormorant-garamond-latin.woff2`
+- `src/app/fonts/manrope-latin.woff2`
+- `src/app/layout.tsx`
+- `src/app/onboarding/page.tsx`
+- `src/components/billing/subscription-overview.tsx`
+- `src/components/finance/finance-dashboard.tsx`
+- `src/components/inventory/inventory-dashboard.tsx`
+- `src/components/modules/backend-contract-notice.tsx`
+- `src/components/modules/empty-module-state.tsx`
+- `src/components/modules/integration-banner.tsx`
+- `src/components/modules/management-form.tsx`
+- `src/components/modules/period-selector.tsx`
+- `src/components/packages/packages-dashboard.tsx`
+- `src/components/reports/advanced-report-dashboard.tsx`
+- `src/components/reviews/review-center.tsx`
+- `src/components/workspace/create-workspace-form.tsx`
+- `src/config/app-navigation.ts`
+- `src/lib/auth/actions.ts`
+- `src/lib/auth/permissions.test.ts`
+- `src/lib/billing/plans.ts`
+- `src/lib/marketing/content.ts`
+- `src/lib/modules/actions.test.ts`
+- `src/lib/modules/actions.ts`
+- `src/lib/modules/management.test.ts`
+- `src/lib/modules/mutations.ts`
+- `src/lib/modules/periods.ts`
+- `src/lib/supabase/database.types.ts`
+- `src/lib/workspace/labels.ts`
+- `supabase/migrations/20260925201418_trial_selected_plan.sql`
