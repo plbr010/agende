@@ -6,6 +6,10 @@ import { createLocalDatabase } from './local-database.mjs';
 test('real SQL migrations: trial, tenant authorization and management operations', async t => {
   const db = await createLocalDatabase();
   t.after(() => db.close());
+  // Match the fixture workspace's timezone, independently of the CI host.
+  // Otherwise current_date differs from the financial report's business day
+  // between midnight and 03:00 UTC and today's paid entry disappears.
+  await db.exec("set time zone 'America/Sao_Paulo'");
   await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
   let sequence = 0;
   const user = async (confirmed = true) => (await db.query("select test_helpers.create_auth_user($1,'professional',$2) as id", ['user' + sequence++ + '@agende-local.test', confirmed])).rows[0].id;

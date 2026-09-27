@@ -99,6 +99,10 @@ Runtime de validação Node 24.19.0:
 | `deno check --node-modules-dir=none --no-lock` nos dois entrypoints | Aprovado |
 | `node scripts/verify-stripe-recovery.mjs` | Aprovado; hashes históricos preservados |
 
+A primeira CI revelou dependência do fuso do host no teste financeiro existente
+durante a virada de dia UTC. A fixture SQL agora fixa `America/Sao_Paulo`, alinhada
+ao negócio de teste; a correção não altera a lógica financeira da aplicação.
+
 ## Antes de produção
 
 1. Revisar e aplicar a migration nova, publicar ambas as Edge Functions e então
