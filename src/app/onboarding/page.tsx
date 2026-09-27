@@ -19,11 +19,10 @@ export default async function OnboardingPage() {
           </form>
         </div>
         <div>
-          <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Onboarding</p>
+          <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Primeiros passos</p>
           <h1 className="mt-2 font-serif text-3xl">Crie o seu negócio</h1>
           <p className="mt-3 text-muted-foreground">
-            Olá, {session.profile.fullName}. O trial de 7 dias começa somente quando o
-            workspace for criado com sucesso — no servidor, não no relógio do celular.
+            Olá, {session.profile.fullName}. Seu e-mail está confirmado. Dê um nome ao seu negócio e escolha o plano para começar.
           </p>
         </div>
         <CreateWorkspaceForm />

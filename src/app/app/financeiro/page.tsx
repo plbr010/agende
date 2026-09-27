@@ -3,17 +3,20 @@ import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { FinanceDashboard } from "@/components/finance/finance-dashboard";
 import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
-import { todayInProductTz } from "@/lib/time/timezone";
+import { resolvePeriod, todayInTimezone } from "@/lib/modules/periods";
+import { PeriodSelector } from "@/components/modules/period-selector";
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 
-export default async function FinancePage() {
+export default async function FinancePage({ searchParams }: { searchParams: Promise<{ period?: string | string[] }> }) {
   const session = await requireConfirmedSession("/app/financeiro");
   const workspace = session.workspaces[0];
   if (!workspace) return null;
-  const today = todayInProductTz();
+  const settings = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
+  const period = resolvePeriod((await searchParams).period, todayInTimezone(settings.timezone));
   const snapshot = await operationalModuleLoaders.finance({
     workspaceId: workspace.id,
-    startDate: `${today.slice(0, 7)}-01`,
-    endDate: today,
+    startDate: period.startDate,
+    endDate: period.endDate,
   });
 
   return (
@@ -21,9 +24,10 @@ export default async function FinancePage() {
       <PageHeader
         eyebrow="Saúde do negócio"
         title="Financeiro"
-        description="Comece pela receita real da agenda e evolua para um fluxo completo de entradas, saídas e conciliação."
+        description="Acompanhe receitas, despesas e pagamentos do seu negócio."
         icon={CircleDollarSign}
       />
+      <PeriodSelector {...period} />
       <FinanceDashboard snapshot={snapshot} />
     </>
   );

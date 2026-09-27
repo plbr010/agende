@@ -22,9 +22,13 @@ const local = readdirSync("supabase/migrations").filter((file) => file.endsWith(
 const remote = history.map(({ version, name }) => `${version}_${name}.sql`);
 const missing = remote.filter((file) => !local.includes(file));
 const extra = local.filter((file) => !remote.includes(file));
-assert.equal(local.length, 60);
-assert.equal(remote.length, 61);
+assert.equal(local.length, 61);
+assert.equal(remote.length, 62);
 assert.deepEqual(missing, ["20260919201138_hardening_snapshot_owner_timezone.sql"]);
 assert.deepEqual(extra, []);
+const trial = history.find(({ version }) => version === "20260926194038");
+assert.ok(trial, "Applied trial migration must be in the remote snapshot");
+assert.equal(trial.statement_count, 1);
+verify(`supabase/migrations/${trial.version}_${trial.name}.sql`, trial.sha256);
 console.log({ local: local.length, remote: remote.length, missing, extra });
 console.log("Verified against the read-only remote snapshot captured on 2026-09-26.");

@@ -30,7 +30,7 @@ export function BackendContractNotice({
         </div>
         <div className="flex items-start gap-2 rounded-2xl border border-primary/15 bg-primary/5 p-4 text-xs leading-5 text-muted-foreground md:max-w-64">
           <Braces className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-          O adaptador será ligado aos nomes reais do Supabase após a sincronização do contrato. Nenhum schema foi presumido.
+          Não foi possível carregar estas informações agora. Tente atualizar a página.
         </div>
       </CardContent>
     </Card>

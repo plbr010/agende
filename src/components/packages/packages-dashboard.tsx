@@ -1,59 +1,42 @@
-import { BadgePercent, CalendarClock, PackageCheck, TicketCheck, Undo2, UsersRound } from "lucide-react";
-import { MetricCard } from "@/components/app/metric-card";
-import { BackendContractNotice } from "@/components/modules/backend-contract-notice";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PackagesSnapshot } from "@/lib/packages/queries";
-import { summarizePackages } from "@/lib/packages/queries";
+import type { ServiceRow, ClientRow } from "@/lib/catalog/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
-
-export function PackagesDashboard({ snapshot }: { snapshot: PackagesSnapshot | null }) {
-  if (!snapshot) {
-    return (
-      <BackendContractNotice
-        title="Jornada de pacotes pronta para o contrato real"
-        description="Catálogo, venda, consumo e reversão já têm uma fronteira única de dados. As ações ficam indisponíveis até os RPCs e regras reais serem conhecidos."
-        fields={["Catálogo e validade", "Venda vinculada à cliente", "Sessões incluídas e usadas", "Expiração e reversão"]}
-      />
-    );
-  }
-
-  const summary = summarizePackages(snapshot);
-
-  return (
-    <>
-      <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo real dos pacotes">
-        <MetricCard label="Pacotes ativos" value={summary.activeCatalogItems} hint="itens disponíveis no catálogo" icon={PackageCheck} />
-        <MetricCard label="Vendas ativas" value={summary.activeSales} hint="não expiradas ou revertidas" icon={UsersRound} tone="success" />
-        <MetricCard label="Sessões restantes" value={summary.remainingSessions} hint="créditos ainda utilizáveis" icon={TicketCheck} tone="warning" />
-      </section>
-      <section className="grid gap-4 xl:grid-cols-2">
-        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
-          <CardHeader><CardTitle className="flex items-center gap-2 text-xl"><BadgePercent className="size-5 text-primary" /> Catálogo</CardTitle><CardDescription>Composição, preço e validade definidos no backend.</CardDescription></CardHeader>
-          <CardContent className="grid gap-3">
-            {snapshot.catalog.map((item) => (
-              <article key={item.id} className="rounded-2xl bg-secondary/45 p-4">
-                <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{item.name}</p><p className="mt-1 text-xs text-muted-foreground">{item.sessions.map((session) => `${session.included}× ${session.serviceName}`).join(" · ")}</p></div><Badge variant={item.active ? "secondary" : "outline"}>{item.active ? "Ativo" : "Inativo"}</Badge></div>
-                <div className="mt-3 flex items-center justify-between text-sm"><span>{formatCentsToReais(item.priceCents)}</span><span className="text-muted-foreground">{item.validityDays ? `${item.validityDays} dias` : "Sem expiração definida"}</span></div>
-              </article>
-            ))}
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
-          <CardHeader><CardTitle className="flex items-center gap-2 text-xl"><CalendarClock className="size-5 text-primary" /> Pacotes de clientes</CardTitle><CardDescription>Consumo, validade e reversões retornados pelo backend.</CardDescription></CardHeader>
-          <CardContent className="grid gap-3">
-            {snapshot.sales.map((sale) => {
-              const statusLabel = { active: "Ativo", exhausted: "Esgotado", cancelled: "Cancelado", expired: "Expirado" }[sale.status];
-              return (
-                <article key={sale.id} className="rounded-2xl border border-border/70 p-4">
-                  <div className="flex items-start justify-between gap-3"><div><p className="font-medium">{sale.clientName}</p><p className="text-xs text-muted-foreground">{sale.packageName}</p></div><Badge variant={sale.status === "cancelled" ? "destructive" : "outline"}>{statusLabel}</Badge></div>
-                  <div className="mt-3 flex items-center justify-between text-sm"><span>{sale.usedTotal} de {sale.includedTotal} sessões usadas</span>{sale.status === "cancelled" ? <span className="flex items-center gap-1 text-destructive"><Undo2 className="size-3.5" /> Cancelado</span> : null}</div>
-                </article>
-              );
-            })}
-          </CardContent>
-        </Card>
-      </section>
-    </>
-  );
+import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
+const statuses = { active: "Ativo", exhausted: "Esgotado", expired: "Expirado", cancelled: "Cancelado" };
+export function PackagesDashboard({ snapshot, services, clients }: {
+    snapshot: PackagesSnapshot | null;
+    services: ServiceRow[];
+    clients: ClientRow[];
+}) {
+    if (!snapshot)
+        return <p>Não foi possível carregar os pacotes. Atualize a página para tentar novamente.</p>;
+    const available = services.filter(s => s.active && !s.archivedAt);
+    return <div className="grid gap-5">
+    <ActionPanel title="+ Criar pacote">{available.length ? <ManagementForm action="package-create" label="Criar pacote">
+        <Field name="name" label="Nome do pacote"/>
+        <Field name="description" label="Descrição" required={false}/>
+        <Field name="amount" label="Preço (R$)"/>
+        <Field name="validity" label="Validade em dias (vazio para sem prazo)" type="number" min={1} max={3650} required={false}/>
+        <fieldset className="grid gap-3">
+        <legend>Serviços incluídos e sessões</legend>{available.map(s => <div key={s.id} className="grid gap-2 rounded-xl border p-3">
+            <label>
+            <input type="checkbox" name="service" value={s.id}/> {s.name}</label>
+            <Field label="Quantidade de sessões" name={"sessions-" + s.id} type="number" min={1} max={100} value={1}/>
+            </div>)}</fieldset>
+        </ManagementForm> : <p>Cadastre um serviço ativo em Serviços antes de criar seu pacote.</p>}</ActionPanel>
+ <section className="grid gap-4 lg:grid-cols-2">{!snapshot.catalog.length && <p>Crie um pacote para oferecer uma sequência de cuidados aos seus clientes.</p>}{snapshot.catalog.map(p => <article key={p.id} className="grid content-start gap-3 rounded-2xl border bg-card p-5">
+        <h2 className="text-xl font-semibold">{p.name}</h2>
+        <p>{p.description}</p>
+        <p className="font-medium">{formatCentsToReais(p.priceCents)} · {p.validityDays ? p.validityDays + " dias" : "Sem prazo de validade"}</p>
+        <ul>{p.sessions.map(s => <li key={s.serviceId}>{s.serviceName} · {s.included} sessões</li>)}</ul>{p.active && !p.archivedAt && <ActionPanel title="Vender pacote">{clients.length ? <ManagementForm action="package-sell" id={p.id} label="Confirmar venda" confirm={"Confirmar venda de " + p.name + " por " + formatCentsToReais(p.priceCents) + "?"}>
+                <SelectField name="client" label="Cliente">
+                <option value="">Selecione o cliente</option>{clients.filter(c => !c.archivedAt).map(c => <option key={c.id} value={c.id}>{c.fullName}</option>)}</SelectField>
+                <p className="text-sm">A venda registra o pacote do cliente e seu lançamento financeiro.</p>
+                </ManagementForm> : <p>Cadastre um cliente antes de vender.</p>}</ActionPanel>}</article>)}</section>
+ <section className="grid gap-3">
+    <h2 className="text-xl font-semibold">Pacotes dos clientes</h2><p className="text-sm text-muted-foreground">Últimas 30 vendas.</p>{!snapshot.sales.length && <p>Nenhum pacote vendido. Escolha um pacote acima para registrar uma venda.</p>}{snapshot.sales.map(s => <article key={s.id} className="grid gap-2 rounded-2xl border bg-card p-5">
+        <h3 className="font-semibold">{s.clientName} · {s.packageName}</h3>
+        <p>{statuses[s.status]} · {s.usedTotal} usadas / {Math.max(0, s.includedTotal - s.usedTotal)} restantes</p>
+        <p>{formatCentsToReais(s.priceCents)} · Validade: {s.expiresAt ? new Date(s.expiresAt).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "Sem prazo"}</p>{s.status === "active" && <ManagementForm action="package-cancel" id={s.id} label="Cancelar pacote" confirm="Solicitar cancelamento deste pacote? A operação será validada conforme o uso e a situação financeira."/>}</article>)}</section>
+    </div>;
 }

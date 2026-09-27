@@ -17,15 +17,15 @@ export default async function ReviewsPage() {
         icon={Star}
       />
       <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo de avaliações">
-        <MetricCard label="Nota média" value="—" hint="aguardando avaliações remotas" icon={Star} />
+        <MetricCard label="Nota média" value="—" hint="avaliações em breve" icon={Star} />
         <MetricCard label="Respostas" value="—" hint="feedbacks recebidos" icon={MessageCircleHeart} tone="success" />
         <MetricCard label="Recomendação" value="—" hint="experiências positivas" icon={ThumbsUp} tone="warning" />
       </section>
-      <IntegrationBanner description="O painel profissional e a jornada da cliente estão estruturados. Elegibilidade, unicidade por atendimento, moderação e publicação dependem das regras já existentes no Supabase remoto." />
+      <IntegrationBanner description="As avaliações estarão disponíveis em breve. Seus clientes poderão contar como foi o atendimento." />
       <EmptyModuleState
         icon={UsersRound}
         title="Feedback que ajuda a crescer"
-        description="Quando o schema remoto estiver sincronizado, esta área exibirá notas, comentários e respostas vinculados aos atendimentos reais."
+        description="Em breve, acompanhe as notas e comentários dos seus clientes e responda às avaliações dos atendimentos."
         capabilities={["Avaliação vinculada a atendimento concluído", "Nota de 1 a 5 e comentário opcional", "Resposta do estabelecimento", "Indicadores de satisfação e reputação"]}
       />
     </>

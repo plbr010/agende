@@ -21,7 +21,7 @@ if (testFiles.length === 0) {
   process.exit(1);
 }
 
-const result = spawnSync(process.execPath, ["--import", "tsx", "--test", ...testFiles], {
+const result = spawnSync(process.execPath, ["--import", "tsx", "--test", ...testFiles, "scripts/database.test.mjs"], {
   stdio: "inherit",
 });
 
