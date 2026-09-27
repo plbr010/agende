@@ -95,6 +95,9 @@ export async function loadPublicWorkspaceProfile(slug: string) {
 }
 
 export type SubscriptionDetail = {
+  billingInterval: "monthly" | "annual";
+  hasStripeCustomer: boolean;
+  hasStripeSubscription: boolean;
   plan: Database["public"]["Enums"]["subscription_plan"];
   status: Database["public"]["Enums"]["subscription_status"];
   trialStartedAt: string | null;
@@ -107,13 +110,16 @@ export async function loadSubscriptionDetail(workspaceId: string): Promise<Subsc
   const supabase = await createClient();
   const { data } = await supabase
     .from("subscriptions")
-    .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
+    .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end, billing_interval, billing_provider, external_customer_id, external_subscription_id")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (!data) {
     return null;
   }
   return {
+    billingInterval: data.billing_interval,
+    hasStripeCustomer: data.billing_provider === "stripe" && Boolean(data.external_customer_id),
+    hasStripeSubscription: data.billing_provider === "stripe" && Boolean(data.external_subscription_id),
     plan: data.plan,
     status: data.status,
     trialStartedAt: data.trial_started_at,
