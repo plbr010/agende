@@ -361,10 +361,12 @@ BEGIN
   PERFORM set_config('app.bypass_protected_columns', 'off', true);
   v_passed := array_append(v_passed, 'seat_limit_constraint_trigger');
 
-  -- Least privilege: authenticated cannot EXECUTE internal app RPCs.
+  -- Least privilege: the trial invoker wrapper needs its guarded app function;
+  -- other internal RPCs remain inaccessible to authenticated callers.
   PERFORM test_helpers.assert_true(
-    NOT has_function_privilege('authenticated', 'app.create_workspace(text, text)', 'execute'),
-    'authenticated cannot execute app.create_workspace'
+    has_function_privilege('authenticated', 'app.create_workspace(text, text, text)', 'execute')
+      AND NOT has_function_privilege('anon', 'app.create_workspace(text, text, text)', 'execute'),
+    'trial create_workspace invoker wrapper requires authenticated execute; anon denied'
   );
   PERFORM test_helpers.assert_true(
     NOT has_function_privilege('authenticated', 'app.accept_workspace_invite(text)', 'execute'),
@@ -375,7 +377,7 @@ BEGIN
     'authenticated cannot execute app.normalize_phone'
   );
   PERFORM test_helpers.assert_true(
-    has_function_privilege('authenticated', 'public.create_workspace(text, text)', 'execute'),
+    has_function_privilege('authenticated', 'public.create_workspace(text, text, text)', 'execute'),
     'authenticated can execute public.create_workspace'
   );
   PERFORM test_helpers.assert_true(

@@ -1,0 +1,176 @@
+[
+  {
+    "path": "/cadastro",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/login",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/verificar-email",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/app/agenda",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fagenda",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/avaliacoes",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Favaliacoes",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/clientes",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fclientes",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/configuracoes/assinatura",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fconfiguracoes%2Fassinatura",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/configuracoes/equipe",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fconfiguracoes%2Fequipe",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/configuracoes/geral",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fconfiguracoes%2Fgeral",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/configuracoes",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fconfiguracoes",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/configuracoes/perfil",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fconfiguracoes%2Fperfil",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/equipe",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fequipe",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/estoque",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Festoque",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/financeiro",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Ffinanceiro",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/pacotes",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fpacotes",
+    "result": "PASS"
+  },
+  {
+    "path": "/app",
+    "status": 307,
+    "location": "/login?next=%2Fapp",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/relatorios",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Frelatorios",
+    "result": "PASS"
+  },
+  {
+    "path": "/app/servicos",
+    "status": 307,
+    "location": "/login?next=%2Fapp%2Fservicos",
+    "result": "PASS"
+  },
+  {
+    "path": "/cliente/agendamentos",
+    "status": 307,
+    "location": "/login?next=%2Fcliente%2Fagendamentos",
+    "result": "PASS"
+  },
+  {
+    "path": "/cliente/avaliacoes",
+    "status": 307,
+    "location": "/login?next=%2Fcliente%2Favaliacoes",
+    "result": "PASS"
+  },
+  {
+    "path": "/cliente",
+    "status": 307,
+    "location": "/login?next=%2Fcliente",
+    "result": "PASS"
+  },
+  {
+    "path": "/onboarding",
+    "status": 307,
+    "location": "/login?next=%2Fonboarding",
+    "result": "PASS"
+  },
+  {
+    "path": "/",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/privacidade",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/termos",
+    "status": 200,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/p/e2e-audit-nonexistent-pr12",
+    "status": 404,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/p/e2e-audit-nonexistent-pr12/agendar",
+    "status": 404,
+    "location": null,
+    "result": "PASS"
+  },
+  {
+    "path": "/auth/callback",
+    "status": 307,
+    "location": "https://agende-9p0ueiy7q-pedros-projects-cfddfd39.vercel.app/verificar-email?status=error",
+    "result": "PASS"
+  },
+  {
+    "path": "/auth/confirm",
+    "status": 307,
+    "location": "https://agende-9p0ueiy7q-pedros-projects-cfddfd39.vercel.app/verificar-email?status=expired",
+    "result": "PASS"
+  }
+]

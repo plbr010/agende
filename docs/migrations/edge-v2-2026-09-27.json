@@ -1,0 +1,31 @@
+{
+  "project": "wohimauqgywshbbejjcl",
+  "compared_pr_sha": "392622bbea28c4c060d36b929fb71dbb9c07d4e7",
+  "comparison": "exact UTF-8 source equality, no normalization",
+  "functions": [
+    {
+      "slug": "stripe-billing",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "source_files": [
+        {
+          "path": "supabase/functions/stripe-billing/index.ts",
+          "sha256": "fc04a6e62e98854a2f20d8503f299ad28bfec1a0653945ca048a23d40339afdf"
+        }
+      ]
+    },
+    {
+      "slug": "stripe-webhook",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "source_files": [
+        {
+          "path": "supabase/functions/stripe-webhook/index.ts",
+          "sha256": "ca53fbafcf58ea9df39d6c19387313b18949e89c4469d202d780da34c3282fc8"
+        }
+      ]
+    }
+  ]
+}

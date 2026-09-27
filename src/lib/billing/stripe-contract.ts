@@ -13,7 +13,7 @@ export const createCheckoutInputSchema = z.object({
   workspaceId: z.string().min(1),
   plan: billingPlanSchema,
   billingInterval: billingIntervalSchema,
-  idempotencyKey: z.string().trim().min(16).max(200),
+  idempotencyKey: z.string().trim().min(16).max(100),
 });
 
 export const createPortalInputSchema = z.object({
@@ -22,8 +22,15 @@ export const createPortalInputSchema = z.object({
 
 export const billingRedirectSchema = z.object({
   url: z.string().url().refine((value) => {
-    const url = new URL(value);
-    return url.protocol === "https:" && ["checkout.stripe.com", "billing.stripe.com"].includes(url.hostname);
+    // This schema also runs in the browser; URL.parse is not available in
+    // older supported browsers. Keep invalid URLs fail-closed without throwing.
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && !url.username && !url.password && !url.port &&
+        ["checkout.stripe.com", "billing.stripe.com"].includes(url.hostname);
+    } catch {
+      return false;
+    }
   }, "stripe_redirect_not_allowed"),
 });
 
@@ -38,8 +45,7 @@ export type StripePortalCommand = CreatePortalInput & {
 };
 
 /**
- * Porta da futura integração Stripe. Não há implementação, segredo, checkout
- * ou chamada externa neste estágio.
+ * Contrato da Edge Function. Segredos e resolução de preços ficam no backend.
  */
 export interface StripeBillingBackend {
   createCheckout(input: StripeCheckoutCommand): Promise<unknown>;
@@ -67,6 +73,6 @@ export function createStripeBillingQueries(backend: StripeBillingBackend) {
 }
 
 export const STRIPE_CAPABILITIES = {
-  checkout: false,
-  portal: false,
+  checkout: true,
+  portal: true,
 } as const;

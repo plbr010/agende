@@ -39,7 +39,7 @@ function getAdminKey(): string | null {
       // Fall through to legacy key during the migration window.
     }
   }
-  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? null;
 }
 
 const ADMIN_KEY = getAdminKey();
@@ -84,7 +84,7 @@ async function authenticate(req: Request) {
   if (!authHeader?.startsWith("Bearer ")) throw new Error("auth_required");
   const token = authHeader.slice("Bearer ".length);
   const { data: { user }, error } = await admin.auth.getUser(token);
-  if (error || !user?.id || !user.email) throw new Error("auth_invalid");
+  if (error || !user?.id || !user.email || !user.email_confirmed_at) throw new Error("auth_invalid");
   return user;
 }
 
@@ -175,7 +175,8 @@ async function resolvePrice(stripe: Stripe, plan: Plan, interval: BillingInterva
     price.lookup_key !== expected.lookupKey ||
     price.currency !== "brl" ||
     price.unit_amount !== expected.amountCents ||
-    price.recurring?.interval !== expected.stripeInterval
+    price.recurring?.interval !== expected.stripeInterval ||
+    price.recurring?.interval_count !== 1 || price.recurring?.usage_type !== "licensed"
   ) {
     throw new Error("stripe_catalog_mismatch");
   }
@@ -186,6 +187,8 @@ async function resolvePrice(stripe: Stripe, plan: Plan, interval: BillingInterva
 function getStripe(options: { apiKey: string }) {
   return new Stripe(options.apiKey, {
     apiVersion: "2026-08-26.dahlia",
+    timeout: 15000,
+    maxNetworkRetries: 1,
     httpClient: Stripe.createFetchHttpClient(),
     appInfo: {
       name: "Agendê",
@@ -227,6 +230,24 @@ async function createCheckout(args: {
   );
   const price = await resolvePrice(args.stripe, args.plan, args.interval);
 
+  // The webhook may not have arrived yet. The Stripe customer is authoritative
+  // for duplicate protection, including paused/incomplete subscriptions.
+  for await (const existing of args.stripe.subscriptions.list({ customer: customerId, status: "all", limit: 100 })) {
+    if (existing.status !== "canceled" && existing.status !== "incomplete_expired") {
+      throw new Error("subscription_already_exists");
+    }
+  }
+  for await (const existing of args.stripe.checkout.sessions.list({ customer: customerId, status: "open", limit: 100 })) {
+    if (existing.mode !== "subscription" || existing.metadata?.app !== "agende") continue;
+    if (existing.metadata.plan_code !== args.plan || existing.metadata.billing_interval !== args.interval) {
+      // Invalidate the old payment link before offering a different selection.
+      // If it was completed concurrently, Stripe rejects expiration and we stop.
+      await args.stripe.checkout.sessions.expire(existing.id);
+      continue;
+    }
+    if (existing.url) return existing.url;
+  }
+
   const subscriptionData: Stripe.Checkout.SessionCreateParams.SubscriptionData = {
     billing_mode: { type: "flexible" },
     metadata: {
@@ -234,6 +255,7 @@ async function createCheckout(args: {
       workspace_id: args.workspaceId,
       plan_code: args.plan,
       billing_interval: args.interval,
+      manager_email: args.email,
     },
   };
 
@@ -250,6 +272,8 @@ async function createCheckout(args: {
     } else if (remainingSeconds >= 5 * 60) {
       subscriptionData.billing_cycle_anchor = trialEndSeconds;
       subscriptionData.proration_behavior = "none";
+    } else if (remainingSeconds > 0) {
+      throw new Error("trial_ending_soon");
     }
   }
 
@@ -270,13 +294,14 @@ async function createCheckout(args: {
         workspace_id: args.workspaceId,
         plan_code: args.plan,
         billing_interval: args.interval,
+        manager_email: args.email,
       },
       subscription_data: subscriptionData,
     },
     {
       idempotencyKey:
-        args.idempotencyKey && args.idempotencyKey.length >= 16 && args.idempotencyKey.length <= 200
-          ? args.idempotencyKey
+        args.idempotencyKey && args.idempotencyKey.length >= 16 && args.idempotencyKey.length <= 100
+          ? `agende_${args.workspaceId}_${args.plan}_${args.interval}_${args.idempotencyKey}`
           : `agende_checkout_${args.workspaceId}_${args.plan}_${args.interval}_${crypto.randomUUID()}`,
     },
   );
@@ -329,17 +354,27 @@ Deno.serve(async (req: Request) => {
       const interval = parseInterval(body.billingInterval);
       if (!plan || !interval) return json(400, { error: "billing_selection_invalid" });
 
-      const url = await createCheckout({
-        stripe,
-        workspaceId,
-        workspaceName: workspace.name,
-        email: user.email!,
-        plan,
-        interval,
-        idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,
-        subscription,
+      const leaseToken = crypto.randomUUID();
+      const { data: acquired, error: leaseError } = await admin.rpc("acquire_stripe_checkout", {
+        p_workspace_id: workspaceId, p_token: leaseToken,
       });
-      return json(200, { url });
+      if (leaseError) throw new Error("billing_unavailable");
+      if (!acquired) throw new Error("checkout_in_progress");
+      try {
+        const url = await createCheckout({
+          stripe,
+          workspaceId,
+          workspaceName: workspace.name,
+          email: user.email!,
+          plan,
+          interval,
+          idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,
+          subscription,
+        });
+        return json(200, { url });
+      } finally {
+        await admin.rpc("release_stripe_checkout", { p_workspace_id: workspaceId, p_token: leaseToken });
+      }
     }
 
     if (body.action === "portal") {
@@ -360,6 +395,8 @@ Deno.serve(async (req: Request) => {
       "billing_customer_deleted",
       "stripe_api_key_missing",
       "stripe_catalog_mismatch",
+      "trial_ending_soon",
+      "checkout_in_progress",
     ];
     const status =
       message === "auth_required" || message === "auth_invalid" ? 401 :
