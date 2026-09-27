@@ -1,6 +1,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.116.0";
+import Stripe from "npm:stripe@22.6.0";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -12,6 +13,17 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
+
+async function retrieveSubscription(id: string) {
+  let key = Deno.env.get("STRIPE_API_KEY");
+  if (!key) {
+    const { data, error } = await supabase.rpc("get_stripe_api_key");
+    if (error || typeof data !== "string" || !data) throw new Error("stripe_api_key_missing");
+    key = data;
+  }
+  const stripe = new Stripe(key, { apiVersion: "2026-08-26.dahlia", httpClient: Stripe.createFetchHttpClient() });
+  return await stripe.subscriptions.retrieve(id);
+}
 
 const PRICE_MAP: Record<string, { plan: "solo" | "equipe" | "salao"; interval: "monthly" | "annual" }> = {
   "price_1UIyLoKii3CCJXtckWStrnuQ": { plan: "solo", interval: "monthly" },
@@ -96,19 +108,6 @@ async function getWebhookSecret(): Promise<string> {
   return data;
 }
 
-function mapPlanIntervalFromMetadata(metadata: Record<string, unknown> | null | undefined) {
-  if (!metadata) return null;
-  const plan = metadata.plan_code;
-  const interval = metadata.billing_interval;
-  if (
-    (plan === "solo" || plan === "equipe" || plan === "salao") &&
-    (interval === "monthly" || interval === "annual")
-  ) {
-    return { plan, interval };
-  }
-  return null;
-}
-
 function mapPlanIntervalFromSubscription(subscription: Record<string, any>) {
   const item = subscription.items?.data?.[0];
   if (!item || subscription.items?.data?.length !== 1) return null;
@@ -167,17 +166,30 @@ async function handleCheckout(event: Record<string, any>, session: Record<string
 
   const workspaceId = typeof session.client_reference_id === "string" ? session.client_reference_id : null;
   const payerEmail =
-    typeof session.customer_details?.email === "string"
+    typeof session.metadata?.manager_email === "string"
+      ? session.metadata.manager_email
+      : typeof session.customer_details?.email === "string"
       ? session.customer_details.email
       : typeof session.customer_email === "string"
         ? session.customer_email
         : null;
   const customerId = stringId(session.customer);
   const subscriptionId = stringId(session.subscription);
-  const planInterval = mapPlanIntervalFromMetadata(session.metadata);
+  const current = subscriptionId ? await retrieveSubscription(subscriptionId) : null;
+  const planInterval = current ? mapPlanIntervalFromSubscription(current) : null;
 
   if (!workspaceId || !payerEmail || !customerId || !subscriptionId || !planInterval) {
     throw new Error("agende_checkout_binding_incomplete");
+  }
+
+  // A replay of a checkout already bound must not replace a later subscription.
+  // Binding records the event atomically; a failed following sync still retries.
+  const { data: seen, error: eventError } = await supabase.from("billing_events")
+    .select("id").eq("provider", "stripe").eq("external_event_id", event.id).maybeSingle();
+  if (eventError) throw new Error("billing_event_lookup_failed");
+  if (seen) {
+    if (await findSubscriptionBinding(subscriptionId)) await handleSubscription(event, current!);
+    return;
   }
 
   const { error } = await supabase.rpc("bind_stripe_checkout", {
@@ -193,6 +205,8 @@ async function handleCheckout(event: Record<string, any>, session: Record<string
     p_occurred_at: toIso(event.created) ?? new Date().toISOString(),
   });
   if (error) throw new Error(`bind_stripe_checkout_failed:${error.message}`);
+  // Also repairs delivery ordering when subscription.created arrived before checkout.
+  await handleSubscription(event, current!);
 }
 
 async function findSubscriptionBinding(externalSubscriptionId: string) {
@@ -213,8 +227,9 @@ async function handleSubscription(event: Record<string, any>, subscription: Reco
 
   const externalSubscriptionId = stringId(subscription.id);
   const externalCustomerId = stringId(subscription.customer);
-  const planInterval = mapPlanIntervalFromSubscription(subscription) ??
-    mapPlanIntervalFromMetadata(subscription.metadata);
+  // Price wins over metadata, which remains stale after a plan/interval change.
+  // Unknown or multi-item subscriptions must not silently inherit an old plan.
+  const planInterval = mapPlanIntervalFromSubscription(subscription);
 
   if (!externalSubscriptionId || !externalCustomerId || !planInterval) {
     if (subscription.metadata?.app === "agende") throw new Error("agende_subscription_payload_invalid");
@@ -223,6 +238,7 @@ async function handleSubscription(event: Record<string, any>, subscription: Reco
 
   const binding = await findSubscriptionBinding(externalSubscriptionId);
   if (!binding) {
+    if (subscription.status === "canceled" || subscription.status === "incomplete_expired") return;
     if (subscription.metadata?.app === "agende") throw new Error("agende_subscription_not_bound_yet");
     return;
   }
@@ -275,14 +291,19 @@ async function handleInvoice(event: Record<string, any>, invoice: Record<string,
   if (!externalSubscriptionId) return;
 
   const binding = await findSubscriptionBinding(externalSubscriptionId);
-  if (!binding) return;
+  if (!binding) {
+    const current = await retrieveSubscription(externalSubscriptionId);
+    if (current.status === "canceled" || current.status === "incomplete_expired") return;
+    if (current.metadata?.app === "agende") throw new Error("agende_subscription_not_bound_yet");
+    return;
+  }
 
   await recordBillingEvent({
     workspaceId: binding.workspace_id,
     eventId: event.id,
     eventType: event.type,
     amountCents:
-      typeof invoice.amount_paid === "number"
+      event.type === "invoice.paid" && typeof invoice.amount_paid === "number"
         ? invoice.amount_paid
         : typeof invoice.amount_due === "number"
           ? invoice.amount_due
@@ -293,27 +314,9 @@ async function handleInvoice(event: Record<string, any>, invoice: Record<string,
     occurredAt: toIso(event.created) ?? new Date().toISOString(),
   });
 
-  if (
-    (event.type === "invoice.paid" || event.type === "invoice.payment_failed") &&
-    binding.external_customer_id &&
-    binding.current_period_start &&
-    binding.current_period_end
-  ) {
-    const nextStatus = event.type === "invoice.paid" ? "active" : "past_due";
-    const { error } = await supabase.rpc("sync_billing_subscription", {
-      p_workspace_id: binding.workspace_id,
-      p_provider: "stripe",
-      p_external_customer_id: binding.external_customer_id,
-      p_external_subscription_id: externalSubscriptionId,
-      p_plan: binding.plan,
-      p_billing_interval: binding.billing_interval,
-      p_status: nextStatus,
-      p_current_period_start: binding.current_period_start,
-      p_current_period_end: binding.current_period_end,
-      p_canceled_at: null,
-    });
-    if (error) throw new Error(`invoice_status_sync_failed:${error.message}`);
-  }
+  // A zero-value trial invoice is paid too; old invoice events cannot reactivate
+  // a canceled subscription or restore an old plan/period.
+  await handleSubscription(event, await retrieveSubscription(externalSubscriptionId));
 }
 
 Deno.serve(async (req: Request) => {
@@ -368,7 +371,9 @@ Deno.serve(async (req: Request) => {
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        await handleSubscription(event, event.data.object);
+      case "customer.subscription.paused":
+      case "customer.subscription.resumed":
+        await handleSubscription(event, await retrieveSubscription(event.data.object.id));
         break;
       case "invoice.paid":
       case "invoice.payment_failed":

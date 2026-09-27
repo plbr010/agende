@@ -66,6 +66,44 @@ test('real SQL migrations: trial, tenant authorization and management operations
     }
     assert.equal((await as(outsider,'select count(*)::int as n from public.subscriptions where workspace_id=$1',[wid])).rows[0].n,0);
   });
+  await t.test('Stripe leases serialize attempts, protect tokens and reject user access', async () => {
+    const first = '11111111-1111-4111-8111-111111111111';
+    const second = '22222222-2222-4222-8222-222222222222';
+    const acquire = async token => (await db.query('select public.acquire_stripe_checkout($1,$2) as ok', [wid, token])).rows[0].ok;
+    assert.equal(await acquire(first), true);
+    assert.equal(await acquire(second), false);
+    await db.query('select public.release_stripe_checkout($1,$2)', [wid, second]);
+    assert.equal(await acquire(second), false);
+    await db.query('select public.release_stripe_checkout($1,$2)', [wid, first]);
+    assert.equal(await acquire(second), true);
+    await db.query("update app.stripe_checkout_leases set expires_at = now() - interval '1 second' where workspace_id=$1", [wid]);
+    assert.equal(await acquire(first), true);
+    await assert.rejects(as(owner, 'select public.acquire_stripe_checkout($1,$2)', [wid, second]), /permission denied/);
+    await assert.rejects(as(owner, 'select public.release_stripe_checkout($1,$2)', [wid, first]), /permission denied/);
+  });
+  await t.test('Stripe binding and subscription lifecycle preserve trial and require service role', async () => {
+    const manager = await user();
+    const w = (await create(manager)).workspace_id;
+    const before = (await db.query('select * from public.subscriptions where workspace_id=$1', [w])).rows[0];
+    const email = (await db.query('select email from auth.users where id=$1', [manager])).rows[0].email;
+    await assert.rejects(as(manager, "select public.bind_billing_customer($1,'stripe','cus_local')", [w]), /permission denied/);
+    await db.query("select public.bind_billing_customer($1,'stripe','cus_local')", [w]);
+    await db.query("select public.bind_stripe_checkout($1,$2,'cus_local','sub_local','equipe','annual','evt_local','checkout.session.completed')", [w, email]);
+    await assert.rejects(as(manager, "select public.change_trial_plan($1,'salao')", [w]), /subscription_already_exists/);
+    for (const status of ['trialing', 'active', 'past_due', 'active', 'canceled']) {
+      await db.query("select public.sync_billing_subscription($1,'stripe','cus_local','sub_local','salao','monthly',$2,now(),now()+interval '1 month',null)", [w, status]);
+      const row = (await db.query('select * from public.subscriptions where workspace_id=$1', [w])).rows[0];
+      assert.equal(row.status, status);
+      assert.equal(row.plan, 'salao');
+      assert.equal(row.billing_interval, 'monthly');
+      assert.deepEqual(row.trial_started_at, before.trial_started_at);
+      assert.deepEqual(row.trial_ends_at, before.trial_ends_at);
+    }
+    await db.query("select public.bind_stripe_checkout($1,$2,'cus_local','sub_new','equipe','annual','evt_new','checkout.session.completed')", [w, email]);
+    const after = (await db.query('select * from public.subscriptions where workspace_id=$1', [w])).rows[0];
+    assert.equal(after.external_subscription_id, 'sub_new');
+    assert.deepEqual(after.trial_ends_at, before.trial_ends_at);
+  });
   let product;
   await t.test('inventory create, entry, exit, adjustment, edit, archive, reactivate and insufficient stock', async () => {
     product=(await as(owner,"select public.create_inventory_product($1,'Shampoo',p_initial_quantity=>10,p_minimum_quantity=>2,p_cost_cents=>1200) as p",[wid])).rows[0].p.id;
