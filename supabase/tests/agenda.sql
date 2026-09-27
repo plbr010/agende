@@ -186,7 +186,7 @@ BEGIN
   EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_appointment($1,$2,$3,$4,$5,$6)'
     INTO v_appt2
-    USING v_ws_a, v_client_a, v_member_pro, v_service_a, v_start, NULL;
+    USING v_ws_a, v_client_a, v_member_pro, v_service_a, v_start + interval '1 hour', NULL;
   EXECUTE 'RESET ROLE';
   SELECT price_cents, duration_minutes INTO v_price, v_duration FROM public.appointments WHERE id = v_appt2;
   PERFORM test_helpers.assert_eq(v_price, 8000, 'catalog price when no override');
@@ -413,6 +413,22 @@ BEGIN
   PERFORM test_helpers.assert_true(v_slot IS NOT NULL, 'available slots computed');
   PERFORM test_helpers.assert_true(v_slot >= v_day_start, 'slots stay inside local day');
   v_passed := array_append(v_passed, 'available_slots');
+
+  PERFORM test_helpers.login_as(v_a);
+  EXECUTE 'SET ROLE authenticated';
+  PERFORM public.reschedule_appointment(v_overlap, v_member_a, v_service_a,
+    timestamp '2026-09-21 14:00:00' AT TIME ZONE v_tz, 'Reagendado');
+  PERFORM public.set_appointment_status(v_overlap, 'in_progress');
+  PERFORM public.set_appointment_status(v_overlap, 'completed');
+  EXECUTE 'RESET ROLE';
+  SELECT status INTO v_status FROM public.appointments WHERE id = v_overlap;
+  PERFORM test_helpers.assert_eq(v_status, 'completed'::public.appointment_status, 'reschedule then complete');
+  PERFORM test_helpers.assert_error(
+    format('SELECT public.reschedule_appointment(%L,%L,%L,%L::timestamptz,NULL)',
+      v_overlap, v_member_a, v_service_a, timestamp '2026-09-21 15:00:00' AT TIME ZONE v_tz),
+    'appointment_terminal', 'completed appointments cannot be rescheduled'
+  );
+  v_passed := array_append(v_passed, 'reschedule_and_complete');
 
   PERFORM test_helpers.login_as(v_recv);
   EXECUTE 'SET ROLE authenticated';

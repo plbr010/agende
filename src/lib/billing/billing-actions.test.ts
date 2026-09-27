@@ -24,7 +24,8 @@ test("unauthorized roles, absent workspace and invalid selections never invoke S
     assert.match((await runBillingAction({ action: "portal" }, { id: "id", role }, backend)).error!, /dono ou admin/);
   }
   assert.ok((await runBillingAction({ action: "portal" }, null, backend)).error);
-  for (const input of [{ action: "checkout", plan: "free" }, { action: "delete" }, null]) {
+  for (const input of [{ action: "checkout", plan: "free" }, { action: "delete" }, null,
+    { action: "checkout", plan: "solo", billingInterval: "monthly", idempotencyKey: "x".repeat(101) }]) {
     assert.ok((await runBillingAction(input, { id: "id", role: "owner" }, backend)).error);
   }
 });
@@ -49,6 +50,21 @@ test("portal adapter, Edge errors, malformed responses and network failures are 
 test("redirect allowlist rejects credentials, lookalike hosts, ports and protocols", () => {
   for (const url of ["http://checkout.stripe.com/x", "https://checkout.stripe.com.evil.test/x", "https://evil.test@checkout.stripe.com/x", "https://billing.stripe.com:444/x", "javascript:alert(1)", "//checkout.stripe.com/x"]) {
     assert.equal(billingRedirectSchema.safeParse({ url }).success, false, url);
+  }
+});
+
+test("checkout and portal redirects work without the optional URL.parse browser API", () => {
+  const descriptor = Object.getOwnPropertyDescriptor(URL, "parse");
+  Object.defineProperty(URL, "parse", { configurable: true, value: undefined });
+  try {
+    for (const url of ["https://checkout.stripe.com/c/pay/test", "https://billing.stripe.com/p/session/test"]) {
+      assert.equal(billingRedirectSchema.safeParse({ url }).success, true);
+    }
+    assert.equal(billingRedirectSchema.safeParse({ url: "not a URL" }).success, false);
+    assert.equal(billingRedirectSchema.safeParse({ url: "https://evil.example" }).success, false);
+  } finally {
+    if (descriptor) Object.defineProperty(URL, "parse", descriptor);
+    else Reflect.deleteProperty(URL, "parse");
   }
 });
 

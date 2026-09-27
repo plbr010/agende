@@ -31,7 +31,10 @@ export async function createLocalDatabase() {
     $$;
     grant usage on schema auth, extensions to anon, authenticated, service_role;
     create table storage.buckets (id text primary key, name text, public boolean, file_size_limit bigint, allowed_mime_types text[]);
-    create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text, name text, owner uuid);
+    create table storage.objects (id uuid primary key default gen_random_uuid(), bucket_id text, name text, owner uuid, metadata jsonb);
+    alter table storage.objects enable row level security;
+    grant usage on schema storage to anon, authenticated, service_role;
+    grant select, insert, update, delete on storage.objects to anon, authenticated, service_role;
     create function storage.foldername(text) returns text[] language sql immutable as $$ select string_to_array($1,'/'); $$;
     create table cron.job (jobid bigint generated always as identity primary key, jobname text, schedule text, command text);
     create function cron.schedule(text,text,text) returns bigint language sql as $$ insert into cron.job(jobname,schedule,command) values($1,$2,$3) returning jobid; $$;

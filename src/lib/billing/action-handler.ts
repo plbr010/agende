@@ -3,7 +3,7 @@ import { billingIntervalSchema, billingPlanSchema, createStripeBillingQueries, t
 
 export const billingActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("checkout"), plan: billingPlanSchema, billingInterval: billingIntervalSchema,
-    idempotencyKey: z.string().trim().min(16).max(200) }),
+    idempotencyKey: z.string().trim().min(16).max(100) }),
   z.object({ action: z.literal("portal") }),
 ]);
 export type BillingActionInput = z.infer<typeof billingActionSchema>;

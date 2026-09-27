@@ -1,0 +1,47 @@
+[
+  {
+    "suite": "foundation",
+    "result": "PASS",
+    "evidence": [
+      {
+        "foundation_test_results": "client_no_subscription_no_trial\nprofessional_no_trial_before_workspace\ncreate_workspace_atomic_7_day_trial\nrls_cannot_select_foreign_workspace\ncannot_update_subscription\ncannot_update_trial_ends_at\ncannot_update_own_role\nunconfirmed_email_cannot_create_workspace\nphone_need_not_be_confirmed\nsecond_workspace_no_new_trial\nphone_normalize_ddd_55\ninvite_email_must_match_confirmed_auth_email\ninvite_null_email_secret_link\nseat_limit_accept_serialized\nseat_limit_constraint_trigger\nleast_privilege_execute_grants"
+      }
+    ]
+  },
+  {
+    "suite": "catalog",
+    "result": "PASS",
+    "evidence": [
+      {
+        "catalog_test_results": "owner_gets_professional_profile\nforce_rls_catalog_tables\nreceptionist_has_no_professional_profile\nreceptionist_cannot_insert_professional_profile\nprofessional_gets_professional_profile\ninactive_or_receptionist_disables_booking\nservice_price_and_duration_constraints\nreceptionist_cannot_manage_services\nrls_hides_foreign_services\nrls_blocks_service_idor\nnon_member_cannot_read_catalog\ncross_workspace_professional_service_denied\nclient_phone_ddd_55\nrls_hides_foreign_clients\nrls_blocks_client_idor\nclient_workspace_id_immutable\nlinked_user_id_not_writable\nreceptionist_can_create_client\ninternal_app_functions_not_granted"
+      }
+    ]
+  },
+  {
+    "suite": "workspace_settings",
+    "result": "PASS",
+    "evidence": [
+      {
+        "workspace_settings_test_results": "settings_provisioned_force_rls\n1_owner_edits_own_settings\n2_admin_edits_own_settings\n3_professional_cannot_edit_settings\n4_cross_workspace_settings_denied\n5_duplicate_slug_rejected\n6_reserved_slug_rejected\n7_missing_public_workspace_hidden\n8_anon_cannot_read_internals\n9_anon_public_profile_allowed\n10_archived_service_hidden\n11_inactive_service_hidden\n12_booking_disabled_hidden\n13_receptionist_not_public_professional\n14_email_bound_invite_rejects_mismatch\n15_secret_invite_without_email\n16_expired_invite_fails\n17_used_invite_fails\n18_professional_blocked_without_seat\n19_receptionist_invite_without_professional_seat\n20_owner_deactivates_member\n21_professional_cannot_remove_member\n22_workspace_keeps_owner\n23_reactivation_respects_plan\n24_idor_cross_tenant_blocked\n25_logo_storage_rls"
+      }
+    ]
+  },
+  {
+    "suite": "agenda",
+    "result": "PASS",
+    "evidence": [
+      {
+        "agenda_test_results": "force_rls_and_exclusion, create_valid_with_override_snapshot, catalog_snapshot_without_override, archived_and_booking_disabled, cross_tenant_and_unlinked_blocked, overlap_blocked, exclusion_blocks_race, hours_and_breaks, time_block_respected, cancelled_frees_slot, receptionist_scope, professional_cannot_edit_other, owner_admin_manage, workspace_id_immutable, idor_cross_tenant, available_slots, reschedule_and_complete, receptionist_can_block, internal_rpc_not_granted"
+      }
+    ]
+  },
+  {
+    "suite": "public_booking",
+    "result": "PASS",
+    "evidence": [
+      {
+        "public_booking_test_results": "anon_lists_public_catalog, anon_cannot_read_private_tables, guest_booking_snapshot, workspace_client_reused, public_create_validations, no_duplicate_slot, override_snapshot, workspace_timezone, past_and_lead_buffer, no_cross_tenant_leak, authenticated_client_reads_own, client_cannot_read_others, client_reschedule_rpc_and_idor, client_cancel_own, client_cancel_others_denied, cancel_too_late, terminal_not_cancellable, rpc_grants, slots_are_availability_only"
+      }
+    ]
+  }
+]

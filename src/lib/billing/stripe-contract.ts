@@ -13,7 +13,7 @@ export const createCheckoutInputSchema = z.object({
   workspaceId: z.string().min(1),
   plan: billingPlanSchema,
   billingInterval: billingIntervalSchema,
-  idempotencyKey: z.string().trim().min(16).max(200),
+  idempotencyKey: z.string().trim().min(16).max(100),
 });
 
 export const createPortalInputSchema = z.object({
@@ -22,10 +22,15 @@ export const createPortalInputSchema = z.object({
 
 export const billingRedirectSchema = z.object({
   url: z.string().url().refine((value) => {
-    const url = URL.parse(value);
-    if (!url) return false;
-    return url.protocol === "https:" && !url.username && !url.password && !url.port &&
-      ["checkout.stripe.com", "billing.stripe.com"].includes(url.hostname);
+    // This schema also runs in the browser; URL.parse is not available in
+    // older supported browsers. Keep invalid URLs fail-closed without throwing.
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && !url.username && !url.password && !url.port &&
+        ["checkout.stripe.com", "billing.stripe.com"].includes(url.hostname);
+    } catch {
+      return false;
+    }
   }, "stripe_redirect_not_allowed"),
 });
 

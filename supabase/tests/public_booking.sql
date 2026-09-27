@@ -460,6 +460,19 @@ BEGIN
   v_passed := array_append(v_passed, 'client_cannot_read_others');
 
   v_appt2 := (v_receipt2->>'appointment_id')::uuid;
+  PERFORM test_helpers.login_as(v_client_other);
+  PERFORM test_helpers.assert_error(
+    format('SELECT public.reschedule_my_appointment(%L,%L::timestamptz,NULL)',
+      v_appt2, v_start2 + interval '3 hours'),
+    'appointment_not_found', 'cannot reschedule another client appointment'
+  );
+  PERFORM test_helpers.login_as(v_client_user);
+  EXECUTE 'SET ROLE authenticated';
+  PERFORM public.reschedule_my_appointment(v_appt2, v_start2 + interval '3 hours', NULL);
+  EXECUTE 'RESET ROLE';
+  SELECT starts_at INTO v_slot FROM public.appointments WHERE id = v_appt2;
+  PERFORM test_helpers.assert_eq(v_slot, v_start2 + interval '3 hours', 'client reschedule RPC works');
+  v_passed := array_append(v_passed, 'client_reschedule_rpc_and_idor');
   PERFORM test_helpers.login_as(v_client_user);
   EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.cancel_my_appointment($1)' INTO v_receipt USING v_appt2;
@@ -482,10 +495,21 @@ BEGIN
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
     INTO v_receipt
     USING v_slug_a, v_service_a, v_member_pro2,
-          date_trunc('minute', clock_timestamp()) + interval '90 minutes',
+          v_start3 + interval '1 day',
           'Tarde demais', '32998880024', 'late-cancel@agende-public-booking.test';
   EXECUTE 'RESET ROLE';
   v_appt3 := (v_receipt->>'appointment_id')::uuid;
+  -- Move this isolated fixture into the cancellation cutoff. Creating a real
+  -- slot at now()+90min can cross midnight, so it cannot test cancellation
+  -- deterministically. All normal booking guards were exercised above.
+  ALTER TABLE public.appointments DISABLE TRIGGER appointments_assert_availability;
+  PERFORM set_config('app.bypass_protected_columns', 'on', true);
+  UPDATE public.appointments
+    SET starts_at = date_trunc('minute', clock_timestamp()) + interval '90 minutes',
+        ends_at = date_trunc('minute', clock_timestamp()) + interval '150 minutes'
+    WHERE id = v_appt3;
+  PERFORM set_config('app.bypass_protected_columns', 'off', true);
+  ALTER TABLE public.appointments ENABLE TRIGGER appointments_assert_availability;
   PERFORM test_helpers.login_as(v_client_user);
   PERFORM test_helpers.assert_error(
     format('SELECT public.cancel_my_appointment(%L)', v_appt3),

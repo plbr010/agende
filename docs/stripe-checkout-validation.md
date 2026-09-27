@@ -3,6 +3,13 @@
 Base: `main` após fetch, `09e866864d12ae63be26bd0759a8886b8cefe719` (PR #11).
 Branch: `codex/stripe-checkout-live`. Nenhum merge ou deploy faz parte desta entrega.
 
+Atualização de 27/09/2026 UTC: outra sessão já aplicou o backend em produção.
+As duas funções ACTIVE v2 foram comparadas exatamente com o código deste PR.
+A migration foi reconciliada para `20260927005815_stripe_checkout_guards.sql`,
+sem reexecução. Ver [reconciliação](migrations/checkout-reconciliation-2026-09-27.md)
+e [auditoria preparatória atual](pr12-e2e-readiness.md). Os resultados abaixo
+descrevem a implementação original; o relatório atual registra a nova validação.
+
 ## Auditoria antes da implementação
 
 - Conferidos os hashes das seis migrations Stripe e dos dois entrypoints recuperados.
@@ -105,8 +112,9 @@ ao negócio de teste; a correção não altera a lógica financeira da aplicaç�
 
 ## Antes de produção
 
-1. Revisar e aplicar a migration nova, publicar ambas as Edge Functions e então
-   publicar o frontend. Não executar a migration sem revisar o histórico remoto.
+1. Backend já aplicado por outra sessão e conferido em leitura: migration
+   `20260927005815`, billing v2 e webhook v2. Não reaplicar a migration.
+   O frontend continua no PR, sem merge para main.
 2. Executar aceitação em sandbox isolado: os seis checkouts, trial longo/curto,
    checkout cancelado/reaberto, Portal, renovação, falha/recuperação, cancelamento,
    reentregas e mudanças de preço compatíveis. A conexão Stripe disponível nesta

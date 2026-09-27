@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { PLANS } from "@/lib/marketing/content";
 import { billingRedirectSchema } from "@/lib/billing/stripe-contract";
 import { checkoutDisabledReason, checkoutReturnMessage } from "@/lib/billing/presentation";
+import { nextCheckoutAttempt, type CheckoutAttempt } from "@/lib/billing/checkout-attempt";
 import type { BillingActionInput, BillingActionResult } from "@/lib/billing/action-handler";
 
 export type BillingControlsProps = {
@@ -25,7 +26,7 @@ export function BillingControls(props: BillingControlsProps) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const busy = useRef(false);
-  const attempts = useRef<Record<string, string>>({});
+  const attempt = useRef<CheckoutAttempt>(null);
   const returnMessage = checkoutReturnMessage(props.checkoutReturn);
 
   function submit(action: "checkout" | "portal", plan?: "solo" | "equipe" | "salao") {
@@ -37,8 +38,8 @@ export function BillingControls(props: BillingControlsProps) {
         let input: BillingActionInput = { action: "portal" };
         if (action === "checkout" && plan) {
           const selection = `${plan}:${interval}`;
-          attempts.current[selection] ??= crypto.randomUUID();
-          input = { action, plan, billingInterval: interval, idempotencyKey: attempts.current[selection] };
+          attempt.current = nextCheckoutAttempt(attempt.current, selection, () => crypto.randomUUID());
+          input = { action, plan, billingInterval: interval, idempotencyKey: attempt.current.key };
         }
         const result = await props.action(input);
         if (result.error) { setError(result.error); return; }
