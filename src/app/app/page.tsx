@@ -22,23 +22,23 @@ import { STATUS_LABEL } from "@/lib/agenda/status";
 import { formatDateTime } from "@/lib/workspace/timezone";
 import { PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
-import { addDaysIso, formatTimeInProductTz, todayInProductTz } from "@/lib/time/timezone";
+import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
 
 export default async function AppPage() {
   const session = await requireConfirmedSession("/app");
   const workspace = session.workspaces[0];
-  const today = todayInProductTz();
-  const [team, services, clients, settings, appointments] = workspace
+  const settings = workspace ? await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug) : null;
+  const timezone = settings?.timezone ?? "America/Sao_Paulo";
+  const today = todayInTimeZone(timezone);
+  const [team, services, clients, appointments] = workspace
     ? await Promise.all([
         loadTeam(workspace.id),
         loadServices(workspace.id),
         loadClients(workspace.id),
-        loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug),
         loadAgendaRange(workspace.id, today, addDaysIso(today, 1)),
       ])
-    : [[], [], [], null, []];
-  const timezone = settings?.timezone;
+    : [[], [], [], []];
   const activeAppointments = appointments.filter(
     (appointment) => appointment.status !== "cancelled" && appointment.status !== "no_show",
   );
@@ -114,7 +114,7 @@ export default async function AppPage() {
                   className="group grid grid-cols-[4.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-secondary/60"
                 >
                   <div className="rounded-xl bg-secondary px-2 py-2 text-center">
-                    <p className="font-serif text-xl leading-none">{formatTimeInProductTz(appointment.startsAt)}</p>
+                    <p className="font-serif text-xl leading-none">{formatTimeInTimeZone(appointment.startsAt, timezone)}</p>
                   </div>
                   <div className="min-w-0">
                     <p className="truncate font-medium">{appointment.clientName}</p>

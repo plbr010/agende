@@ -20,6 +20,7 @@ import {
   loadCurrentMemberId,
 } from "@/lib/agenda/queries";
 import { canRescheduleStatus, isAppointmentStatus } from "@/lib/agenda/status";
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { zonedWallTimeToUtc } from "@/lib/time/timezone";
 
 export type SlotActionState = ActionState & {
@@ -388,8 +389,9 @@ export async function addTimeBlockAction(
   if (!canManageTimeBlocks(workspace.role, currentMemberId === parsed.data.memberId)) {
     return { error: "Você não pode bloquear a agenda deste profissional." };
   }
-  const startsAt = zonedWallTimeToUtc(parsed.data.localDate, parsed.data.startTime).toISOString();
-  const endsAt = zonedWallTimeToUtc(parsed.data.localDate, parsed.data.endTime).toISOString();
+  const { timezone } = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
+  const startsAt = zonedWallTimeToUtc(parsed.data.localDate, parsed.data.startTime, timezone).toISOString();
+  const endsAt = zonedWallTimeToUtc(parsed.data.localDate, parsed.data.endTime, timezone).toISOString();
   const supabase = await createClient();
   const { error: insertError } = await supabase.from("professional_time_blocks").insert({
     workspace_id: workspace.id,

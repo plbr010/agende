@@ -18,7 +18,8 @@ function ProductFields({ product }: {
     <Field label="Estoque mínimo" name="minimum" type="number" min={0} step="0.001" value={product?.minimumQuantity ?? 0}/>
     <Field label="Custo por unidade (R$)" name="cost" value={product?.costCents == null ? "" : formatCentsInput(product.costCents)} required={false}/>{product ? <input type="hidden" name="active" value={String(product.active)}/> : <Field label="Quantidade inicial" name="quantity" type="number" min={0} step="0.001" value={0}/>}</>;
 }
-export function InventoryDashboard({ snapshot }: {
+export function InventoryDashboard({ timezone, snapshot }: {
+    timezone: string;
     snapshot: InventorySnapshot | null;
 }) {
     const [search, setSearch] = useState("");
@@ -77,7 +78,7 @@ export function InventoryDashboard({ snapshot }: {
     <h2 className="mb-4 text-xl font-semibold">Histórico recente</h2>{!snapshot.recentMovements.length && <p>As entradas, saídas e ajustes aparecerão aqui.</p>}{snapshot.recentMovements.map(m => <div key={m.id} className="flex justify-between gap-4 border-b py-3">
         <div>
         <p>{m.productName} · {m.label}</p>
-        <p className="text-xs text-muted-foreground">{new Date(m.occurredAt).toLocaleString("pt-BR")} · {m.note}</p>
+        <p className="text-xs text-muted-foreground">{new Date(m.occurredAt).toLocaleString("pt-BR", { timeZone: timezone })} · {m.note}</p>
         </div>
         <strong>{m.quantityDelta > 0 ? "+" : ""}{m.quantityDelta}</strong>
         </div>)}</section>

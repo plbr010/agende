@@ -54,6 +54,14 @@ export function sanitizeNextPath(raw: string | null | undefined): string | null 
     return null;
   }
   const value = raw.trim();
+  // Reject encoded separators/control characters before URL normalization.
+  let decoded = value;
+  try {
+    for (let i = 0; i < 3; i++) decoded = decodeURIComponent(decoded);
+  } catch { return null; }
+  if (/[\u0000-\u0020\u007f\\]/.test(decoded) || decoded.startsWith("//")) return null;
+  const normalized = new URL(value, "https://agende.invalid");
+  if (normalized.origin !== "https://agende.invalid") return null;
   if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) {
     return null;
   }
@@ -63,9 +71,14 @@ export function sanitizeNextPath(raw: string | null | undefined): string | null 
   if (
     value.startsWith("/login") ||
     value.startsWith("/cadastro") ||
-    value.startsWith("/auth")
+    value.startsWith("/auth") ||
+    normalized.pathname.startsWith("/auth") ||
+    normalized.pathname.startsWith("/login") ||
+    normalized.pathname.startsWith("/cadastro") ||
+    normalized.pathname.startsWith("/redefinir-senha") ||
+    normalized.pathname.startsWith("/recuperar-senha")
   ) {
     return null;
   }
-  return value;
+  return normalized.pathname + normalized.search + normalized.hash;
 }

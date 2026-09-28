@@ -3,7 +3,8 @@ import type { ServiceRow, ClientRow } from "@/lib/catalog/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
 const statuses = { active: "Ativo", exhausted: "Esgotado", expired: "Expirado", cancelled: "Cancelado" };
-export function PackagesDashboard({ snapshot, services, clients }: {
+export function PackagesDashboard({ timezone, snapshot, services, clients }: {
+    timezone: string;
     snapshot: PackagesSnapshot | null;
     services: ServiceRow[];
     clients: ClientRow[];
@@ -37,6 +38,6 @@ export function PackagesDashboard({ snapshot, services, clients }: {
     <h2 className="text-xl font-semibold">Pacotes dos clientes</h2><p className="text-sm text-muted-foreground">Últimas 30 vendas.</p>{!snapshot.sales.length && <p>Nenhum pacote vendido. Escolha um pacote acima para registrar uma venda.</p>}{snapshot.sales.map(s => <article key={s.id} className="grid gap-2 rounded-2xl border bg-card p-5">
         <h3 className="font-semibold">{s.clientName} · {s.packageName}</h3>
         <p>{statuses[s.status]} · {s.usedTotal} usadas / {Math.max(0, s.includedTotal - s.usedTotal)} restantes</p>
-        <p>{formatCentsToReais(s.priceCents)} · Validade: {s.expiresAt ? new Date(s.expiresAt).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "Sem prazo"}</p>{s.status === "active" && <ManagementForm action="package-cancel" id={s.id} label="Cancelar pacote" confirm="Solicitar cancelamento deste pacote? A operação será validada conforme o uso e a situação financeira."/>}</article>)}</section>
+        <p>{formatCentsToReais(s.priceCents)} · Validade: {s.expiresAt ? new Date(s.expiresAt).toLocaleDateString("pt-BR", { timeZone: timezone }) : "Sem prazo"}</p>{s.status === "active" && <ManagementForm action="package-cancel" id={s.id} label="Cancelar pacote" confirm="Solicitar cancelamento deste pacote? A operação será validada conforme o uso e a situação financeira."/>}</article>)}</section>
     </div>;
 }

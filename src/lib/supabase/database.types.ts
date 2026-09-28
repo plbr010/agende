@@ -4,6 +4,39 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      appointment_reviews: {
+        Row: {
+          id: string;
+          appointment_id: string;
+          workspace_id: string;
+          client_user_id: string;
+          rating: number;
+          comment: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          appointment_id: string;
+          workspace_id: string;
+          client_user_id: string;
+          rating: number;
+          comment?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          appointment_id?: string;
+          workspace_id?: string;
+          client_user_id?: string;
+          rating?: number;
+          comment?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "appointment_reviews_appointment_id_fkey"; columns: ["appointment_id"]; isOneToOne: true; referencedRelation: "appointments"; referencedColumns: ["id"] },
+          { foreignKeyName: "appointment_reviews_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
       appointments: {
         Row: {
           id: string;
@@ -1308,6 +1341,7 @@ export type Database = {
     Views: { [_ in never]: never };
     Functions: {
       accept_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
+      acquire_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: boolean };
       apply_inventory_movement: { Args: { p_workspace_id: string | null; p_product_id: string | null; p_type: Database["public"]["Enums"]["inventory_movement_type"] | null; p_quantity?: number | null; p_new_quantity?: number | null; p_reason?: string | null }; Returns: Json };
       archive_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null }; Returns: string };
       archive_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
@@ -1343,6 +1377,7 @@ export type Database = {
       list_available_slots: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_my_appointments: { Args: Record<PropertyKey, never>; Returns: Json };
       list_my_packages: { Args: Record<PropertyKey, never>; Returns: Json };
+      list_my_reschedule_slots: { Args: { p_appointment_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_public_available_slots: { Args: { p_slug: string | null; p_service_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_public_booking_catalog: { Args: { p_slug: string | null }; Returns: Json };
       mark_financial_entry_paid: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_paid_at?: string | null }; Returns: string };
@@ -1353,6 +1388,7 @@ export type Database = {
       record_billing_event: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_event_id: string | null; p_event_type: string | null; p_amount_cents?: number | null; p_currency?: string | null; p_billing_interval?: Database["public"]["Enums"]["billing_interval"] | null; p_event_status?: string | null; p_occurred_at?: string | null }; Returns: string };
       redeem_client_package: { Args: { p_workspace_id: string | null; p_client_package_id: string | null; p_appointment_id: string | null }; Returns: Json };
       refund_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_amount_cents: number | null; p_reason: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_refunded_at?: string | null; p_idempotency_key?: string | null }; Returns: string };
+      release_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: undefined };
       remove_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
       reopen_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null }; Returns: string };
       reschedule_appointment: { Args: { p_appointment_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_starts_at: string | null; p_notes?: string | null }; Returns: string };
@@ -1361,6 +1397,7 @@ export type Database = {
       revoke_workspace_invite: { Args: { p_workspace_id: string | null; p_invite_id: string | null }; Returns: Json };
       sell_service_package: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_package_id: string | null }; Returns: string };
       set_appointment_status: { Args: { p_appointment_id: string | null; p_status: Database["public"]["Enums"]["appointment_status"] | null }; Returns: string };
+      submit_appointment_review: { Args: { p_appointment_id: string | null; p_rating: number | null; p_comment?: string | null }; Returns: Json };
       sync_billing_subscription: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_status: Database["public"]["Enums"]["subscription_status"] | null; p_current_period_start?: string | null; p_current_period_end?: string | null; p_canceled_at?: string | null }; Returns: undefined };
       update_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null; p_name: string | null }; Returns: string };
       update_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_description: string | null; p_amount_cents: number | null; p_due_date: string | null }; Returns: string };

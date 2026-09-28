@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { CalendarCheck2, LockKeyhole, MessageCircleHeart, Star } from "lucide-react";
+import { submitReview } from "@/lib/reviews/actions";
+import type { AppointmentReview } from "@/lib/reviews/queries";
 import type { MyAppointment } from "@/lib/booking/queries";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,12 +13,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
 import { cn } from "@/lib/utils";
 
-export function ReviewCenter({ appointments }: { appointments: MyAppointment[] }) {
+export function ReviewCenter({ appointments, initialReviews }: { appointments: MyAppointment[]; initialReviews: AppointmentReview[] }) {
+  const [reviews, setReviews] = useState(initialReviews);
+  const [comment, setComment] = useState("");
+  const [message, setMessage] = useState("");
+  const [pending, start] = useTransition();
+  function send() { if (!selected) return; start(async () => { try { const result = await submitReview({ appointmentId: selected.id, rating, comment }); if (result.error) setMessage(result.error); else if (result.reviews) { setReviews(result.reviews); setSelected(null); setMessage("Avaliação enviada com sucesso."); } } catch { setMessage("Não foi possível confirmar o envio. Atualize a página antes de tentar novamente."); } }); }
   const [selected, setSelected] = useState<MyAppointment | null>(null);
   const [rating, setRating] = useState(0);
 
   return (
     <>
+      {!selected && message && <p role="status">{message}</p>}
       <section className="grid gap-4">
         {appointments.length === 0 ? (
           <Card className="rounded-3xl border-border/70 bg-card/85">
@@ -38,16 +46,16 @@ export function ReviewCenter({ appointments }: { appointments: MyAppointment[] }
               </CardHeader>
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">{formatDateTimeInTimeZone(appointment.startsAt, appointment.timezone)}</p>
-                <Button variant="outline" className="h-11 rounded-full" onClick={() => { setRating(0); setSelected(appointment); }}>
-                  <Star className="size-4" /> Preparar avaliação
-                </Button>
+                {reviews.some(r => r.appointment_id === appointment.id) ? <div><p>Nota: {reviews.find(r => r.appointment_id === appointment.id)?.rating}/5</p><p>{reviews.find(r => r.appointment_id === appointment.id)?.comment}</p><p className="text-xs">Avaliação enviada. Não permite edição.</p></div> : <Button variant="outline" className="h-11 rounded-full" onClick={() => { setRating(0); setComment(""); setMessage(""); setSelected(appointment); }}>
+                  <Star className="size-4" /> Avaliar atendimento
+                </Button>}
               </CardContent>
             </Card>
           ))
         )}
       </section>
 
-      <Dialog open={Boolean(selected)} onOpenChange={(open) => !open && setSelected(null)}>
+      <Dialog open={Boolean(selected)} onOpenChange={(open) => !open && !pending && setSelected(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Como foi sua experiência?</DialogTitle>
@@ -66,15 +74,16 @@ export function ReviewCenter({ appointments }: { appointments: MyAppointment[] }
             </fieldset>
             <div className="grid gap-2">
               <Label htmlFor="review-comment">Comentário opcional</Label>
-              <Textarea id="review-comment" maxLength={500} placeholder="O que tornou esse atendimento especial?" rows={5} />
+              <Textarea value={comment} onChange={e => setComment(e.target.value)} disabled={pending} id="review-comment" maxLength={500} placeholder="O que tornou esse atendimento especial?" rows={5} />
             </div>
             <div className="flex items-start gap-2 rounded-2xl bg-secondary/60 p-4 text-xs leading-5 text-muted-foreground">
               <LockKeyhole className="mt-0.5 size-3.5 shrink-0 text-primary" />
-              O envio de avaliações estará disponível em breve.
+              Após enviar, sua avaliação não poderá ser editada ou excluída por aqui. Ela será visível à equipe do estabelecimento.
             </div>
           </div>
           <DialogFooter>
-            <Button disabled className="h-11 w-full sm:w-auto">Envio após sincronização</Button>
+            {message && <p role="alert">{message}</p>}
+            <Button disabled={pending || rating < 1} onClick={send} className="h-11 w-full sm:w-auto">{pending ? "Enviando..." : "Enviar avaliação"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,3 +1,4 @@
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { Boxes } from "lucide-react";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
@@ -8,6 +9,7 @@ export default async function InventoryPage() {
   const session = await requireConfirmedSession("/app/estoque");
   const workspace = session.workspaces[0];
   if (!workspace) return null;
+  const { timezone } = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
   const snapshot = await operationalModuleLoaders.inventory(workspace.id);
 
   return (
@@ -18,7 +20,7 @@ export default async function InventoryPage() {
         description="Enxergue o que entra, o que sai e o que precisa de reposição antes de impactar seus atendimentos."
         icon={Boxes}
       />
-      <InventoryDashboard snapshot={snapshot} />
+      <InventoryDashboard timezone={timezone} snapshot={snapshot} />
     </>
   );
 }

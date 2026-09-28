@@ -79,6 +79,9 @@ export function canClientCancel(
   if (status === "in_progress") {
     return { ok: false, reason: "in_progress" };
   }
+  if (!["scheduled", "confirmed"].includes(status) || !Number.isFinite(Date.parse(startsAtIso))) {
+    return { ok: false, reason: "terminal" };
+  }
   if (new Date(startsAtIso).getTime() < now.getTime() + leadMinutes * 60_000) {
     return { ok: false, reason: "too_late" };
   }
@@ -129,6 +132,8 @@ export function partitionClientAppointments<T extends { startsAt: string; status
 
 export function sanitizeBookingError(message: string | null | undefined): string {
   const value = (message ?? "").toLowerCase();
+  if (value.includes("reschedule_too_late")) return "Faltam menos de 2 horas. Não é mais possível reagendar por aqui.";
+  if (value.includes("appointment_not_reschedulable")) return "Este agendamento não pode ser reagendado.";
   if (value.includes("slot_taken") || value.includes("appointment_overlap") || value.includes("23p01")) {
     return "Esse horário acabou de ser reservado. Escolha outro horário.";
   }

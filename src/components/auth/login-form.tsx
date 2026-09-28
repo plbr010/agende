@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { signInAction, type ActionState } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ export function LoginForm({ next }: { next?: string | null }) {
         <Input id="password" name="password" type="password" autoComplete="current-password" required className="h-11" />
       </div>
       {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+      <Link href="/recuperar-senha" className="text-sm underline">Esqueci minha senha</Link>
       <Button type="submit" className="h-12" disabled={pending}>
         {pending ? "Entrando..." : "Entrar"}
       </Button>

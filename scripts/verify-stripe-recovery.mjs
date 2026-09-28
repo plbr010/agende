@@ -28,10 +28,10 @@ const local = readdirSync("supabase/migrations").filter((file) => file.endsWith(
 const remote = history.map(({ version, name }) => `${version}_${name}.sql`);
 const missing = remote.filter((file) => !local.includes(file));
 const extra = local.filter((file) => !remote.includes(file));
-assert.equal(local.length, 62);
+assert.equal(local.length, 63);
 assert.equal(remote.length, 63);
 assert.deepEqual(missing, ["20260919201138_hardening_snapshot_owner_timezone.sql"]);
-assert.deepEqual(extra, [], "No local-only migrations may remain after reconciliation");
+assert.deepEqual(extra, ["20260927014947_launch_readiness_reviews.sql"], "Only the reviewed launch-readiness migration may remain local-only");
 const trial = history.find(({ version }) => version === "20260926194038");
 assert.ok(trial, "Applied trial migration must be in the remote snapshot");
 assert.equal(trial.statement_count, 1);
