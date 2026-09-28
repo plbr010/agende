@@ -125,12 +125,12 @@ export function todayInProductTz(now: Date = new Date()): string {
   return formatDateInProductTz(now);
 }
 
-export function startOfLocalDayUtc(date: string): Date {
-  return zonedWallTimeToUtc(date, "00:00:00");
+export function startOfLocalDayUtc(date: string, timeZone: string = PRODUCT_TIMEZONE): Date {
+  return zonedWallTimeToUtc(date, "00:00:00", timeZone);
 }
 
-export function startOfNextLocalDayUtc(date: string): Date {
-  return zonedWallTimeToUtc(addDaysIso(date, 1), "00:00:00");
+export function startOfNextLocalDayUtc(date: string, timeZone: string = PRODUCT_TIMEZONE): Date {
+  return zonedWallTimeToUtc(addDaysIso(date, 1), "00:00:00", timeZone);
 }
 
 export function compareTime(start: string, end: string): number {

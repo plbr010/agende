@@ -1,6 +1,9 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { loadMyAppointments, type MyAppointment } from "@/lib/booking/queries";
 import { hashClientIp } from "@/lib/booking/ip";
 import {
   parsePublicBookingConfirmation,
@@ -97,4 +100,31 @@ export async function loadCatalogAction(slug: string): Promise<PublicBookingCata
   const supabase = await createClient();
   const { data } = await supabase.rpc("list_public_booking_catalog", { p_slug: slug });
   return parsePublicBookingCatalog(data);
+}
+
+export async function rescheduleMyAppointmentAction(input: {
+  appointmentId: string; startsAt: string; professionalMemberId: string;
+}): Promise<{ error?: string; appointments?: MyAppointment[] }> {
+  const parsed = z.object({ appointmentId: z.string().uuid(), startsAt: z.string().datetime({ offset: true }), professionalMemberId: z.string().uuid() }).safeParse(input);
+  if (!parsed.success) return { error: "Escolha um profissional e um horário válido." };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reschedule_my_appointment", {
+    p_appointment_id: parsed.data.appointmentId,
+    p_starts_at: parsed.data.startsAt,
+    p_professional_member_id: parsed.data.professionalMemberId,
+  });
+  if (error) return { error: sanitizeBookingError(error.message) };
+  revalidatePath("/cliente");
+  revalidatePath("/cliente/agendamentos");
+  revalidatePath("/app/agenda");
+  return { appointments: await loadMyAppointments() };
+}
+
+export async function fetchMyRescheduleSlots(input: { appointmentId: string; professionalMemberId: string; localDate: string }): Promise<{ slots: string[]; error?: string }> {
+  const parsed = z.object({ appointmentId: z.string().uuid(), professionalMemberId: z.string().uuid(), localDate: z.string().date() }).safeParse(input);
+  if (!parsed.success) return { slots: [], error: "Escolha uma data e um profissional válidos." };
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("list_my_reschedule_slots", { p_appointment_id: parsed.data.appointmentId, p_professional_member_id: parsed.data.professionalMemberId, p_local_date: parsed.data.localDate });
+  if (error) return { slots: [], error: sanitizeBookingError(error.message) };
+  return { slots: (data ?? []).map(row => row.starts_at) };
 }

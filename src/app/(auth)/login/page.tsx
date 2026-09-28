@@ -6,9 +6,9 @@ import { sanitizeNextPath } from "@/lib/auth/redirects";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; password?: string }>;
 }) {
-  const { next } = await searchParams;
+  const { next, password } = await searchParams;
   const safeNext = sanitizeNextPath(next);
   await requireAnonymous(safeNext);
 
@@ -19,6 +19,7 @@ export default async function LoginPage({
         <p className="mt-2 text-muted-foreground">Acesse sua conta Agendê.</p>
       </div>
       <LoginForm next={safeNext} />
+      {password === "updated" && <p role="status">Senha alterada. Entre com sua nova senha.</p>}
       <p className="text-sm text-muted-foreground">
         Ainda não tem conta?{" "}
         <Link

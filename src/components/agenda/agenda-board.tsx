@@ -20,7 +20,7 @@ import {
   statusActions,
   type AppointmentStatus,
 } from "@/lib/agenda/status";
-import { addDaysIso, formatTimeInProductTz, todayInProductTz } from "@/lib/time/timezone";
+import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { WEEKDAYS } from "@/lib/validation/agenda";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +82,7 @@ const statusVariant: Record<AppointmentStatus, "default" | "secondary" | "outlin
 };
 
 export function AgendaBoard({
+  timezone,
   view,
   date,
   weekDates,
@@ -93,6 +94,7 @@ export function AgendaBoard({
   role,
   currentMemberId,
 }: {
+  timezone: string;
   view: "day" | "week";
   date: string;
   weekDates: string[];
@@ -142,7 +144,7 @@ export function AgendaBoard({
           <Button variant="outline" className="h-11" render={<Link href={navHref(view, addDaysIso(date, view === "week" ? -7 : -1), selectedProfessionalId)} />}>
             Anterior
           </Button>
-          <Button variant="outline" className="h-11" render={<Link href={navHref(view, todayInProductTz(), selectedProfessionalId)} />}>
+          <Button variant="outline" className="h-11" render={<Link href={navHref(view, todayInTimeZone(timezone), selectedProfessionalId)} />}>
             Hoje
           </Button>
           <Button variant="outline" className="h-11" render={<Link href={navHref(view, addDaysIso(date, view === "week" ? 7 : 1), selectedProfessionalId)} />}>
@@ -189,6 +191,7 @@ export function AgendaBoard({
       )}
 
       <AppointmentFormDialog
+        timezone={timezone}
         open={creating}
         onOpenChange={setCreating}
         professionals={bookable}
@@ -199,6 +202,7 @@ export function AgendaBoard({
       />
       {editing ? (
         <AppointmentDetailDialog
+          timezone={timezone}
           appointment={editing}
           open
           onOpenChange={(open) => !open && setEditing(null)}
@@ -273,6 +277,7 @@ function DayColumn({
 }
 
 function AppointmentFormDialog({
+  timezone,
   open,
   onOpenChange,
   professionals,
@@ -282,6 +287,7 @@ function AppointmentFormDialog({
   defaultProfessionalId,
   appointment,
 }: {
+  timezone: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   professionals: TeamMember[];
@@ -376,7 +382,7 @@ function AppointmentFormDialog({
                   {slots.map((slot) => (
                     <label key={slot} className="flex items-center justify-center gap-1 rounded-lg bg-secondary/60 px-2 py-2 text-sm ring-1 ring-border">
                       <input type="radio" name="startsAt" value={slot} required className="size-4" />
-                      {formatTimeInProductTz(slot)}
+                      {formatTimeInTimeZone(slot, timezone)}
                     </label>
                   ))}
                 </div>
@@ -402,6 +408,7 @@ function AppointmentFormDialog({
 }
 
 function AppointmentDetailDialog({
+  timezone,
   appointment,
   open,
   onOpenChange,
@@ -410,6 +417,7 @@ function AppointmentDetailDialog({
   role,
   currentMemberId,
 }: {
+  timezone: string;
   appointment: AgendaAppointment;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -465,6 +473,7 @@ function AppointmentDetailDialog({
         </DialogContent>
       </Dialog>
       <AppointmentFormDialog
+        timezone={timezone}
         open={rescheduling}
         onOpenChange={(next) => {
           setRescheduling(next);

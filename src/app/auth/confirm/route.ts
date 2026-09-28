@@ -10,7 +10,13 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next");
 
-  if (tokenHash && type) {
+  if (type === "recovery") {
+    const target = new URL("/auth/recovery", request.url);
+    if (tokenHash) target.searchParams.set("token_hash", tokenHash);
+    target.searchParams.set("type", "recovery");
+    return NextResponse.redirect(target);
+  }
+  if (tokenHash && type && ["signup", "email", "invite", "email_change"].includes(type)) {
     const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({
       type,
@@ -21,9 +27,7 @@ export async function GET(request: NextRequest) {
       const destination = session
         ? getDefaultDestination(session.context)
         : "/verificar-email?status=error";
-      const redirectTo = request.nextUrl.clone();
-      redirectTo.pathname = sanitizeNextPath(next) ?? destination;
-      redirectTo.search = "";
+      const redirectTo = new URL(sanitizeNextPath(next) ?? destination, request.url);
       return NextResponse.redirect(redirectTo);
     }
   }

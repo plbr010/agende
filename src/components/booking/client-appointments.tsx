@@ -1,5 +1,6 @@
 "use client";
 
+import { RescheduleDialog } from "@/components/booking/reschedule-dialog";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { CalendarCheck2, CalendarDays, Clock3, ExternalLink, Star } from "lucide-react";
@@ -15,6 +16,7 @@ import { formatCentsToReais } from "@/lib/validation/money";
 
 export function ClientAppointments({ initial }: { initial: MyAppointment[] }) {
   const [items, setItems] = useState(initial);
+  const [rescheduling, setRescheduling] = useState<MyAppointment | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -38,6 +40,7 @@ export function ClientAppointments({ initial }: { initial: MyAppointment[] }) {
 
   return (
     <div className="grid gap-8">
+      {rescheduling && <RescheduleDialog key={rescheduling.id} appointment={rescheduling} onClose={() => setRescheduling(null)} onSaved={updated => { setItems(updated); setRescheduling(null); setMessage("Agendamento atualizado com sucesso."); }} />}
       {message ? <p className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm text-muted-foreground" role="status">{message}</p> : null}
       <section className="grid gap-3">
         <div className="flex items-center gap-2"><CalendarDays className="size-4 text-primary" /><h2 className="font-serif text-2xl">Próximos</h2></div>
@@ -49,7 +52,8 @@ export function ClientAppointments({ initial }: { initial: MyAppointment[] }) {
               key={item.id}
               item={item}
               pending={pending && pendingId === item.id}
-              onCancel={() => cancel(item.id)}
+              onCancel={() => { if (window.confirm("Confirma o cancelamento deste agendamento?")) cancel(item.id); }}
+              onReschedule={() => setRescheduling(item)}
             />
           ))
         )}
@@ -72,10 +76,12 @@ function AppointmentCard({
   item,
   pending,
   onCancel,
+  onReschedule,
 }: {
   item: MyAppointment;
   pending: boolean;
   onCancel?: () => void;
+  onReschedule?: () => void;
 }) {
   const status = (isAppointmentStatus(item.status) ? item.status : "scheduled") as AppointmentStatus;
   const cancellable = onCancel ? canClientCancel(item.status, item.startsAt, CLIENT_CANCEL_LEAD_MINUTES) : { ok: false as const, reason: "terminal" as const };
@@ -98,6 +104,7 @@ function AppointmentCard({
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">
+        {cancellable.ok && onReschedule && item.serviceId && item.professionalMemberId && <Button disabled={pending} variant="outline" onClick={onReschedule}>Reagendar</Button>}
         {cancellable.ok && onCancel ? (
           <Button type="button" variant="outline" className="h-10 rounded-full" disabled={pending} onClick={onCancel}>
             {pending ? "Cancelando…" : "Cancelar horário"}

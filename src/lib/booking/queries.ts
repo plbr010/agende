@@ -154,6 +154,8 @@ export async function loadPublicAvailableSlots(input: {
 
 export type MyAppointment = {
   id: string;
+  serviceId?: string;
+  professionalMemberId?: string;
   workspaceName: string;
   slug: string;
   serviceName: string;
@@ -189,6 +191,8 @@ export function parseMyAppointments(raw: unknown): MyAppointment[] {
       {
         id,
         workspaceName,
+        serviceId: asString(row.service_id) ?? undefined,
+        professionalMemberId: asString(row.professional_member_id) ?? undefined,
         slug,
         serviceName,
         professionalName,

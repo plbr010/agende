@@ -1,9 +1,10 @@
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { createClient } from "@/lib/supabase/server";
 import type { MemberRole } from "@/lib/catalog/queries";
 import type { AppointmentStatus } from "@/lib/agenda/status";
 import {
-  formatDateInProductTz,
-  formatTimeInProductTz,
+  formatDateInTimeZone,
+  formatTimeInTimeZone,
   startOfLocalDayUtc,
   startOfNextLocalDayUtc,
 } from "@/lib/time/timezone";
@@ -78,8 +79,9 @@ export async function loadAgendaRange(
   professionalMemberId?: string,
 ): Promise<AgendaAppointment[]> {
   const supabase = await createClient();
-  const fromIso = startOfLocalDayUtc(fromDate).toISOString();
-  const toIso = startOfLocalDayUtc(toDateExclusive).toISOString();
+  const { timezone } = await loadWorkspaceSettings(workspaceId, "", "");
+  const fromIso = startOfLocalDayUtc(fromDate, timezone).toISOString();
+  const toIso = startOfLocalDayUtc(toDateExclusive, timezone).toISOString();
 
   let request = supabase
     .from("appointments")
@@ -134,9 +136,9 @@ export async function loadAgendaRange(
     priceCents: row.price_cents,
     durationMinutes: row.duration_minutes,
     notes: row.notes,
-    localDate: formatDateInProductTz(row.starts_at),
-    localStart: formatTimeInProductTz(row.starts_at),
-    localEnd: formatTimeInProductTz(row.ends_at),
+    localDate: formatDateInTimeZone(row.starts_at, timezone),
+    localStart: formatTimeInTimeZone(row.starts_at, timezone),
+    localEnd: formatTimeInTimeZone(row.ends_at, timezone),
   }));
 }
 
@@ -181,7 +183,8 @@ export async function loadBreaks(workspaceId: string, memberId: string): Promise
 
 export async function loadTimeBlocks(workspaceId: string, memberId: string): Promise<TimeBlockRow[]> {
   const supabase = await createClient();
-  const fromIso = startOfLocalDayUtc(formatDateInProductTz(new Date())).toISOString();
+  const { timezone } = await loadWorkspaceSettings(workspaceId, "", "");
+  const fromIso = startOfLocalDayUtc(formatDateInTimeZone(new Date(), timezone), timezone).toISOString();
   const { data } = await supabase
     .from("professional_time_blocks")
     .select("id, starts_at, ends_at, reason")
@@ -196,9 +199,9 @@ export async function loadTimeBlocks(workspaceId: string, memberId: string): Pro
     startsAt: row.starts_at,
     endsAt: row.ends_at,
     reason: row.reason,
-    localDate: formatDateInProductTz(row.starts_at),
-    localStart: formatTimeInProductTz(row.starts_at),
-    localEnd: formatTimeInProductTz(row.ends_at),
+    localDate: formatDateInTimeZone(row.starts_at, timezone),
+    localStart: formatTimeInTimeZone(row.starts_at, timezone),
+    localEnd: formatTimeInTimeZone(row.ends_at, timezone),
   }));
 }
 
