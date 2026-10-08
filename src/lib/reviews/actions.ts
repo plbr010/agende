@@ -13,6 +13,7 @@ export async function submitReview(input: { appointmentId: string; rating: numbe
     p_appointment_id: parsed.data.appointmentId, p_rating: parsed.data.rating, p_comment: parsed.data.comment,
   });
   if (error) {
+    if (error.code === "PGRST202" || error.code === "42883") return { error: "As avaliações estão temporariamente indisponíveis. Tente novamente mais tarde." };
     if (error.message.includes("already_reviewed")) return { error: "Este atendimento já foi avaliado. Atualize a página para ver sua avaliação." };
     if (error.message.includes("not_completed")) return { error: "Somente atendimentos concluídos podem ser avaliados." };
     if (error.message.includes("not_found")) return { error: "Atendimento não encontrado na sua conta." };
@@ -20,5 +21,7 @@ export async function submitReview(input: { appointmentId: string; rating: numbe
   }
   revalidatePath("/cliente/avaliacoes");
   revalidatePath("/app/avaliacoes");
-  return { reviews: await loadReviews() };
+  const reviews = await loadReviews();
+  if (reviews === null) return { error: "Sua avaliação foi enviada, mas não foi possível atualizar a lista. Atualize a página antes de tentar novamente." };
+  return { reviews };
 }

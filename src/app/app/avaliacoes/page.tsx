@@ -9,6 +9,7 @@ export default async function ReviewsPage() {
   const workspace = session.workspaces[0];
   if (!workspace) return null;
   const [reviews, settings] = await Promise.all([loadReviews(workspace.id), loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug)]);
+  if (reviews === null) return <><PageHeader eyebrow="Sua equipe" title="Avaliações" description="Opiniões de clientes sobre atendimentos concluídos." icon={Star} /><p role="status">As avaliações estão temporariamente indisponíveis. Tente novamente mais tarde.</p></>;
   const average = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : "—";
   return <><PageHeader eyebrow="Sua equipe" title="Avaliações" description="Opiniões de clientes sobre atendimentos concluídos." icon={Star} />
     <p>Nota média: {average} · {reviews.length} avaliações</p>

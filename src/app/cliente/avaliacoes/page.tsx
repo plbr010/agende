@@ -19,7 +19,11 @@ export default async function ClientReviewsPage() {
         description="Relembre atendimentos concluídos e prepare um feedback para quem cuidou de você."
         icon={Star}
       />
-      <ReviewCenter appointments={eligible} initialReviews={reviews} />
+      {reviews === null ? (
+        <p role="status">As avaliações estão temporariamente indisponíveis. Seus agendamentos continuam disponíveis.</p>
+      ) : (
+        <ReviewCenter appointments={eligible} initialReviews={reviews} />
+      )}
     </>
   );
 }
