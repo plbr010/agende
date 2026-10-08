@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const MISSING_SERVICE_MESSAGE = "Não é possível reagendar este horário por aqui. Fale com o estabelecimento.";
+
 export function RescheduleDialog({
   appointment,
   onClose,
@@ -18,27 +20,22 @@ export function RescheduleDialog({
   onClose: () => void;
   onSaved: (items: MyAppointment[]) => void;
 }) {
+  const canReschedule = Boolean(appointment.serviceId);
   const [catalog, setCatalog] = useState<PublicBookingCatalog | null>(null);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(() => todayInTimeZone(appointment.timezone));
   const [professional, setProfessional] = useState(appointment.professionalMemberId ?? "");
   const [slots, setSlots] = useState<string[]>([]);
   const [slot, setSlot] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(canReschedule ? "" : MISSING_SERVICE_MESSAGE);
+  const [loading, setLoading] = useState(canReschedule);
   const [confirming, setConfirming] = useState(false);
   const [pending, start] = useTransition();
 
   useEffect(() => {
-    setDate(todayInTimeZone(appointment.timezone));
-  }, [appointment.timezone]);
-
-  useEffect(() => {
-    let active = true;
     if (!appointment.serviceId) {
-      setError("Não é possível reagendar este horário por aqui. Fale com o estabelecimento.");
-      setLoading(false);
       return;
     }
+    let active = true;
     loadCatalogAction(appointment.slug)
       .then((data) => {
         if (!active) return;
@@ -60,14 +57,10 @@ export function RescheduleDialog({
   }, [appointment.slug, appointment.serviceId]);
 
   useEffect(() => {
-    if (!catalog || !professional || !appointment.serviceId || !date) {
-      if (!appointment.serviceId || (catalog && !professional)) {
-        setLoading(false);
-      }
+    if (!catalog || !professional || !appointment.serviceId) {
       return;
     }
     let active = true;
-    setLoading(true);
     fetchMyRescheduleSlots({
       appointmentId: appointment.id,
       professionalMemberId: professional,
@@ -137,7 +130,7 @@ export function RescheduleDialog({
             <select
               id="reschedule-professional"
               value={professional}
-              disabled={pending || confirming || !appointment.serviceId}
+              disabled={pending || confirming || !canReschedule}
               onChange={(event) => {
                 changeSelection();
                 setProfessional(event.target.value);
@@ -162,7 +155,7 @@ export function RescheduleDialog({
               value={date}
               min={todayInTimeZone(appointment.timezone)}
               max={addDaysIso(todayInTimeZone(appointment.timezone), catalog?.horizonDays ?? 90)}
-              disabled={pending || confirming || !appointment.serviceId}
+              disabled={pending || confirming || !canReschedule}
               onChange={(event) => {
                 if (event.target.value) {
                   changeSelection();
@@ -213,7 +206,7 @@ export function RescheduleDialog({
               </Button>
             </>
           ) : (
-            <Button className="h-11" disabled={!slot || loading || pending || !appointment.serviceId} onClick={() => setConfirming(true)}>
+            <Button className="h-11" disabled={!slot || loading || pending || !canReschedule} onClick={() => setConfirming(true)}>
               Revisar alteração
             </Button>
           )}
