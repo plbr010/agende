@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  extractPublicWorkspaceSlug,
   formatPublicProfilePreview,
   isReservedWorkspaceSlug,
   slugError,
@@ -27,6 +28,17 @@ test("slugError enforces length, charset and reserved words", () => {
   assert.ok(slugError("Maiuscula"));
   assert.ok(slugError("app"));
   assert.equal(slugError("meu-salao"), null);
+});
+
+test("extractPublicWorkspaceSlug accepts slugs and public profile URLs only", () => {
+  assert.equal(extractPublicWorkspaceSlug("luna"), "luna");
+  assert.equal(extractPublicWorkspaceSlug("  Studio-Ana  "), "studio-ana");
+  assert.equal(extractPublicWorkspaceSlug("/p/studio-luna"), "studio-luna");
+  assert.equal(extractPublicWorkspaceSlug("https://agende.app/p/studio-luna/agendar"), "studio-luna");
+  assert.equal(extractPublicWorkspaceSlug("agende.app/p/meu-salao?utm=bio"), "meu-salao");
+  assert.equal(extractPublicWorkspaceSlug("ab"), null);
+  assert.equal(extractPublicWorkspaceSlug("app"), null);
+  assert.equal(extractPublicWorkspaceSlug(""), null);
 });
 
 test("preview uses the current host without a hardcoded domain", () => {

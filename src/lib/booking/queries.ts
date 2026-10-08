@@ -209,13 +209,24 @@ export function parseMyAppointments(raw: unknown): MyAppointment[] {
   });
 }
 
-export async function loadMyAppointments(): Promise<MyAppointment[]> {
+export async function loadMyAppointmentsResult(): Promise<{
+  appointments: MyAppointment[];
+  error: string | null;
+}> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("list_my_appointments");
   if (error) {
-    return [];
+    return {
+      appointments: [],
+      error: "Não foi possível carregar seus agendamentos. Atualize a página para tentar de novo.",
+    };
   }
-  return parseMyAppointments(data);
+  return { appointments: parseMyAppointments(data), error: null };
+}
+
+export async function loadMyAppointments(): Promise<MyAppointment[]> {
+  const { appointments } = await loadMyAppointmentsResult();
+  return appointments;
 }
 
 export type PublicBookingConfirmation = {

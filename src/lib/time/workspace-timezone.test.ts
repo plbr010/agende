@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { formatDateInTimeZone, formatTimeInTimeZone, startOfLocalDayUtc, startOfNextLocalDayUtc, todayInTimeZone, zonedWallTimeToUtc } from "./timezone";
+import { timezoneDisplayName } from "../workspace/timezone";
 
 test("same appointment instant renders and round-trips correctly in two workspace zones", () => {
   const instant = "2026-10-12T13:00:00.000Z";
@@ -15,4 +16,9 @@ test("workspace day filters and today respect different midnight boundaries", ()
   assert.equal(todayInTimeZone("America/Manaus", instant), "2026-10-11");
   assert.equal(startOfLocalDayUtc("2026-10-12", "America/Manaus").toISOString(), "2026-10-12T04:00:00.000Z");
   assert.equal(startOfNextLocalDayUtc("2026-10-12", "America/Sao_Paulo").toISOString(), "2026-10-13T03:00:00.000Z");
+});
+
+test("timezoneDisplayName uses the workspace label instead of a hardcoded São Paulo string", () => {
+  assert.match(timezoneDisplayName("America/Manaus"), /Manaus/);
+  assert.match(timezoneDisplayName("America/Sao_Paulo"), /Brasília/);
 });

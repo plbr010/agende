@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PublicBookingFlow } from "@/components/booking/public-booking-flow";
 import { loadPublicBookingCatalog } from "@/lib/booking/queries";
 import { loadAppSession } from "@/lib/auth/session";
+import { todayInTimeZone } from "@/lib/time/timezone";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -26,6 +27,7 @@ export default async function PublicBookingPage({ params }: PageProps) {
   return (
     <PublicBookingFlow
       catalog={catalog}
+      today={todayInTimeZone(catalog.timezone)}
       prefill={{
         fullName: session?.profile.fullName ?? "",
         phone: session?.profile.phone ?? "",

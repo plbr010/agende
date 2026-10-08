@@ -53,6 +53,15 @@ test("every plan is presented with a free trial and no card in the primary CTA",
   assert.equal(MARKETING_CTAS.secondary.label, "Ver como funciona");
 });
 
+test("plans differentiate benefits and show annual prices", () => {
+  const highlights = PLANS.flatMap((plan) => plan.highlights);
+  assert.equal(new Set(highlights).size, highlights.length);
+  for (const plan of PLANS) {
+    assert.ok(plan.annualPrice.includes("/ano"));
+    assert.ok(plan.highlights.length >= 3);
+  }
+});
+
 test("header and footer expose the required public links", () => {
   assert.deepEqual(
     MARKETING_NAV.map((item) => item.label),

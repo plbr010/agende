@@ -25,7 +25,12 @@ import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
 
-export default async function AppPage() {
+export default async function AppPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ clientError?: string }>;
+}) {
+  const { clientError } = await searchParams;
   const session = await requireConfirmedSession("/app");
   const workspace = session.workspaces[0];
   const settings = workspace ? await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug) : null;
@@ -55,6 +60,11 @@ export default async function AppPage() {
 
   return (
     <>
+      {clientError ? (
+        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
+          Não foi possível ativar sua área de cliente agora. Tente novamente em instantes.
+        </p>
+      ) : null}
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-primary px-5 py-7 text-primary-foreground shadow-xl shadow-primary/15 sm:px-8 sm:py-9">
         <div className="pointer-events-none absolute -top-24 -right-16 size-64 rounded-full bg-white/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-28 left-1/3 size-52 rounded-full bg-accent/20 blur-3xl" />
@@ -71,10 +81,10 @@ export default async function AppPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" size="lg" className="h-11 rounded-full px-5" render={<Link href="/app/agenda" />}>
-              <CalendarDays className="size-4" /> Abrir agenda
+            <Button variant="secondary" size="lg" className="h-11 rounded-full px-5" render={<Link href="/app/agenda?novo=1" />}>
+              <CalendarDays className="size-4" /> Novo agendamento
             </Button>
-            <Button variant="outline" size="lg" className="h-11 rounded-full border-white/30 bg-white/10 px-5 text-white hover:bg-white/20 hover:text-white" render={<Link href="/app/clientes" />}>
+            <Button variant="outline" size="lg" className="h-11 rounded-full border-white/30 bg-white/10 px-5 text-white hover:bg-white/20 hover:text-white" render={<Link href="/app/clientes?novo=1" />}>
               <UserRoundPlus className="size-4" /> Novo cliente
             </Button>
           </div>

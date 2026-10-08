@@ -71,6 +71,7 @@ test("public profile parser keeps only public fields", () => {
     name: "Luna",
     slug: "luna",
     description: "Studio",
+    address: "Rua das Flores, 10",
     city: "Juiz de Fora",
     state: "MG",
     instagram: "luna.studio",
@@ -92,4 +93,6 @@ test("public profile parser keeps only public fields", () => {
   assert.equal(parsed?.name, "Luna");
   assert.equal("email" in (parsed ?? {}), false);
   assert.equal(parsed?.services[0]?.min_price_cents, 7000);
+  assert.equal(parsed?.address, "Rua das Flores, 10");
+  assert.equal(parsed?.services[0]?.id, null);
 });

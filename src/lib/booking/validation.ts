@@ -88,6 +88,30 @@ export function canClientCancel(
   return { ok: true };
 }
 
+export function clientAppointmentChangeMessage(
+  reason: "terminal" | "in_progress" | "too_late",
+): string {
+  if (reason === "too_late") {
+    return "Cancelamento e reagendamento só até 2 horas antes do horário.";
+  }
+  if (reason === "in_progress") {
+    return "Este atendimento já começou e não pode ser alterado por aqui.";
+  }
+  return "Este agendamento não pode mais ser alterado.";
+}
+
+export function uniqueClientWorkspaces<T extends { slug: string; workspaceName: string }>(
+  items: T[],
+): { slug: string; name: string }[] {
+  const seen = new Map<string, string>();
+  for (const item of items) {
+    if (!seen.has(item.slug)) {
+      seen.set(item.slug, item.workspaceName);
+    }
+  }
+  return [...seen.entries()].map(([slug, name]) => ({ slug, name }));
+}
+
 export function nextBookingStep(
   current: "service" | "professional" | "date" | "slot" | "details" | "confirm",
 ): typeof current | "success" {
