@@ -84,5 +84,34 @@ test('launch readiness SQL: reviews, rescheduling, roles and timezone', async t 
     await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role anon');await tx.query('select * from public.appointment_reviews');}),/permission denied/);
     await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role anon');await tx.query('select public.submit_appointment_review($1,5,null)',[appointment]);}),/permission denied/);
   });
+  await t.test('appointment_reviews uses FORCE RLS and SECURITY DEFINER functions pin empty search_path', async () => {
+    const rls=(await db.query("select c.relrowsecurity, c.relforcerowsecurity from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relname='appointment_reviews'")).rows[0];
+    assert.equal(rls.relrowsecurity, true);
+    assert.equal(rls.relforcerowsecurity, true);
+    const missing=(await db.query(`
+      select n.nspname, p.proname
+      from pg_proc p
+      join pg_namespace n on n.oid=p.pronamespace
+      where p.prosecdef
+        and n.nspname in ('app','public')
+        and (
+          p.proconfig is null
+          or not exists (
+            select 1 from unnest(p.proconfig) as cfg(value)
+            where cfg.value like 'search_path=%'
+          )
+        )
+    `)).rows;
+    assert.deepEqual(missing, []);
+    const publicExecute=(await db.query(`
+      select grantee, routine_name
+      from information_schema.routine_privileges
+      where specific_schema='public'
+        and routine_name in ('submit_appointment_review','list_my_reschedule_slots')
+        and privilege_type='EXECUTE'
+        and grantee in ('PUBLIC','anon')
+    `)).rows;
+    assert.deepEqual(publicExecute, []);
+  });
 });
 

@@ -5,18 +5,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { loadMyAppointments } from "@/lib/booking/queries";
 import { partitionClientAppointments } from "@/lib/booking/validation";
+import { loadReviewsResult } from "@/lib/reviews/queries";
 import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
 
 export default async function ClientePage() {
   const session = await requireConfirmedSession("/cliente");
-  const appointments = await loadMyAppointments();
+  const [appointments, { reviews, schemaReady }] = await Promise.all([
+    loadMyAppointments(),
+    loadReviewsResult(),
+  ]);
   const { upcoming, past } = partitionClientAppointments(appointments);
   const next = upcoming[0];
   const firstName = session.profile.fullName.split(/\s+/)[0] || "cliente";
   const metrics = [
     { icon: CalendarCheck2, label: "Próximos", value: upcoming.length, hint: "horários à frente" },
     { icon: Clock3, label: "Histórico", value: past.length, hint: "atendimentos anteriores" },
-    { icon: Star, label: "Avaliações", value: "—", hint: "sincronização pendente" },
+    {
+      icon: Star,
+      label: "Avaliações",
+      value: schemaReady ? reviews.length : "—",
+      hint: schemaReady ? "notas enviadas" : "aguardando schema remoto",
+    },
   ];
 
   return (

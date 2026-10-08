@@ -70,6 +70,9 @@ for (const role of ["owner", "admin", "professional", "receptionist"] as const) 
     assert.ok(links.includes("/app"));
     assert.ok(links.includes("/app/agenda"));
     assert.ok(links.includes("/app/clientes"));
+    const reviews = getAppNavigation(role).flatMap((group) => group.items).find((item) => item.href === "/app/avaliacoes");
+    assert.equal(reviews?.href, "/app/avaliacoes");
+    assert.equal(reviews?.integrationPending, undefined);
   });
 
   for (const route of routes) {

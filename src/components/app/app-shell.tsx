@@ -161,7 +161,7 @@ export function AppShell({
               >
                 <Menu className="size-5" />
               </SheetTrigger>
-              <SheetContent side="left" className="w-[88%] p-0 sm:max-w-xs">
+              <SheetContent side="left" className="w-[88%] gap-0 p-0 sm:max-w-xs">
                 <SheetHeader className="border-b border-border/70 p-5 text-left">
                   <SheetTitle><BrandLogo size="md" /></SheetTitle>
                   <SheetDescription className="sr-only">Navegação do Agendê</SheetDescription>
@@ -179,6 +179,23 @@ export function AppShell({
                 </SheetHeader>
                 <div className="min-h-0 flex-1 overflow-y-auto p-4">
                   <Navigation pathname={pathname} role={role} onNavigate={() => setMobileOpen(false)} />
+                </div>
+                <div className="grid gap-2 border-t border-border/70 p-4">
+                  {workspaceSlug ? (
+                    <Button
+                      variant="outline"
+                      className="h-11 justify-start rounded-2xl"
+                      render={<Link href={`/p/${workspaceSlug}`} target="_blank" />}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Ver página pública <ExternalLink className="ml-auto size-3.5" />
+                    </Button>
+                  ) : null}
+                  <form action={signOutAction}>
+                    <Button type="submit" variant="ghost" className="h-11 w-full justify-start rounded-2xl">
+                      <LogOut className="size-4" /> Sair da conta
+                    </Button>
+                  </form>
                 </div>
               </SheetContent>
             </Sheet>

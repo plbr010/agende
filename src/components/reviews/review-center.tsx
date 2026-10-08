@@ -46,9 +46,30 @@ export function ReviewCenter({ appointments, initialReviews }: { appointments: M
               </CardHeader>
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">{formatDateTimeInTimeZone(appointment.startsAt, appointment.timezone)}</p>
-                {reviews.some(r => r.appointment_id === appointment.id) ? <div><p>Nota: {reviews.find(r => r.appointment_id === appointment.id)?.rating}/5</p><p>{reviews.find(r => r.appointment_id === appointment.id)?.comment}</p><p className="text-xs">Avaliação enviada. Não permite edição.</p></div> : <Button variant="outline" className="h-11 rounded-full" onClick={() => { setRating(0); setComment(""); setMessage(""); setSelected(appointment); }}>
-                  <Star className="size-4" /> Avaliar atendimento
-                </Button>}
+                {reviews.some((review) => review.appointment_id === appointment.id) ? (
+                  <div className="rounded-2xl bg-secondary/60 p-4">
+                    <p className="font-medium">
+                      Nota: {reviews.find((review) => review.appointment_id === appointment.id)?.rating}/5
+                    </p>
+                    <p className="mt-1 text-sm leading-6">
+                      {reviews.find((review) => review.appointment_id === appointment.id)?.comment || "Sem comentário."}
+                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground">Avaliação enviada. Não permite edição.</p>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="h-11 rounded-full"
+                    onClick={() => {
+                      setRating(0);
+                      setComment("");
+                      setMessage("");
+                      setSelected(appointment);
+                    }}
+                  >
+                    <Star className="size-4" /> Avaliar atendimento
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))
