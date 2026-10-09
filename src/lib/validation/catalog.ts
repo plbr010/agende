@@ -49,7 +49,9 @@ export const serviceSchema = z.object({
     .min(1, "Informe o preço.")
     .refine((value) => parseReaisToCents(value) !== null, "Informe um preço válido em reais."),
   active: z.boolean().default(true),
-  professionalMemberIds: z.array(z.string().uuid()).default([]),
+  professionalMemberIds: z
+    .array(z.string().uuid())
+    .min(1, "Escolha ao menos uma profissional para realizar o serviço."),
 });
 
 export const clientSchema = z.object({

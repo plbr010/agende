@@ -17,31 +17,53 @@ test("formats cents as BRL", () => {
   assert.match(formatCentsToReais(8050), /80,50/);
 });
 
+const professionalId = "11111111-1111-4111-8111-111111111111";
+
 test("rejects negative service price and invalid duration", () => {
   assert.equal(serviceSchema.safeParse({
     name: "Corte",
     durationMinutes: 45,
     priceReais: "-10",
+    professionalMemberIds: [professionalId],
   }).success, false);
   assert.equal(serviceSchema.safeParse({
     name: "Corte",
     durationMinutes: 2,
     priceReais: "50",
+    professionalMemberIds: [professionalId],
   }).success, false);
   assert.equal(serviceSchema.safeParse({
     name: "Corte",
     durationMinutes: 480,
     priceReais: "50",
+    professionalMemberIds: [professionalId],
   }).success, true);
   assert.equal(serviceSchema.safeParse({
     name: "Corte",
     durationMinutes: 481,
     priceReais: "50",
+    professionalMemberIds: [professionalId],
   }).success, false);
   assert.equal(serviceSchema.safeParse({
     name: "Corte feminino",
     durationMinutes: 45,
     priceReais: "80,00",
+    professionalMemberIds: [professionalId],
+  }).success, true);
+});
+
+test("service requires at least one professional", () => {
+  assert.equal(serviceSchema.safeParse({
+    name: "Corte",
+    durationMinutes: 45,
+    priceReais: "80,00",
+    professionalMemberIds: [],
+  }).success, false);
+  assert.equal(serviceSchema.safeParse({
+    name: "Corte",
+    durationMinutes: 45,
+    priceReais: "80,00",
+    professionalMemberIds: [professionalId],
   }).success, true);
 });
 

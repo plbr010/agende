@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseInviteForm, parseWorkspaceSettingsForm } from "./validation";
-import { parsePublicWorkspaceProfile } from "./public";
+import { bookablePublicServices, parsePublicWorkspaceProfile } from "./public";
 
 test("settings form normalizes slug, phone, instagram and CEP", () => {
   const form = new FormData();
@@ -95,4 +95,19 @@ test("public profile parser keeps only public fields", () => {
   assert.equal(parsed?.services[0]?.min_price_cents, 7000);
   assert.equal(parsed?.address, "Rua das Flores, 10");
   assert.equal(parsed?.services[0]?.id, null);
+});
+
+test("bookablePublicServices hides services without a published professional", () => {
+  const profile = parsePublicWorkspaceProfile({
+    name: "Luna",
+    slug: "luna",
+    services: [
+      { id: "11111111-1111-4111-8111-111111111111", name: "Corte", duration_minutes: 45, price_cents: 8000 },
+      { id: "22222222-2222-4222-8222-222222222222", name: "Coloração", duration_minutes: 90, price_cents: 18000 },
+    ],
+    professionals: [{ display_name: "Ana", bio: null, services: ["Corte"] }],
+  });
+  assert.ok(profile);
+  const bookable = bookablePublicServices(profile!);
+  assert.deepEqual(bookable.map((service) => service.name), ["Corte"]);
 });

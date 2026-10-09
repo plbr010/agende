@@ -1,0 +1,195 @@
+{
+  "base": "http://localhost:3000",
+  "generatedAt": "2026-10-09T16:30:59.231Z",
+  "results": [
+    {
+      "name": "desktop-1366-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-landing.png"
+    },
+    {
+      "name": "desktop-1366-cadastro",
+      "path": "/cadastro",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-cadastro.png"
+    },
+    {
+      "name": "desktop-1366-cadastro-client",
+      "path": "/cadastro?intent=client",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-cadastro-client.png"
+    },
+    {
+      "name": "desktop-1366-login",
+      "path": "/login",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-login.png"
+    },
+    {
+      "name": "desktop-1366-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-public-profile.png"
+    },
+    {
+      "name": "desktop-1366-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-public-booking.png"
+    },
+    {
+      "name": "desktop-1366-public-profile-booking-state",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-public-profile-booking-state.png"
+    },
+    {
+      "name": "desktop-1366-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-app-guard.png"
+    },
+    {
+      "name": "desktop-1366-cliente-guard",
+      "path": "/cliente",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/desktop-1366-cliente-guard.png"
+    },
+    {
+      "name": "iphone-14-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-landing.png"
+    },
+    {
+      "name": "iphone-14-cadastro",
+      "path": "/cadastro",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-cadastro.png"
+    },
+    {
+      "name": "iphone-14-cadastro-client",
+      "path": "/cadastro?intent=client",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-cadastro-client.png"
+    },
+    {
+      "name": "iphone-14-login",
+      "path": "/login",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-login.png"
+    },
+    {
+      "name": "iphone-14-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-public-profile.png"
+    },
+    {
+      "name": "iphone-14-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-public-booking.png"
+    },
+    {
+      "name": "iphone-14-public-profile-booking-state",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-public-profile-booking-state.png"
+    },
+    {
+      "name": "iphone-14-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-app-guard.png"
+    },
+    {
+      "name": "iphone-14-cliente-guard",
+      "path": "/cliente",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/iphone-14-cliente-guard.png"
+    },
+    {
+      "name": "android-small-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-landing.png"
+    },
+    {
+      "name": "android-small-cadastro",
+      "path": "/cadastro",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-cadastro.png"
+    },
+    {
+      "name": "android-small-cadastro-client",
+      "path": "/cadastro?intent=client",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-cadastro-client.png"
+    },
+    {
+      "name": "android-small-login",
+      "path": "/login",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-login.png"
+    },
+    {
+      "name": "android-small-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-public-profile.png"
+    },
+    {
+      "name": "android-small-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-public-booking.png"
+    },
+    {
+      "name": "android-small-public-profile-booking-state",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-public-profile-booking-state.png"
+    },
+    {
+      "name": "android-small-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-app-guard.png"
+    },
+    {
+      "name": "android-small-cliente-guard",
+      "path": "/cliente",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-functional-audit/android-small-cliente-guard.png"
+    }
+  ]
+}

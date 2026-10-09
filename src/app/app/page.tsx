@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricCard } from "@/components/app/metric-card";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
-import { loadAgendaRange } from "@/lib/agenda/queries";
+import { loadAgendaRange, loadWorkingHours } from "@/lib/agenda/queries";
 import { STATUS_LABEL } from "@/lib/agenda/status";
 
 import { formatDateTime } from "@/lib/workspace/timezone";
@@ -44,6 +44,10 @@ export default async function AppPage({
         loadAgendaRange(workspace.id, today, addDaysIso(today, 1)),
       ])
     : [[], [], [], []];
+  const guideMember =
+    team.find((member) => member.hasProfessionalProfile && member.bookingEnabled !== false) ?? team[0];
+  const workingHours =
+    workspace && guideMember ? await loadWorkingHours(workspace.id, guideMember.memberId) : [];
   const activeAppointments = appointments.filter(
     (appointment) => appointment.status !== "cancelled" && appointment.status !== "no_show",
   );
@@ -57,6 +61,29 @@ export default async function AppPage({
     )
     .slice(0, 5);
   const firstName = session.profile.fullName.split(/\s+/)[0] || "profissional";
+  const activeServices = services.filter((service) => service.active);
+  const servicesWithPros = activeServices.filter((service) => service.professionalMemberIds.length > 0);
+  const setupSteps = [
+    {
+      done: servicesWithPros.length > 0,
+      title: "Cadastre um serviço com profissional",
+      href: "/app/servicos",
+      hint: "Sem vínculo, o serviço não aparece na página pública.",
+    },
+    {
+      done: workingHours.length > 0,
+      title: "Configure a jornada da equipe",
+      href: guideMember ? `/app/equipe/${guideMember.memberId}/disponibilidade` : "/app/equipe",
+      hint: "Horários de trabalho liberam as vagas para agendar.",
+    },
+    {
+      done: servicesWithPros.length > 0 && workingHours.length > 0,
+      title: "Compartilhe a página pública",
+      href: workspace ? `/p/${workspace.slug}` : "/app/configuracoes/geral",
+      hint: workspace ? `/p/${workspace.slug}` : "Publique o link do seu negócio.",
+    },
+  ] as const;
+  const setupIncomplete = setupSteps.some((step) => !step.done);
 
   return (
     <>
@@ -64,6 +91,35 @@ export default async function AppPage({
         <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
           Não foi possível ativar sua área de cliente agora. Tente novamente em instantes.
         </p>
+      ) : null}
+      {setupIncomplete ? (
+        <section className="rounded-[2rem] border border-primary/20 bg-secondary/40 px-5 py-5 sm:px-6" aria-label="Primeiros passos">
+          <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">Para abrir a agenda</p>
+          <h2 className="mt-2 font-serif text-2xl">Complete estes passos</h2>
+          <ol className="mt-4 grid gap-3">
+            {setupSteps.map((step, index) => (
+              <li key={step.title}>
+                <Link
+                  href={step.href}
+                  className="flex items-start gap-3 rounded-2xl bg-card px-4 py-3 ring-1 ring-border transition-colors hover:bg-secondary/60"
+                >
+                  <span
+                    className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                      step.done ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                    }`}
+                    aria-label={step.done ? "Concluído" : `Passo ${index + 1}`}
+                  >
+                    {step.done ? "ok" : index + 1}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-medium">{step.title}</span>
+                    <span className="mt-0.5 block text-sm text-muted-foreground">{step.hint}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </section>
       ) : null}
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-primary px-5 py-7 text-primary-foreground shadow-xl shadow-primary/15 sm:px-8 sm:py-9">
         <div className="pointer-events-none absolute -top-24 -right-16 size-64 rounded-full bg-white/10 blur-3xl" />

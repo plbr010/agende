@@ -315,6 +315,27 @@ function AppointmentFormDialog({
             Preço e duração são calculados no servidor. O horário precisa caber na jornada.
           </DialogDescription>
         </DialogHeader>
+        {!appointment && (clients.length === 0 || services.length === 0 || professionals.length === 0) ? (
+          <div className="grid gap-3 rounded-2xl bg-secondary/50 px-4 py-4 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Antes de agendar, complete o básico:</p>
+            {clients.length === 0 ? (
+              <Link href="/app/clientes?novo=1" className="underline underline-offset-4">
+                Cadastre ao menos uma cliente
+              </Link>
+            ) : null}
+            {services.length === 0 ? (
+              <Link href="/app/servicos" className="underline underline-offset-4">
+                Cadastre um serviço com profissional
+              </Link>
+            ) : null}
+            {professionals.length === 0 ? (
+              <Link href="/app/equipe" className="underline underline-offset-4">
+                Ative um profissional na equipe
+              </Link>
+            ) : null}
+            <p>Depois configure a jornada em Equipe → Disponibilidade para liberar horários.</p>
+          </div>
+        ) : null}
         <form action={formAction} className="grid gap-4">
           {appointment ? <input type="hidden" name="appointmentId" value={appointment.id} /> : null}
           <FormFields state={state}>
@@ -323,7 +344,7 @@ function AppointmentFormDialog({
                 <Label htmlFor="clientId">Cliente</Label>
                 <select id="clientId" name="clientId" required className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3" defaultValue="">
                   <option value="" disabled>
-                    Selecione
+                    {clients.length === 0 ? "Nenhuma cliente cadastrada" : "Selecione"}
                   </option>
                   {clients.map((client) => (
                     <option key={client.id} value={client.id}>

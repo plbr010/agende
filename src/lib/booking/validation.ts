@@ -194,5 +194,11 @@ export function sanitizeBookingError(message: string | null | undefined): string
   if (value.includes("appointment_not_found")) {
     return "Não encontramos esse agendamento.";
   }
+  if (value.includes("workspace_unavailable")) {
+    return "A agenda online deste estabelecimento está temporariamente indisponível.";
+  }
+  if (value.includes("workspace_not_found")) {
+    return "Este estabelecimento não está público.";
+  }
   return "Não foi possível concluir. Tente de novo.";
 }
