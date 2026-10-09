@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { reviewDraftSchema } from "@/lib/reviews/validation";
-import { loadReviews, type AppointmentReview } from "@/lib/reviews/queries";
+import { loadReviewsResult, type AppointmentReview } from "@/lib/reviews/queries";
 
 export async function submitReview(input: { appointmentId: string; rating: number; comment: string }): Promise<{ error?: string; reviews?: AppointmentReview[] }> {
   const parsed = reviewDraftSchema.safeParse(input);
@@ -21,7 +21,7 @@ export async function submitReview(input: { appointmentId: string; rating: numbe
   }
   revalidatePath("/cliente/avaliacoes");
   revalidatePath("/app/avaliacoes");
-  const reviews = await loadReviews();
-  if (reviews === null) return { error: "Sua avaliação foi enviada, mas não foi possível atualizar a lista. Atualize a página antes de tentar novamente." };
+  const { reviews, schemaReady } = await loadReviewsResult();
+  if (!schemaReady) return { error: "Sua avaliação foi enviada, mas não foi possível atualizar a lista. Atualize a página antes de tentar novamente." };
   return { reviews };
 }

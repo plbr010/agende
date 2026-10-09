@@ -19,16 +19,22 @@ function pages(dir, route = "") {
 let failed = false;
 for (const path of [...pages("src/app"), "/p/e2e-audit-nonexistent-pr12", "/p/e2e-audit-nonexistent-pr12/agendar", "/auth/callback", "/auth/confirm", "/auth/recovery"]) {
   const response = await fetch(new URL(path, base), { redirect: "manual", signal: AbortSignal.timeout(20000) });
-  const location = response.headers.get("location");
   const body = await response.text();
+  // loading.tsx may start a 200 stream before redirect() emits a refresh tag.
+  const streamedRedirect = body.match(/<meta[^>]+http-equiv="refresh"[^>]+content="0;url=([^"]+)"/i)?.[1];
+  const location = response.headers.get("location") ?? streamedRedirect ?? null;
+  const redirected = [303, 307, 308].includes(response.status) || (response.status === 200 && Boolean(streamedRedirect));
   const protectedRoute = path === "/app" || path.startsWith("/app/") || path === "/cliente" || path.startsWith("/cliente/") || path === "/onboarding";
-  const pass = protectedRoute ? [303, 307, 308].includes(response.status) && Boolean(location?.includes("/login"))
-    : path === "/auth/recovery" || path === "/redefinir-senha" ? [303, 307, 308].includes(response.status) && Boolean(location?.includes("/recuperar-senha?status=expired"))
-    : path.startsWith("/auth/") ? [303, 307, 308].includes(response.status) && Boolean(location?.includes("/verificar-email"))
+  const pass = protectedRoute ? redirected && Boolean(location?.includes("/login"))
+    : path === "/auth/recovery" || path === "/redefinir-senha" ? redirected && Boolean(location?.includes("/recuperar-senha?status=expired"))
+    : path.startsWith("/auth/") ? redirected && Boolean(location?.includes("/verificar-email"))
     // Next.js may send a streamed not-found page with a 200 HTTP response.
     : path.startsWith("/p/") ? [200, 404].includes(response.status) && body.includes("Este estabelecimento não está público")
     : response.status === 200;
-  if (!pass) failed = true;
+  if (!pass) {
+    failed = true;
+    console.error(JSON.stringify({ path, redirectEvidence: body.match(/.{0,40}NEXT_REDIRECT.{0,150}/g), refreshTags: body.match(/<meta[^>]*refresh[^>]*>/gi) }));
+  }
   console.log(JSON.stringify({ path, status: response.status, location, result: pass ? "PASS" : "FAIL" }));
 }
 process.exitCode = failed ? 1 : 0;

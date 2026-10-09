@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import * as validation from "./validation";
-import type { AppointmentReview } from "./queries";
+import type { ReviewsQueryResult } from "./queries";
 
 function moduleFrom<T>(file: string, dependencies: Record<string, unknown>): T {
   const source = readFileSync(new URL(file, import.meta.url), "utf8");
@@ -26,20 +26,22 @@ function loader(error: { code: string; message?: string } | null, signedIn = tru
     eq(...args: unknown[]) { filters.push(args); return this; },
     then(resolve: (value: unknown) => unknown) { return Promise.resolve({ data: [], error }).then(resolve); },
   };
-  const { loadReviews } = moduleFrom<{ loadReviews: (workspaceId?: string) => Promise<AppointmentReview[] | null> }>("./queries.ts", {
+  const { loadReviewsResult } = moduleFrom<{ loadReviewsResult: (workspaceId?: string) => Promise<ReviewsQueryResult> }>("./queries.ts", {
     "@/lib/supabase/server": { createClient: async () => ({
       from: (table: string) => { assert.equal(table, "appointment_reviews"); return query; },
       auth: { getUser: async () => ({ data: { user: signedIn ? { id: "client" } : null } }) },
     }) },
   });
-  return { loadReviews, filters };
+  return { loadReviews: loadReviewsResult, filters };
 }
 
 test("missing reviews schema has an unavailable state distinct from empty reviews", async () => {
-  for (const code of ["PGRST205", "42P01"]) assert.equal(await loader({ code }).loadReviews(), null);
-  assert.equal((await loader(null).loadReviews())?.length, 0);
+  for (const code of ["PGRST205", "42P01"]) assert.equal((await loader({ code }).loadReviews()).schemaReady, false);
+  const empty = await loader(null).loadReviews();
+  assert.equal(empty.schemaReady, true);
+  assert.equal(empty.reviews.length, 0);
   for (const code of ["42501", "PGRST301", "503"]) {
-    await assert.rejects(loader({ code, message: "private diagnostic" }).loadReviews, /Não foi possível carregar/);
+    await assert.rejects(loader({ code, message: "appointment_reviews schema cache private diagnostic" }).loadReviews, /Não foi possível carregar/);
   }
 });
 
@@ -51,7 +53,7 @@ test("reviews stay scoped to the active tenant or verified client", async () => 
   await workspace.loadReviews("workspace");
   assert.equal(JSON.stringify(workspace.filters), JSON.stringify([["workspace_id", "workspace"]]));
   const anonymous = loader({ code: "503" }, false);
-  assert.equal((await anonymous.loadReviews())?.length, 0);
+  assert.equal((await anonymous.loadReviews()).reviews.length, 0);
   assert.equal(anonymous.filters.length, 0);
 });
 
@@ -60,7 +62,7 @@ test("review action handles an undeployed RPC without claiming submission succes
   const { submitReview } = moduleFrom<{ submitReview: (input: unknown) => Promise<{ error?: string }> }>("./actions.ts", {
     "next/cache": { revalidatePath: (path: string) => paths.push(path) },
     "@/lib/reviews/validation": validation,
-    "@/lib/reviews/queries": { loadReviews: async () => { assert.fail("must not refresh failed submission"); } },
+    "@/lib/reviews/queries": { loadReviewsResult: async () => { assert.fail("must not refresh failed submission"); } },
     "@/lib/supabase/server": { createClient: async () => ({ rpc: async () => ({ error: { code: "PGRST202", message: "schema cache" } }) }) },
   });
   const result = await submitReview({ appointmentId: "11111111-1111-4111-8111-111111111111", rating: 5, comment: "" });
@@ -76,11 +78,14 @@ test("both review pages render an unavailable notice without mounting submission
       "lucide-react": { Star: "star" },
       "@/lib/auth/session": { requireConfirmedSession: async () => ({ workspaces: [{ id: "workspace", name: "Studio", slug: "studio" }] }) },
       "@/lib/booking/queries": { loadMyAppointments: async () => [] },
-      "@/lib/reviews/queries": { loadReviews: async () => null },
+      "@/lib/reviews/queries": { loadReviewsResult: async () => ({ reviews: [], schemaReady: false }) },
       "@/lib/reviews/validation": validation,
       "@/lib/workspace/queries": { loadWorkspaceSettings: async () => ({ timezone: "America/Sao_Paulo" }) },
       "@/lib/time/timezone": {},
       "@/components/app/page-header": { PageHeader: "header" },
+      "@/components/app/metric-card": { MetricCard: "metric" },
+      "@/components/ui/card": {},
+      "@/components/modules/backend-contract-notice": { BackendContractNotice: "notice" },
       "@/components/reviews/review-center": { get ReviewCenter() { submissions++; return "review-center"; } },
     });
     const tree = JSON.stringify(await page.default());

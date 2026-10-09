@@ -33,12 +33,12 @@ Uma pessoa tem **uma conta** (`auth.users` + `profiles`). Capacidades são compo
 | `/app/equipe/[member]/disponibilidade` | jornada, pausas e bloqueios |
 | `/app/servicos` | catálogo de serviços do workspace |
 | `/app/clientes` | clientes internos do estabelecimento |
-| `/app/estoque` `/app/pacotes` | módulos operacionais preparados para sincronização remota |
+| `/app/estoque` `/app/pacotes` | estoque e pacotes via RPC |
 | `/app/financeiro` `/app/relatorios` | visão financeira e indicadores dos agendamentos |
-| `/app/avaliacoes` | estrutura de avaliações, aguardando schema remoto |
+| `/app/avaliacoes` | avaliações imutáveis (`appointment_reviews`) |
 | `/cliente` | `client_profiles` |
 | `/cliente/agendamentos` | próximos horários e histórico da cliente |
-| `/cliente/avaliacoes` | preparação de avaliações de atendimentos concluídos |
+| `/cliente/avaliacoes` | envio de avaliações de atendimentos concluídos |
 | `/auth/callback` `/auth/confirm` | troca de código / token de e-mail |
 
 Rotas privadas são barradas no **servidor** (proxy + `getUser()` + RLS).
@@ -94,6 +94,12 @@ npm run build
 Migrations versionadas em `supabase/migrations`. Schema `app` não é exposto na Data API.
 
 Não reescreva migrations já aplicadas no projeto remoto. Correções de banco entram em uma **nova** migration.
+
+As migrations `20260927014947_launch_readiness_reviews` e
+`20261008131859_launch_hardening_reviews_force_rls` estão no Git e ainda não
+constam do snapshot remoto de 27/09/2026. Validação e ordem de aplicação:
+[docs/migrations/launch-readiness-2026-10-08.md](docs/migrations/launch-readiness-2026-10-08.md).
+Não aplicar em produção sem revisão humana.
 
 ## Testes SQL da fundação
 

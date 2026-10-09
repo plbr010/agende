@@ -1,6 +1,7 @@
 # Auditoria de lançamento — 08/10/2026
 
-Lançamento previsto: 15/10/2026. Base: `main`, commit `3bd1acd` (PR #13).
+Lançamento previsto: 15/10/2026. Base inicial: `main`, commit `3bd1acd` (PR #13).
+Base final incorporada na branch: `9a0be97` (PR #14).
 Branch de trabalho: `codex/launch-2026-10-15-audit`.
 
 ## Ambiente e preservação
@@ -28,8 +29,10 @@ invocar npm-cli.js pelo executável Node 24.
 - Atualizações transitivas compatíveis: sharp 0.35.5, source-map-js 1.2.2 e
   @modelcontextprotocol/sdk 1.32.1, com lockfile atualizado. Não foi usado
   `npm audit fix --force`.
-- A consulta de avaliações distingue schema ausente (`null`) de lista vazia
-  (`[]`). As páginas profissional/cliente mostram indisponibilidade sem montar
+- A consulta de avaliações preserva o contrato `schemaReady` introduzido no
+  PR #14 e distingue schema ausente de lista vazia. Códigos explícitos de
+  permissão/autenticação/transporte não são ocultados por texto de erro.
+  As páginas profissional/cliente mostram indisponibilidade sem montar
   o formulário de envio quando a tabela não existe. Erros de permissão,
   autenticação e transporte continuam sendo erros, sem virar lista vazia.
 - A action de avaliações trata RPC ausente e não anuncia sucesso. Após uma
@@ -46,7 +49,7 @@ invocar npm-cli.js pelo executável Node 24.
 | npm ci | PASS | Instalação limpa do lockfile final com Node 24 |
 | npm run lint | PASS | Código e scripts locais |
 | npm run typecheck | PASS | Tipos de rotas e TypeScript |
-| npm test | PASS | 145 testes; zero falhas/skips, incluindo 4 regressões novas |
+| npm test | PASS | 149 testes; zero falhas/skips, incluindo 4 regressões novas |
 | npm run build | PASS | Next.js 16.3.8, geração estática 33/33 |
 | node scripts/audit-local-flows.mjs | PASS | 5 suítes SQL, 99 cenários identificados |
 | node scripts/verify-stripe-recovery.mjs | PASS | Integridade histórica e hashes contra snapshot de 27/09 |
@@ -77,9 +80,10 @@ do histórico e catálogo, não de aplicação de migrations.
 | --- | --- | --- |
 | 20260919201138_hardening_snapshot_owner_timezone | Remota; SQL ausente no Git e `statements=[]` no histórico | Recuperar SQL original em backup/artefato do autor; não inventar migration histórica |
 | 20260927014947_launch_readiness_reviews | Local, ainda ausente no remoto | Aprovação e rollout separado do banco, com verificação posterior |
+| 20261008131859_launch_hardening_reviews_force_rls | Incorporada do PR #14; local e ausente no snapshot remoto de 08/10 | Aplicar depois da migration de avaliações, somente com aprovação |
 
-São 63 versões locais e 63 remotas, mas os conjuntos diferem nesses dois itens.
-A mesma contagem não comprova reconciliação. O remoto também conserva três
+São 64 versões locais e 63 remotas, com uma versão remota ausente no Git e
+duas versões locais pendentes no remoto. O remoto também conserva três
 entradas de public_booking com o comentário `-- applied via execute_sql`,
 não o SQL original; os arquivos completos existentes no Git foram preservados.
 O remoto possui `app.enforce_active_owner`, `app.lock_workspace_membership` e
@@ -129,7 +133,8 @@ do endpoint LIVE e não devem ser anunciados como fluxo externo validado.
 
 ## Bloqueios antes de liberar o lançamento
 
-1. Aprovar e verificar o rollout da migration de avaliações/reagendamento;
+1. Aprovar e verificar o rollout das duas migrations de avaliações/reagendamento
+   e hardening;
    confirmar schema, grants/RLS, read model e jornadas após a aplicação.
 2. Recuperar o SQL histórico perdido e comparar schema local/remoto, incluindo
    o guard de último owner. Não executar repair/reaplicação por suposição.

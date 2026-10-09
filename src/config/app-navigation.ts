@@ -45,7 +45,7 @@ export const appNavigation: AppNavigationGroup[] = [
       { href: "/app/pacotes", label: "Pacotes", description: "Combos e créditos", icon: PackageCheck },
       { href: "/app/financeiro", label: "Financeiro", description: "Entradas e saídas", icon: CircleDollarSign },
       { href: "/app/relatorios", label: "Relatórios", description: "Indicadores do negócio", icon: ChartNoAxesCombined },
-      { href: "/app/avaliacoes", label: "Avaliações", description: "Reputação e feedbacks", icon: Star, integrationPending: true },
+      { href: "/app/avaliacoes", label: "Avaliações", description: "Reputação e feedbacks", icon: Star },
     ],
   },
 ];

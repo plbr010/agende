@@ -1,33 +1,35 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { loadAppSession } from "@/lib/auth/session";
+import { canAccessWorkspaceRecord, isWorkspaceId } from "@/lib/workspace/access";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
+function forbidden() {
+  return NextResponse.json({ error: "forbidden" }, { status: 403 });
+}
+
 export async function GET(_request: Request, context: RouteContext) {
   const { id } = await context.params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!isWorkspaceId(id)) {
+    return forbidden();
+  }
 
-  if (!user?.email_confirmed_at) {
+  const session = await loadAppSession();
+  if (!session?.user.emailConfirmed) {
     return NextResponse.json({ error: "forbidden" }, { status: 401 });
   }
-
-  const { data, error } = await supabase
-    .from("workspaces")
-    .select("id, name, slug")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
-  if (!data) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  if (!canAccessWorkspaceRecord(session.workspaces, id)) {
+    return forbidden();
   }
 
-  return NextResponse.json({ workspace: data });
+  const workspace = session.workspaces.find((item) => item.id === id);
+  if (!workspace) {
+    return forbidden();
+  }
+
+  return NextResponse.json({
+    workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug },
+  });
 }
