@@ -35,13 +35,18 @@ export function SignupForm({
   return (
     <form action={action} className="space-y-6">
       {next ? <input type="hidden" name="next" value={next} /> : null}
-      {plan ? <input type="hidden" name="plan" value={plan} /> : null}
+      {plan && intent === "professional" ? <input type="hidden" name="plan" value={plan} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />
       <input type="hidden" name="termsAccepted" value={terms ? "true" : "false"} />
 
       <div className="space-y-3">
         <h1 className="font-serif text-3xl leading-tight">Como você quer usar o Agendê?</h1>
         <p className="text-muted-foreground">Escolha um caminho agora. Depois você pode viver os dois lados.</p>
+        {plan && intent === "client" ? (
+          <p className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm text-muted-foreground">
+            O plano selecionado vale só para a conta profissional. Como cliente, a área continua gratuita.
+          </p>
+        ) : null}
         <div role="radiogroup" aria-label="Como você quer usar o Agendê?" className="grid gap-3">
           <button
             type="button"
@@ -49,7 +54,7 @@ export function SignupForm({
             aria-checked={intent === "client"}
             onClick={() => setIntent("client")}
             className={cn(
-              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               intent === "client" && "ring-2 ring-primary",
             )}
           >
@@ -62,7 +67,7 @@ export function SignupForm({
             aria-checked={intent === "professional"}
             onClick={() => setIntent("professional")}
             className={cn(
-              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               intent === "professional" && "ring-2 ring-primary",
             )}
           >

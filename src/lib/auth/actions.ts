@@ -230,7 +230,7 @@ export async function createWorkspaceAction(
     return { error: "Não foi possível criar o negócio. Tente novamente." };
   }
 
-  redirect("/app");
+  redirect("/app?setup=1");
 }
 
 export async function enableClientProfileAction(): Promise<void> {
