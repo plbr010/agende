@@ -193,8 +193,8 @@ usado o ambiente LIVE como substituto.
 
 ## 8. PR e evidências
 
-PR da branch `codex/launch-final-hardening` para main: link será inserido após
-a publicação. Sem merge automático.
+PR da branch `codex/launch-final-hardening` para main:
+[PR #19](https://github.com/plbr010/agende/pull/19). Sem merge automático.
 
 - `docs/migrations/remote-final-2026-10-09.json`: catálogo/histórico por leitura.
 - `docs/migrations/drift-final-2026-10-09.json`: comparação offline reproduzível.
