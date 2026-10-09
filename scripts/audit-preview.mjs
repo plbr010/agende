@@ -21,7 +21,8 @@ for (const path of [...pages("src/app"), "/p/e2e-audit-nonexistent-pr12", "/p/e2
   const response = await fetch(new URL(path, base), { redirect: "manual", signal: AbortSignal.timeout(20000) });
   const body = await response.text();
   // loading.tsx may start a 200 stream before redirect() emits a refresh tag.
-  const streamedRedirect = body.match(/<meta[^>]+http-equiv="refresh"[^>]+content="0;url=([^"]+)"/i)?.[1];
+  // Next.js uses 0 for push and 1 for replace navigation.
+  const streamedRedirect = body.match(/<meta[^>]+http-equiv="refresh"[^>]+content="[01];url=([^"]+)"/i)?.[1];
   const location = response.headers.get("location") ?? streamedRedirect ?? null;
   const redirected = [303, 307, 308].includes(response.status) || (response.status === 200 && Boolean(streamedRedirect));
   const protectedRoute = path === "/app" || path.startsWith("/app/") || path === "/cliente" || path.startsWith("/cliente/") || path === "/onboarding";

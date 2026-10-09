@@ -150,6 +150,29 @@ do endpoint LIVE e não devem ser anunciados como fluxo externo validado.
    produção deve ser avaliada separadamente; não se afirma risco zero.
 6. Revisar configuração de senhas vazadas e redirects Auth no ambiente alvo.
 
-Sem merge, deploy manual, migrations/DDL/repair remotos, alterações de produção
+## Integração com a main — 2026-10-09
+
+A branch `codex/launch-2026-10-15-audit` incorpora a main no commit
+`5935dd0` (PR #16), preservando a interface do Cursor, Next.js e
+eslint-config-next 16.3.8, as dependências da auditoria e os testes adicionais.
+As avaliações usam `loadReviewsResult` nas páginas e na action: schema ausente
+mostra indisponibilidade, enquanto erros de permissão, autenticação e transporte
+continuam sendo falhas. Nenhuma alteração local anterior foi descartada.
+
+Validação local com Node 24.19.0: `npm ci`, lint, typecheck, test, build e
+test novamente aprovados; 156 testes em cada execução, sem falhas ou skips.
+As cinco suítes SQL locais e o verificador histórico também passaram.
+O smoke test aprovou as 32 sondagens HTTP após corrigir o reconhecimento
+do redirect por streaming com `content="1;url=..."` do Next.js; o script
+anterior aceitava apenas `0;url`. O destino esperado continua sendo verificado.
+O build e as sondagens usaram configuração sintética. SQL foi executado
+somente em memória, e as chamadas de cobrança dos testes foram simuladas.
+
+`npm audit` ainda reporta nove alertas high na cadeia braces/micromatch;
+o downgrade incompatível de shadcn sugerido pelo audit não foi aplicado.
+Os bloqueios de lançamento acima permanecem pendentes; a integração e os
+checks locais não demonstram jornadas autenticadas ou pagamentos externos.
+
+Sem merge do PR, deploy manual, migrations/DDL/repair remotos, alterações de produção
 ou pagamentos reais. O PR entrega código e evidências; lançamento não liberado
 automaticamente pelos checks locais.
