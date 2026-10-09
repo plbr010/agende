@@ -20,9 +20,9 @@ export function isMissingReviewsRelation(
   }
   const code = error.code ?? "";
   const message = error.message ?? "";
+  // Explicit permission/auth/transport codes must not be hidden by a message.
+  if (code) return code === "42P01" || code === "PGRST205";
   return (
-    code === "42P01" ||
-    code === "PGRST205" ||
     (/appointment_reviews/i.test(message) &&
       /does not exist|schema cache|could not find/i.test(message))
   );

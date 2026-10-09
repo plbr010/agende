@@ -26,7 +26,7 @@ export default async function ClientReviewsPage() {
       {!schemaReady ? (
         <BackendContractNotice
           title="Ainda não é possível publicar avaliações"
-          description="Seus atendimentos estão salvos. A publicação de notas depende da migration de avaliações no banco remoto."
+          description="As avaliações estão temporariamente indisponíveis. Seus agendamentos continuam disponíveis."
           fields={["Somente atendimentos concluídos", "Nota de 1 a 5", "Comentário opcional", "Envio único e irreversível"]}
         />
       ) : (

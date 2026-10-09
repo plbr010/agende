@@ -31,8 +31,8 @@ export default async function ReviewsPage() {
       />
       {!schemaReady ? (
         <BackendContractNotice
-          title="Avaliações ainda não estão no banco remoto"
-          description="O aplicativo já está pronto. A tabela appointment_reviews precisa da migration de lançamento documentada em docs/migrations/launch-readiness-2026-10-08.md."
+          title="Avaliações temporariamente indisponíveis"
+          description="As avaliações estão temporariamente indisponíveis. Tente novamente mais tarde."
           fields={["Nota de 1 a 5", "Comentário opcional", "Uma avaliação por atendimento", "Isolamento por workspace"]}
         />
       ) : (
