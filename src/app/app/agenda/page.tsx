@@ -17,7 +17,7 @@ function weekStart(date: string, timezone: string): string {
 export default async function AgendaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string; view?: string; professional?: string }>;
+  searchParams: Promise<{ date?: string; view?: string; professional?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/agenda");
   const workspace = session.workspaces[0];
@@ -85,6 +85,7 @@ export default async function AgendaPage({
         selectedProfessionalId={professional}
         role={workspace.role}
         currentMemberId={currentMemberId}
+        startCreating={params.novo === "1"}
       />
     </>
   );

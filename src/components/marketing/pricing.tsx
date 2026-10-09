@@ -1,4 +1,5 @@
 import { MARKETING_CTAS, PLANS } from "@/lib/marketing/content";
+import { TRIAL_COPY, planSignupHref } from "@/lib/billing/plans";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +15,7 @@ export function MarketingPricing() {
             Escolha o tamanho do seu estúdio.
           </h2>
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Todos os planos incluem 7 dias grátis. Sem cartão para começar.
+            Solo, Equipe ou Salão. Todos incluem 7 dias grátis, sem cartão para começar.
           </p>
         </div>
 
@@ -58,26 +59,41 @@ export function MarketingPricing() {
                   {plan.period}
                 </span>
               </p>
+              <p
+                className={cn(
+                  "mt-2 text-sm",
+                  plan.popular ? "text-primary-foreground/75" : "text-muted-foreground",
+                )}
+              >
+                ou {plan.annualPrice}
+              </p>
               <ul
                 className={cn(
                   "mt-6 space-y-2 text-sm",
                   plan.popular ? "text-primary-foreground/90" : "text-muted-foreground",
                 )}
               >
-                <li>7 dias grátis</li>
-                <li>Sem cartão para começar</li>
-                <li>Agenda e link de agendamento</li>
+                <li>7 dias grátis, sem cartão</li>
+                {plan.highlights.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
               <MarketingLinkButton
-                href={MARKETING_CTAS.primary.href}
+                href={planSignupHref(plan.id)}
                 variant={plan.popular ? "secondary" : "default"}
                 className="mt-8 h-12 min-h-12 w-full rounded-full text-base"
               >
-                {MARKETING_CTAS.primary.label}
+                Começar com {plan.name}
               </MarketingLinkButton>
             </article>
           ))}
         </div>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">{TRIAL_COPY}</p>
+        <p className="mt-3 text-center text-sm">
+          <a href={MARKETING_CTAS.primary.href} className="underline underline-offset-4">
+            Prefere decidir o plano depois? Começar 7 dias grátis
+          </a>
+        </p>
       </div>
     </section>
   );

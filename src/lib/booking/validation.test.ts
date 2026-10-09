@@ -8,11 +8,13 @@ import {
 } from "./config";
 import {
   canClientCancel,
+  clientAppointmentChangeMessage,
   nextBookingStep,
   parsePublicBookingDetails,
   partitionClientAppointments,
   previousBookingStep,
   sanitizeBookingError,
+  uniqueClientWorkspaces,
 } from "./validation";
 import { bookingWhatsAppText, buildIcs, buildWhatsAppLink } from "./calendar";
 import { parsePublicBookingCatalog, parseMyAppointments, parsePublicBookingConfirmation } from "./queries";
@@ -85,6 +87,22 @@ test("client cancel helpers respect terminal status and 2h lead", () => {
   assert.equal(canClientCancel("scheduled", "2026-09-18T16:30:00.000Z", CLIENT_CANCEL_LEAD_MINUTES, now).ok, false);
   assert.equal(canClientCancel("completed", "2026-09-18T18:00:00.000Z", CLIENT_CANCEL_LEAD_MINUTES, now).reason, "terminal");
   assert.equal(canClientCancel("in_progress", "2026-09-18T18:00:00.000Z", CLIENT_CANCEL_LEAD_MINUTES, now).reason, "in_progress");
+  assert.match(clientAppointmentChangeMessage("too_late"), /2 horas/);
+  assert.match(clientAppointmentChangeMessage("in_progress"), /já começou/);
+});
+
+test("uniqueClientWorkspaces keeps first name per slug", () => {
+  assert.deepEqual(
+    uniqueClientWorkspaces([
+      { slug: "luna", workspaceName: "Luna" },
+      { slug: "luna", workspaceName: "Luna Studio" },
+      { slug: "ana", workspaceName: "Studio Ana" },
+    ]),
+    [
+      { slug: "luna", name: "Luna" },
+      { slug: "ana", name: "Studio Ana" },
+    ],
+  );
 });
 
 test("sanitize booking errors never leak internals", () => {

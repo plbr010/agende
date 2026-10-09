@@ -11,6 +11,7 @@ import {
   loadTimeBlocks,
   loadWorkingHours,
 } from "@/lib/agenda/queries";
+import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { Button } from "@/components/ui/button";
 
 export default async function AvailabilityPage({
@@ -25,12 +26,13 @@ export default async function AvailabilityPage({
   }
 
   const { memberId } = await params;
-  const [team, currentMemberId, hours, breaks, blocks] = await Promise.all([
+  const [team, currentMemberId, hours, breaks, blocks, settings] = await Promise.all([
     loadTeam(workspace.id),
     loadCurrentMemberId(workspace.id, session.user.id),
     loadWorkingHours(workspace.id, memberId),
     loadBreaks(workspace.id, memberId),
     loadTimeBlocks(workspace.id, memberId),
+    loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug),
   ]);
 
   const member = team.find((row) => row.memberId === memberId && row.hasProfessionalProfile);
@@ -53,6 +55,7 @@ export default async function AvailabilityPage({
         blocks={blocks}
         canEditJornada={canManageJornada(workspace.role, isOwn)}
         canEditBlocks={canManageTimeBlocks(workspace.role, isOwn)}
+        timezone={settings.timezone}
       />
     </>
   );

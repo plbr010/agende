@@ -1,6 +1,7 @@
 import { getSupabaseUrl } from "@/lib/supabase/env";
 
 export type PublicService = {
+  id: string | null;
   name: string;
   description: string | null;
   duration_minutes: number;
@@ -10,6 +11,7 @@ export type PublicService = {
 };
 
 export type PublicProfessional = {
+  id: string | null;
   display_name: string;
   bio: string | null;
   services: string[];
@@ -19,6 +21,7 @@ export type PublicWorkspaceProfile = {
   name: string;
   slug: string;
   description: string | null;
+  address: string | null;
   city: string | null;
   state: string | null;
   instagram: string | null;
@@ -62,6 +65,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
         if (!serviceName) return [];
         return [
           {
+            id: asString(row.id),
             name: serviceName,
             description: asString(row.description),
             duration_minutes: asNumber(row.duration_minutes),
@@ -81,6 +85,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
         if (!displayName) return [];
         return [
           {
+            id: asString(row.id),
             display_name: displayName,
             bio: asString(row.bio),
             services: Array.isArray(row.services)
@@ -96,6 +101,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
     name,
     slug,
     description: asString(data.description),
+    address: asString(data.address),
     city: asString(data.city),
     state: asString(data.state),
     instagram: asString(data.instagram),

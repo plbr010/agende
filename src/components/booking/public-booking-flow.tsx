@@ -29,7 +29,8 @@ import type {
   PublicBookingService,
 } from "@/lib/booking/queries";
 import { parsePublicBookingDetails, previousBookingStep } from "@/lib/booking/validation";
-import { addDaysIso, formatDateTimeInTimeZone, todayInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
+import { addDaysIso, formatDateTimeInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
+import { formatPhoneBr } from "@/lib/validation/phone";
 import { formatCentsToReais } from "@/lib/validation/money";
 
 const STEP_LABEL: Record<BookingStep, string> = {
@@ -50,9 +51,11 @@ type Prefill = {
 export function PublicBookingFlow({
   catalog,
   prefill,
+  today,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
+  today: string;
 }) {
   const [step, setStep] = useState<BookingStep>("service");
   const [serviceId, setServiceId] = useState<string | null>(null);
@@ -254,6 +257,7 @@ export function PublicBookingFlow({
           <DateStep
             timezone={catalog.timezone}
             horizonDays={catalog.horizonDays}
+            today={today}
             selected={localDate}
             onSelect={selectDate}
           />
@@ -300,6 +304,7 @@ export function PublicBookingFlow({
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 className="h-12 rounded-2xl"
+                required
                 aria-invalid={Boolean(fieldErrors.fullName)}
               />
               {fieldErrors.fullName ? <p className="text-sm text-destructive">{fieldErrors.fullName}</p> : null}
@@ -313,8 +318,9 @@ export function PublicBookingFlow({
                 inputMode="tel"
                 autoComplete="tel"
                 value={phone}
-                onChange={(event) => setPhone(event.target.value)}
+                onChange={(event) => setPhone(formatPhoneBr(event.target.value))}
                 className="h-12 rounded-2xl"
+                required
                 aria-invalid={Boolean(fieldErrors.phone)}
               />
               {fieldErrors.phone ? <p className="text-sm text-destructive">{fieldErrors.phone}</p> : null}
@@ -329,6 +335,7 @@ export function PublicBookingFlow({
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 className="h-12 rounded-2xl"
+                required
                 aria-invalid={Boolean(fieldErrors.email)}
               />
               {fieldErrors.email ? <p className="text-sm text-destructive">{fieldErrors.email}</p> : null}
@@ -348,6 +355,12 @@ export function PublicBookingFlow({
               Revisar agendamento
             </Button>
           </section>
+        ) : null}
+
+        {step === "confirm" && (!service || !startsAt) ? (
+          <p className="text-sm text-destructive" role="alert">
+            Faltam dados para confirmar. Volte e escolha o horário novamente.
+          </p>
         ) : null}
 
         {step === "confirm" && service && startsAt ? (
@@ -420,12 +433,23 @@ function ProfessionalStep({
   service: PublicBookingService | null;
   onSelect: (id: string | typeof ANY_PROFESSIONAL) => void;
 }) {
+  if (people.length === 0) {
+    return (
+      <section className="grid gap-3" aria-label="Escolher profissional">
+        <p className="rounded-3xl bg-secondary/50 p-5 text-sm" role="status">
+          Nenhuma profissional atende este serviço no momento. Volte e escolha outro serviço, ou fale com o
+          estabelecimento.
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section className="grid gap-3" aria-label="Escolher profissional">
       <button
         type="button"
         onClick={() => onSelect(ANY_PROFESSIONAL)}
-        className="rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border hover:ring-primary"
+        className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border hover:ring-primary"
       >
         <h2 className="font-serif text-2xl">Qualquer profissional disponível</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -458,20 +482,21 @@ function ProfessionalStep({
   );
 }
 
-const WEEKDAY_LABELS = ["D", "S", "T", "Q", "Q", "S", "S"];
+const WEEKDAY_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 function DateStep({
   timezone,
   horizonDays,
+  today,
   selected,
   onSelect,
 }: {
   timezone: string;
   horizonDays: number;
+  today: string;
   selected: string | null;
   onSelect: (date: string) => void;
 }) {
-  const today = todayInTimeZone(timezone);
   const last = addDaysIso(today, horizonDays);
   const months = useMemo(() => {
     const days: string[] = [];

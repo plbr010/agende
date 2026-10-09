@@ -25,7 +25,7 @@ export function ManagementForm({ action, label, id, children, confirm, idempoten
     return <form action={submit} onSubmit={event => { if (confirm && !window.confirm(confirm))
         event.preventDefault(); }} className="grid gap-3">
     <input type="hidden" name="action" value={action}/>{id && <input type="hidden" name="id" value={id}/>}
-    <fieldset disabled={pending} className="grid gap-3">{children}<Button type="submit" disabled={pending}>{pending ? "Salvando…" : label}</Button>
+    <fieldset disabled={pending} className="grid gap-3">{children}<Button type="submit" className="h-11" disabled={pending}>{pending ? "Salvando…" : label}</Button>
     </fieldset>
     <div aria-live="polite">{state.error && <p className="text-sm text-destructive" role="alert">{state.error}</p>}{state.success && <p className="text-sm text-primary">{state.success}</p>}</div>
   </form>;
@@ -40,7 +40,7 @@ export function Field({ label, name, value, type = "text", required = true, min,
     max?: number;
     step?: string;
 }) {
-    return <label className="grid gap-1 text-sm">{label}<input className="h-10 w-full rounded-lg border bg-background px-3" name={name} defaultValue={value} type={type} required={required} min={min} max={max} step={step}/>
+    return <label className="grid gap-1 text-sm">{label}<input className="h-11 w-full rounded-xl border border-input bg-background px-3" name={name} defaultValue={value} type={type} required={required} min={min} max={max} step={step}/>
     </label>;
 }
 export function SelectField({ label, name, value, children }: {
@@ -49,7 +49,7 @@ export function SelectField({ label, name, value, children }: {
     value?: string;
     children: ReactNode;
 }) {
-    return <label className="grid gap-1 text-sm">{label}<select className="h-10 w-full rounded-lg border bg-background px-3" name={name} defaultValue={value}>{children}</select>
+    return <label className="grid gap-1 text-sm">{label}<select className="h-11 w-full rounded-xl border border-input bg-background px-3" name={name} defaultValue={value}>{children}</select>
     </label>;
 }
 export function ActionPanel({ title, children }: {

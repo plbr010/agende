@@ -11,7 +11,8 @@ export function MarketingFooter() {
             <BrandLogo size="sm" />
             <p className="text-sm leading-relaxed text-muted-foreground">
               Agenda e agendamento para profissionais e estabelecimentos de
-              beleza. Elegante, simples e feito para o celular.
+              beleza. Elegante, simples e feito para o celular. 7 dias grátis,
+              sem cartão para começar.
             </p>
           </div>
           <nav

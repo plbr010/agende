@@ -25,7 +25,7 @@ export function InventoryDashboard({ timezone, snapshot }: {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
     if (!snapshot)
-        return <p>Não foi possível carregar o estoque. Atualize a página para tentar novamente.</p>;
+        return <p className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive" role="alert">Não foi possível carregar o estoque. Atualize a página para tentar novamente.</p>;
     const products = snapshot.products.filter(p => p.name.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")) && (filter === "archived" ? !!p.archivedAt : !p.archivedAt && (filter === "all" || (filter === "low" ? p.quantity > 0 && p.quantity <= p.minimumQuantity : p.quantity === 0))));
     return <div className="grid gap-5">
     <div className="grid gap-3 sm:grid-cols-3">{[["Produtos", snapshot.summary.products], ["Estoque baixo", snapshot.summary.lowStock], ["Custo em estoque", formatCentsToReais(snapshot.summary.estimatedCostCents)]].map(([label, value]) => <div className="rounded-2xl border bg-card p-5" key={label}>
@@ -37,10 +37,10 @@ export function InventoryDashboard({ timezone, snapshot }: {
     <ProductFields />
     </ManagementForm>
     </ActionPanel>
- <div className="flex flex-wrap gap-3">
-    <label>Buscar produto<input className="ml-2 rounded-lg border p-2" value={search} onChange={e => setSearch(e.target.value)}/>
+ <div className="grid gap-3 sm:grid-cols-2">
+    <label className="grid gap-1 text-sm">Buscar produto<input className="h-11 rounded-xl border border-input bg-background px-3" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nome do produto"/>
     </label>
-    <label>Exibir<select className="ml-2 rounded-lg border p-2" value={filter} onChange={e => setFilter(e.target.value)}>
+    <label className="grid gap-1 text-sm">Exibir<select className="h-11 rounded-xl border border-input bg-background px-3" value={filter} onChange={e => setFilter(e.target.value)}>
     <option value="all">Todos</option>
     <option value="low">Estoque baixo</option>
     <option value="zero">Sem estoque</option>

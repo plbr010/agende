@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ChevronRight, ExternalLink, LogOut, Menu, Sparkles } from "lucide-react";
+import { CalendarPlus, ChevronRight, ExternalLink, LogOut, Menu, Sparkles } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -199,13 +199,19 @@ export function AppShell({
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="min-w-0 text-center">
+            <div className="min-w-0 flex-1 text-center">
               <p className="truncate text-sm font-semibold">{workspaceName}</p>
               <p className="text-[0.68rem] tracking-wider text-muted-foreground uppercase">Painel Agendê</p>
             </div>
-            <Avatar>
-              <AvatarFallback className="bg-secondary text-xs">{initials(userName)}</AvatarFallback>
-            </Avatar>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-11"
+              aria-label="Novo agendamento"
+              render={<Link href="/app/agenda?novo=1" />}
+            >
+              <CalendarPlus className="size-5" />
+            </Button>
           </div>
         </header>
         <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-5 sm:px-6 sm:py-8 xl:px-10">

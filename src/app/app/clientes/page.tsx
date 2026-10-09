@@ -10,14 +10,14 @@ import { Input } from "@/components/ui/input";
 export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/clientes");
   const workspace = session.workspaces[0];
   if (!workspace) {
     return null;
   }
-  const { q } = await searchParams;
+  const { q, novo } = await searchParams;
   const clients = await loadClients(workspace.id, q);
   const withContact = clients.filter((client) => client.phone || client.email).length;
   const withNotes = clients.filter((client) => client.notes).length;
@@ -48,7 +48,7 @@ export default async function ClientsPage({
         <MetricCard label="Com contato" value={withContact} hint="telefone ou e-mail disponível" icon={ContactRound} tone="success" />
         <MetricCard label="Com observações" value={withNotes} hint="preferências registradas" icon={NotebookPen} tone="neutral" />
       </section>
-      <ClientDirectory clients={clients} canEdit={canEditClients(workspace.role)} />
+      <ClientDirectory clients={clients} canEdit={canEditClients(workspace.role)} startCreating={novo === "1"} />
     </>
   );
 }

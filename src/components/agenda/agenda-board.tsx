@@ -93,6 +93,7 @@ export function AgendaBoard({
   selectedProfessionalId,
   role,
   currentMemberId,
+  startCreating = false,
 }: {
   timezone: string;
   view: "day" | "week";
@@ -105,8 +106,9 @@ export function AgendaBoard({
   selectedProfessionalId: string;
   role: MemberRole;
   currentMemberId: string | null;
+  startCreating?: boolean;
 }) {
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(startCreating);
   const [editing, setEditing] = useState<AgendaAppointment | null>(null);
   const bookable = professionals.filter((member) => member.hasProfessionalProfile && member.bookingEnabled);
 
@@ -119,7 +121,7 @@ export function AgendaBoard({
             id="professional"
             name="professional"
             defaultValue={selectedProfessionalId}
-            className="h-11 rounded-lg border border-input bg-background px-3"
+            className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3"
           >
             <option value="">Toda a equipe</option>
             {bookable.map((member) => (
@@ -247,7 +249,9 @@ function DayColumn({
         </h2>
       </header>
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nenhum horário neste dia.</p>
+        <p className="rounded-xl bg-secondary/40 px-3 py-4 text-sm text-muted-foreground">
+          Nenhum horário neste dia. Use Novo agendamento para encaixar uma cliente.
+        </p>
       ) : (
         <div className="grid gap-2">
           {items.map((item) => (
@@ -317,7 +321,7 @@ function AppointmentFormDialog({
             {appointment ? null : (
               <div className="grid gap-2">
                 <Label htmlFor="clientId">Cliente</Label>
-                <select id="clientId" name="clientId" required className="h-11 rounded-lg border border-input bg-background px-3" defaultValue="">
+                <select id="clientId" name="clientId" required className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3" defaultValue="">
                   <option value="" disabled>
                     Selecione
                   </option>
@@ -335,7 +339,7 @@ function AppointmentFormDialog({
                 id="professionalMemberId"
                 name="professionalMemberId"
                 required
-                className="h-11 rounded-lg border border-input bg-background px-3"
+                className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3"
                 defaultValue={appointment?.professionalMemberId ?? defaultProfessionalId ?? ""}
               >
                 <option value="" disabled>
@@ -354,7 +358,7 @@ function AppointmentFormDialog({
                 id="serviceId"
                 name="serviceId"
                 required
-                className="h-11 rounded-lg border border-input bg-background px-3"
+                className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3"
                 defaultValue={appointment?.serviceId ?? ""}
               >
                 <option value="" disabled>
