@@ -73,7 +73,7 @@ export function ClientShell({
             const current = item.href === "/cliente" ? pathname === item.href : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
-              <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex min-w-fit flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground ring-1 ring-border")}>
+              <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground ring-1 ring-border")}>
                 <Icon className="size-3.5" /> {item.label}
               </Link>
             );

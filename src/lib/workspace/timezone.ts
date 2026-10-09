@@ -29,6 +29,11 @@ export function resolveWorkspaceTimezone(value: string | null | undefined): Work
   return DEFAULT_TIMEZONE;
 }
 
+export function timezoneDisplayName(timezone: string): string {
+  const resolved = resolveWorkspaceTimezone(timezone);
+  return WORKSPACE_TIMEZONES.find((item) => item.value === resolved)?.label ?? resolved.replaceAll("_", " ");
+}
+
 export function formatDateTime(
   value: string | null | undefined,
   timezone: string = DEFAULT_TIMEZONE,

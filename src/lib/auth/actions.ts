@@ -1,6 +1,6 @@
 "use server";
 
-import { planSchema } from "@/lib/billing/plans";
+import { parsePlanId, planSchema, type PlanId } from "@/lib/billing/plans";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -13,6 +13,7 @@ import { loginSchema, parseSignupForm } from "@/lib/validation/signup";
 
 const PENDING_EMAIL_COOKIE = "agende_pending_email";
 const RESEND_AT_COOKIE = "agende_resend_at";
+const SELECTED_PLAN_COOKIE = "agende_selected_plan";
 const RESEND_COOLDOWN_MS = 60_000;
 
 async function resolveOrigin(): Promise<string> {
@@ -33,6 +34,22 @@ async function setPendingEmail(email: string) {
 export async function getPendingEmail(): Promise<string | null> {
   const store = await cookies();
   return store.get(PENDING_EMAIL_COOKIE)?.value ?? null;
+}
+
+export async function getSelectedPlan(): Promise<PlanId | null> {
+  const store = await cookies();
+  return parsePlanId(store.get(SELECTED_PLAN_COOKIE)?.value);
+}
+
+async function setSelectedPlanCookie(plan: PlanId) {
+  const store = await cookies();
+  store.set(SELECTED_PLAN_COOKIE, plan, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 14,
+  });
 }
 
 export type ActionState = {
@@ -88,6 +105,10 @@ export async function signUpAction(
   }
 
   await setPendingEmail(input.email);
+  const selectedPlan = parsePlanId(formData.get("plan"));
+  if (selectedPlan && input.intendedUse === "professional") {
+    await setSelectedPlanCookie(selectedPlan);
+  }
   redirect(`/verificar-email?status=sent`);
 }
 

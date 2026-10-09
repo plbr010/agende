@@ -20,6 +20,11 @@ export const PLANS = [
     annualPrice: "R$ 799/ano",
     period: "/mês",
     popular: false,
+    highlights: [
+      "Agenda do dia e da semana",
+      "Link público para a cliente marcar sozinha",
+      "Clientes, serviços e histórico no mesmo lugar",
+    ],
   },
   {
     id: "equipe",
@@ -29,6 +34,11 @@ export const PLANS = [
     annualPrice: "R$ 1.499/ano",
     period: "/mês",
     popular: true,
+    highlights: [
+      "Várias profissionais, uma agenda só",
+      "Cada pessoa com os próprios horários",
+      "Convites, papéis e controle de equipe",
+    ],
   },
   {
     id: "salao",
@@ -38,6 +48,11 @@ export const PLANS = [
     annualPrice: "R$ 2.799/ano",
     period: "/mês",
     popular: false,
+    highlights: [
+      "Operação completa para o salão inteiro",
+      "Financeiro, estoque e relatórios no produto",
+      "Até 15 profissionais no mesmo workspace",
+    ],
   },
 ] as const;
 

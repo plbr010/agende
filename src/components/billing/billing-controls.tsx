@@ -71,7 +71,7 @@ export function BillingControls(props: BillingControlsProps) {
         <h4 className="text-xl font-semibold">{plan.name}</h4>
         <p>{plan.seats}</p>
         <p className="text-2xl font-semibold">{interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}</p>
-        <button type="button" className="rounded-xl bg-primary p-3 text-primary-foreground disabled:opacity-50"
+        <button type="button" className="h-11 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
           disabled={pending || !props.capabilities.checkout || Boolean(reason)}
           aria-describedby={reason ? `billing-${plan.id}-reason` : undefined}
           onClick={() => submit("checkout", plan.id)}>Assinar {plan.name} {interval === "annual" ? "anual" : "mensal"}</button>
@@ -80,8 +80,8 @@ export function BillingControls(props: BillingControlsProps) {
     })}</div>
     <div className="flex flex-wrap gap-3">
       {props.canManage && props.hasCustomer && props.capabilities.portal &&
-        <button type="button" disabled={pending} onClick={() => submit("portal")} className="rounded-xl border p-3 disabled:opacity-50">Abrir Portal Stripe</button>}
-      <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())} className="rounded-xl border p-3">Atualizar dados da assinatura</button>
+        <button type="button" disabled={pending} onClick={() => submit("portal")} className="h-11 rounded-full border px-4 text-sm disabled:opacity-50">Abrir Portal Stripe</button>}
+      <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())} className="h-11 rounded-full border px-4 text-sm">Atualizar dados da assinatura</button>
     </div>
     {props.hasCustomer && <p className="text-sm text-muted-foreground">No Portal você pode consultar faturas, atualizar o cartão e cancelar a assinatura ao fim do período.</p>}
   </section>;

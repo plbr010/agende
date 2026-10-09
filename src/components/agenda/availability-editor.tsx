@@ -13,6 +13,7 @@ import {
   deleteWorkingHourAction,
 } from "@/lib/agenda/actions";
 import { WEEKDAYS } from "@/lib/validation/agenda";
+import { timezoneDisplayName } from "@/lib/workspace/timezone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -56,6 +57,7 @@ export function AvailabilityEditor({
   blocks,
   canEditJornada,
   canEditBlocks,
+  timezone,
 }: {
   memberId: string;
   memberName: string;
@@ -64,6 +66,7 @@ export function AvailabilityEditor({
   blocks: TimeBlockRow[];
   canEditJornada: boolean;
   canEditBlocks: boolean;
+  timezone: string;
 }) {
   const [hourState, hourAction, hourPending] = useAgendaAction(addWorkingHourAction);
   const [breakState, breakAction, breakPending] = useAgendaAction(addBreakAction);
@@ -75,7 +78,7 @@ export function AvailabilityEditor({
         <p className="text-sm text-muted-foreground">Jornada</p>
         <h1 className="font-serif text-3xl">{memberName}</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          Horários no fuso America/Sao_Paulo. Vários períodos no mesmo dia são permitidos, por exemplo
+          Horários no fuso {timezoneDisplayName(timezone)}. Vários períodos no mesmo dia são permitidos, por exemplo
           08:00–12:00 e 14:00–18:00. Pausas (almoço) não geram horários livres.
         </p>
       </div>

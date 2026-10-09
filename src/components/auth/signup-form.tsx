@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { signUpAction, type ActionState } from "@/lib/auth/actions";
+import type { PlanId } from "@/lib/billing/plans";
 import { formatPhoneBr } from "@/lib/validation/phone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,29 +14,42 @@ import { cn } from "@/lib/utils";
 
 const initial: ActionState = {};
 
-export function SignupForm({ next }: { next?: string | null }) {
+export function SignupForm({
+  next,
+  plan,
+  initialIntent = "",
+}: {
+  next?: string | null;
+  plan?: PlanId | null;
+  initialIntent?: "client" | "professional" | "";
+}) {
   const [state, action, pending] = useActionState(signUpAction, initial);
-  const [intent, setIntent] = useState<"client" | "professional" | "">("");
+  const [intent, setIntent] = useState<"client" | "professional" | "">(
+    initialIntent === "client" || initialIntent === "professional" ? initialIntent : plan ? "professional" : "",
+  );
   const [phone, setPhone] = useState("");
   const [terms, setTerms] = useState(false);
 
-  const canSubmit = !pending;
+  const canSubmit = !pending && (intent === "client" || intent === "professional") && terms;
 
   return (
     <form action={action} className="space-y-6">
       {next ? <input type="hidden" name="next" value={next} /> : null}
+      {plan ? <input type="hidden" name="plan" value={plan} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />
       <input type="hidden" name="termsAccepted" value={terms ? "true" : "false"} />
 
       <div className="space-y-3">
         <h1 className="font-serif text-3xl leading-tight">Como você quer usar o Agendê?</h1>
         <p className="text-muted-foreground">Escolha um caminho agora. Depois você pode viver os dois lados.</p>
-        <div className="grid gap-3">
+        <div role="radiogroup" aria-label="Como você quer usar o Agendê?" className="grid gap-3">
           <button
             type="button"
+            role="radio"
+            aria-checked={intent === "client"}
             onClick={() => setIntent("client")}
             className={cn(
-              "rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
               intent === "client" && "ring-2 ring-primary",
             )}
           >
@@ -44,9 +58,11 @@ export function SignupForm({ next }: { next?: string | null }) {
           </button>
           <button
             type="button"
+            role="radio"
+            aria-checked={intent === "professional"}
             onClick={() => setIntent("professional")}
             className={cn(
-              "rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
               intent === "professional" && "ring-2 ring-primary",
             )}
           >
@@ -102,8 +118,13 @@ export function SignupForm({ next }: { next?: string | null }) {
               <p className="text-sm text-destructive">{state.fieldErrors.confirmPassword}</p>
             ) : null}
           </div>
-          <label className="flex items-start gap-3 text-sm leading-relaxed">
-            <Checkbox checked={terms} onCheckedChange={(value) => setTerms(value === true)} className="mt-0.5" />
+          <label htmlFor="termsAccepted" className="flex items-start gap-3 text-sm leading-relaxed">
+            <Checkbox
+              id="termsAccepted"
+              checked={terms}
+              onCheckedChange={(value) => setTerms(value === true)}
+              className="mt-0.5 size-5"
+            />
             <span>
               Li e concordo com os{" "}
               <Link href="/termos" className="underline underline-offset-4">
@@ -123,6 +144,11 @@ export function SignupForm({ next }: { next?: string | null }) {
           <Button type="submit" className="h-12" disabled={!canSubmit}>
             {pending ? "Criando conta..." : "Criar conta"}
           </Button>
+          {!canSubmit && !pending ? (
+            <p className="text-center text-xs text-muted-foreground">
+              Escolha se você é cliente ou profissional e aceite os termos para continuar.
+            </p>
+          ) : null}
         </CardContent>
       </Card>
     </form>

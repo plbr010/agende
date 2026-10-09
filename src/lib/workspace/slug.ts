@@ -63,6 +63,25 @@ export function publicProfilePath(slug: string): string {
   return `/p/${slug}`;
 }
 
+export function extractPublicWorkspaceSlug(input: string): string | null {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  let candidate = trimmed;
+  const pathMatch = trimmed.match(/\/p\/([A-Za-z0-9-]+)/i);
+  if (pathMatch?.[1]) {
+    candidate = pathMatch[1];
+  } else {
+    candidate = trimmed.replace(/^https?:\/\//i, "").replace(/^\/+/, "");
+    candidate = candidate.split(/[/?#]/)[0] ?? candidate;
+  }
+
+  const slug = candidate.toLowerCase();
+  return slugError(slug) ? null : slug;
+}
+
 export function invitePath(token: string): string {
   return `/convite/${token}`;
 }

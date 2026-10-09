@@ -3,20 +3,23 @@ import { CalendarCheck2, CalendarDays, ChevronRight, Clock3, Heart, Sparkles, St
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { loadMyAppointments } from "@/lib/booking/queries";
-import { partitionClientAppointments } from "@/lib/booking/validation";
+import { WorkspaceFinder } from "@/components/client/workspace-finder";
+import { loadMyAppointmentsResult } from "@/lib/booking/queries";
+import { partitionClientAppointments, uniqueClientWorkspaces } from "@/lib/booking/validation";
 import { loadReviewsResult } from "@/lib/reviews/queries";
 import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
 
 export default async function ClientePage() {
   const session = await requireConfirmedSession("/cliente");
-  const [appointments, { reviews, schemaReady }] = await Promise.all([
-    loadMyAppointments(),
+  const [appointmentsResult, { reviews, schemaReady }] = await Promise.all([
+    loadMyAppointmentsResult(),
     loadReviewsResult(),
   ]);
+  const appointments = appointmentsResult.appointments;
   const { upcoming, past } = partitionClientAppointments(appointments);
   const next = upcoming[0];
   const firstName = session.profile.fullName.split(/\s+/)[0] || "cliente";
+  const knownWorkspaces = uniqueClientWorkspaces(appointments);
   const metrics = [
     { icon: CalendarCheck2, label: "Próximos", value: upcoming.length, hint: "horários à frente" },
     { icon: Clock3, label: "Histórico", value: past.length, hint: "atendimentos anteriores" },
@@ -24,7 +27,7 @@ export default async function ClientePage() {
       icon: Star,
       label: "Avaliações",
       value: schemaReady ? reviews.length : "—",
-      hint: schemaReady ? "notas enviadas" : "aguardando schema remoto",
+      hint: schemaReady ? "notas enviadas" : "disponíveis após o atendimento",
     },
   ];
 
@@ -62,14 +65,29 @@ export default async function ClientePage() {
             <CardDescription>O compromisso mais próximo na sua agenda.</CardDescription>
           </CardHeader>
           <CardContent>
-            {next ? (
+            {appointmentsResult.error ? (
+              <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
+                {appointmentsResult.error}
+              </p>
+            ) : next ? (
               <Link href="/cliente/agendamentos" className="group flex items-center gap-4 rounded-2xl bg-secondary/60 p-4 transition-colors hover:bg-secondary">
                 <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-background text-primary ring-1 ring-border"><CalendarDays className="size-5" /></div>
                 <div className="min-w-0 flex-1"><p className="truncate font-medium">{next.serviceName}</p><p className="truncate text-sm text-muted-foreground">{next.workspaceName} · {next.professionalName}</p><p className="mt-1 text-xs">{formatDateTimeInTimeZone(next.startsAt, next.timezone)}</p></div>
                 <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
               </Link>
             ) : (
-              <div className="grid place-items-center gap-3 rounded-2xl bg-secondary/45 px-4 py-10 text-center"><Heart className="size-6 text-primary" /><div><p className="font-medium">Nada marcado por enquanto</p><p className="mt-1 text-sm text-muted-foreground">Explore o perfil de um estabelecimento para reservar.</p></div></div>
+              <div className="grid gap-4 rounded-2xl bg-secondary/45 px-4 py-6">
+                <div className="grid place-items-center gap-3 text-center">
+                  <Heart className="size-6 text-primary" />
+                  <div>
+                    <p className="font-medium">Nada marcado por enquanto</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Abra o link do estabelecimento para reservar. O Agendê não inventa salões na busca.
+                    </p>
+                  </div>
+                </div>
+                <WorkspaceFinder knownWorkspaces={knownWorkspaces} />
+              </div>
             )}
           </CardContent>
         </Card>

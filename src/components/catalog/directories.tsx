@@ -123,8 +123,13 @@ export function TeamDirectory({
     <div className="grid gap-4">
       {members.length === 0 ? (
         <Card className="border-none ring-1 ring-border">
-          <CardContent className="py-8 text-sm text-muted-foreground">
-            Nenhuma pessoa neste workspace ainda.
+          <CardContent className="grid gap-3 py-8">
+            <p className="text-sm text-muted-foreground">Nenhuma pessoa neste workspace ainda.</p>
+            {canManage ? (
+              <Button className="h-11 w-fit rounded-full" render={<Link href="/app/configuracoes/equipe" />}>
+                Convidar a primeira pessoa
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       ) : (
@@ -148,7 +153,7 @@ export function TeamDirectory({
                   </CardDescription>
                   {canEdit ? (
                     <CardAction className="col-start-3">
-                      <Button variant="ghost" size="sm" onClick={() => setEditing(member)}>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(member)}>
                         Editar
                       </Button>
                     </CardAction>
@@ -238,13 +243,15 @@ export function ServiceCatalog({
   professionals,
   canManage,
   currentMemberId,
+  startCreating = false,
 }: {
   services: ServiceRow[];
   professionals: TeamMember[];
   canManage: boolean;
   currentMemberId: string | null;
+  startCreating?: boolean;
 }) {
-  const [editing, setEditing] = useState<ServiceRow | "new" | null>(null);
+  const [editing, setEditing] = useState<ServiceRow | "new" | null>(startCreating && canManage ? "new" : null);
   const [state, action, pending] = useCatalogAction(saveServiceAction, () => {
     setEditing(null);
   });
@@ -258,15 +265,20 @@ export function ServiceCatalog({
     <div className="grid gap-4">
       {canManage ? (
         <div className="flex justify-end">
-          <Button className="h-11" onClick={() => setEditing("new")}>
+          <Button type="button" className="h-11" onClick={() => setEditing("new")}>
             Novo serviço
           </Button>
         </div>
       ) : null}
       {services.length === 0 ? (
         <Card className="border-none ring-1 ring-border">
-          <CardContent className="py-8 text-sm text-muted-foreground">
-            Nenhum serviço cadastrado ainda.
+          <CardContent className="grid gap-3 py-8">
+            <p className="text-sm text-muted-foreground">Nenhum serviço cadastrado ainda.</p>
+            {canManage ? (
+              <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
+                Cadastrar o primeiro serviço
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       ) : (
@@ -288,7 +300,7 @@ export function ServiceCatalog({
                 </CardDescription>
                 {canManage ? (
                   <CardAction>
-                    <Button variant="outline" size="sm" onClick={() => setEditing(service)}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setEditing(service)}>
                       Editar
                     </Button>
                   </CardAction>
@@ -415,11 +427,13 @@ export function ServiceCatalog({
 export function ClientDirectory({
   clients,
   canEdit,
+  startCreating = false,
 }: {
   clients: ClientRow[];
   canEdit: boolean;
+  startCreating?: boolean;
 }) {
-  const [editing, setEditing] = useState<ClientRow | "new" | null>(null);
+  const [editing, setEditing] = useState<ClientRow | "new" | null>(startCreating && canEdit ? "new" : null);
   const [state, action, pending] = useCatalogAction(saveClientAction, () => {
     setEditing(null);
   });
@@ -430,15 +444,20 @@ export function ClientDirectory({
     <div className="grid gap-4">
       {canEdit ? (
         <div className="flex justify-end">
-          <Button className="h-11" onClick={() => setEditing("new")}>
+          <Button type="button" className="h-11" onClick={() => setEditing("new")}>
             Novo cliente
           </Button>
         </div>
       ) : null}
       {clients.length === 0 ? (
         <Card className="border-none ring-1 ring-border">
-          <CardContent className="py-8 text-sm text-muted-foreground">
-            Nenhum cliente cadastrado neste negócio.
+          <CardContent className="grid gap-3 py-8">
+            <p className="text-sm text-muted-foreground">Nenhum cliente cadastrado neste negócio.</p>
+            {canEdit ? (
+              <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
+                Cadastrar o primeiro cliente
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       ) : (
@@ -459,7 +478,7 @@ export function ClientDirectory({
               {canEdit ? (
                 <CardAction className="col-start-3">
                   <div className="flex flex-wrap justify-end gap-1">
-                    <Button variant="outline" size="sm" onClick={() => setEditing(client)}>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setEditing(client)}>
                       Editar
                     </Button>
                     <form action={(formData) => runFormAction(archiveClientAction, formData)}>

@@ -11,14 +11,14 @@ import { formatCentsToReais } from "@/lib/validation/money";
 export default async function ServicesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/servicos");
   const workspace = session.workspaces[0];
   if (!workspace) {
     return null;
   }
-  const { q } = await searchParams;
+  const { q, novo } = await searchParams;
   const [services, team] = await Promise.all([
     loadServices(workspace.id, q),
     loadTeam(workspace.id),
@@ -58,6 +58,7 @@ export default async function ServicesPage({
         professionals={team}
         canManage={canManageServices(workspace.role)}
         currentMemberId={team.find((member) => member.userId === session.user.id)?.memberId ?? null}
+        startCreating={novo === "1"}
       />
     </>
   );
