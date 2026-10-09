@@ -93,6 +93,9 @@ export async function cancelMyAppointmentAction(appointmentId: string): Promise<
   if (error) {
     return { error: sanitizeBookingError(error.message) };
   }
+  revalidatePath("/cliente");
+  revalidatePath("/cliente/agendamentos");
+  revalidatePath("/app/agenda");
   return { success: "Agendamento cancelado." };
 }
 

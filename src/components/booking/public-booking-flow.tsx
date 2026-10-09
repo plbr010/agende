@@ -52,13 +52,21 @@ export function PublicBookingFlow({
   catalog,
   prefill,
   today,
+  initialServiceId = null,
+  hasClientProfile = false,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
   today: string;
+  initialServiceId?: string | null;
+  hasClientProfile?: boolean;
 }) {
-  const [step, setStep] = useState<BookingStep>("service");
-  const [serviceId, setServiceId] = useState<string | null>(null);
+  const initialService =
+    initialServiceId && catalog.services.some((item) => item.id === initialServiceId)
+      ? initialServiceId
+      : null;
+  const [step, setStep] = useState<BookingStep>(initialService ? "professional" : "service");
+  const [serviceId, setServiceId] = useState<string | null>(initialService);
   const [professionalId, setProfessionalId] = useState<string | null | typeof ANY_PROFESSIONAL>(null);
   const [localDate, setLocalDate] = useState<string | null>(null);
   const [startsAt, setStartsAt] = useState<string | null>(null);
@@ -176,7 +184,13 @@ export function PublicBookingFlow({
   const stepIndex = BOOKING_STEPS.indexOf(step);
 
   if (confirmation) {
-    return <BookingSuccess confirmation={confirmation} guestHint={confirmation.guest} />;
+    return (
+      <BookingSuccess
+        confirmation={confirmation}
+        guestHint={confirmation.guest}
+        hasClientProfile={hasClientProfile}
+      />
+    );
   }
 
   return (
@@ -584,9 +598,11 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 function BookingSuccess({
   confirmation,
   guestHint,
+  hasClientProfile,
 }: {
   confirmation: PublicBookingConfirmation;
   guestHint: boolean;
+  hasClientProfile: boolean;
 }) {
   const ics = buildIcs({
     title: `${confirmation.serviceName} · ${confirmation.workspaceName}`,
@@ -614,7 +630,7 @@ function BookingSuccess({
       <main className="mx-auto grid w-full max-w-lg gap-6 px-4 py-10">
         <section className="rounded-[2rem] bg-card p-6 text-center ring-1 ring-border">
           <p className="text-xs tracking-[0.18em] text-primary uppercase">Pronto</p>
-          <h1 className="mt-2 font-serif text-4xl">Seu horário está reservado ✨</h1>
+          <h1 className="mt-2 font-serif text-4xl">Seu horário está reservado</h1>
           <p className="mt-3 text-muted-foreground">{confirmation.workspaceName}</p>
         </section>
         <article className="rounded-[2rem] bg-card p-5 ring-1 ring-border">
@@ -656,15 +672,25 @@ function BookingSuccess({
         </div>
         {guestHint ? (
           <p className="text-center text-sm text-muted-foreground">
-            Crie sua conta para acompanhar seus agendamentos.{" "}
-            <Link href={`/cadastro?next=/cliente/agendamentos`} className="underline underline-offset-4">
+            Crie sua conta de cliente para acompanhar seus agendamentos.{" "}
+            <Link
+              href="/cadastro?intent=client&next=/cliente/agendamentos"
+              className="underline underline-offset-4"
+            >
               Criar conta
             </Link>
           </p>
-        ) : (
+        ) : hasClientProfile ? (
           <p className="text-center text-sm">
             <Link href="/cliente/agendamentos" className="underline underline-offset-4">
               Ver meus agendamentos
+            </Link>
+          </p>
+        ) : (
+          <p className="text-center text-sm text-muted-foreground">
+            Para ver a lista de reservas nesta conta, ative a área de cliente no painel.{" "}
+            <Link href="/app" className="underline underline-offset-4">
+              Ir para o painel
             </Link>
           </p>
         )}

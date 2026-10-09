@@ -46,6 +46,17 @@ export function publicLogoUrl(logoPath: string | null | undefined): string | nul
   return `${getSupabaseUrl()}/storage/v1/object/public/workspace-logos/${logoPath}`;
 }
 
+/** Services that at least one published professional can perform (bookable on the public page). */
+export function bookablePublicServices(profile: PublicWorkspaceProfile): PublicService[] {
+  const offeredNames = new Set(
+    profile.professionals.flatMap((person) => person.services.map((name) => name.trim().toLocaleLowerCase("pt-BR"))),
+  );
+  if (offeredNames.size === 0) {
+    return [];
+  }
+  return profile.services.filter((service) => offeredNames.has(service.name.trim().toLocaleLowerCase("pt-BR")));
+}
+
 export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfile | null {
   if (!raw || typeof raw !== "object") {
     return null;

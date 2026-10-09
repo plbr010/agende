@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/logo";
 import { formatCentsToReais } from "@/lib/validation/money";
-import type { PublicWorkspaceProfile } from "@/lib/workspace/public";
+import { bookablePublicServices, type PublicWorkspaceProfile } from "@/lib/workspace/public";
 import { Button } from "@/components/ui/button";
 
 function servicePriceLabel(min: number, max: number) {
@@ -11,10 +11,18 @@ function servicePriceLabel(min: number, max: number) {
   return formatCentsToReais(min);
 }
 
+function serviceBookingHref(slug: string, serviceId: string | null) {
+  if (!serviceId) {
+    return `/p/${slug}/agendar`;
+  }
+  return `/p/${slug}/agendar?servico=${encodeURIComponent(serviceId)}`;
+}
+
 export function PublicWorkspacePage({ profile }: { profile: PublicWorkspaceProfile }) {
   const location = [profile.address, profile.city, profile.state].filter(Boolean).join(" · ");
   const initial = profile.name.slice(0, 1).toUpperCase();
   const bookingHref = `/p/${profile.slug}/agendar`;
+  const services = bookablePublicServices(profile);
 
   return (
     <div className="agende-bloom min-h-full">
@@ -82,13 +90,13 @@ export function PublicWorkspacePage({ profile }: { profile: PublicWorkspaceProfi
             <p className="text-sm text-muted-foreground">Serviços</p>
             <h2 className="font-serif text-3xl">O que oferecemos</h2>
           </div>
-          {profile.services.length === 0 ? (
+          {services.length === 0 ? (
             <p className="rounded-3xl bg-card p-5 text-sm text-muted-foreground ring-1 ring-border">
-              Este estabelecimento ainda não publicou serviços. Volte mais tarde ou fale direto com o espaço.
+              Este estabelecimento ainda não publicou serviços com agenda aberta. Volte mais tarde ou fale direto com o espaço.
             </p>
           ) : (
             <div className="grid gap-3">
-              {profile.services.map((service, index) => (
+              {services.map((service, index) => (
                 <article
                   key={service.id ?? `${service.name}-${service.duration_minutes}-${index}`}
                   className="rounded-3xl bg-card p-5 ring-1 ring-border"
@@ -104,7 +112,10 @@ export function PublicWorkspacePage({ profile }: { profile: PublicWorkspaceProfi
                   </div>
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm text-muted-foreground">{service.duration_minutes} minutos</p>
-                    <Link href={bookingHref} className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+                    <Link
+                      href={serviceBookingHref(profile.slug, service.id)}
+                      className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    >
                       Agendar este serviço
                     </Link>
                   </div>

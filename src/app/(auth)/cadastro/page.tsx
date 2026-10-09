@@ -8,12 +8,14 @@ import { PLANS } from "@/lib/marketing/content";
 export default async function CadastroPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; plan?: string }>;
+  searchParams: Promise<{ next?: string; plan?: string; intent?: string }>;
 }) {
-  const { next, plan: planParam } = await searchParams;
+  const { next, plan: planParam, intent: intentParam } = await searchParams;
   const safeNext = sanitizeNextPath(next);
   const plan = parsePlanId(planParam);
   const selectedPlan = plan ? PLANS.find((item) => item.id === plan) : null;
+  const intentFromQuery =
+    intentParam === "client" || intentParam === "professional" ? intentParam : "";
   await requireAnonymous(safeNext);
 
   return (
@@ -24,7 +26,11 @@ export default async function CadastroPage({
           e-mail, o trial de 7 dias começa nesse plano — sem cartão.
         </p>
       ) : null}
-      <SignupForm next={safeNext} plan={plan} initialIntent={plan ? "professional" : ""} />
+      <SignupForm
+        next={safeNext}
+        plan={plan}
+        initialIntent={plan ? "professional" : intentFromQuery}
+      />
       <p className="text-sm text-muted-foreground">
         Já tem conta?{" "}
         <Link

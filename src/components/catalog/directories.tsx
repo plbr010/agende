@@ -392,8 +392,11 @@ export function ServiceCatalog({
               </label>
               <fieldset className="grid gap-2">
                 <legend className="text-sm font-medium">Quem realiza</legend>
+                <p className="text-sm text-muted-foreground">
+                  Selecione ao menos uma profissional. Sem vínculo, o serviço não aparece na agenda pública.
+                </p>
                 {bookable.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-destructive">
                     Nenhum profissional com perfil de atendimento neste workspace.
                   </p>
                 ) : (
@@ -403,7 +406,11 @@ export function ServiceCatalog({
                         type="checkbox"
                         name="professionalMemberIds"
                         value={member.memberId}
-                        defaultChecked={current?.professionalMemberIds.includes(member.memberId)}
+                        defaultChecked={
+                          current
+                            ? current.professionalMemberIds.includes(member.memberId)
+                            : bookable.length === 1
+                        }
                         className="size-4 rounded border-input"
                       />
                       {member.displayName ?? member.fullName}
