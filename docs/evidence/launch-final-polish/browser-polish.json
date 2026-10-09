@@ -1,0 +1,153 @@
+{
+  "base": "http://localhost:3000",
+  "generatedAt": "2026-10-09T17:26:31.692Z",
+  "results": [
+    {
+      "name": "desktop-1366-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-landing.png"
+    },
+    {
+      "name": "desktop-1366-cadastro-plan",
+      "path": "/cadastro?plan=equipe",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-cadastro-plan.png"
+    },
+    {
+      "name": "desktop-1366-verificar-email",
+      "path": "/verificar-email",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-verificar-email.png"
+    },
+    {
+      "name": "desktop-1366-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-public-profile.png"
+    },
+    {
+      "name": "desktop-1366-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-public-booking.png"
+    },
+    {
+      "name": "desktop-1366-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-app-guard.png"
+    },
+    {
+      "name": "desktop-1366-onboarding-guard",
+      "path": "/onboarding",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/desktop-1366-onboarding-guard.png"
+    },
+    {
+      "name": "iphone-13-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-landing.png"
+    },
+    {
+      "name": "iphone-13-cadastro-plan",
+      "path": "/cadastro?plan=equipe",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-cadastro-plan.png"
+    },
+    {
+      "name": "iphone-13-verificar-email",
+      "path": "/verificar-email",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-verificar-email.png"
+    },
+    {
+      "name": "iphone-13-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-public-profile.png"
+    },
+    {
+      "name": "iphone-13-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-public-booking.png"
+    },
+    {
+      "name": "iphone-13-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-app-guard.png"
+    },
+    {
+      "name": "iphone-13-onboarding-guard",
+      "path": "/onboarding",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/iphone-13-onboarding-guard.png"
+    },
+    {
+      "name": "android-small-landing",
+      "path": "/",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-landing.png"
+    },
+    {
+      "name": "android-small-cadastro-plan",
+      "path": "/cadastro?plan=equipe",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-cadastro-plan.png"
+    },
+    {
+      "name": "android-small-verificar-email",
+      "path": "/verificar-email",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-verificar-email.png"
+    },
+    {
+      "name": "android-small-public-profile",
+      "path": "/p/estudio-luna",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-public-profile.png"
+    },
+    {
+      "name": "android-small-public-booking",
+      "path": "/p/estudio-luna/agendar",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-public-booking.png"
+    },
+    {
+      "name": "android-small-app-guard",
+      "path": "/app",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-app-guard.png"
+    },
+    {
+      "name": "android-small-onboarding-guard",
+      "path": "/onboarding",
+      "status": 200,
+      "result": "PASS",
+      "evidence": "docs/evidence/launch-final-polish/android-small-onboarding-guard.png"
+    }
+  ]
+}
