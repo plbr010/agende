@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PublicWorkspacePage } from "@/components/workspace/public-profile";
+import { loadPublicBookingCatalogResult } from "@/lib/booking/queries";
 import { loadPublicWorkspaceProfile } from "@/lib/workspace/queries";
 
 type PageProps = {
@@ -21,9 +22,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PublicSlugPage({ params }: PageProps) {
   const { slug } = await params;
-  const profile = await loadPublicWorkspaceProfile(slug);
+  const [profile, booking] = await Promise.all([
+    loadPublicWorkspaceProfile(slug),
+    loadPublicBookingCatalogResult(slug),
+  ]);
   if (!profile) {
     notFound();
   }
-  return <PublicWorkspacePage profile={profile} />;
+  return <PublicWorkspacePage profile={profile} bookingOpen={!booking.unavailable && Boolean(booking.catalog)} />;
 }

@@ -122,13 +122,35 @@ export function parsePublicBookingCatalog(raw: unknown): PublicBookingCatalog | 
   };
 }
 
-export async function loadPublicBookingCatalog(slug: string): Promise<PublicBookingCatalog | null> {
+export type PublicBookingCatalogResult = {
+  catalog: PublicBookingCatalog | null;
+  /** Trial/assinatura sem entitlement: perfil pode existir, mas a agenda pública fica fechada. */
+  unavailable: boolean;
+  notFound: boolean;
+};
+
+export async function loadPublicBookingCatalogResult(slug: string): Promise<PublicBookingCatalogResult> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("list_public_booking_catalog", { p_slug: slug });
   if (error) {
-    return null;
+    const message = (error.message ?? "").toLowerCase();
+    return {
+      catalog: null,
+      unavailable: message.includes("workspace_unavailable"),
+      notFound: message.includes("workspace_not_found") || message.includes("not_found"),
+    };
   }
-  return parsePublicBookingCatalog(data);
+  const catalog = parsePublicBookingCatalog(data);
+  return {
+    catalog,
+    unavailable: false,
+    notFound: catalog === null,
+  };
+}
+
+export async function loadPublicBookingCatalog(slug: string): Promise<PublicBookingCatalog | null> {
+  const result = await loadPublicBookingCatalogResult(slug);
+  return result.catalog;
 }
 
 export async function loadPublicAvailableSlots(input: {
