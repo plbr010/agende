@@ -35,6 +35,7 @@ function harness(kind, overrides = {}) {
     },
     async rpc(name, args) {
       state.calls.push({ name, args });
+      if (state.rpcErrors?.[name]) return { data: null, error: { message: state.rpcErrors[name] } };
       if (name === 'get_stripe_webhook_secret') return { data: 'whsec_mock', error: null };
       if (name === 'get_stripe_api_key') return { data: 'mock_key', error: null };
       if (name === 'acquire_stripe_checkout') return { data: !state.locked, error: null };
@@ -67,8 +68,8 @@ function harness(kind, overrides = {}) {
       return handler(new Request('https://local.invalid', { method: 'POST', headers: { authorization: 'Bearer mock' },
         body: JSON.stringify({ action: 'checkout', workspaceId: wid, plan: 'solo', billingInterval: 'monthly', idempotencyKey: 'attempt-1234567890', ...body }) }));
     },
-    async event(type, object, { invalidSignature = false, timestamp = now } = {}) {
-      const body = JSON.stringify({ id: 'evt_mock', type, created: timestamp, data: { object } });
+    async event(type, object, { invalidSignature = false, timestamp = now, eventId = 'evt_mock' } = {}) {
+      const body = JSON.stringify({ id: eventId, type, created: timestamp, data: { object } });
       const signature = createHmac('sha256', 'whsec_mock').update(`${timestamp}.${body}`).digest('hex');
       return handler(new Request('https://local.invalid', { method: 'POST', body,
         headers: { 'stripe-signature': `t=${timestamp},v1=${invalidSignature ? 'bad' : signature}` } }));
@@ -88,6 +89,46 @@ test('Edge checkout: six existing lookup keys, fixed redirects, seat checks and 
   for (const role of ['professional', 'receptionist']) assert.equal((await harness('stripe-billing', { role }).billing()).status, 403);
   assert.equal((await harness('stripe-billing', { seats: 2 }).billing()).status, 409);
   assert.equal((await harness('stripe-billing', { badPrice: true }).billing()).status, 409);
+});
+
+test('Webhook maps all six sandbox lookup keys and renewal periods instead of stale metadata', async () => {
+  for (const plan of ['solo', 'equipe', 'salao']) for (const interval of ['monthly', 'annual']) {
+    const current = snapshot('active', `agende_${plan}_${interval}`);
+    current.items.data[0].current_period_end = now + (interval === 'annual' ? 365 : 30) * 86400;
+    const h = harness('stripe-webhook', { current });
+    assert.equal((await h.event('invoice.paid', { subscription: 'sub_test', amount_paid: 8990, status: 'paid' })).status, 200);
+    const sync = h.state.calls.find(c => c.name === 'sync_billing_subscription').args;
+    assert.equal(sync.p_plan, plan);
+    assert.equal(sync.p_billing_interval, interval);
+    assert.equal(sync.p_current_period_end, new Date(current.items.data[0].current_period_end * 1000).toISOString());
+  }
+});
+
+test('Webhook replay skips rebinding and retries a failed sync after the event was recorded', async () => {
+  const replay = harness('stripe-webhook', { seen: true });
+  const checkout = { mode: 'subscription', client_reference_id: wid, customer: 'cus_test', subscription: 'sub_test',
+    metadata: { app: 'agende', manager_email: 'owner@test.invalid' } };
+  assert.equal((await replay.event('checkout.session.completed', checkout)).status, 200);
+  assert.equal(replay.state.calls.some(c => c.name === 'bind_stripe_checkout'), false);
+  assert.ok(replay.state.calls.some(c => c.name === 'sync_billing_subscription'));
+  const retry = harness('stripe-webhook', { rpcErrors: { sync_billing_subscription: 'database unavailable' } });
+  const invoice = { subscription: 'sub_test', status: 'paid', amount_paid: 8990 };
+  assert.equal((await retry.event('invoice.paid', invoice)).status, 409);
+  retry.state.rpcErrors = {};
+  assert.equal((await retry.event('invoice.paid', invoice)).status, 200);
+  assert.equal(retry.state.calls.filter(c => c.name === 'sync_billing_subscription').length, 2);
+});
+
+test('asynchronous payment failure never activates access and pause/resume uses the current subscription', async () => {
+  const h = harness('stripe-webhook');
+  assert.equal((await h.event('checkout.session.async_payment_failed', { client_reference_id: wid,
+    metadata: { app: 'agende' }, payment_status: 'unpaid' })).status, 200);
+  assert.equal(h.state.calls.some(c => c.name === 'sync_billing_subscription'), false);
+  for (const [type, status, expected] of [['customer.subscription.paused','paused','expired'], ['customer.subscription.resumed','active','active']]) {
+    const p = harness('stripe-webhook', { current: snapshot(status) });
+    assert.equal((await p.event(type, snapshot())).status, 200);
+    assert.equal(p.state.calls.find(c => c.name === 'sync_billing_subscription').args.p_status, expected);
+  }
 });
 
 test('Edge preserves original trial end and never resets or charges the last minutes', async () => {

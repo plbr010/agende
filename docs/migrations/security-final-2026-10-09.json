@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-09T17:18:06.654355+00:00",
+  "project": "wohimauqgywshbbejjcl",
+  "mode": "read-only",
+  "findings": [
+    {
+      "name": "rls_enabled_no_policy",
+      "title": "RLS Enabled No Policy",
+      "level": "INFO",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "title": "Public Can Execute SECURITY DEFINER Function",
+      "level": "WARN",
+      "count": 5,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "title": "Signed-In Users Can Execute SECURITY DEFINER Function",
+      "level": "WARN",
+      "count": 53,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "title": "Leaked Password Protection Disabled",
+      "level": "WARN",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "publicTables": 31,
+  "publicTablesWithForceRls": 31,
+  "privateLeaseTableRls": true,
+  "privateLeaseTablePolicies": 0,
+  "publicViews": 0,
+  "securityDefinersWithoutEmptySearchPath": 0,
+  "anonymousTableAccess": [
+    "public.plans:SELECT"
+  ],
+  "branches": [],
+  "stripeAccessibleModes": [
+    "LIVE only; no financial test operation performed"
+  ]
+}
