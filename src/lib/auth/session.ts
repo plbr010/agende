@@ -75,9 +75,9 @@ export async function loadAppSession(): Promise<AppSession | null> {
   }
 
   const [
-    { data: profile },
-    { data: clientProfile },
-    { data: memberships },
+    { data: profile, error: profileError },
+    { data: clientProfile, error: clientError },
+    { data: memberships, error: membershipError },
   ] = await Promise.all([
     supabase
       .from("profiles")
@@ -95,6 +95,10 @@ export async function loadAppSession(): Promise<AppSession | null> {
       .eq("user_id", user.id)
       .eq("status", "active"),
   ]);
+
+  if (profileError || clientError || membershipError) {
+    throw new Error("Não foi possível carregar sua sessão. Tente novamente.");
+  }
 
   const workspaces: WorkspaceSummary[] = (memberships ?? []).flatMap((row) => {
     const workspace = row.workspaces;
@@ -114,11 +118,14 @@ export async function loadAppSession(): Promise<AppSession | null> {
   let subscription: SubscriptionSummary | null = null;
   const primaryWorkspace = workspaces[0];
   if (primaryWorkspace) {
-    const { data: sub } = await supabase
+    const { data: sub, error: subscriptionError } = await supabase
       .from("subscriptions")
       .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
       .eq("workspace_id", primaryWorkspace.id)
       .maybeSingle();
+    if (subscriptionError) {
+      throw new Error("Não foi possível carregar sua assinatura. Tente novamente.");
+    }
     if (sub) {
       subscription = {
         plan: sub.plan,
