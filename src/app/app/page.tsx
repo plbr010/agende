@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricCard } from "@/components/app/metric-card";
+import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
 import { loadAgendaRange, loadWorkingHours } from "@/lib/agenda/queries";
 import { STATUS_LABEL } from "@/lib/agenda/status";
@@ -28,9 +29,9 @@ import { formatCentsToReais } from "@/lib/validation/money";
 export default async function AppPage({
   searchParams,
 }: {
-  searchParams: Promise<{ clientError?: string }>;
+  searchParams: Promise<{ clientError?: string; setup?: string }>;
 }) {
-  const { clientError } = await searchParams;
+  const { clientError, setup } = await searchParams;
   const session = await requireConfirmedSession("/app");
   const workspace = session.workspaces[0];
   const settings = workspace ? await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug) : null;
@@ -94,18 +95,29 @@ export default async function AppPage({
       ) : null}
       {setupIncomplete ? (
         <section className="rounded-[2rem] border border-primary/20 bg-secondary/40 px-5 py-5 sm:px-6" aria-label="Primeiros passos">
+          <OnboardingProgressSteps current={3} className="mb-5" />
+          {setup === "1" ? (
+            <p className="mb-3 rounded-2xl bg-card px-4 py-3 text-sm ring-1 ring-border" role="status">
+              Negócio criado e trial de 7 dias ativo. Complete os passos abaixo para abrir a agenda pública.
+            </p>
+          ) : null}
           <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">Para abrir a agenda</p>
-          <h2 className="mt-2 font-serif text-2xl">Complete estes passos</h2>
+          <h2 className="mt-2 font-serif text-2xl">Próximo passo: configure o essencial</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Comece pelo item ainda pendente. Sem serviço e jornada, clientes não conseguem marcar horário.
+          </p>
           <ol className="mt-4 grid gap-3">
             {setupSteps.map((step, index) => (
               <li key={step.title}>
                 <Link
                   href={step.href}
-                  className="flex items-start gap-3 rounded-2xl bg-card px-4 py-3 ring-1 ring-border transition-colors hover:bg-secondary/60"
+                  className={`flex items-start gap-3 rounded-2xl px-4 py-3 ring-1 transition-colors hover:bg-secondary/60 ${
+                    step.done ? "bg-card/70 ring-border" : "bg-card ring-primary/40"
+                  }`}
                 >
                   <span
                     className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                      step.done ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                      step.done ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary"
                     }`}
                     aria-label={step.done ? "Concluído" : `Passo ${index + 1}`}
                   >
@@ -130,20 +142,35 @@ export default async function AppPage({
               <Sparkles className="size-3.5" /> Área profissional
             </p>
             <h1 className="mt-3 max-w-2xl text-4xl leading-none font-semibold tracking-tight sm:text-5xl">
-              Um dia bonito começa organizado, {firstName}.
+              {setupIncomplete
+                ? `Vamos deixar a agenda pronta, ${firstName}.`
+                : `Um dia bonito começa organizado, ${firstName}.`}
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-primary-foreground/75 sm:text-base">
-              Acompanhe a agenda, cuide dos seus clientes e mantenha o ritmo do negócio sem perder a leveza.
+              {setupIncomplete
+                ? "Depois dos primeiros passos, seus clientes passam a marcar sozinhos pelo link público."
+                : "Acompanhe a agenda, cuide dos seus clientes e mantenha o ritmo do negócio sem perder a leveza."}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" size="lg" className="h-11 rounded-full px-5" render={<Link href="/app/agenda?novo=1" />}>
-              <CalendarDays className="size-4" /> Novo agendamento
+          {!setupIncomplete ? (
+            <div className="flex flex-wrap gap-2">
+              <Button variant="secondary" size="lg" className="h-11 rounded-full px-5" render={<Link href="/app/agenda?novo=1" />}>
+                <CalendarDays className="size-4" /> Novo agendamento
+              </Button>
+              <Button variant="outline" size="lg" className="h-11 rounded-full border-white/30 bg-white/10 px-5 text-white hover:bg-white/20 hover:text-white" render={<Link href="/app/clientes?novo=1" />}>
+                <UserRoundPlus className="size-4" /> Novo cliente
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="secondary"
+              size="lg"
+              className="h-11 rounded-full px-5"
+              render={<Link href={setupSteps.find((step) => !step.done)?.href ?? "/app/servicos"} />}
+            >
+              Continuar configuração
             </Button>
-            <Button variant="outline" size="lg" className="h-11 rounded-full border-white/30 bg-white/10 px-5 text-white hover:bg-white/20 hover:text-white" render={<Link href="/app/clientes?novo=1" />}>
-              <UserRoundPlus className="size-4" /> Novo cliente
-            </Button>
-          </div>
+          )}
         </div>
       </section>
 
@@ -170,7 +197,9 @@ export default async function AppPage({
                   <p className="font-medium">Agenda livre por enquanto</p>
                   <p className="mt-1 text-sm text-muted-foreground">Aproveite para organizar a semana ou criar um horário.</p>
                 </div>
-                <Button variant="outline" className="rounded-full" render={<Link href="/app/agenda" />}>Ir para agenda</Button>
+                <Button variant="outline" className="rounded-full" render={<Link href={setupIncomplete ? "/app/servicos" : "/app/agenda?novo=1"} />}>
+                  {setupIncomplete ? "Cadastrar serviço" : "Novo agendamento"}
+                </Button>
               </div>
             ) : (
               nextAppointments.map((appointment) => (

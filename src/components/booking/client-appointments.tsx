@@ -214,7 +214,7 @@ function AppointmentCard({
         {onCancel && !cancellable.ok ? (
           <p className="w-full text-xs text-muted-foreground sm:w-auto">{clientAppointmentChangeMessage(cancellable.reason)}</p>
         ) : null}
-        {cancellable.ok && onReschedule && !item.serviceId ? (
+        {cancellable.ok && onReschedule && (!item.serviceId || !item.professionalMemberId) ? (
           <p className="w-full text-xs text-muted-foreground sm:w-auto">
             Não é possível reagendar este horário por aqui. Fale com o estabelecimento.
           </p>

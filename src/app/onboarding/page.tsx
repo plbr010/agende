@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
+import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { getSelectedPlan, signOutAction } from "@/lib/auth/actions";
 import { parsePlanId } from "@/lib/billing/plans";
 import { Button } from "@/components/ui/button";
@@ -26,13 +27,7 @@ export default async function OnboardingPage({
             </Button>
           </form>
         </div>
-        <ol className="grid grid-cols-3 gap-2 text-center text-xs" aria-label="Passos do onboarding">
-          <li className="rounded-full bg-secondary px-2 py-2 font-medium">1. Conta</li>
-          <li className="rounded-full bg-primary px-2 py-2 font-medium text-primary-foreground" aria-current="step">
-            2. Negócio
-          </li>
-          <li className="rounded-full bg-secondary/60 px-2 py-2 text-muted-foreground">3. Agenda</li>
-        </ol>
+        <OnboardingProgressSteps current={2} />
         <div>
           <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Primeiros passos</p>
           <h1 className="mt-2 font-serif text-3xl">Crie o seu negócio</h1>

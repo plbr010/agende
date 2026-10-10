@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BrandLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +42,18 @@ const STEP_LABEL: Record<BookingStep, string> = {
   confirm: "Confirmar",
 };
 
+const PICKER_BUTTON =
+  "rounded-3xl bg-card p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+
+const SLOT_BUTTON =
+  "min-h-12 rounded-2xl bg-card text-sm font-medium ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60";
+
+function formatIsoDateLabel(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-");
+  if (!year || !month || !day) return isoDate;
+  return `${day}/${month}/${year}`;
+}
+
 type Prefill = {
   fullName: string;
   phone: string;
@@ -76,10 +88,12 @@ export function PublicBookingFlow({
   const [customerNote, setCustomerNote] = useState("");
   const [slots, setSlots] = useState<string[]>([]);
   const [slotsError, setSlotsError] = useState<string | null>(null);
+  const [slotsLoading, setSlotsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmation, setConfirmation] = useState<PublicBookingConfirmation | null>(null);
   const [pending, startTransition] = useTransition();
+  const slotsRequestId = useRef(0);
 
   const service = catalog.services.find((item) => item.id === serviceId) ?? null;
   const professionalsForService = useMemo(
@@ -96,7 +110,9 @@ export function PublicBookingFlow({
     if (step !== "slot" || !serviceId || !localDate || professionalId === null) {
       return;
     }
+    const requestId = ++slotsRequestId.current;
     const memberId = professionalId === ANY_PROFESSIONAL ? null : professionalId;
+    let cancelled = false;
     startTransition(async () => {
       const result = await fetchPublicSlotsAction({
         slug: catalog.slug,
@@ -104,9 +120,16 @@ export function PublicBookingFlow({
         professionalMemberId: memberId,
         localDate,
       });
+      if (cancelled || requestId !== slotsRequestId.current) {
+        return;
+      }
       setSlots(result.slots);
       setSlotsError(result.error ?? null);
+      setSlotsLoading(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [step, serviceId, professionalId, localDate, catalog.slug]);
 
   function go(next: BookingStep) {
@@ -119,6 +142,9 @@ export function PublicBookingFlow({
     setProfessionalId(null);
     setLocalDate(null);
     setStartsAt(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(false);
     go("professional");
   }
 
@@ -126,12 +152,18 @@ export function PublicBookingFlow({
     setProfessionalId(id);
     setLocalDate(null);
     setStartsAt(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(false);
     go("date");
   }
 
   function selectDate(date: string) {
     setLocalDate(date);
     setStartsAt(null);
+    setSlots([]);
+    setSlotsError(null);
+    setSlotsLoading(true);
     go("slot");
   }
 
@@ -237,7 +269,7 @@ export function PublicBookingFlow({
                   key={item.id}
                   type="button"
                   onClick={() => selectService(item)}
-                  className="rounded-3xl bg-card p-5 text-left ring-1 ring-border transition hover:ring-primary"
+                  className={PICKER_BUTTON}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -279,31 +311,45 @@ export function PublicBookingFlow({
 
         {step === "slot" ? (
           <section className="grid gap-3" aria-label="Escolher horário">
-            {pending && slots.length === 0 ? (
+            {localDate ? (
+              <p className="text-sm font-medium">Horários para {formatIsoDateLabel(localDate)}</p>
+            ) : null}
+            {slotsLoading ? (
               <p className="text-sm text-muted-foreground" role="status">
                 Buscando horários…
               </p>
             ) : null}
-            {slotsError ? <p className="text-sm text-destructive">{slotsError}</p> : null}
-            {!pending && slots.length === 0 && !slotsError ? (
-              <p className="text-sm text-muted-foreground">Nenhum horário neste dia. Escolha outra data.</p>
-            ) : (
+            {slotsError ? (
+              <p className="text-sm text-destructive" role="alert">
+                {slotsError}
+              </p>
+            ) : null}
+            {!slotsLoading && slots.length === 0 && !slotsError ? (
+              <div className="grid gap-3 rounded-3xl bg-secondary/50 p-4">
+                <p className="text-sm text-muted-foreground">Nenhum horário neste dia.</p>
+                <Button type="button" variant="outline" className="h-11 rounded-full" onClick={() => go("date")}>
+                  Trocar data
+                </Button>
+              </div>
+            ) : null}
+            {!slotsLoading && slots.length > 0 ? (
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {slots.map((slot) => (
                   <button
                     key={slot}
                     type="button"
+                    disabled={pending}
                     onClick={() => {
                       setStartsAt(slot);
                       go("details");
                     }}
-                    className="min-h-12 rounded-2xl bg-card text-sm font-medium ring-1 ring-border hover:ring-primary"
+                    className={SLOT_BUTTON}
                   >
                     {formatSlotLabel(slot, catalog.timezone)}
                   </button>
                 ))}
               </div>
-            )}
+            ) : null}
           </section>
         ) : null}
 
@@ -320,8 +366,13 @@ export function PublicBookingFlow({
                 className="h-12 rounded-2xl"
                 required
                 aria-invalid={Boolean(fieldErrors.fullName)}
+                aria-describedby={fieldErrors.fullName ? "fullName-error" : undefined}
               />
-              {fieldErrors.fullName ? <p className="text-sm text-destructive">{fieldErrors.fullName}</p> : null}
+              {fieldErrors.fullName ? (
+                <p id="fullName-error" className="text-sm text-destructive">
+                  {fieldErrors.fullName}
+                </p>
+              ) : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="phone">Celular</Label>
@@ -336,8 +387,13 @@ export function PublicBookingFlow({
                 className="h-12 rounded-2xl"
                 required
                 aria-invalid={Boolean(fieldErrors.phone)}
+                aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
               />
-              {fieldErrors.phone ? <p className="text-sm text-destructive">{fieldErrors.phone}</p> : null}
+              {fieldErrors.phone ? (
+                <p id="phone-error" className="text-sm text-destructive">
+                  {fieldErrors.phone}
+                </p>
+              ) : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">E-mail</Label>
@@ -351,8 +407,13 @@ export function PublicBookingFlow({
                 className="h-12 rounded-2xl"
                 required
                 aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? "email-error" : undefined}
               />
-              {fieldErrors.email ? <p className="text-sm text-destructive">{fieldErrors.email}</p> : null}
+              {fieldErrors.email ? (
+                <p id="email-error" className="text-sm text-destructive">
+                  {fieldErrors.email}
+                </p>
+              ) : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="customerNote">Observação para o profissional (opcional)</Label>
@@ -463,7 +524,7 @@ function ProfessionalStep({
       <button
         type="button"
         onClick={() => onSelect(ANY_PROFESSIONAL)}
-        className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border hover:ring-primary"
+        className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         <h2 className="font-serif text-2xl">Qualquer profissional disponível</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -475,7 +536,7 @@ function ProfessionalStep({
           key={person.id}
           type="button"
           onClick={() => onSelect(person.id)}
-          className="rounded-3xl bg-card p-5 text-left ring-1 ring-border hover:ring-primary"
+          className={PICKER_BUTTON}
         >
           <h2 className="font-serif text-2xl">{person.displayName}</h2>
           {person.bio ? <p className="mt-1 text-sm text-muted-foreground">{person.bio}</p> : null}
@@ -568,7 +629,7 @@ function DateStep({
                       day: "numeric",
                       month: "long",
                     }).format(zonedWallTimeToUtc(date, "12:00", timezone))}
-                    className={`min-h-11 rounded-2xl text-sm ring-1 ${
+                    className={`min-h-11 rounded-2xl text-sm ring-1 transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
                       isSelected
                         ? "bg-primary text-primary-foreground ring-primary"
                         : "bg-card ring-border hover:ring-primary"

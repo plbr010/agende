@@ -54,9 +54,20 @@ export function ClientShell({
           </nav>
           <div className="flex items-center gap-2">
             {hasWorkspace ? (
-              <Button variant="outline" size="sm" className="hidden rounded-full sm:inline-flex" render={<Link href="/app" />}>
-                Área profissional
-              </Button>
+              <>
+                <Button variant="outline" size="sm" className="hidden rounded-full sm:inline-flex" render={<Link href="/app" />}>
+                  Área profissional
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full sm:hidden"
+                  aria-label="Área profissional"
+                  render={<Link href="/app" />}
+                >
+                  <Sparkles className="size-4" />
+                </Button>
+              </>
             ) : null}
             <Avatar>
               <AvatarFallback className="bg-secondary text-xs">{initials(userName)}</AvatarFallback>

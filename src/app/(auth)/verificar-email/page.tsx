@@ -1,8 +1,11 @@
+import Link from "next/link";
 import { ResendEmailButton } from "@/components/auth/resend-email-button";
+import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { getPendingEmail } from "@/lib/auth/actions";
 import { loadAppSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { getDefaultDestination } from "@/lib/auth/redirects";
+import { Button } from "@/components/ui/button";
 
 const copy: Record<string, { title: string; body: string }> = {
   sent: {
@@ -45,9 +48,11 @@ export default async function VerificarEmailPage({
   const pendingEmail = await getPendingEmail();
   const key = status && copy[status] ? status : "loading";
   const content = copy[key];
+  const showLoginCta = key === "success" || key === "loading" || key === "sent";
 
   return (
     <div className="space-y-6">
+      <OnboardingProgressSteps current={1} />
       <div>
         <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Confirmação</p>
         <h1 className="mt-2 font-serif text-3xl">{content.title}</h1>
@@ -55,9 +60,24 @@ export default async function VerificarEmailPage({
       </div>
       <div className="rounded-2xl bg-card p-5 ring-1 ring-border">
         <p className="text-sm text-muted-foreground">E-mail enviado para</p>
-        <p className="mt-1 font-medium">{pendingEmail ?? session?.user.email ?? "o endereço informado no cadastro"}</p>
+        <p className="mt-1 font-medium">
+          {pendingEmail ?? session?.user.email ?? "o endereço informado no cadastro"}
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Não encontrou? Verifique spam, promoções e a pasta de lixo eletrônico.
+        </p>
       </div>
       <ResendEmailButton />
+      {showLoginCta ? (
+        <div className="grid gap-3">
+          <Button className="h-11" render={<Link href="/login" />}>
+            Já confirmei — entrar
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            Depois do login, o próximo passo é criar o negócio e abrir a agenda.
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }
