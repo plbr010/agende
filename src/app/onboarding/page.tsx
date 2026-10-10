@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
@@ -30,24 +29,14 @@ export default async function OnboardingPage({
         <OnboardingProgressSteps current={2} />
         <div>
           <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Primeiros passos</p>
-          <h1 className="mt-2 font-serif text-3xl">Crie o seu negócio</h1>
+          <h1 className="mt-2 font-serif text-3xl">Cadastre seu salão</h1>
           <p className="mt-3 text-muted-foreground">
-            Olá, {session.profile.fullName}. Seu e-mail está confirmado. Dê um nome ao seu negócio e escolha o plano
-            para começar os 7 dias grátis.
+            Oi, {session.profile.fullName.split(/\s+/)[0]}! Coloque o nome do salão e escolha o plano. São 7 dias
+            grátis, sem cartão. Se sair agora, entre de novo para continuar.
           </p>
         </div>
         <CreateWorkspaceForm defaultPlan={defaultPlan} />
-        <p className="text-center text-sm text-muted-foreground">
-          Ao continuar, você concorda com os{" "}
-          <Link href="/termos" className="underline underline-offset-4">
-            Termos
-          </Link>{" "}
-          e a{" "}
-          <Link href="/privacidade" className="underline underline-offset-4">
-            Privacidade
-          </Link>
-          .
-        </p>
+        <p className="text-center text-sm text-muted-foreground">Você já aceitou os termos no cadastro.</p>
       </div>
     </div>
   );

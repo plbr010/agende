@@ -7,7 +7,7 @@ export type SubscriptionStatus = Database["public"]["Enums"]["subscription_statu
 
 export const MEMBER_ROLE_LABEL: Record<MemberRole, string> = {
   owner: "Dono",
-  admin: "Admin",
+  admin: "Administrador",
   professional: "Profissional",
   receptionist: "Recepção",
 };

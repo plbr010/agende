@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
 import type { ClientRow, ServiceRow, TeamMember } from "@/lib/catalog/queries";
@@ -134,10 +135,10 @@ export function AgendaBoard({
         <input type="hidden" name="view" value={view} />
         <input type="hidden" name="date" value={date} />
         <Button type="submit" variant="outline" className="h-11">
-          Filtrar
+          Mostrar
         </Button>
         <Button type="button" className="h-11" onClick={() => setCreating(true)}>
-          Novo agendamento
+          Novo horário
         </Button>
       </form>
 
@@ -250,7 +251,7 @@ function DayColumn({
       </header>
       {items.length === 0 ? (
         <p className="rounded-xl bg-secondary/40 px-3 py-4 text-sm text-muted-foreground">
-          Nenhum horário neste dia. Use Novo agendamento para encaixar uma cliente.
+          Nada marcado neste dia. Toque em Novo horário para marcar.
         </p>
       ) : (
         <div className="grid gap-2">
@@ -304,15 +305,31 @@ function AppointmentFormDialog({
   const [slotState, slotAction, slotPending] = useActionState(loadSlotsAction, {} as SlotActionState);
   const action = appointment ? rescheduleAppointmentAction : createAppointmentAction;
   const [state, formAction, pending] = useAgendaAction(action, () => onOpenChange(false));
+  const [professionalMemberId, setProfessionalMemberId] = useState(
+    appointment?.professionalMemberId ?? defaultProfessionalId ?? "",
+  );
+  const [serviceId, setServiceId] = useState(appointment?.serviceId ?? "");
+  const [localDate, setLocalDate] = useState(appointment?.localDate ?? defaultDate);
   const slots = slotState.slots ?? [];
+
+  useEffect(() => {
+    if (!open || !professionalMemberId || !serviceId || !localDate) {
+      return;
+    }
+    const data = new FormData();
+    data.set("professionalMemberId", professionalMemberId);
+    data.set("serviceId", serviceId);
+    data.set("localDate", localDate);
+    slotAction(data);
+  }, [open, professionalMemberId, serviceId, localDate, slotAction]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{appointment ? "Reagendar" : "Novo agendamento"}</DialogTitle>
+          <DialogTitle>{appointment ? "Trocar horário" : "Novo horário"}</DialogTitle>
           <DialogDescription>
-            Preço e duração são calculados no servidor. O horário precisa caber na jornada.
+            O valor e o tempo vêm do serviço escolhido. Escolha um horário dentro do expediente.
           </DialogDescription>
         </DialogHeader>
         {!appointment && (clients.length === 0 || services.length === 0 || professionals.length === 0) ? (
@@ -333,7 +350,7 @@ function AppointmentFormDialog({
                 Ative um profissional na equipe
               </Link>
             ) : null}
-            <p>Depois configure a jornada em Equipe → Disponibilidade para liberar horários.</p>
+            <p>Depois, em Equipe, toque em Horários de trabalho e informe quando você atende.</p>
           </div>
         ) : null}
         <form action={formAction} className="grid gap-4">
@@ -361,7 +378,8 @@ function AppointmentFormDialog({
                 name="professionalMemberId"
                 required
                 className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3"
-                defaultValue={appointment?.professionalMemberId ?? defaultProfessionalId ?? ""}
+                value={professionalMemberId}
+                onChange={(event) => setProfessionalMemberId(event.target.value)}
               >
                 <option value="" disabled>
                   Selecione
@@ -380,7 +398,8 @@ function AppointmentFormDialog({
                 name="serviceId"
                 required
                 className="h-11 min-h-11 w-full rounded-xl border border-input bg-background px-3"
-                defaultValue={appointment?.serviceId ?? ""}
+                value={serviceId}
+                onChange={(event) => setServiceId(event.target.value)}
               >
                 <option value="" disabled>
                   Selecione
@@ -394,7 +413,15 @@ function AppointmentFormDialog({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="localDate">Dia</Label>
-              <Input id="localDate" name="localDate" type="date" defaultValue={appointment?.localDate ?? defaultDate} className="h-11" required />
+              <Input
+                id="localDate"
+                name="localDate"
+                type="date"
+                value={localDate}
+                onChange={(event) => setLocalDate(event.target.value)}
+                className="h-11"
+                required
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="notes">Observações</Label>
@@ -405,8 +432,8 @@ function AppointmentFormDialog({
                 <legend className="text-sm font-medium">Horário</legend>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                   {slots.map((slot) => (
-                    <label key={slot} className="flex items-center justify-center gap-1 rounded-lg bg-secondary/60 px-2 py-2 text-sm ring-1 ring-border">
-                      <input type="radio" name="startsAt" value={slot} required className="size-4" />
+                    <label key={slot} className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl bg-secondary/60 px-2 py-2 text-sm ring-1 ring-border has-[:checked]:ring-2 has-[:checked]:ring-primary">
+                      <input type="radio" name="startsAt" value={slot} required className="size-5" />
                       {formatTimeInTimeZone(slot, timezone)}
                     </label>
                   ))}
@@ -414,16 +441,23 @@ function AppointmentFormDialog({
               </fieldset>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Busque os horários livres depois de escolher profissional, serviço e dia.
+                {slotPending
+                  ? "Buscando horários livres…"
+                  : slotState.error
+                    ? slotState.error
+                    : "Escolha profissional, serviço e dia. Os horários livres aparecem aqui."}
               </p>
             )}
           </FormFields>
           <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button formAction={slotAction} type="submit" variant="outline" disabled={slotPending} className="h-11 w-full">
-              {slotPending ? "Buscando..." : "Ver horários livres"}
+              {slotPending ? "Buscando..." : "Atualizar horários livres"}
             </Button>
             <Button type="submit" disabled={pending || slots.length === 0} className="h-11 w-full">
-              {pending ? "Salvando..." : appointment ? "Reagendar" : "Agendar"}
+              {pending ? "Salvando..." : appointment ? "Confirmar novo horário" : "Agendar"}
+            </Button>
+            <Button type="button" variant="ghost" className="h-11 w-full" onClick={() => onOpenChange(false)}>
+              Cancelar
             </Button>
           </DialogFooter>
         </form>
@@ -479,7 +513,7 @@ function AppointmentDetailDialog({
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="button" variant="outline" className="h-11" onClick={() => setRescheduling(true)}>
-                Reagendar
+                Trocar horário
               </Button>
             ) : null}
             {actions.map((status) => (
@@ -490,7 +524,7 @@ function AppointmentDetailDialog({
                 <input type="hidden" name="appointmentId" value={appointment.id} />
                 <input type="hidden" name="status" value={status} />
                 <Button type="submit" variant="outline" className="h-11">
-                  {STATUS_LABEL[status]}
+                  {STATUS_ACTION_LABEL[status]}
                 </Button>
               </form>
             ))}

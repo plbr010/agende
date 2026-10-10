@@ -51,7 +51,7 @@ export const PLANS = [
     highlights: [
       "Operação completa para o salão inteiro",
       "Financeiro, estoque e relatórios no produto",
-      "Até 15 profissionais no mesmo workspace",
+      "Até 15 profissionais no mesmo salão",
     ],
   },
 ] as const;

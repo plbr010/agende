@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { useActionState, useState, useTransition, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
 import type { BreakRow, TimeBlockRow, WorkingHourRow } from "@/lib/agenda/queries";
@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ContextualHint } from "@/components/usability/contextual-hint";
+import { ConfirmAction } from "@/components/usability/confirm-action";
 
 function FormFields({ state, children }: { state: ActionState; children: ReactNode }) {
   return (
@@ -71,87 +73,170 @@ export function AvailabilityEditor({
   const [hourState, hourAction, hourPending] = useAgendaAction(addWorkingHourAction);
   const [breakState, breakAction, breakPending] = useAgendaAction(addBreakAction);
   const [blockState, blockAction, blockPending] = useAgendaAction(addTimeBlockAction);
+  const [copying, startCopy] = useTransition();
+  const [copyFrom, setCopyFrom] = useState<number | null>(null);
+
+  function copyHoursToOtherDays(sourceWeekday: number) {
+    const sourceHours = hours.filter((row) => row.weekday === sourceWeekday);
+    if (sourceHours.length === 0) {
+      toast.error("Este dia ainda não tem horário para copiar.");
+      return;
+    }
+    startCopy(async () => {
+      let copied = 0;
+      for (const day of WEEKDAYS) {
+        if (day.value === sourceWeekday) continue;
+        if (hours.some((row) => row.weekday === day.value)) continue;
+        for (const period of sourceHours) {
+          const data = new FormData();
+          data.set("memberId", memberId);
+          data.set("weekday", String(day.value));
+          data.set("startTime", period.startTime.slice(0, 5));
+          data.set("endTime", period.endTime.slice(0, 5));
+          const result = await addWorkingHourAction({}, data);
+          if (result.error) {
+            toast.error(result.error);
+            return;
+          }
+          copied += 1;
+        }
+      }
+      toast.success(
+        copied > 0
+          ? "Horários copiados para os outros dias vazios."
+          : "Os outros dias já tinham horário. Nada foi alterado.",
+      );
+    });
+  }
 
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-sm text-muted-foreground">Jornada</p>
+        <p className="text-sm text-muted-foreground">Horários de trabalho</p>
         <h1 className="font-serif text-3xl">{memberName}</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Horários no fuso {timezoneDisplayName(timezone)}. Vários períodos no mesmo dia são permitidos, por exemplo
-          08:00–12:00 e 14:00–18:00. Pausas (almoço) não geram horários livres.
-        </p>
+        <ContextualHint className="mt-2 max-w-2xl">
+          Defina quando você atende. Pode colocar manhã e tarde separados. O horário de almoço não aparece para
+          clientes marcarem. Horário de {timezoneDisplayName(timezone)}.
+        </ContextualHint>
       </div>
 
       <div className="grid gap-4">
         {WEEKDAYS.map((day) => {
           const dayHours = hours.filter((row) => row.weekday === day.value);
           const dayBreaks = breaks.filter((row) => row.weekday === day.value);
+          const hasHours = dayHours.length > 0;
           return (
             <Card key={day.value} className="border-none ring-1 ring-border">
-              <CardHeader>
-                <CardTitle>{day.label}</CardTitle>
-                <CardDescription>
-                  {dayHours.length === 0 ? "Folga nesta jornada padrão." : `${dayHours.length} período(s) de atendimento.`}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                <PeriodList
-                  rows={dayHours}
-                  empty="Nenhum período."
-                  canEdit={canEditJornada}
-                  memberId={memberId}
-                  deleteAction={deleteWorkingHourAction}
-                />
-                {dayBreaks.length > 0 ? (
-                  <div className="grid gap-2">
-                    <p className="text-sm font-medium">Pausas</p>
-                    <PeriodList
-                      rows={dayBreaks.map((row) => ({
-                        ...row,
-                        extra: row.label,
-                      }))}
-                      empty=""
-                      canEdit={canEditJornada}
-                      memberId={memberId}
-                      deleteAction={deleteBreakAction}
-                    />
-                  </div>
-                ) : null}
-                {canEditJornada ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <form action={hourAction} className="grid gap-2 rounded-xl bg-secondary/40 p-3">
-                      <input type="hidden" name="memberId" value={memberId} />
-                      <input type="hidden" name="weekday" value={day.value} />
-                      <p className="text-sm font-medium">Adicionar período</p>
-                      <FormFields state={hourState}>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Input name="startTime" type="time" required className="h-11" />
-                          <Input name="endTime" type="time" required className="h-11" />
+              <details open={hasHours}>
+                <summary className="cursor-pointer list-none">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between gap-3">
+                      <span>{day.label}</span>
+                      <span className="text-sm font-normal text-muted-foreground">
+                        {hasHours ? `${dayHours.length} horário(s)` : "Folga — toque para definir"}
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                </summary>
+                <CardContent className="grid gap-4">
+                  <PeriodList
+                    rows={dayHours}
+                    empty="Nenhum horário neste dia."
+                    canEdit={canEditJornada}
+                    memberId={memberId}
+                    deleteAction={deleteWorkingHourAction}
+                    confirmMessage="Remover este horário de atendimento?"
+                  />
+                  {dayBreaks.length > 0 ? (
+                    <div className="grid gap-2">
+                      <p className="text-sm font-medium">Pausas (almoço)</p>
+                      <PeriodList
+                        rows={dayBreaks.map((row) => ({
+                          ...row,
+                          extra: row.label,
+                        }))}
+                        empty=""
+                        canEdit={canEditJornada}
+                        memberId={memberId}
+                        deleteAction={deleteBreakAction}
+                        confirmMessage="Remover esta pausa?"
+                      />
+                    </div>
+                  ) : null}
+                  {canEditJornada ? (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <form action={hourAction} className="grid gap-2 rounded-xl bg-secondary/40 p-3">
+                        <input type="hidden" name="memberId" value={memberId} />
+                        <input type="hidden" name="weekday" value={day.value} />
+                        <p className="text-sm font-medium">Adicionar horário</p>
+                        <FormFields state={hourState}>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="grid gap-1">
+                              <Label>De</Label>
+                              <Input name="startTime" type="time" required className="h-11" />
+                            </div>
+                            <div className="grid gap-1">
+                              <Label>Até</Label>
+                              <Input name="endTime" type="time" required className="h-11" />
+                            </div>
+                          </div>
+                        </FormFields>
+                        <Button type="submit" disabled={hourPending} className="h-11">
+                          {hourPending ? "Salvando..." : "Adicionar horário"}
+                        </Button>
+                      </form>
+                      <form action={breakAction} className="grid gap-2 rounded-xl bg-secondary/40 p-3">
+                        <input type="hidden" name="memberId" value={memberId} />
+                        <input type="hidden" name="weekday" value={day.value} />
+                        <p className="text-sm font-medium">Adicionar pausa</p>
+                        <FormFields state={breakState}>
+                          <Input name="label" placeholder="Almoço" className="h-11" />
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="grid gap-1">
+                              <Label>De</Label>
+                              <Input name="startTime" type="time" required className="h-11" />
+                            </div>
+                            <div className="grid gap-1">
+                              <Label>Até</Label>
+                              <Input name="endTime" type="time" required className="h-11" />
+                            </div>
+                          </div>
+                        </FormFields>
+                        <Button type="submit" variant="outline" disabled={breakPending} className="h-11">
+                          {breakPending ? "Salvando..." : "Adicionar pausa"}
+                        </Button>
+                      </form>
+                    </div>
+                  ) : null}
+                  {canEditJornada && hasHours ? (
+                    copyFrom === day.value ? (
+                      <div className="grid gap-2 rounded-xl bg-secondary/50 p-3">
+                        <p className="text-sm">Usar estes horários nos outros dias que ainda estão vazios?</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            className="h-11"
+                            disabled={copying}
+                            onClick={() => {
+                              copyHoursToOtherDays(day.value);
+                              setCopyFrom(null);
+                            }}
+                          >
+                            {copying ? "Copiando..." : "Sim, copiar"}
+                          </Button>
+                          <Button type="button" variant="outline" className="h-11" onClick={() => setCopyFrom(null)}>
+                            Voltar
+                          </Button>
                         </div>
-                      </FormFields>
-                      <Button type="submit" disabled={hourPending} className="h-11">
-                        {hourPending ? "Salvando..." : "Salvar período"}
+                      </div>
+                    ) : (
+                      <Button type="button" variant="outline" className="h-11" onClick={() => setCopyFrom(day.value)}>
+                        Usar estes horários nos outros dias
                       </Button>
-                    </form>
-                    <form action={breakAction} className="grid gap-2 rounded-xl bg-secondary/40 p-3">
-                      <input type="hidden" name="memberId" value={memberId} />
-                      <input type="hidden" name="weekday" value={day.value} />
-                      <p className="text-sm font-medium">Adicionar pausa</p>
-                      <FormFields state={breakState}>
-                        <Input name="label" placeholder="Almoço" className="h-11" />
-                        <div className="grid grid-cols-2 gap-2">
-                          <Input name="startTime" type="time" required className="h-11" />
-                          <Input name="endTime" type="time" required className="h-11" />
-                        </div>
-                      </FormFields>
-                      <Button type="submit" variant="outline" disabled={breakPending} className="h-11">
-                        {breakPending ? "Salvando..." : "Salvar pausa"}
-                      </Button>
-                    </form>
-                  </div>
-                ) : null}
-              </CardContent>
+                    )
+                  ) : null}
+                </CardContent>
+              </details>
             </Card>
           );
         })}
@@ -159,14 +244,12 @@ export function AvailabilityEditor({
 
       <Card className="border-none ring-1 ring-border">
         <CardHeader>
-          <CardTitle>Bloqueios pontuais</CardTitle>
-          <CardDescription>
-            Folga, médico, férias ou fechamento do salão. Datas e horas são interpretadas em São Paulo.
-          </CardDescription>
+          <CardTitle>Folgas e ausências</CardTitle>
+          <CardDescription>Use para médico, férias ou um dia sem atendimento.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           {blocks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhum bloqueio futuro.</p>
+            <p className="text-sm text-muted-foreground">Nenhuma folga marcada.</p>
           ) : (
             <div className="grid gap-2">
               {blocks.map((block) => (
@@ -175,16 +258,25 @@ export function AvailabilityEditor({
                     <p className="font-medium">
                       {block.localDate} · {block.localStart}–{block.localEnd}
                     </p>
-                    <p className="text-sm text-muted-foreground">{block.reason ?? "Bloqueio"}</p>
+                    <p className="text-sm text-muted-foreground">{block.reason ?? "Folga"}</p>
                   </div>
                   {canEditBlocks ? (
-                    <form action={(formData) => runFormAction(deleteTimeBlockAction, formData)}>
-                      <input type="hidden" name="id" value={block.id} />
-                      <input type="hidden" name="memberId" value={memberId} />
-                      <Button type="submit" variant="outline" size="sm">
-                        Remover
-                      </Button>
-                    </form>
+                    <ConfirmAction
+                      title="Remover esta folga?"
+                      description="O horário volta a aparecer para clientes marcarem."
+                      confirmLabel="Sim, remover"
+                      trigger={
+                        <Button type="button" variant="outline" className="h-11">
+                          Remover
+                        </Button>
+                      }
+                      onConfirm={() => {
+                        const formData = new FormData();
+                        formData.set("id", block.id);
+                        formData.set("memberId", memberId);
+                        return runFormAction(deleteTimeBlockAction, formData);
+                      }}
+                    />
                   ) : null}
                 </div>
               ))}
@@ -199,13 +291,19 @@ export function AvailabilityEditor({
                   <Input id="blockDate" name="localDate" type="date" required className="h-11" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Input name="startTime" type="time" required className="h-11" />
-                  <Input name="endTime" type="time" required className="h-11" />
+                  <div className="grid gap-1">
+                    <Label>De</Label>
+                    <Input name="startTime" type="time" required className="h-11" />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label>Até</Label>
+                    <Input name="endTime" type="time" required className="h-11" />
+                  </div>
                 </div>
                 <Input name="reason" placeholder="Motivo (opcional)" className="h-11" />
               </FormFields>
               <Button type="submit" disabled={blockPending} className="h-11">
-                {blockPending ? "Salvando..." : "Bloquear horário"}
+                {blockPending ? "Salvando..." : "Marcar folga neste horário"}
               </Button>
             </form>
           ) : null}
@@ -221,12 +319,14 @@ function PeriodList({
   canEdit,
   memberId,
   deleteAction,
+  confirmMessage,
 }: {
   rows: Array<{ id: string; startTime: string; endTime: string; extra?: string | null }>;
   empty: string;
   canEdit: boolean;
   memberId: string;
   deleteAction: (formData: FormData) => Promise<ActionState>;
+  confirmMessage: string;
 }) {
   if (rows.length === 0) {
     return empty ? <p className="text-sm text-muted-foreground">{empty}</p> : null;
@@ -240,13 +340,22 @@ function PeriodList({
             {row.extra ? ` · ${row.extra}` : ""}
           </p>
           {canEdit ? (
-            <form action={(formData) => runFormAction(deleteAction, formData)}>
-              <input type="hidden" name="id" value={row.id} />
-              <input type="hidden" name="memberId" value={memberId} />
-              <Button type="submit" variant="ghost" size="sm">
-                Remover
-              </Button>
-            </form>
+            <ConfirmAction
+              title={confirmMessage}
+              description="Você pode cadastrar de novo se mudar de ideia."
+              confirmLabel="Sim, remover"
+              trigger={
+                <Button type="button" variant="outline" className="h-11">
+                  Remover
+                </Button>
+              }
+              onConfirm={() => {
+                const formData = new FormData();
+                formData.set("id", row.id);
+                formData.set("memberId", memberId);
+                return runFormAction(deleteAction, formData);
+              }}
+            />
           ) : null}
         </div>
       ))}

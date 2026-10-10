@@ -41,7 +41,7 @@ export function SeatUsageCard({ seats }: { seats: SeatUsage }) {
       <CardHeader>
         <CardTitle>Vagas de profissionais</CardTitle>
         <CardDescription>
-          Recepção não ocupa vaga. O limite vem do plano; o banco continua sendo a regra final.
+          Quem só faz recepção não entra no limite de profissionais do seu plano.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -74,19 +74,19 @@ export function TeamInviteCard({ canManage }: { canManage: boolean }) {
       <CardHeader>
         <CardTitle>Convidar para a equipe</CardTitle>
         <CardDescription>
-          Com e-mail, o convite fica preso àquele endereço. Sem e-mail, nasce um link secreto
-          compartilhável. O token só aparece agora.
+          Com e-mail, só aquela pessoa consegue entrar. Sem e-mail, nasce um link para você copiar e
+          enviar agora. Depois de sair da tela, o link não aparece de novo.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <form action={action} className="grid gap-4">
-          <div className="grid gap-4 sm:grid-cols-[1fr_9rem]">
+          <div className="grid gap-4 sm:grid-cols-[1fr_12rem]">
             <div className="grid gap-2">
               <Label htmlFor="email">E-mail (opcional)</Label>
               <Input id="email" name="email" type="email" className="h-11" placeholder="pessoa@email.com" />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="role">Papel</Label>
+              <Label htmlFor="role">Função na equipe</Label>
               <select id="role" name="role" defaultValue="professional" className={selectClassName}>
                 {INVITE_ROLES.map((role: InviteRole) => (
                   <option key={role} value={role}>
@@ -135,7 +135,7 @@ export function PendingInvitesList({
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
         <CardTitle>Convites em aberto</CardTitle>
-        <CardDescription>O token bruto nunca é guardado. Aqui só aparece o destino e o papel.</CardDescription>
+        <CardDescription>Aqui aparece para quem o convite foi enviado, a função e até quando vale.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
         {invites.map((invite) => (
@@ -148,8 +148,8 @@ export function PendingInvitesList({
             </div>
             <form action={(formData) => runAction(revokeTeamInviteAction, formData)}>
               <input type="hidden" name="inviteId" value={invite.id} />
-              <Button type="submit" variant="ghost" size="sm" className="h-10">
-                Revogar
+              <Button type="submit" variant="ghost" className="h-11">
+                Cancelar convite
               </Button>
             </form>
           </div>
@@ -193,7 +193,7 @@ export function MemberManagementList({
                 <Badge variant="outline">{MEMBER_STATUS_LABEL[member.status]}</Badge>
                 {member.hasProfessionalProfile ? (
                   <Badge variant={member.bookingEnabled ? "default" : "outline"}>
-                    {member.bookingEnabled ? "Agenda ligada" : "Agenda desligada"}
+                    {member.bookingEnabled ? "Recebe reservas" : "Pausado para reservas"}
                   </Badge>
                 ) : (
                   <Badge variant="outline">Recepção</Badge>
@@ -216,7 +216,7 @@ export function MemberManagementList({
                         name="role"
                         defaultValue={member.role}
                         className={selectClassName}
-                        aria-label="Papel"
+                        aria-label="Função na equipe"
                       >
                         {INVITE_ROLES.map((role) => (
                           <option key={role} value={role}>
@@ -225,7 +225,7 @@ export function MemberManagementList({
                         ))}
                       </select>
                       <Button type="submit" variant="outline" className="h-11 shrink-0">
-                        Papel
+                        Salvar função
                       </Button>
                     </form>
                   ) : null}

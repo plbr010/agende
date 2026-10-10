@@ -22,9 +22,9 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
   return (
     <>
       <PageHeader
-        eyebrow="Saúde do negócio"
+        eyebrow="Dinheiro do salão"
         title="Financeiro"
-        description="Acompanhe receitas, despesas e pagamentos do seu negócio."
+        description="Anote o que entrou, o que saiu e o que ainda falta pagar."
         icon={CircleDollarSign}
       />
       <PeriodSelector {...period} />

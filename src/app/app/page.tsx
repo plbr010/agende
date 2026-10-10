@@ -21,7 +21,8 @@ import { loadAgendaRange, loadWorkingHours } from "@/lib/agenda/queries";
 import { STATUS_LABEL } from "@/lib/agenda/status";
 
 import { formatDateTime } from "@/lib/workspace/timezone";
-import { PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
+import { MEMBER_ROLE_LABEL, PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
+import { CopyLinkButton } from "@/components/usability/copy-link-button";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
@@ -67,21 +68,21 @@ export default async function AppPage({
   const setupSteps = [
     {
       done: servicesWithPros.length > 0,
-      title: "Cadastre um serviço com profissional",
-      href: "/app/servicos",
-      hint: "Sem vínculo, o serviço não aparece na página pública.",
+      title: "Cadastre um serviço",
+      href: "/app/servicos?novo=1",
+      hint: "Ex.: Manicure — 1h — R$ 80. Marque quem faz.",
     },
     {
       done: workingHours.length > 0,
-      title: "Configure a jornada da equipe",
+      title: "Defina horários de atendimento",
       href: guideMember ? `/app/equipe/${guideMember.memberId}/disponibilidade` : "/app/equipe",
-      hint: "Horários de trabalho liberam as vagas para agendar.",
+      hint: "Informe os dias e as horas em que você atende.",
     },
     {
       done: servicesWithPros.length > 0 && workingHours.length > 0,
-      title: "Compartilhe a página pública",
+      title: "Envie o link para clientes",
       href: workspace ? `/p/${workspace.slug}` : "/app/configuracoes/geral",
-      hint: workspace ? `/p/${workspace.slug}` : "Publique o link do seu negócio.",
+      hint: "Copie e mande no WhatsApp. Elas marcam sozinhas.",
     },
   ] as const;
   const setupIncomplete = setupSteps.some((step) => !step.done);
@@ -98,13 +99,13 @@ export default async function AppPage({
           <OnboardingProgressSteps current={3} className="mb-5" />
           {setup === "1" ? (
             <p className="mb-3 rounded-2xl bg-card px-4 py-3 text-sm ring-1 ring-border" role="status">
-              Negócio criado e trial de 7 dias ativo. Complete os passos abaixo para abrir a agenda pública.
+              Salão criado. Faltam estes passos para as clientes marcarem sozinhas.
             </p>
           ) : null}
-          <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">Para abrir a agenda</p>
-          <h2 className="mt-2 font-serif text-2xl">Próximo passo: configure o essencial</h2>
+          <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">Para clientes marcarem sozinhas</p>
+          <h2 className="mt-2 font-serif text-2xl">Faça estes 3 passos</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Comece pelo item ainda pendente. Sem serviço e jornada, clientes não conseguem marcar horário.
+            Comece pelo item ainda pendente. Sem serviço e horários, ninguém consegue marcar.
           </p>
           <ol className="mt-4 grid gap-3">
             {setupSteps.map((step, index) => (
@@ -131,6 +132,11 @@ export default async function AppPage({
               </li>
             ))}
           </ol>
+          {workspace ? (
+            <div className="mt-4">
+              <CopyLinkButton path={`/p/${workspace.slug}`} label="Copiar link do salão" className="h-11 w-full sm:w-auto" />
+            </div>
+          ) : null}
         </section>
       ) : null}
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-primary px-5 py-7 text-primary-foreground shadow-xl shadow-primary/15 sm:px-8 sm:py-9">
@@ -155,7 +161,7 @@ export default async function AppPage({
           {!setupIncomplete ? (
             <div className="flex flex-wrap gap-2">
               <Button variant="secondary" size="lg" className="h-11 rounded-full px-5" render={<Link href="/app/agenda?novo=1" />}>
-                <CalendarDays className="size-4" /> Novo agendamento
+                <CalendarDays className="size-4" /> Novo horário
               </Button>
               <Button variant="outline" size="lg" className="h-11 rounded-full border-white/30 bg-white/10 px-5 text-white hover:bg-white/20 hover:text-white" render={<Link href="/app/clientes?novo=1" />}>
                 <UserRoundPlus className="size-4" /> Novo cliente
@@ -168,24 +174,24 @@ export default async function AppPage({
               className="h-11 rounded-full px-5"
               render={<Link href={setupSteps.find((step) => !step.done)?.href ?? "/app/servicos"} />}
             >
-              Continuar configuração
+              Fazer o próximo passo
             </Button>
           )}
         </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo do dia">
-        <MetricCard label="Agenda de hoje" value={activeAppointments.length} hint="atendimentos válidos" icon={CalendarCheck2} />
-        <MetricCard label="Concluídos" value={completedAppointments.length} hint="finalizados hoje" icon={Clock3} tone="success" />
-        <MetricCard label="Previsão do dia" value={formatCentsToReais(expectedRevenue)} hint="sem cancelamentos e faltas" icon={CircleDollarSign} tone="warning" />
-        <MetricCard label="Base de clientes" value={clients.length} hint={`${services.filter((service) => service.active).length} serviços ativos`} icon={UsersRound} tone="neutral" />
+        <MetricCard label="Agenda de hoje" value={activeAppointments.length} hint="horários do dia" icon={CalendarCheck2} />
+        <MetricCard label="Concluídos" value={completedAppointments.length} hint="já finalizados hoje" icon={Clock3} tone="success" />
+        <MetricCard label="Total do dia" value={formatCentsToReais(expectedRevenue)} hint="só horários que ainda valem" icon={CircleDollarSign} tone="warning" />
+        <MetricCard label="Clientes" value={clients.length} hint={`${services.filter((service) => service.active).length} serviços ativos`} icon={UsersRound} tone="neutral" />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(20rem,0.6fr)]">
         <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="text-xl">Próximos atendimentos</CardTitle>
-            <CardDescription>O que ainda está no seu radar hoje.</CardDescription>
+            <CardDescription>O próximo horário aparece primeiro, com hora grande.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-1 pt-2">
             {nextAppointments.length === 0 ? (
@@ -198,7 +204,7 @@ export default async function AppPage({
                   <p className="mt-1 text-sm text-muted-foreground">Aproveite para organizar a semana ou criar um horário.</p>
                 </div>
                 <Button variant="outline" className="rounded-full" render={<Link href={setupIncomplete ? "/app/servicos" : "/app/agenda?novo=1"} />}>
-                  {setupIncomplete ? "Cadastrar serviço" : "Novo agendamento"}
+                  {setupIncomplete ? "Cadastrar serviço" : "Novo horário"}
                 </Button>
               </div>
             ) : (
@@ -250,9 +256,9 @@ export default async function AppPage({
       <section className="grid gap-4 md:grid-cols-2">
         <Card className="rounded-3xl border-border/70 bg-card/85">
           <CardHeader>
-            <CardTitle>Assinatura do workspace</CardTitle>
+            <CardTitle>Plano do salão</CardTitle>
             <CardDescription>
-              Pertence ao negócio, não à sua conta pessoal. Datas vêm do banco.
+              O plano é do salão, não da sua conta pessoal.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -263,21 +269,22 @@ export default async function AppPage({
               </Badge>
             </div>
             <p className="text-sm">
-              Trial iniciado: {formatDateTime(session.subscription?.trialStartedAt ?? null, timezone)}
+              Teste grátis começou: {formatDateTime(session.subscription?.trialStartedAt ?? null, timezone)}
             </p>
             <p className="text-sm">
-              Trial termina: {formatDateTime(session.subscription?.trialEndsAt ?? null, timezone)}
+              Teste grátis termina: {formatDateTime(session.subscription?.trialEndsAt ?? null, timezone)}
             </p>
             <p className="text-sm text-muted-foreground">
-              Papel: {workspace?.role ?? "—"}. Página pública: /p/{workspace?.slug}
+              Sua função: {workspace ? MEMBER_ROLE_LABEL[workspace.role] : "—"}.
             </p>
+            {workspace ? <CopyLinkButton path={`/p/${workspace.slug}`} label="Copiar link do salão" className="h-11" /> : null}
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-border/70 bg-card/85">
           <CardHeader>
             <CardTitle>Agenda</CardTitle>
             <CardDescription>
-              Jornada, pausas e agendamentos internos do estabelecimento.
+              Veja o dia, marque clientes e atualize cada horário.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -287,7 +294,7 @@ export default async function AppPage({
             {!session.context.hasClientProfile ? (
               <form action={enableClientProfileAction}>
                 <Button variant="outline" type="submit" className="h-11">
-                  Também quero agendar como cliente
+                  Quero marcar horários em outros salões também
                 </Button>
               </form>
             ) : (

@@ -10,7 +10,7 @@ export async function sendRecovery(auth: Pick<Auth, "resetPasswordForEmail">, em
   if (!parsed.success) return { error: "Informe um e-mail válido." };
   const { error } = await auth.resetPasswordForEmail(normalizeEmail(parsed.data), { redirectTo: new URL("/auth/recovery", origin).href });
   if (error) return { error: "Não foi possível enviar agora. Aguarde um minuto e tente novamente." };
-  return { success: "Se houver uma conta com esse e-mail, você receberá um link para redefinir sua senha. Abra o link neste navegador." };
+  return { success: "Se existir conta com esse e-mail, mandamos um link. Abra o link e volte aqui para criar a senha." };
 }
 
 export async function exchangeRecovery(auth: Pick<Auth, "exchangeCodeForSession" | "verifyOtp">, params: URLSearchParams): Promise<boolean> {

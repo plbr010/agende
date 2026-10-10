@@ -71,7 +71,7 @@ export async function signUpAction(
         fieldErrors[key] = issue.message;
       }
     }
-    return { error: "Revise os campos destacados.", fieldErrors };
+    return { error: "Confira os campos em vermelho.", fieldErrors };
   }
 
   const input = parsed.data;
@@ -142,7 +142,7 @@ export async function signInAction(
 
   const session = await loadAppSession();
   if (!session) {
-    return { error: "Não foi possível autenticar. Tente novamente." };
+    return { error: "Não foi possível entrar. Tente novamente." };
   }
   const next = sanitizeNextPath(String(formData.get("next") ?? ""));
   redirect(next ?? getDefaultDestination(session.context));
@@ -205,7 +205,7 @@ export async function createWorkspaceAction(
   if (!plan.success) return { error: "Escolha um plano válido." };
   const name = String(formData.get("name") ?? "").trim();
   if (name.length < 2 || name.length > 80) {
-    return { error: "Informe o nome do negócio (2 a 80 caracteres).", fieldErrors: { name: "Nome inválido." } };
+    return { error: "Informe o nome do salão ou estúdio (2 a 80 caracteres).", fieldErrors: { name: "Nome inválido." } };
   }
 
   const supabase = await createClient();
@@ -225,9 +225,9 @@ export async function createWorkspaceAction(
       redirect("/verificar-email");
     }
     if (error.message.includes("invalid_workspace_name")) {
-      return { error: "Nome do negócio inválido." };
+      return { error: "Nome do salão inválido." };
     }
-    return { error: "Não foi possível criar o negócio. Tente novamente." };
+    return { error: "Não foi possível criar o salão. Tente novamente." };
   }
 
   redirect("/app?setup=1");

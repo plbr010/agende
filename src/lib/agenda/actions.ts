@@ -41,7 +41,7 @@ function fieldErrorsFromZod(error: { issues: ReadonlyArray<{ path: readonly Prop
 
 function mapAgendaError(message: string): string {
   if (message.includes("outside_working_hours")) {
-    return "Esse horário está fora da jornada do profissional.";
+    return "Esse horário está fora do horário de atendimento da profissional.";
   }
   if (message.includes("inside_break")) {
     return "Esse horário cai em uma pausa.";
@@ -62,13 +62,13 @@ function mapAgendaError(message: string): string {
     return "Este profissional não realiza o serviço escolhido.";
   }
   if (message.includes("client_not_found") || message.includes("client_archived")) {
-    return "Cliente não encontrado neste negócio.";
+    return "Cliente não encontrado neste salão.";
   }
   if (message.includes("appointment_terminal") || message.includes("appointment_in_progress")) {
     return "Este agendamento não pode mais ser reagendado.";
   }
   if (message.includes("status_denied") || message.includes("invalid_status_transition")) {
-    return "Essa mudança de status não é permitida.";
+    return "Essa mudança de situação não é permitida.";
   }
   if (message.includes("appointment_write_denied") || message.includes("42501") || message.includes("permission denied")) {
     return "Você não tem permissão para esta ação.";
@@ -189,7 +189,7 @@ export async function rescheduleAppointmentAction(
 export async function setAppointmentStatusAction(formData: FormData): Promise<ActionState> {
   const parsed = parseAppointmentStatusForm(formData);
   if (!parsed.success) {
-    return { error: "Status inválido." };
+    return { error: "Não foi possível atualizar a situação deste horário." };
   }
 
   const { error, session, workspace } = await requireWorkspace();
@@ -197,7 +197,7 @@ export async function setAppointmentStatusAction(formData: FormData): Promise<Ac
     return { error: error ?? "Nenhum negócio encontrado." };
   }
   if (!isAppointmentStatus(parsed.data.status)) {
-    return { error: "Status inválido." };
+    return { error: "Não foi possível atualizar a situação deste horário." };
   }
 
   const supabase = await createClient();
@@ -225,7 +225,7 @@ export async function setAppointmentStatusAction(formData: FormData): Promise<Ac
   }
 
   revalidateAgenda();
-  return { success: "Status atualizado." };
+  return { success: "Situação do horário atualizada." };
 }
 
 export async function loadSlotsAction(
@@ -253,7 +253,7 @@ export async function loadSlotsAction(
       localDate: parsed.data.localDate,
     };
   }
-  return { slots, localDate: parsed.data.localDate, success: "Horários atualizados." };
+  return { slots, localDate: parsed.data.localDate };
 }
 
 export async function addWorkingHourAction(
@@ -270,7 +270,7 @@ export async function addWorkingHourAction(
   }
   const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
   if (!canManageJornada(workspace.role, currentMemberId === parsed.data.memberId)) {
-    return { error: "Você não pode alterar a jornada deste profissional." };
+    return { error: "Você não pode alterar os horários desta profissional." };
   }
   const supabase = await createClient();
   const { error: insertError } = await supabase.from("professional_working_hours").insert({
@@ -332,7 +332,7 @@ export async function deleteWorkingHourAction(formData: FormData): Promise<Actio
   }
   const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
   if (!canManageJornada(workspace.role, currentMemberId === memberId)) {
-    return { error: "Você não pode alterar a jornada deste profissional." };
+    return { error: "Você não pode alterar os horários desta profissional." };
   }
   const supabase = await createClient();
   const { error: deleteError } = await supabase

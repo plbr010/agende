@@ -57,7 +57,7 @@ export function ActionPanel({ title, children }: {
     children: ReactNode;
 }) {
     return <details className="rounded-2xl border bg-card p-4">
-    <summary className="cursor-pointer font-medium text-primary">{title}</summary>
+    <summary className="flex min-h-12 cursor-pointer items-center font-medium text-primary">{title}</summary>
     <div className="mt-4">{children}</div>
     </details>;
 }

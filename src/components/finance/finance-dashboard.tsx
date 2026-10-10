@@ -3,9 +3,9 @@ import { useState } from "react";
 import type { FinancialSnapshot } from "@/lib/finance/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
-const statuses = { pending: "Pendente", paid: "Pago", cancelled: "Cancelado" };
+const statuses = { pending: "A pagar", paid: "Pago", cancelled: "Cancelado" };
 function PaymentField() {
-    return <SelectField label="Forma de pagamento" name="method">
+    return <SelectField label="Como recebeu ou pagou" name="method">
     <option value="pix">Pix</option>
     <option value="cash">Dinheiro</option>
     <option value="debit_card">Cartão de débito</option>
@@ -24,63 +24,67 @@ export function FinanceDashboard({ snapshot }: {
         return <p>Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
     const entries = snapshot.entries.filter(e => (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
     return <div className="grid gap-5">
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Receitas pagas", snapshot.summary.paidRevenueCents], ["Despesas pagas", snapshot.summary.paidExpenseCents], ["Pendente", snapshot.summary.pendingCents], ["Saldo líquido", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="rounded-2xl border bg-card p-5">
+    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda a pagar", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="rounded-2xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">{label}</p>
         <p className="font-serif text-2xl">{formatCentsToReais(Number(value))}</p>
         </div>)}</section>
- <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "+ Receita" : "+ Despesa"}>
-        <ManagementForm action="finance-create" label="Salvar lançamento" idempotent>
+ <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "Adicionar dinheiro que entrou" : "Adicionar dinheiro que saiu"}>
+        <ManagementForm action="finance-create" label="Salvar" idempotent>
         <input type="hidden" name="kind" value={type}/>
-        <Field name="description" label="Descrição"/>
+        <Field name="description" label="O que foi"/>
         <Field name="amount" label="Valor (R$)"/>
-        <Field name="due" label="Vencimento" type="date"/>
+        <Field name="due" label="Data" type="date"/>
         <SelectField label="Categoria" name="category" value="">
         <option value="">Sem categoria</option>{snapshot.categories.filter(c => c.active && !c.archivedAt && c.kind === type).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}</SelectField>
         </ManagementForm>
         </ActionPanel>)}</div>
- <div className="flex flex-wrap gap-3">
-    <p className="text-sm text-muted-foreground">Últimos 100 lançamentos criados no período. A busca e os filtros se aplicam à lista exibida.</p><label>Buscar<input className="ml-2 rounded-lg border p-2" value={search} onChange={e => setSearch(e.target.value)}/>
+ <div className="grid gap-3 sm:grid-cols-3">
+    <p className="text-sm text-muted-foreground sm:col-span-3">Mostramos os registros mais recentes deste período. Use a busca para achar um nome ou valor.</p>
+    <label className="grid gap-1 text-sm">Buscar
+      <input className="h-11 rounded-xl border border-input bg-background px-3" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nome ou descrição"/>
     </label>
-    <label>Situação<select className="ml-2 rounded-lg border p-2" value={status} onChange={e => setStatus(e.target.value)}>
+    <label className="grid gap-1 text-sm">Situação
+      <select className="h-11 rounded-xl border border-input bg-background px-3" value={status} onChange={e => setStatus(e.target.value)}>
     <option value="all">Todas</option>{Object.entries(statuses).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select>
     </label>
-    <label>Tipo<select className="ml-2 rounded-lg border p-2" value={kind} onChange={e => setKind(e.target.value)}>
+    <label className="grid gap-1 text-sm">Tipo
+      <select className="h-11 rounded-xl border border-input bg-background px-3" value={kind} onChange={e => setKind(e.target.value)}>
     <option value="all">Todos</option>
-    <option value="income">Receita</option>
-    <option value="expense">Despesa</option>
+    <option value="income">Dinheiro que entrou</option>
+    <option value="expense">Dinheiro que saiu</option>
     </select>
     </label>
     </div>
- {!entries.length && <p className="rounded-2xl bg-secondary p-5">Nenhum lançamento encontrado. Registre uma receita ou despesa, ou ajuste o período e os filtros.</p>}
+ {!entries.length && <p className="rounded-2xl bg-secondary p-5">Nada encontrado. Toque em Adicionar dinheiro que entrou ou saiu, ou mude o período.</p>}
  {entries.map(e => <article key={e.id} className="grid gap-3 rounded-2xl border bg-card p-5">
         <div className="flex flex-wrap justify-between gap-3">
         <div>
         <h2 className="font-semibold">{e.title}</h2>
-        <p className="text-sm text-muted-foreground">{e.kind === "income" ? "Receita" : "Despesa"} · {e.categoryLabel} · {e.clientName}</p>
+        <p className="text-sm text-muted-foreground">{e.kind === "income" ? "Entrou" : "Saiu"} · {e.categoryLabel} · {e.clientName}</p>
         </div>
         <div>
         <strong>{formatCentsToReais(e.amountCents)}</strong>
         <p>{statuses[e.status]}</p>
         </div>
         </div>
-        <p className="text-sm">Vencimento: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
+        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
  {e.status === "pending" && <>
-            <ActionPanel title="Dar baixa">
+            <ActionPanel title="Marcar como pago">
             <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" confirm={"Confirmar pagamento de " + formatCentsToReais(e.amountCents) + "?"}>
             <PaymentField />
             </ManagementForm>
             </ActionPanel>
-            <ManagementForm action="finance-cancel" id={e.id} label="Cancelar lançamento" confirm="Cancelar este lançamento?"/>
+            <ManagementForm action="finance-cancel" id={e.id} label="Cancelar este registro" confirm="Cancelar este registro?"/>
             </>}
- {e.status === "cancelled" && <ManagementForm action="finance-reopen" id={e.id} label="Reabrir" confirm="Solicitar reabertura deste lançamento?"/>}
+ {e.status === "cancelled" && <ManagementForm action="finance-reopen" id={e.id} label="Desfazer cancelamento" confirm="Desfazer o cancelamento deste registro?"/>}
  {e.status === "paid" && e.kind === "income" && e.refundedCents < e.amountCents && <ActionPanel title="Registrar devolução">
-            <ManagementForm action="finance-refund" id={e.id} label="Confirmar devolução" idempotent confirm="Confirmar o registro da devolução? Confira valor, motivo e forma de pagamento.">
-            <p className="text-sm">Disponível: {formatCentsToReais(e.amountCents - e.refundedCents)}. Este registro não transfere dinheiro. Uma devolução integral de pacote pode cancelar as sessões restantes.</p>
+            <ManagementForm action="finance-refund" id={e.id} label="Confirmar devolução" idempotent confirm="Confirmar a devolução? Confira valor, motivo e forma de pagamento.">
+            <p className="text-sm">Ainda dá para devolver {formatCentsToReais(e.amountCents - e.refundedCents)}. Isto só anota a devolução no Agendê. Se for um pacote inteiro, as sessões que faltam podem ser canceladas.</p>
             <Field label="Valor devolvido (R$)" name="amount"/>
             <Field label="Motivo da devolução" name="reason"/>
             <PaymentField />
-            <label className="text-sm">
-            <input type="checkbox" name="confirmed" required/> Confirmo que conferi a devolução e seus efeitos.</label>
+            <label className="flex min-h-11 items-center gap-2 text-sm">
+            <input type="checkbox" name="confirmed" required className="size-5"/> Confirmei o valor e o motivo da devolução.</label>
             </ManagementForm>
             </ActionPanel>}
  </article>)}</div>;

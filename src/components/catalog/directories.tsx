@@ -38,10 +38,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCentsInput, formatCentsToReais } from "@/lib/validation/money";
 import { formatPhoneBr } from "@/lib/validation/phone";
+import { ConfirmAction } from "@/components/usability/confirm-action";
 
 const roleLabel: Record<MemberRole, string> = {
   owner: "Dono",
-  admin: "Admin",
+  admin: "Administrador",
   professional: "Profissional",
   receptionist: "Recepção",
 };
@@ -124,7 +125,7 @@ export function TeamDirectory({
       {members.length === 0 ? (
         <Card className="border-none ring-1 ring-border">
           <CardContent className="grid gap-3 py-8">
-            <p className="text-sm text-muted-foreground">Nenhuma pessoa neste workspace ainda.</p>
+            <p className="text-sm text-muted-foreground">Nenhuma pessoa nesta equipe ainda.</p>
             {canManage ? (
               <Button className="h-11 w-fit rounded-full" render={<Link href="/app/configuracoes/equipe" />}>
                 Convidar a primeira pessoa
@@ -164,10 +165,10 @@ export function TeamDirectory({
                   <Badge variant="outline">{statusLabel[member.status]}</Badge>
                   {member.hasProfessionalProfile ? (
                     <Badge variant={member.bookingEnabled ? "default" : "outline"}>
-                      {member.bookingEnabled ? "Atende clientes" : "Não atende"}
+                      {member.bookingEnabled ? "Recebe reservas" : "Pausado para reservas"}
                     </Badge>
                   ) : (
-                    <Badge variant="outline">Sem perfil de atendimento</Badge>
+                    <Badge variant="outline">Não atende clientes (só recepção)</Badge>
                   )}
                   <Badge variant="ghost">{member.serviceCount} serviços</Badge>
                   {member.hasProfessionalProfile ? (
@@ -175,7 +176,7 @@ export function TeamDirectory({
                       href={`/app/equipe/${member.memberId}/disponibilidade`}
                       className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
                     >
-                      <CalendarDays className="size-3.5" /> Jornada
+                      <CalendarDays className="size-3.5" /> Horários de trabalho
                     </Link>
                   ) : null}
                 </CardContent>
@@ -208,20 +209,20 @@ export function TeamDirectory({
                   ) : null}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea id="bio" name="bio" defaultValue={editing.bio ?? ""} />
+                  <Label htmlFor="bio">Uma frase sobre o atendimento</Label>
+                  <Textarea id="bio" name="bio" defaultValue={editing.bio ?? ""} placeholder="Ex.: Manicure há 10 anos, atendimento com hora marcada." />
                 </div>
                 {canManage ? (
-                  <label className="flex items-center gap-2 text-sm">
+                  <label className="flex min-h-11 items-center gap-2 text-sm">
                     <input type="hidden" name="manageBooking" value="1" />
                     <input
                       type="checkbox"
                       name="bookingEnabled"
                       value="true"
                       defaultChecked={Boolean(editing.bookingEnabled)}
-                      className="size-4 rounded border-input"
+                      className="size-5 rounded border-input"
                     />
-                    Atende clientes
+                    Recebe reservas online
                   </label>
                 ) : null}
               </FormFields>
@@ -308,25 +309,35 @@ export function ServiceCatalog({
               </CardHeader>
               <CardContent className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
                 <Badge variant={service.active ? "default" : "outline"}>
-                  {service.active ? "Ativo" : "Pausado"}
+                  {service.active ? "Aparece na agenda" : "Oculto na agenda online"}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
                   {service.professionalMemberIds.length} profissionais
                 </span>
                 {canManage ? (
-                  <form action={(formData) => runFormAction(archiveServiceAction, formData)}>
-                    <input type="hidden" name="id" value={service.id} />
-                    <Button variant="ghost" size="sm" type="submit">
-                      Arquivar
-                    </Button>
-                  </form>
+                  <ConfirmAction
+                    title="Ocultar este serviço?"
+                    description="Ele some da lista. Você pode cadastrar de novo depois."
+                    confirmLabel="Sim, ocultar"
+                    cancelLabel="Manter na lista"
+                    trigger={
+                      <Button variant="outline" className="h-11" type="button">
+                        Ocultar da lista
+                      </Button>
+                    }
+                    onConfirm={() => {
+                      const formData = new FormData();
+                      formData.set("id", service.id);
+                      return runFormAction(archiveServiceAction, formData);
+                    }}
+                  />
                 ) : null}
                 {canToggleOwn && currentMemberId ? (
                   <form action={(formData) => runFormAction(toggleOwnServiceAction, formData)}>
                     <input type="hidden" name="serviceId" value={service.id} />
                     <input type="hidden" name="enabled" value={performs ? "false" : "true"} />
-                    <Button variant="outline" size="sm" type="submit">
-                      {performs ? "Deixar de realizar" : "Eu realizo este serviço"}
+                    <Button variant="outline" className="h-11" type="submit">
+                      {performs ? "Não faço mais este serviço" : "Eu faço este serviço"}
                     </Button>
                   </form>
                 ) : null}
@@ -340,7 +351,7 @@ export function ServiceCatalog({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{current ? "Editar serviço" : "Novo serviço"}</DialogTitle>
-            <DialogDescription>Preço em reais; o banco guarda centavos.</DialogDescription>
+            <DialogDescription>Quanto cobra e quanto tempo dura?</DialogDescription>
           </DialogHeader>
           <form key={current?.id ?? "new"} action={action} className="grid gap-4">
             {current ? <input type="hidden" name="id" value={current.id} /> : null}
@@ -355,7 +366,7 @@ export function ServiceCatalog({
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="durationMinutes">Duração (min)</Label>
+                  <Label htmlFor="durationMinutes">Tempo em minutos</Label>
                   <Input
                     id="durationMinutes"
                     name="durationMinutes"
@@ -380,28 +391,28 @@ export function ServiceCatalog({
                   />
                 </div>
               </div>
-              <label className="flex items-center gap-2 text-sm">
+              <label className="flex min-h-11 items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   name="active"
                   value="true"
                   defaultChecked={current?.active ?? true}
-                  className="size-4 rounded border-input"
+                  className="size-5 rounded border-input"
                 />
-                Serviço ativo
+                Aparece na agenda online
               </label>
               <fieldset className="grid gap-2">
-                <legend className="text-sm font-medium">Quem realiza</legend>
+                <legend className="text-sm font-medium">Quem faz este serviço</legend>
                 <p className="text-sm text-muted-foreground">
-                  Selecione ao menos uma profissional. Sem vínculo, o serviço não aparece na agenda pública.
+                  Marque quem atende. Se ninguém estiver marcado, clientes não veem na internet.
                 </p>
                 {bookable.length === 0 ? (
                   <p className="text-sm text-destructive">
-                    Nenhum profissional com perfil de atendimento neste workspace.
+                    Cadastre uma profissional na equipe antes de salvar o serviço.
                   </p>
                 ) : (
                   bookable.map((member) => (
-                    <label key={member.memberId} className="flex items-center gap-2 text-sm">
+                    <label key={member.memberId} className="flex min-h-11 items-center gap-2 text-sm">
                       <input
                         type="checkbox"
                         name="professionalMemberIds"
@@ -411,7 +422,7 @@ export function ServiceCatalog({
                             ? current.professionalMemberIds.includes(member.memberId)
                             : bookable.length === 1
                         }
-                        className="size-4 rounded border-input"
+                        className="size-5 rounded border-input"
                       />
                       {member.displayName ?? member.fullName}
                     </label>
@@ -488,12 +499,22 @@ export function ClientDirectory({
                     <Button type="button" variant="outline" size="sm" onClick={() => setEditing(client)}>
                       Editar
                     </Button>
-                    <form action={(formData) => runFormAction(archiveClientAction, formData)}>
-                      <input type="hidden" name="id" value={client.id} />
-                      <Button variant="ghost" size="sm" type="submit">
-                        Arquivar
-                      </Button>
-                    </form>
+                    <ConfirmAction
+                      title="Ocultar esta cliente?"
+                      description="Ela some da lista. Os horários antigos continuam no histórico."
+                      confirmLabel="Sim, ocultar"
+                      cancelLabel="Manter na lista"
+                      trigger={
+                        <Button variant="outline" className="h-11" type="button">
+                          Ocultar da lista
+                        </Button>
+                      }
+                      onConfirm={() => {
+                        const formData = new FormData();
+                        formData.set("id", client.id);
+                        return runFormAction(archiveClientAction, formData);
+                      }}
+                    />
                   </div>
                 </CardAction>
               ) : null}
@@ -518,7 +539,7 @@ export function ClientDirectory({
           <DialogHeader>
             <DialogTitle>{current ? "Editar cliente" : "Novo cliente"}</DialogTitle>
             <DialogDescription>
-              Cadastro interno do salão. Não é a conta /cliente do Agendê.
+              Ficha da cliente no salão. Isso não é a conta dela no app Agendê.
             </DialogDescription>
           </DialogHeader>
           <form key={current?.id ?? "new"} action={action} className="grid gap-4">
@@ -554,6 +575,9 @@ export function ClientDirectory({
                   className="h-11"
                 />
               </div>
+              <details className="rounded-2xl bg-secondary/40 p-3">
+                <summary className="cursor-pointer text-sm font-medium">Mais informações (opcional)</summary>
+                <div className="mt-3 grid gap-3">
               <div className="grid gap-2">
                 <Label htmlFor="birthDate">Nascimento</Label>
                 <Input
@@ -568,6 +592,8 @@ export function ClientDirectory({
                 <Label htmlFor="notes">Observações</Label>
                 <Textarea id="notes" name="notes" defaultValue={current?.notes ?? ""} />
               </div>
+                </div>
+              </details>
             </FormFields>
             <DialogFooter>
               <Button type="submit" disabled={pending} className="h-11">

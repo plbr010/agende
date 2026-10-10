@@ -62,16 +62,16 @@ export default async function AgendaPage({
   return (
     <>
       <PageHeader
-        eyebrow="Agenda interna"
+        eyebrow="Sua agenda"
         title="Atendimentos"
-        description="Visualize o ritmo do dia, filtre por profissional e conduza cada atendimento do agendamento à conclusão."
+        description="Veja o dia, marque clientes e atualize cada horário."
         icon={CalendarDays}
       />
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo da agenda">
         <MetricCard label="Na agenda" value={visibleAppointments.length} hint={view === "week" ? "na semana selecionada" : "no dia selecionado"} icon={CalendarCheck2} />
         <MetricCard label="Confirmados" value={confirmed} hint="clientes confirmados" icon={Clock3} tone="success" />
         <MetricCard label="Em atendimento" value={inProgress} hint="acontecendo agora" icon={Clock3} tone="warning" />
-        <MetricCard label="Valor previsto" value={formatCentsToReais(revenue)} hint="sem cancelamentos e faltas" icon={CircleDollarSign} tone="neutral" />
+        <MetricCard label="Total do dia" value={formatCentsToReais(revenue)} hint="só horários que ainda valem" icon={CircleDollarSign} tone="neutral" />
       </section>
       <AgendaBoard
         timezone={timezone}

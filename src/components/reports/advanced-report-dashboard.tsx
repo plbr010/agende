@@ -16,8 +16,8 @@ export function AdvancedReportDashboard({ report }: { report: AdvancedReport | n
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label={`Indicadores de ${report.period.startDate} a ${report.period.endDate}`}>
         <MetricCard label="Atendimentos" value={report.operations.appointmentsTotal} hint={`${report.operations.completionRatePct.toLocaleString("pt-BR")}% concluídos`} icon={ChartNoAxesCombined} />
         <MetricCard label="Clientes únicos" value={report.clients.uniqueClients} hint={`${report.clients.newClients} novos no período`} icon={UsersRound} />
-        <MetricCard label="Valor concluído" value={formatCentsToReais(report.operations.completedServiceValueCents)} hint={`Ticket médio ${formatCentsToReais(report.operations.averageServiceTicketCents)}`} icon={CircleDollarSign} />
-        <MetricCard label="Estoque baixo" value={report.inventory.lowStock} hint={`${report.inventory.outOfStock} sem saldo`} icon={Boxes} tone="warning" />
+        <MetricCard label="Valor concluído" value={formatCentsToReais(report.operations.completedServiceValueCents)} hint={`Preço médio ${formatCentsToReais(report.operations.averageServiceTicketCents)}`} icon={CircleDollarSign} />
+        <MetricCard label="Estoque baixo" value={report.inventory.lowStock} hint={`${report.inventory.outOfStock} sem estoque`} icon={Boxes} tone="warning" />
       </section>
       <section className="grid gap-4 sm:grid-cols-2"><Card><CardHeader><CardTitle>Agenda</CardTitle></CardHeader><CardContent><p>{report.operations.completed} concluídos · {report.operations.cancelled} cancelados · {report.operations.noShow} faltas</p><p className="text-sm text-muted-foreground">Cancelamentos: {report.operations.cancellationRatePct}% · Faltas: {report.operations.noShowRatePct}%</p></CardContent></Card><Card><CardHeader><CardTitle>Clientes</CardTitle></CardHeader><CardContent><p>{report.clients.uniqueClients} atendidos · {report.clients.newClients} novos · {report.clients.repeatClients} recorrentes</p></CardContent></Card></section>
       <section className="grid gap-4 xl:grid-cols-2">
@@ -31,7 +31,7 @@ export function AdvancedReportDashboard({ report }: { report: AdvancedReport | n
         </Card>
       </section>
       <section className="grid gap-4 sm:grid-cols-2">
-        <MetricCard label="Pacotes vendidos" value={report.packages.sold} hint={`${report.packages.redemptions} resgates · ${report.packages.reversedRedemptions} revertidos`} icon={PackageCheck} />
+        <MetricCard label="Pacotes vendidos" value={report.packages.sold} hint={`${report.packages.redemptions} sessões usadas · ${report.packages.reversedRedemptions} desfeitas`} icon={PackageCheck} />
         <MetricCard label="Custo estimado em estoque" value={formatCentsToReais(report.inventory.estimatedStockCostCents)} hint={`${report.inventory.activeProducts} produtos ativos · posição atual`} icon={Boxes} tone="neutral" />
       </section>
     </>

@@ -8,7 +8,7 @@ export default function PublicProfileNotFound() {
       <div className="w-full max-w-md space-y-6 text-center">
         <BrandLogo className="mx-auto" />
         <div>
-          <h1 className="font-serif text-3xl">Este estabelecimento não está público</h1>
+          <h1 className="font-serif text-3xl">Não encontramos este salão</h1>
           <p className="mt-2 text-muted-foreground">
             O endereço pode estar errado, o salão ainda não existe no Agendê, ou a página pública não foi ativada.
           </p>

@@ -57,7 +57,7 @@ function Navigation({ pathname, role, onNavigate }: { pathname: string; role: Wo
                 <Icon className="size-4 shrink-0" aria-hidden="true" />
                 <span className="min-w-0 flex-1 truncate font-medium">{item.label}</span>
                 {item.integrationPending && !current ? (
-                  <span className="size-1.5 shrink-0 rounded-full bg-accent" title="Integração pendente" />
+                  <span className="rounded-full bg-accent px-2 py-0.5 text-[0.65rem] font-medium text-foreground">Em breve</span>
                 ) : null}
                 <ChevronRight className={cn("size-3.5 shrink-0 opacity-0 transition-opacity", current && "opacity-70", !current && "group-hover:opacity-60")} aria-hidden="true" />
               </Link>
@@ -108,7 +108,7 @@ export function AppShell({
       <aside className="hidden h-screen border-r border-border/70 bg-card/70 p-4 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col">
         <div className="px-3 py-2">
           <BrandLogo size="md" />
-          <p className="mt-1 text-xs text-muted-foreground">Gestão leve para beleza</p>
+          <p className="mt-1 text-xs text-muted-foreground">Agenda do seu salão</p>
         </div>
         <div className="my-5 rounded-2xl bg-secondary/60 p-3 ring-1 ring-border/70">
           <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export function AppShell({
             className="mt-3 w-full justify-start text-xs"
             render={<Link href={`/p/${workspaceSlug}`} target="_blank" />}
           >
-            Ver página pública <ExternalLink className="ml-auto size-3" />
+            Ver página do salão <ExternalLink className="ml-auto size-3" />
           </Button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
@@ -144,8 +144,8 @@ export function AppShell({
               <Badge variant="outline" className="mt-1">Conta profissional</Badge>
             </div>
             <form action={signOutAction}>
-              <Button type="submit" variant="ghost" size="icon" aria-label="Sair">
-                <LogOut className="size-4" />
+              <Button type="submit" variant="ghost" className="h-11 px-3" aria-label="Sair">
+                <LogOut className="size-4" /> Sair
               </Button>
             </form>
           </div>
@@ -157,9 +157,10 @@ export function AppShell({
           <div className="flex h-16 items-center justify-between gap-3 px-4">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger
-                render={<Button variant="ghost" size="icon" aria-label="Abrir menu" />}
+                render={<Button variant="ghost" className="h-11 gap-1 px-2" aria-label="Abrir menu" />}
               >
                 <Menu className="size-5" />
+                <span className="text-sm">Menu</span>
               </SheetTrigger>
               <SheetContent side="left" className="w-[88%] gap-0 p-0 sm:max-w-xs">
                 <SheetHeader className="border-b border-border/70 p-5 text-left">
@@ -188,7 +189,7 @@ export function AppShell({
                       render={<Link href={`/p/${workspaceSlug}`} target="_blank" />}
                       onClick={() => setMobileOpen(false)}
                     >
-                      Ver página pública <ExternalLink className="ml-auto size-3.5" />
+                      Ver página do salão <ExternalLink className="ml-auto size-3.5" />
                     </Button>
                   ) : null}
                   <form action={signOutAction}>
@@ -201,16 +202,16 @@ export function AppShell({
             </Sheet>
             <div className="min-w-0 flex-1 text-center">
               <p className="truncate text-sm font-semibold">{workspaceName}</p>
-              <p className="text-[0.68rem] tracking-wider text-muted-foreground uppercase">Painel Agendê</p>
+              <p className="text-[0.68rem] tracking-wider text-muted-foreground uppercase">Área do salão</p>
             </div>
             <Button
               variant="ghost"
-              size="icon"
-              className="size-11"
-              aria-label="Novo agendamento"
+              className="h-11 gap-1 px-2"
+              aria-label="Novo horário"
               render={<Link href="/app/agenda?novo=1" />}
             >
               <CalendarPlus className="size-5" />
+              <span className="text-sm">Novo</span>
             </Button>
           </div>
         </header>

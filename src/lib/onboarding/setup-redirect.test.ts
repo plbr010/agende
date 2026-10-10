@@ -21,6 +21,6 @@ test("public booking clears stale slots before fetching", () => {
   const source = readFileSync(new URL("../../components/booking/public-booking-flow.tsx", import.meta.url), "utf8");
   assert.match(source, /slotsRequestId/);
   assert.match(source, /setSlots\(\[\]\)/);
-  assert.match(source, /Trocar data/);
+  assert.match(source, /Escolher outro dia/);
   assert.match(source, /Horários para/);
 });

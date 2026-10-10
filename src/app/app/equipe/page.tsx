@@ -37,13 +37,13 @@ export default async function TeamPage() {
       <PageHeader
         eyebrow="Pessoas"
         title="Equipe"
-        description="Organize quem atende, os serviços de cada profissional e a disponibilidade que move a agenda."
+        description="Quem atende, o que cada pessoa faz e os horários de trabalho."
         icon={UsersRound}
       />
       <section className="grid gap-4 sm:grid-cols-3" aria-label="Resumo da equipe">
-        <MetricCard label="Pessoas ativas" value={activeMembers} hint="membros no workspace" icon={UserRoundCheck} />
-        <MetricCard label="Na agenda" value={bookableMembers} hint="profissionais com reservas" icon={CalendarClock} tone="success" />
-        <MetricCard label="Vínculos de serviço" value={linkedServices} hint="especialidades configuradas" icon={Sparkles} tone="neutral" />
+        <MetricCard label="Pessoas ativas" value={activeMembers} hint="pessoas na equipe" icon={UserRoundCheck} />
+        <MetricCard label="Na agenda" value={bookableMembers} hint="quem recebe reservas" icon={CalendarClock} tone="success" />
+        <MetricCard label="Serviços por profissional" value={linkedServices} hint="o que cada pessoa faz" icon={Sparkles} tone="neutral" />
       </section>
       {seats ? <SeatUsageCard seats={seats} /> : null}
       <TeamInviteCard canManage={canManage} />

@@ -9,7 +9,7 @@ function ProductFields({ product }: {
     return <>
     <Field label="Nome do produto" name="name" value={product?.name}/>
     <Field label="Descrição" name="description" value={product?.description ?? ""} required={false}/>
-    <Field label="Código / SKU" name="sku" value={product?.sku ?? ""} required={false}/>
+    <Field label="Código do produto (opcional)" name="sku" value={product?.sku ?? ""} required={false}/>
     <SelectField label="Unidade" name="unit" value={product?.unit ?? "unidade"}>
     <option value="unidade">Unidade</option>
     <option value="ml">ml</option>

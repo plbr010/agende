@@ -82,7 +82,7 @@ export default async function ClientePage() {
                   <div>
                     <p className="font-medium">Nada marcado por enquanto</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Abra o link do estabelecimento para reservar. O Agendê não inventa salões na busca.
+                      Você precisa do link que o salão te mandou para marcar um horário.
                     </p>
                   </div>
                 </div>
@@ -97,7 +97,7 @@ export default async function ClientePage() {
             {session.context.hasWorkspace ? (
               <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/app" />}>Ir para área profissional</Button>
             ) : (
-              <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/onboarding" />}>Criar meu espaço profissional</Button>
+              <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/onboarding" />}>Cadastrar meu salão</Button>
             )}
             <p className="mt-4 text-center text-xs text-muted-foreground">Sua área de cliente continua gratuita.</p>
           </CardContent>

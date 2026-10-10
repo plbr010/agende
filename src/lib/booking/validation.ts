@@ -92,7 +92,7 @@ export function clientAppointmentChangeMessage(
   reason: "terminal" | "in_progress" | "too_late",
 ): string {
   if (reason === "too_late") {
-    return "Cancelamento e reagendamento só até 2 horas antes do horário.";
+    return "Só é possível desmarcar ou trocar até 2 horas antes. Depois disso, fale com o salão.";
   }
   if (reason === "in_progress") {
     return "Este atendimento já começou e não pode ser alterado por aqui.";
@@ -195,10 +195,10 @@ export function sanitizeBookingError(message: string | null | undefined): string
     return "Não encontramos esse agendamento.";
   }
   if (value.includes("workspace_unavailable")) {
-    return "A agenda online deste estabelecimento está temporariamente indisponível.";
+    return "A agenda online deste salão está temporariamente indisponível.";
   }
   if (value.includes("workspace_not_found")) {
-    return "Este estabelecimento não está público.";
+    return "Este salão não está aberto para reservas agora.";
   }
   return "Não foi possível concluir. Tente de novo.";
 }

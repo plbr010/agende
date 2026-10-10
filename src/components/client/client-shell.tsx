@@ -73,8 +73,8 @@ export function ClientShell({
               <AvatarFallback className="bg-secondary text-xs">{initials(userName)}</AvatarFallback>
             </Avatar>
             <form action={signOutAction}>
-              <Button variant="ghost" size="icon" type="submit" aria-label="Sair">
-                <LogOut className="size-4" />
+              <Button variant="ghost" className="h-11 px-3" type="submit" aria-label="Sair">
+                <LogOut className="size-4" /> Sair
               </Button>
             </form>
           </div>

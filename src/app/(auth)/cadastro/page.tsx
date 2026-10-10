@@ -23,7 +23,7 @@ export default async function CadastroPage({
       {selectedPlan ? (
         <p className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm">
           Você escolheu o plano <strong>{selectedPlan.name}</strong> ({selectedPlan.seats}). Depois de confirmar o
-          e-mail, o trial de 7 dias começa nesse plano — sem cartão.
+          e-mail, começam <strong>7 dias grátis</strong> nesse plano — sem cartão.
         </p>
       ) : null}
       <SignupForm
@@ -35,7 +35,7 @@ export default async function CadastroPage({
         Já tem conta?{" "}
         <Link
           href={safeNext ? `/login?next=${encodeURIComponent(safeNext)}` : "/login"}
-          className="text-foreground underline underline-offset-4"
+          className="inline-flex min-h-11 items-center text-foreground underline underline-offset-4"
         >
           Entrar
         </Link>

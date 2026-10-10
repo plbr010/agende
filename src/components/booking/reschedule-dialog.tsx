@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const MISSING_SERVICE_MESSAGE = "Não é possível reagendar este horário por aqui. Fale com o estabelecimento.";
+const MISSING_SERVICE_MESSAGE = "Não é possível reagendar este horário por aqui. Fale com o salão.";
 
 export function RescheduleDialog({
   appointment,
@@ -121,7 +121,7 @@ export function RescheduleDialog({
         <DialogHeader>
           <DialogTitle>Reagendar {appointment.serviceName}</DialogTitle>
           <DialogDescription>
-            Horários no fuso do estabelecimento. O preço e a duração do agendamento são preservados.
+            Horário do salão. O valor continua o mesmo.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">

@@ -33,19 +33,19 @@ export const appNavigation: AppNavigationGroup[] = [
     items: [
       { href: "/app", label: "Visão geral", description: "Seu dia em um só lugar", icon: House },
       { href: "/app/agenda", label: "Agenda", description: "Horários e atendimentos", icon: CalendarDays },
-      { href: "/app/clientes", label: "Clientes", description: "Relacionamento e histórico", icon: UsersRound },
-      { href: "/app/servicos", label: "Serviços", description: "Catálogo e preços", icon: WandSparkles },
-      { href: "/app/equipe", label: "Equipe", description: "Profissionais e jornadas", icon: Sparkles },
+      { href: "/app/clientes", label: "Clientes", description: "Nomes e histórico", icon: UsersRound },
+      { href: "/app/servicos", label: "Serviços", description: "O que você oferece e os preços", icon: WandSparkles },
+      { href: "/app/equipe", label: "Equipe", description: "Pessoas e horários de trabalho", icon: Sparkles },
     ],
   },
   {
-    label: "Gestão",
+    label: "Dinheiro e estoque",
     items: [
       { href: "/app/estoque", label: "Estoque", description: "Produtos e movimentações", icon: Boxes },
-      { href: "/app/pacotes", label: "Pacotes", description: "Combos e créditos", icon: PackageCheck },
-      { href: "/app/financeiro", label: "Financeiro", description: "Entradas e saídas", icon: CircleDollarSign },
-      { href: "/app/relatorios", label: "Relatórios", description: "Indicadores do negócio", icon: ChartNoAxesCombined },
-      { href: "/app/avaliacoes", label: "Avaliações", description: "Reputação e feedbacks", icon: Star },
+      { href: "/app/pacotes", label: "Pacotes", description: "Combos para clientes", icon: PackageCheck },
+      { href: "/app/financeiro", label: "Financeiro", description: "Dinheiro que entra e sai", icon: CircleDollarSign },
+      { href: "/app/relatorios", label: "Relatórios", description: "Números do mês", icon: ChartNoAxesCombined },
+      { href: "/app/avaliacoes", label: "Avaliações", description: "Notas das clientes", icon: Star },
     ],
   },
 ];
@@ -53,7 +53,7 @@ export const appNavigation: AppNavigationGroup[] = [
 export const settingsNavigationItem: AppNavigationItem = {
   href: "/app/configuracoes",
   label: "Configurações",
-  description: "Perfil e preferências",
+  description: "Dados do salão e do plano",
   icon: Settings2,
 };
 

@@ -21,15 +21,15 @@ export const signupSchema = z
       .string()
       .trim()
       .min(1, "Informe um celular.")
-      .refine(isValidPhone, "Informe um celular brasileiro válido."),
+      .refine(isValidPhone, "Coloque o DDD e o número, como (32) 99999-9999."),
     password: z
       .string()
-      .min(8, "A senha deve ter pelo menos 8 caracteres.")
-      .regex(/[A-Za-z]/, "A senha deve conter letras.")
-      .regex(/[0-9]/, "A senha deve conter números."),
+      .min(8, "A senha deve ter pelo menos 8 caracteres, com letras e números.")
+      .regex(/[A-Za-z]/, "A senha deve ter letras e números (mínimo 8).")
+      .regex(/[0-9]/, "A senha deve ter letras e números (mínimo 8)."),
     confirmPassword: z.string(),
     termsAccepted: z.boolean().refine((value) => value === true, {
-      message: "Aceite os Termos de Uso e a Política de Privacidade.",
+      message: "Marque a caixinha dos termos para continuar.",
     }),
   })
   .refine((value) => value.password === value.confirmPassword, {
@@ -83,6 +83,6 @@ export const workspaceSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, "Informe o nome do negócio.")
+    .min(2, "Informe o nome do salão ou estúdio.")
     .max(80, "Nome muito longo."),
 });

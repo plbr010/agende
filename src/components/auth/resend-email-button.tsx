@@ -15,7 +15,7 @@ export function ResendEmailButton() {
   return (
     <form action={action} className="space-y-3">
       <Button type="submit" variant="outline" className="h-11 w-full" disabled={pending}>
-        {pending ? "Reenviando..." : "Reenviar e-mail"}
+        {pending ? "Enviando..." : "Enviar e-mail de novo"}
       </Button>
       {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
       {state.success ? <p className="text-sm text-success-foreground">{state.success}</p> : null}

@@ -33,7 +33,7 @@ export default async function ReviewsPage() {
         <BackendContractNotice
           title="Avaliações temporariamente indisponíveis"
           description="As avaliações estão temporariamente indisponíveis. Tente novamente mais tarde."
-          fields={["Nota de 1 a 5", "Comentário opcional", "Uma avaliação por atendimento", "Isolamento por workspace"]}
+          fields={["Nota de 1 a 5", "Comentário opcional", "Uma avaliação por atendimento", "Só o seu salão vê as notas"]}
         />
       ) : (
         <>
