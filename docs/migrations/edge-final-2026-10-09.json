@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-09T17:18:06.654355+00:00",
+  "functions": [
+    {
+      "name": "stripe-billing",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "sha256": "fc04a6e62e98854a2f20d8503f299ad28bfec1a0653945ca048a23d40339afdf"
+    },
+    {
+      "name": "stripe-webhook",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "sha256": "ca53fbafcf58ea9df39d6c19387313b18949e89c4469d202d780da34c3282fc8"
+    }
+  ]
+}

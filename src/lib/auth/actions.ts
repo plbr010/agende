@@ -98,7 +98,7 @@ export async function signUpAction(
   });
 
   if (error) {
-    if (error.message.toLowerCase().includes("already registered") || error.status === 422) {
+    if (error.code === "user_already_exists" || error.message.toLowerCase().includes("already registered")) {
       return { error: "Este e-mail já possui uma conta. Entre ou recupere o acesso." };
     }
     return { error: "Não foi possível criar sua conta. Tente novamente." };
@@ -150,7 +150,10 @@ export async function signInAction(
 
 export async function signOutAction() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new Error("Não foi possível encerrar sua sessão. Tente novamente.");
+  }
   redirect("/");
 }
 

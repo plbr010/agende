@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-09T17:46:42.1572587Z",
+  "node": "24.19.0",
+  "production": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "all": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 5,
+    "critical": 0,
+    "total": 5
+  },
+  "remaining_dev_packages": [
+    "@next/eslint-plugin-next",
+    "braces",
+    "eslint-config-next",
+    "fast-glob",
+    "micromatch"
+  ],
+  "advisory": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+  "preserved_css_sha256": "4c371f7a1ff5d219ae2f7ff28bd256b4346fd546fe46fbae22092e57db2f0fae"
+}

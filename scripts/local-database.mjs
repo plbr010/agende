@@ -7,7 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 // In-memory PostgreSQL only. No URL, network connection or remote credentials.
 // Auth/storage objects emulate the Supabase platform, not application business rules.
 // pg_cron registration is recorded locally; the scheduler itself is not run.
-export async function createLocalDatabase() {
+export async function createLocalDatabase({ throughVersion = '99999999999999' } = {}) {
   const db = new PGlite({ extensions: { unaccent, pgcrypto, btree_gist } });
   await db.exec(`
     create role anon; create role authenticated; create role service_role bypassrls;
@@ -40,7 +40,7 @@ export async function createLocalDatabase() {
     create function cron.schedule(text,text,text) returns bigint language sql as $$ insert into cron.job(jobname,schedule,command) values($1,$2,$3) returning jobid; $$;
     create function cron.unschedule(bigint) returns boolean language sql as $$ delete from cron.job where jobid=$1 returning true; $$;
   `);
-  for (const file of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
+  for (const file of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f.slice(0,14) <= throughVersion).sort()) {
     let sql = readFileSync('supabase/migrations/' + file,'utf8');
     sql = sql.replace(/create extension if not exists pg_cron with schema pg_catalog;/i,'-- pg_cron scheduling is represented by local platform fixtures.');
     try { await db.exec(sql); } catch (error) { await db.close(); throw new Error('Migration failed: ' + file + ': ' + error.message, {cause:error}); }
