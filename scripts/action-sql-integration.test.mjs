@@ -8,6 +8,7 @@ import { createLocalDatabase } from './local-database.mjs';
 import * as catalogValidation from '../src/lib/validation/catalog.ts';
 import * as agendaValidation from '../src/lib/validation/agenda.ts';
 import * as money from '../src/lib/validation/money.ts';
+import * as phone from '../src/lib/validation/phone.ts';
 import * as plans from '../src/lib/billing/plans.ts';
 import * as redirects from '../src/lib/auth/redirects.ts';
 import * as signup from '../src/lib/validation/signup.ts';
@@ -83,16 +84,16 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     '@/lib/supabase/server':{createClient:async()=>client}, '@/lib/billing/plans':plans,
     '@/lib/auth/redirects':redirects, '@/lib/auth/session':{loadAppSession:async()=>null,requireConfirmedSession:async()=>({user:{id:actor},workspaces:[{id:workspaceId,role:actor===owner?'owner':'professional'}]})},
     '@/lib/http/origin':{getRequestOrigin:async()=>'http://127.0.0.1:3000'}, '@/lib/validation/email':email,'@/lib/validation/signup':signup,
-    '@/lib/validation/catalog':catalogValidation,'@/lib/validation/money':money,
-    '@/lib/catalog/queries':{canManageServices:role=>['owner','admin'].includes(role),canManageAllProfiles:role=>['owner','admin'].includes(role)},
+    '@/lib/validation/catalog':catalogValidation,'@/lib/validation/money':money,'@/lib/validation/phone':phone,
     '@/lib/validation/agenda':agendaValidation,'@/lib/agenda/status':agendaStatus,'@/lib/time/timezone':timezone,
     '@/lib/workspace/queries':{loadWorkspaceSettings:async()=>({timezone:'America/Sao_Paulo'})},
-    '@/lib/agenda/queries':{canManageJornada:role=>role==='owner',canWriteAppointment:role=>role==='owner',loadCurrentMemberId:async()=>memberId},
     '@/lib/workspace/public':{publicLogoUrl:()=>null}, '@/lib/workspace/timezone':workspaceTimezone,
     '@/lib/booking/ip':{hashClientIp:async()=>'local-fixture-only'}, '@/lib/booking/validation':bookingValidation,
     '@/lib/reviews/validation':reviewValidation,'./mutations':mutationValidation,
   };
   const load=path=>moduleFrom(path,dependencies);
+  dependencies['@/lib/catalog/queries']=load('src/lib/catalog/queries.ts');
+  dependencies['@/lib/agenda/queries']=load('src/lib/agenda/queries.ts');
   const auth=load('src/lib/auth/actions.ts');
   const catalog=load('src/lib/catalog/actions.ts');
   const agenda=load('src/lib/agenda/actions.ts');

@@ -216,7 +216,8 @@ fonte comprovada e aprovação específica. Nenhuma dessas operações foi reali
 
 ## 10. PR e evidências
 
-Novo PR da branch `codex/launch-audit-2026-10-10` será publicado após os commits.
+Novo PR da branch `codex/launch-audit-2026-10-10`:
+[PR #21](https://github.com/plbr010/agende/pull/21).
 Inclui as correções anteriores do #19, mantendo esse PR/branch intactos.
 Revisar a entrega consolidada; não contar o #19 como trabalho independente
 já aplicado à main. Não foi feito merge automático.
