@@ -30,7 +30,7 @@ for (const path of [...pages("src/app"), "/p/e2e-audit-nonexistent-pr12", "/p/e2
     : path === "/auth/recovery" || path === "/redefinir-senha" ? redirected && Boolean(location?.includes("/recuperar-senha?status=expired"))
     : path.startsWith("/auth/") ? redirected && Boolean(location?.includes("/verificar-email"))
     // Next.js may send a streamed not-found page with a 200 HTTP response.
-    : path.startsWith("/p/") ? [200, 404].includes(response.status) && body.includes("Este estabelecimento não está público")
+    : path.startsWith("/p/") ? [200, 404].includes(response.status) && body.includes("Não encontramos este salão")
     : response.status === 200;
   if (!pass) {
     failed = true;
