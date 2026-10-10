@@ -17,5 +17,18 @@ export function getSupabasePublishableKey(): string {
 }
 
 export function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const deployed = process.env.VERCEL === "1" || ["production", "preview"].includes(process.env.VERCEL_ENV ?? "");
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const platformHost = process.env.VERCEL_ENV === "preview"
+    ? process.env.VERCEL_URL
+    : process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  const value = configured || (platformHost ? `https://${platformHost}` : deployed ? null : "http://localhost:3000");
+  if (!value) throw new Error("Missing site origin configuration");
+
+  const url = new URL(value);
+  const localHttp = !deployed && url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+  if ((url.protocol !== "https:" && !localHttp) || url.username || url.password || url.pathname !== "/" || url.search || url.hash) {
+    throw new Error("Invalid site origin configuration");
+  }
+  return url.origin;
 }
