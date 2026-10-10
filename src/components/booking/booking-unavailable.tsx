@@ -18,15 +18,15 @@ export function BookingUnavailableNotice({
           <p className="mt-2 text-muted-foreground">
             {workspaceName
               ? `${workspaceName} está no Agendê, mas a agenda online não está aberta neste momento.`
-              : "Este estabelecimento está no Agendê, mas a agenda online não está aberta neste momento."}
+              : "Este salão está no Agendê, mas a agenda online não está aberta neste momento."}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Se você é a profissional, renove o trial ou a assinatura do negócio para voltar a receber reservas.
+            Peça ao salão para reabrir a agenda online. Se você é dona do salão, entre na sua conta para renovar o teste ou o plano.
           </p>
         </div>
         <div className="grid gap-3 text-sm">
           <Link href={`/p/${slug}`} className="underline underline-offset-4">
-            Ver página pública
+            Ver o salão
           </Link>
           <Link href="/" className="underline underline-offset-4">
             Voltar ao Agendê

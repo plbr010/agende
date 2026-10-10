@@ -72,7 +72,7 @@ export const clientSchema = z.object({
     .trim()
     .optional()
     .transform((value) => value ?? "")
-    .refine((value) => value === "" || isValidPhone(value), "Informe um celular brasileiro válido.")
+    .refine((value) => value === "" || isValidPhone(value), "Coloque o DDD e o número, como (32) 99999-9999.")
     .transform((value) => (value ? normalizePhone(value) : null)),
   birthDate: z
     .string()

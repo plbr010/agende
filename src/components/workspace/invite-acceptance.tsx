@@ -18,15 +18,15 @@ const statusCopy: Record<InvitePeek["status"], { title: string; body: string }> 
   },
   expired: {
     title: "Este convite expirou",
-    body: "Peça um link novo para a pessoa que administra o estabelecimento.",
+    body: "Peça um link novo para quem cuida do salão.",
   },
   revoked: {
-    title: "Este convite foi revogado",
+    title: "Este convite foi cancelado",
     body: "Ele não pode mais ser usado.",
   },
   accepted: {
     title: "Este convite já foi utilizado",
-    body: "Se você já entrou, acesse a área do estabelecimento.",
+    body: "Se você já entrou, acesse a área do salão.",
   },
   not_found: {
     title: "Convite não encontrado",
@@ -67,22 +67,22 @@ export function InviteAcceptance({
           <CardContent className="grid gap-4">
             {peek.workspaceName ? (
               <p className="text-sm">
-                Estabelecimento: <span className="font-medium">{peek.workspaceName}</span>
+                Salão: <span className="font-medium">{peek.workspaceName}</span>
               </p>
             ) : null}
             {roleLabel ? (
               <p className="text-sm">
-                Papel: <span className="font-medium">{roleLabel}</span>
+                Função na equipe: <span className="font-medium">{roleLabel}</span>
               </p>
             ) : null}
             {peek.status !== "not_found" && peek.emailBound ? (
               <p className="text-sm text-muted-foreground">
-                Este convite está vinculado a um e-mail específico. A conta autenticada precisa ser a mesma.
+                Este convite é só para um e-mail. Entre com a conta desse e-mail.
               </p>
             ) : null}
             {peek.status !== "not_found" && !peek.emailBound ? (
               <p className="text-sm text-muted-foreground">
-                Este é um link secreto. Quem tiver o endereço e uma conta confirmada pode aceitar.
+                Este é um link pessoal. Copie, envie e entre com a conta confirmada para aceitar.
               </p>
             ) : null}
             {peek.expiresAt && peek.status === "valid" ? (
@@ -125,7 +125,7 @@ export function InviteAcceptance({
 
             {peek.status === "accepted" ? (
               <Link href="/app" className={cn(buttonVariants({ variant: "default" }), "h-12")}>
-                Ir para o estabelecimento
+                Ir para o salão
               </Link>
             ) : null}
           </CardContent>

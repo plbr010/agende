@@ -34,8 +34,8 @@ export const workspaceSettingsSchema = z.object({
     z
       .string()
       .trim()
-      .min(2, "Informe o nome do estabelecimento (2 a 80 caracteres).")
-      .max(80, "Informe o nome do estabelecimento (2 a 80 caracteres)."),
+      .min(2, "Informe o nome do salão ou estúdio (2 a 80 caracteres).")
+      .max(80, "Informe o nome do salão ou estúdio (2 a 80 caracteres)."),
   ),
   slug: z.preprocess(
     omittedToUndefined,

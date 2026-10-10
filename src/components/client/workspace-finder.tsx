@@ -20,7 +20,7 @@ export function WorkspaceFinder({
     event.preventDefault();
     const slug = extractPublicWorkspaceSlug(value);
     if (!slug) {
-      setError("Cole o link do estabelecimento ou o endereço público, como studio-luna.");
+      setError("Cole o link que o salão te mandou, pelo WhatsApp ou Instagram.");
       return;
     }
     setError(null);
@@ -31,7 +31,7 @@ export function WorkspaceFinder({
     <div className="grid gap-4">
       {knownWorkspaces.length > 0 ? (
         <div className="grid gap-2">
-          <p className="text-sm font-medium">Seus estabelecimentos</p>
+          <p className="text-sm font-medium">Seus salões</p>
           <ul className="grid gap-2">
             {knownWorkspaces.map((workspace) => (
               <li key={workspace.slug}>
@@ -41,7 +41,7 @@ export function WorkspaceFinder({
                   render={<a href={publicProfilePath(workspace.slug)} />}
                 >
                   <span className="truncate">{workspace.name}</span>
-                  <span className="text-xs text-muted-foreground">/p/{workspace.slug}</span>
+                  <span className="text-xs text-muted-foreground">Abrir</span>
                 </Button>
               </li>
             ))}
@@ -50,7 +50,7 @@ export function WorkspaceFinder({
       ) : null}
       <form onSubmit={openWorkspace} className="grid gap-3">
         <div className="grid gap-2">
-          <Label htmlFor="workspace-ref">Abrir um estabelecimento</Label>
+          <Label htmlFor="workspace-ref">Abrir um salão</Label>
           <Input
             id="workspace-ref"
             value={value}
@@ -59,7 +59,7 @@ export function WorkspaceFinder({
               setError(null);
             }}
             className="h-11"
-            placeholder="Link ou endereço, ex.: /p/studio-luna"
+            placeholder="Cole o link que você recebeu"
             autoComplete="off"
           />
         </div>
@@ -69,11 +69,11 @@ export function WorkspaceFinder({
           </p>
         ) : (
           <p className="text-xs text-muted-foreground">
-            O Agendê não lista salões aleatórios. Use o link que a profissional compartilhou.
+            Use o link que o salão te mandou. Não buscamos salões pelo nome.
           </p>
         )}
         <Button type="submit" className="h-11 rounded-full">
-          Abrir perfil
+          Ir para agendar
         </Button>
       </form>
     </div>

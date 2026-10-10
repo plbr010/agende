@@ -126,7 +126,7 @@ export function ClientAppointments({
       <section className="grid gap-3">
         <div className="flex items-center gap-2">
           <CalendarDays className="size-4 text-primary" />
-          <h2 className="font-serif text-2xl">Próximos</h2>
+          <h2 className="font-serif text-2xl">Próximos horários</h2>
         </div>
         {upcoming.length === 0 ? (
           <EmptyAppointments
@@ -150,7 +150,7 @@ export function ClientAppointments({
       <section className="grid gap-3">
         <div className="flex items-center gap-2">
           <Clock3 className="size-4 text-primary" />
-          <h2 className="font-serif text-2xl">Anteriores</h2>
+          <h2 className="font-serif text-2xl">Já aconteceram</h2>
         </div>
         {past.length === 0 ? (
           <EmptyAppointments
@@ -208,7 +208,7 @@ function AppointmentCard({
         ) : null}
         {cancellable.ok && onCancel ? (
           <Button type="button" variant="outline" className="h-11 rounded-full" disabled={pending} onClick={onCancel}>
-            {pending ? "Cancelando…" : "Cancelar horário"}
+            {pending ? "Cancelando…" : "Desmarcar"}
           </Button>
         ) : null}
         {onCancel && !cancellable.ok ? (
@@ -216,7 +216,7 @@ function AppointmentCard({
         ) : null}
         {cancellable.ok && onReschedule && (!item.serviceId || !item.professionalMemberId) ? (
           <p className="w-full text-xs text-muted-foreground sm:w-auto">
-            Não é possível reagendar este horário por aqui. Fale com o estabelecimento.
+            Não é possível reagendar este horário por aqui. Fale com o salão.
           </p>
         ) : null}
         {status === "completed" ? (
@@ -228,7 +228,7 @@ function AppointmentCard({
           href={`/p/${item.slug}`}
           className="ml-auto inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
-          Ver estabelecimento <ExternalLink className="size-3.5" />
+          Ver o salão <ExternalLink className="size-3.5" />
         </Link>
       </div>
     </article>

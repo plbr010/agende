@@ -14,7 +14,7 @@ export function RecoveryForm({ reset = false }: { reset?: boolean }) {
       {reset ? (
         <>
           <div className="grid gap-2">
-            <Label htmlFor="password">Nova senha (mínimo de 8 caracteres, letras e números)</Label>
+            <Label htmlFor="password">Nova senha</Label>
             <Input
               id="password"
               name="password"
@@ -25,6 +25,7 @@ export function RecoveryForm({ reset = false }: { reset?: boolean }) {
               required
               className="h-11"
             />
+            <p className="text-sm text-muted-foreground">Use no mínimo 8 caracteres, com letras e números.</p>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="confirmPassword">Confirme a nova senha</Label>
@@ -57,7 +58,7 @@ export function RecoveryForm({ reset = false }: { reset?: boolean }) {
         </p>
       ) : null}
       <Button disabled={pending} type="submit" className="h-12">
-        {pending ? "Aguarde..." : reset ? "Salvar nova senha" : "Enviar link de recuperação"}
+        {pending ? (reset ? "Salvando..." : "Enviando...") : reset ? "Salvar nova senha" : "Enviar link de recuperação"}
       </Button>
       <Link href="/login" className="text-sm underline underline-offset-4">
         Voltar para entrar

@@ -133,7 +133,7 @@ export async function saveServiceAction(
     return { error: error ?? "Nenhum negócio encontrado." };
   }
   if (!canManageServices(workspace.role)) {
-    return { error: "Somente dono ou admin pode alterar o catálogo de serviços." };
+    return { error: "Somente dono ou admin pode alterar os serviços." };
   }
 
   const priceCents = parseReaisToCents(parsed.data.priceReais);
@@ -242,7 +242,7 @@ export async function archiveServiceAction(formData: FormData): Promise<ActionSt
   }
   revalidatePath("/app");
   revalidatePath("/app/servicos");
-  return { success: "Serviço arquivado." };
+  return { success: "Serviço ocultado da lista." };
 }
 
 export async function toggleOwnServiceAction(formData: FormData): Promise<ActionState> {
@@ -296,7 +296,7 @@ export async function toggleOwnServiceAction(formData: FormData): Promise<Action
   revalidatePath("/app");
   revalidatePath("/app/servicos");
   revalidatePath("/app/equipe");
-  return { success: "Associação atualizada." };
+  return { success: "Lista de serviços atualizada." };
 }
 
 export async function saveClientAction(

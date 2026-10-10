@@ -17,7 +17,7 @@ export function PackagesDashboard({ timezone, snapshot, services, clients }: {
         <Field name="name" label="Nome do pacote"/>
         <Field name="description" label="Descrição" required={false}/>
         <Field name="amount" label="Preço (R$)"/>
-        <Field name="validity" label="Validade em dias (vazio para sem prazo)" type="number" min={1} max={3650} required={false}/>
+        <Field name="validity" label="Validade em dias (deixe vazio se não vence)" type="number" min={1} max={3650} required={false}/>
         <fieldset className="grid gap-3">
         <legend>Serviços incluídos e sessões</legend>{available.map(s => <div key={s.id} className="grid gap-2 rounded-xl border p-3">
             <label>
@@ -32,7 +32,7 @@ export function PackagesDashboard({ timezone, snapshot, services, clients }: {
         <ul>{p.sessions.map(s => <li key={s.serviceId}>{s.serviceName} · {s.included} sessões</li>)}</ul>{p.active && !p.archivedAt && <ActionPanel title="Vender pacote">{clients.length ? <ManagementForm action="package-sell" id={p.id} label="Confirmar venda" confirm={"Confirmar venda de " + p.name + " por " + formatCentsToReais(p.priceCents) + "?"}>
                 <SelectField name="client" label="Cliente">
                 <option value="">Selecione o cliente</option>{clients.filter(c => !c.archivedAt).map(c => <option key={c.id} value={c.id}>{c.fullName}</option>)}</SelectField>
-                <p className="text-sm">A venda registra o pacote do cliente e seu lançamento financeiro.</p>
+                <p className="text-sm">A venda entra no financeiro do salão automaticamente.</p>
                 </ManagementForm> : <p>Cadastre um cliente antes de vender.</p>}</ActionPanel>}</article>)}</section>
  <section className="grid gap-3">
     <h2 className="text-xl font-semibold">Pacotes dos clientes</h2><p className="text-sm text-muted-foreground">Últimas 30 vendas.</p>{!snapshot.sales.length && <p>Nenhum pacote vendido. Escolha um pacote acima para registrar uma venda.</p>}{snapshot.sales.map(s => <article key={s.id} className="grid gap-2 rounded-2xl border bg-card p-5">

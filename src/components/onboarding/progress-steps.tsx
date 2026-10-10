@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 
 const STEPS = [
   { id: 1, label: "Conta" },
-  { id: 2, label: "Negócio" },
-  { id: 3, label: "Agenda" },
+  { id: 2, label: "Salão" },
+  { id: 3, label: "Pronto" },
 ] as const;
 
 export function OnboardingProgressSteps({

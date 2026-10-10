@@ -70,10 +70,9 @@ export function GeneralSettingsForm({
   return (
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle>Dados do estabelecimento</CardTitle>
+        <CardTitle>Endereço e contato do salão</CardTitle>
         <CardDescription>
-          Nome, contato comercial e endereço. O fuso padrão do Agendê é Brasília, e cada negócio
-          guarda o próprio.
+          Nome, telefone e endereço. O horário padrão é o de Brasília.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -83,7 +82,7 @@ export function GeneralSettingsForm({
             omit={["name", "businessPhone", "businessEmail", "address", "city", "state", "postalCode", "timezone"]}
           />
           <div className="grid gap-2">
-            <Label htmlFor="name">Nome do estabelecimento</Label>
+            <Label htmlFor="name">Nome do salão ou estúdio</Label>
             <Input id="name" name="name" required defaultValue={settings.name} className="h-11" disabled={!canEdit} />
             {state.fieldErrors?.name ? <p className="text-sm text-destructive">{state.fieldErrors.name}</p> : null}
           </div>
@@ -182,7 +181,7 @@ export function GeneralSettingsForm({
               {pending ? "Salvando..." : "Salvar dados"}
             </Button>
           ) : (
-            <p className="text-sm text-muted-foreground">Somente dono ou admin pode editar.</p>
+            <p className="text-sm text-muted-foreground">Só quem administra o salão pode editar.</p>
           )}
         </form>
       </CardContent>
@@ -215,9 +214,9 @@ export function PublicProfileSettingsForm({
   return (
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle>Como o salão aparece</CardTitle>
+        <CardTitle>Como clientes te veem na internet</CardTitle>
         <CardDescription>
-          Link público, texto, Instagram e logo. O agendamento online entra na próxima etapa.
+          Link, foto, texto e Instagram. Com horários cadastrados, as clientes marcam sozinhas.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -227,7 +226,7 @@ export function PublicProfileSettingsForm({
             omit={["slug", "description", "instagram"]}
           />
           <div className="grid gap-2">
-            <Label htmlFor="slug">Link público</Label>
+            <Label htmlFor="slug">Endereço do seu link</Label>
             <Input
               id="slug"
               name="slug"
@@ -276,7 +275,7 @@ export function PublicProfileSettingsForm({
               </div>
             )}
             <Input id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp" className="h-11" disabled={!canEdit} />
-            <p className="text-xs text-muted-foreground">JPEG, PNG ou WebP até 2 MB. SVG não é permitido.</p>
+            <p className="text-xs text-muted-foreground">Foto ou logo (JPG ou PNG, até 2 MB).</p>
             {logoUrl ? (
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="clearLogo" value="true" className="size-4 rounded border-input" disabled={!canEdit} />
@@ -288,14 +287,14 @@ export function PublicProfileSettingsForm({
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="submit" className="h-12" disabled={pending}>
-                {pending ? "Salvando..." : "Salvar perfil público"}
+                {pending ? "Salvando..." : "Salvar"}
               </Button>
             ) : null}
             <Link
               href={`/p/${settings.slug}`}
               className="inline-flex h-12 items-center rounded-lg px-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
             >
-              Ver página pública
+              Ver como clientes te veem
             </Link>
           </div>
         </form>

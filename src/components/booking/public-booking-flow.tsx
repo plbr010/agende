@@ -29,6 +29,7 @@ import type {
   PublicBookingService,
 } from "@/lib/booking/queries";
 import { parsePublicBookingDetails, previousBookingStep } from "@/lib/booking/validation";
+import { bookingStepCaption, shouldSkipProfessionalStep } from "@/lib/usability/copy";
 import { addDaysIso, formatDateTimeInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
 import { formatPhoneBr } from "@/lib/validation/phone";
 import { formatCentsToReais } from "@/lib/validation/money";
@@ -107,6 +108,16 @@ export function PublicBookingFlow({
   const offering = professional?.offerings.find((item) => item.serviceId === serviceId) ?? null;
 
   useEffect(() => {
+    if (step !== "professional") {
+      return;
+    }
+    if (shouldSkipProfessionalStep(professionalsForService.length) && professionalsForService[0] && professionalId === null) {
+      selectProfessional(professionalsForService[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- local helper would retrigger every render
+  }, [step, professionalsForService, professionalId]);
+
+  useEffect(() => {
     if (step !== "slot" || !serviceId || !localDate || professionalId === null) {
       return;
     }
@@ -145,6 +156,11 @@ export function PublicBookingFlow({
     setSlots([]);
     setSlotsError(null);
     setSlotsLoading(false);
+    const people = catalog.professionals.filter((person) => person.serviceIds.includes(next.id));
+    if (shouldSkipProfessionalStep(people.length) && people[0]) {
+      selectProfessional(people[0].id);
+      return;
+    }
     go("professional");
   }
 
@@ -176,7 +192,7 @@ export function PublicBookingFlow({
         if (!nextErrors[key]) nextErrors[key] = issue.message;
       }
       setFieldErrors(nextErrors);
-      setFormError("Revise os campos destacados.");
+      setFormError("Confira nome, celular e e-mail.");
       return;
     }
     setFieldErrors({});
@@ -213,7 +229,26 @@ export function PublicBookingFlow({
     });
   }
 
-  const stepIndex = BOOKING_STEPS.indexOf(step);
+  function proceedAfterSlot(slot: string) {
+    setStartsAt(slot);
+    const parsed = parsePublicBookingDetails({ fullName, phone, email, customerNote });
+    if (parsed.success) {
+      setFieldErrors({});
+      setFullName(parsed.data.fullName);
+      setPhone(parsed.data.phone);
+      setEmail(parsed.data.email);
+      setCustomerNote(parsed.data.customerNote ?? "");
+      go("confirm");
+      return;
+    }
+    go("details");
+  }
+
+  const visibleSteps: BookingStep[] =
+    shouldSkipProfessionalStep(professionalsForService.length) && step !== "professional"
+      ? BOOKING_STEPS.filter((item) => item !== "professional")
+      : [...BOOKING_STEPS];
+  const stepIndex = visibleSteps.indexOf(step);
 
   if (confirmation) {
     return (
@@ -230,8 +265,8 @@ export function PublicBookingFlow({
       <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-lg items-center justify-between px-4">
           <BrandLogo size="sm" />
-          <Link href={`/p/${catalog.slug}`} className="text-sm underline-offset-4 hover:underline">
-            Ver perfil
+          <Link href={`/p/${catalog.slug}`} className="inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline">
+            Voltar ao salão
           </Link>
         </div>
       </header>
@@ -242,7 +277,7 @@ export function PublicBookingFlow({
         </div>
 
         <ol className="flex gap-1" aria-label="Etapas do agendamento">
-          {BOOKING_STEPS.map((item, index) => (
+          {visibleSteps.map((item, index) => (
             <li key={item} className="min-w-0 flex-1">
               <div
                 className={`h-1.5 rounded-full ${index <= stepIndex ? "bg-primary" : "bg-border"}`}
@@ -255,8 +290,8 @@ export function PublicBookingFlow({
             </li>
           ))}
         </ol>
-        <p className="text-sm text-muted-foreground">
-          {stepIndex + 1} de {BOOKING_STEPS.length} · {STEP_LABEL[step]}
+        <p className="text-base font-medium">
+          {bookingStepCaption(step, Math.max(stepIndex, 0), visibleSteps.length)}
         </p>
 
         {step === "service" ? (
@@ -326,9 +361,9 @@ export function PublicBookingFlow({
             ) : null}
             {!slotsLoading && slots.length === 0 && !slotsError ? (
               <div className="grid gap-3 rounded-3xl bg-secondary/50 p-4">
-                <p className="text-sm text-muted-foreground">Nenhum horário neste dia.</p>
+                <p className="text-sm text-muted-foreground">Não há horários livres neste dia. Toque em Voltar e escolha outro dia.</p>
                 <Button type="button" variant="outline" className="h-11 rounded-full" onClick={() => go("date")}>
-                  Trocar data
+                  Escolher outro dia
                 </Button>
               </div>
             ) : null}
@@ -339,10 +374,7 @@ export function PublicBookingFlow({
                     key={slot}
                     type="button"
                     disabled={pending}
-                    onClick={() => {
-                      setStartsAt(slot);
-                      go("details");
-                    }}
+                    onClick={() => proceedAfterSlot(slot)}
                     className={SLOT_BUTTON}
                   >
                     {formatSlotLabel(slot, catalog.timezone)}
@@ -416,7 +448,7 @@ export function PublicBookingFlow({
               ) : null}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="customerNote">Observação para o profissional (opcional)</Label>
+              <Label htmlFor="customerNote">Alguma preferência? (opcional)</Label>
               <Textarea
                 id="customerNote"
                 name="customerNote"
@@ -427,7 +459,7 @@ export function PublicBookingFlow({
               />
             </div>
             <Button type="button" className="h-12 w-full rounded-full" onClick={submitDetails}>
-              Revisar agendamento
+              Continuar
             </Button>
           </section>
         ) : null}
@@ -469,8 +501,22 @@ export function PublicBookingFlow({
               disabled={pending}
               onClick={confirm}
             >
-              {pending ? "Reservando…" : "Confirmar agendamento"}
+              {pending ? "Reservando…" : "Reservar este horário"}
             </Button>
+            <div className="grid grid-cols-2 gap-2">
+              <Button type="button" variant="outline" className="h-11" onClick={() => go("service")}>
+                Mudar serviço
+              </Button>
+              <Button type="button" variant="outline" className="h-11" onClick={() => go("date")}>
+                Mudar dia
+              </Button>
+              <Button type="button" variant="outline" className="h-11" onClick={() => go("slot")}>
+                Mudar horário
+              </Button>
+              <Button type="button" variant="outline" className="h-11" onClick={() => go("details")}>
+                Alterar meus dados
+              </Button>
+            </div>
           </section>
         ) : null}
 
@@ -513,7 +559,7 @@ function ProfessionalStep({
       <section className="grid gap-3" aria-label="Escolher profissional">
         <p className="rounded-3xl bg-secondary/50 p-5 text-sm" role="status">
           Nenhuma profissional atende este serviço no momento. Volte e escolha outro serviço, ou fale com o
-          estabelecimento.
+          salão.
         </p>
       </section>
     );
@@ -526,9 +572,9 @@ function ProfessionalStep({
         onClick={() => onSelect(ANY_PROFESSIONAL)}
         className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <h2 className="font-serif text-2xl">Qualquer profissional disponível</h2>
+        <h2 className="font-serif text-2xl">Tanto faz (quem estiver livre)</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          O Agendê escolhe a primeira profissional livre neste horário.
+          Escolhemos quem estiver livre naquele horário.
         </p>
       </button>
       {people.map((person) => (
@@ -591,7 +637,7 @@ function DateStep({
   return (
     <section className="grid gap-4" aria-label="Escolher data">
       <p className="text-sm text-muted-foreground">
-        Datas nos próximos {horizonDays} dias, no fuso do estabelecimento.
+        Toque no dia que você quer. Mostramos os próximos {horizonDays} dias no horário do salão.
       </p>
       {months.map(([monthKey, days]) => {
         const monthLabel = new Intl.DateTimeFormat("pt-BR", {
@@ -723,17 +769,17 @@ function BookingSuccess({
               />
             }
           >
-            Google Agenda
+            Abrir no Google Agenda
           </Button>
           {whatsapp ? (
             <Button variant="outline" className="h-12 rounded-full" render={<a href={whatsapp} target="_blank" rel="noreferrer" />}>
-              Falar com o estabelecimento
+              Falar com o salão
             </Button>
           ) : null}
         </div>
         {guestHint ? (
           <p className="text-center text-sm text-muted-foreground">
-            Crie sua conta de cliente para acompanhar seus agendamentos.{" "}
+            Quer ver todos os seus horários aqui? Crie uma conta grátis.{" "}
             <Link
               href="/cadastro?intent=client&next=/cliente/agendamentos"
               className="underline underline-offset-4"
@@ -749,10 +795,7 @@ function BookingSuccess({
           </p>
         ) : (
           <p className="text-center text-sm text-muted-foreground">
-            Para ver a lista de reservas nesta conta, ative a área de cliente no painel.{" "}
-            <Link href="/app" className="underline underline-offset-4">
-              Ir para o painel
-            </Link>
+            Seus horários ficam neste e-mail. Guarde a confirmação.
           </p>
         )}
       </main>

@@ -50,10 +50,10 @@ function mapWorkspaceError(message: string): string {
     return "Informe um telefone brasileiro válido, com DDD.";
   }
   if (message.includes("invalid_logo_path")) {
-    return "A imagem precisa pertencer a este estabelecimento.";
+    return "A imagem precisa pertencer a este salão.";
   }
   if (message.includes("last_owner_protected")) {
-    return "O estabelecimento precisa continuar com um dono ativo.";
+    return "O salão precisa continuar com um dono ativo.";
   }
   if (message.includes("owner_transfer_not_supported") || message.includes("invalid_invite_role")) {
     return "Não é possível convidar ou promover alguém a dono nesta etapa.";
@@ -62,7 +62,7 @@ function mapWorkspaceError(message: string): string {
     return "Não há vaga de profissional neste plano.";
   }
   if (message.includes("member_not_found")) {
-    return "Membro não encontrado neste estabelecimento.";
+    return "Pessoa não encontrada neste salão.";
   }
   if (message.includes("invite_not_found")) {
     return "Convite não encontrado.";
@@ -74,13 +74,13 @@ function mapWorkspaceError(message: string): string {
     return "Este convite expirou.";
   }
   if (message.includes("invite_revoked")) {
-    return "Este convite foi revogado.";
+    return "Este convite foi cancelado.";
   }
   if (message.includes("invite_already_accepted")) {
     return "Este convite já foi utilizado.";
   }
   if (message.includes("already_a_member")) {
-    return "Você já faz parte deste estabelecimento.";
+    return "Você já faz parte deste salão.";
   }
   if (message.includes("email_not_confirmed")) {
     return "Confirme seu e-mail para continuar.";
@@ -243,7 +243,7 @@ export async function revokeTeamInviteAction(formData: FormData): Promise<Action
     return { error: mapWorkspaceError(rpcError.message) };
   }
   revalidateWorkspace(workspace.slug);
-  return { success: "Convite revogado." };
+  return { success: "Convite cancelado." };
 }
 
 async function mutateMember(
@@ -331,7 +331,7 @@ export async function updateMemberRoleAction(formData: FormData): Promise<Action
     return { error: mapWorkspaceError(rpcError.message) };
   }
   revalidateWorkspace(workspace.slug);
-  return { success: "Papel atualizado." };
+  return { success: "Função atualizada." };
 }
 
 export async function acceptInviteAction(

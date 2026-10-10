@@ -8,7 +8,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <AppShell
-      workspaceName={workspace?.name ?? "Seu negócio"}
+      workspaceName={workspace?.name ?? "Seu salão"}
       workspaceSlug={workspace?.slug ?? ""}
       userName={session.profile.fullName}
       roleLabel={workspace ? MEMBER_ROLE_LABEL[workspace.role] : "Profissional"}
