@@ -1397,6 +1397,7 @@ export type Database = {
       revoke_workspace_invite: { Args: { p_workspace_id: string | null; p_invite_id: string | null }; Returns: Json };
       sell_service_package: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_package_id: string | null }; Returns: string };
       set_appointment_status: { Args: { p_appointment_id: string | null; p_status: Database["public"]["Enums"]["appointment_status"] | null }; Returns: string };
+      save_service_with_professionals: { Args: { p_workspace_id: string; p_service_id: string | null; p_name: string; p_description: string | null; p_duration_minutes: number; p_price_cents: number; p_active: boolean; p_professional_member_ids: string[] }; Returns: string };
       submit_appointment_review: { Args: { p_appointment_id: string | null; p_rating: number | null; p_comment?: string | null }; Returns: Json };
       sync_billing_subscription: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_status: Database["public"]["Enums"]["subscription_status"] | null; p_current_period_start?: string | null; p_current_period_end?: string | null; p_canceled_at?: string | null }; Returns: undefined };
       update_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null; p_name: string | null }; Returns: string };

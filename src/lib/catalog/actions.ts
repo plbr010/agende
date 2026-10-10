@@ -24,6 +24,12 @@ function fieldErrorsFromZod(error: { issues: ReadonlyArray<{ path: readonly Prop
 }
 
 function mapCatalogError(message: string): string {
+  if (message.includes("professional_not_found") || message.includes("invalid_professionals")) {
+    return "Selecione profissionais ativos deste negócio.";
+  }
+  if (message.includes("service_not_found")) {
+    return "Serviço não encontrado neste negócio.";
+  }
   if (message.includes("invalid_phone")) {
     return "Informe um telefone brasileiro válido, com DDD.";
   }
@@ -142,78 +148,21 @@ export async function saveServiceAction(
   }
 
   const supabase = await createClient();
-  const payload = {
-    workspace_id: workspace.id,
-    name: parsed.data.name,
-    description: parsed.data.description,
-    duration_minutes: parsed.data.durationMinutes,
-    price_cents: priceCents,
-    active: parsed.data.active,
-  };
-
-  let serviceId = parsed.data.id;
-  if (serviceId) {
-    const { error: updateError } = await supabase
-      .from("services")
-      .update({
-        name: payload.name,
-        description: payload.description,
-        duration_minutes: payload.duration_minutes,
-        price_cents: payload.price_cents,
-        active: payload.active,
-      })
-      .eq("id", serviceId)
-      .eq("workspace_id", workspace.id);
-    if (updateError) {
-      return { error: mapCatalogError(updateError.message) };
+  const { error: saveError } = await supabase.rpc("save_service_with_professionals", {
+    p_workspace_id: workspace.id,
+    p_service_id: parsed.data.id ?? null,
+    p_name: parsed.data.name,
+    p_description: parsed.data.description,
+    p_duration_minutes: parsed.data.durationMinutes,
+    p_price_cents: priceCents,
+    p_active: parsed.data.active,
+    p_professional_member_ids: parsed.data.professionalMemberIds,
+  });
+  if (saveError) {
+    if (saveError.code === "PGRST202" || saveError.code === "42883") {
+      return { error: "O cadastro de serviços está temporariamente indisponível. Aguarde a atualização do sistema." };
     }
-  } else {
-    const { data, error: insertError } = await supabase
-      .from("services")
-      .insert(payload)
-      .select("id")
-      .single();
-    if (insertError || !data) {
-      return { error: mapCatalogError(insertError?.message ?? "") };
-    }
-    serviceId = data.id;
-  }
-
-  const { data: existing } = await supabase
-    .from("professional_services")
-    .select("id, professional_member_id, active")
-    .eq("workspace_id", workspace.id)
-    .eq("service_id", serviceId);
-
-  const wanted = new Set(parsed.data.professionalMemberIds);
-  const seen = new Set<string>();
-
-  for (const row of existing ?? []) {
-    seen.add(row.professional_member_id);
-    const shouldBeActive = wanted.has(row.professional_member_id);
-    if (row.active !== shouldBeActive) {
-      const { error: linkError } = await supabase
-        .from("professional_services")
-        .update({ active: shouldBeActive })
-        .eq("id", row.id)
-        .eq("workspace_id", workspace.id);
-      if (linkError) {
-        return { error: mapCatalogError(linkError.message) };
-      }
-    }
-  }
-
-  for (const memberId of wanted) {
-    if (seen.has(memberId)) continue;
-    const { error: linkError } = await supabase.from("professional_services").insert({
-      workspace_id: workspace.id,
-      professional_member_id: memberId,
-      service_id: serviceId,
-      active: true,
-    });
-    if (linkError) {
-      return { error: mapCatalogError(linkError.message) };
-    }
+    return { error: mapCatalogError(saveError.message) };
   }
 
   revalidatePath("/app");

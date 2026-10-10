@@ -49,7 +49,7 @@ for (const [mode, throughVersion] of [["baseline", "20260927005815"], ["target",
   } finally { await db.close(); }
 }
 report.snapshotSha256 = createHash("sha256").update(readFileSync("docs/migrations/remote-final-2026-10-09.json")).digest("hex");
-writeFileSync("docs/migrations/drift-final-2026-10-09.json", JSON.stringify(report, null, 2) + "\n");
+writeFileSync(process.argv[2] ?? "docs/migrations/drift-final-2026-10-10.json", JSON.stringify(report, null, 2) + "\n");
 for (const [mode, groups] of Object.entries(report.modes)) {
   console.log(mode, Object.fromEntries(Object.entries(groups).map(([name, diff]) => [name,
     Object.fromEntries(Object.entries(diff).map(([kind, items]) => [kind, items.length > 12 ? { count: items.length, sample: items.slice(0, 3) } : items]))])));
