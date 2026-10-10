@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import type { ActionState } from "@/lib/auth/actions";
@@ -22,6 +23,7 @@ import {
 import { canRescheduleStatus, isAppointmentStatus } from "@/lib/agenda/status";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { zonedWallTimeToUtc } from "@/lib/time/timezone";
+import { PERIOD_MESSAGES } from "@/lib/agenda/period-rules";
 
 export type SlotActionState = ActionState & {
   slots?: string[];
@@ -77,9 +79,30 @@ function mapAgendaError(message: string): string {
     return "O atendimento precisa caber no mesmo dia.";
   }
   if (message.includes("working_hours_no_overlap") || message.includes("professional_breaks_no_overlap")) {
-    return "Esse período se sobrepõe a outro já cadastrado.";
+    return PERIOD_MESSAGES.overlap;
   }
-  return "Não foi possível salvar. Tente novamente.";
+  if (message.includes("professional_time_blocks_no_overlap")) {
+    return "Esta folga cruza outra que já está marcada. Escolha outro horário.";
+  }
+  if (
+    message.includes("working_hours_identity_immutable") ||
+    message.includes("break_identity_immutable") ||
+    message.includes("time_block_identity_immutable")
+  ) {
+    return "Não foi possível alterar este horário. Tente de novo.";
+  }
+  return "Não deu certo salvar. Tente de novo.";
+}
+
+function validationState(error: { issues: ReadonlyArray<{ path: readonly PropertyKey[]; message: string }> }): ActionState {
+  const fieldErrors = fieldErrorsFromZod(error);
+  const detail = fieldErrors.endTime ?? fieldErrors.startTime ?? fieldErrors.localDate ?? fieldErrors.label ?? fieldErrors.reason;
+  return { error: detail ?? "Revise os horários.", fieldErrors };
+}
+
+function readRowId(formData: FormData): string | null {
+  const id = String(formData.get("id") ?? "");
+  return z.string().uuid().safeParse(id).success ? id : null;
 }
 
 async function requireWorkspace() {
@@ -262,7 +285,7 @@ export async function addWorkingHourAction(
 ): Promise<ActionState> {
   const parsed = parseWorkingPeriodForm(formData);
   if (!parsed.success) {
-    return { error: "Revise os horários.", fieldErrors: fieldErrorsFromZod(parsed.error) };
+    return validationState(parsed.error);
   }
   const { error, session, workspace } = await requireWorkspace();
   if (error || !workspace) {
@@ -286,7 +309,7 @@ export async function addWorkingHourAction(
   }
   revalidatePath(`/app/equipe/${parsed.data.memberId}/disponibilidade`);
   revalidatePath("/app/equipe");
-  return { success: "Período adicionado." };
+  return { success: "Horário adicionado." };
 }
 
 export async function addBreakAction(
@@ -295,7 +318,7 @@ export async function addBreakAction(
 ): Promise<ActionState> {
   const parsed = parseWorkingPeriodForm(formData);
   if (!parsed.success) {
-    return { error: "Revise os horários.", fieldErrors: fieldErrorsFromZod(parsed.error) };
+    return validationState(parsed.error);
   }
   const { error, session, workspace } = await requireWorkspace();
   if (error || !workspace) {
@@ -345,7 +368,50 @@ export async function deleteWorkingHourAction(formData: FormData): Promise<Actio
     return { error: mapAgendaError(deleteError.message) };
   }
   revalidatePath(`/app/equipe/${memberId}/disponibilidade`);
-  return { success: "Período removido." };
+  return { success: "Horário removido." };
+}
+
+export async function updateWorkingHourAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const id = readRowId(formData);
+  if (!id) {
+    return { error: "Não encontramos este horário para alterar." };
+  }
+  const parsed = parseWorkingPeriodForm(formData);
+  if (!parsed.success) {
+    return validationState(parsed.error);
+  }
+  const { error, session, workspace } = await requireWorkspace();
+  if (error || !workspace) {
+    return { error: error ?? "Nenhum negócio encontrado." };
+  }
+  const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
+  if (!canManageJornada(workspace.role, currentMemberId === parsed.data.memberId)) {
+    return { error: "Você não pode alterar os horários desta profissional." };
+  }
+  const supabase = await createClient();
+  const { data, error: updateError } = await supabase
+    .from("professional_working_hours")
+    .update({
+      weekday: parsed.data.weekday,
+      start_time: `${parsed.data.startTime}:00`,
+      end_time: `${parsed.data.endTime}:00`,
+    })
+    .eq("id", id)
+    .eq("workspace_id", workspace.id)
+    .eq("professional_member_id", parsed.data.memberId)
+    .select("id");
+  if (updateError) {
+    return { error: mapAgendaError(updateError.message) };
+  }
+  if (!data?.length) {
+    return { error: "Não encontramos este horário para alterar." };
+  }
+  revalidatePath(`/app/equipe/${parsed.data.memberId}/disponibilidade`);
+  revalidatePath("/app/equipe");
+  return { success: "Horário atualizado." };
 }
 
 export async function deleteBreakAction(formData: FormData): Promise<ActionState> {
@@ -373,13 +439,57 @@ export async function deleteBreakAction(formData: FormData): Promise<ActionState
   return { success: "Pausa removida." };
 }
 
+export async function updateBreakAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const id = readRowId(formData);
+  if (!id) {
+    return { error: "Não encontramos esta pausa para alterar." };
+  }
+  const parsed = parseWorkingPeriodForm(formData);
+  if (!parsed.success) {
+    return validationState(parsed.error);
+  }
+  const { error, session, workspace } = await requireWorkspace();
+  if (error || !workspace) {
+    return { error: error ?? "Nenhum negócio encontrado." };
+  }
+  const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
+  if (!canManageJornada(workspace.role, currentMemberId === parsed.data.memberId)) {
+    return { error: "Você não pode alterar as pausas deste profissional." };
+  }
+  const supabase = await createClient();
+  const { data, error: updateError } = await supabase
+    .from("professional_breaks")
+    .update({
+      weekday: parsed.data.weekday,
+      start_time: `${parsed.data.startTime}:00`,
+      end_time: `${parsed.data.endTime}:00`,
+      label: parsed.data.label,
+    })
+    .eq("id", id)
+    .eq("workspace_id", workspace.id)
+    .eq("professional_member_id", parsed.data.memberId)
+    .select("id");
+  if (updateError) {
+    return { error: mapAgendaError(updateError.message) };
+  }
+  if (!data?.length) {
+    return { error: "Não encontramos esta pausa para alterar." };
+  }
+  revalidatePath(`/app/equipe/${parsed.data.memberId}/disponibilidade`);
+  revalidatePath("/app/equipe");
+  return { success: "Pausa atualizada." };
+}
+
 export async function addTimeBlockAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const parsed = parseTimeBlockForm(formData);
   if (!parsed.success) {
-    return { error: "Revise o bloqueio.", fieldErrors: fieldErrorsFromZod(parsed.error) };
+    return validationState(parsed.error);
   }
   const { error, session, workspace } = await requireWorkspace();
   if (error || !workspace) {
@@ -387,7 +497,7 @@ export async function addTimeBlockAction(
   }
   const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
   if (!canManageTimeBlocks(workspace.role, currentMemberId === parsed.data.memberId)) {
-    return { error: "Você não pode bloquear a agenda deste profissional." };
+    return { error: "Você não pode marcar folga na agenda deste profissional." };
   }
   const { timezone } = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
   const startsAt = zonedWallTimeToUtc(parsed.data.localDate, parsed.data.startTime, timezone).toISOString();
@@ -405,7 +515,7 @@ export async function addTimeBlockAction(
   }
   revalidatePath(`/app/equipe/${parsed.data.memberId}/disponibilidade`);
   revalidateAgenda();
-  return { success: "Horário bloqueado." };
+  return { success: "Folga marcada." };
 }
 
 export async function deleteTimeBlockAction(formData: FormData): Promise<ActionState> {
@@ -417,7 +527,7 @@ export async function deleteTimeBlockAction(formData: FormData): Promise<ActionS
   }
   const currentMemberId = await loadCurrentMemberId(workspace.id, session.user.id);
   if (!canManageTimeBlocks(workspace.role, currentMemberId === memberId)) {
-    return { error: "Você não pode remover este bloqueio." };
+    return { error: "Você não pode remover esta folga." };
   }
   const supabase = await createClient();
   const { error: deleteError } = await supabase
@@ -431,5 +541,5 @@ export async function deleteTimeBlockAction(formData: FormData): Promise<ActionS
   }
   revalidatePath(`/app/equipe/${memberId}/disponibilidade`);
   revalidateAgenda();
-  return { success: "Bloqueio removido." };
+  return { success: "Folga removida." };
 }

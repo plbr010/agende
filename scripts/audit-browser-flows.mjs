@@ -65,13 +65,13 @@ try {
 
     await checkPage(context, `${profile.name}-cadastro`, "/cadastro", async (page, status) => {
       if (status !== 200) throw new Error(`status ${status}`);
-      await page.getByRole("radio", { name: /Sou cliente/i }).waitFor();
-      await page.getByRole("radio", { name: /Sou profissional/i }).waitFor();
+      await page.getByRole("radio", { name: /Quero marcar horários/i }).waitFor();
+      await page.getByRole("radio", { name: /Tenho salão ou atendo/i }).waitFor();
     });
 
     await checkPage(context, `${profile.name}-cadastro-client`, "/cadastro?intent=client", async (page, status) => {
       if (status !== 200) throw new Error(`status ${status}`);
-      const client = page.getByRole("radio", { name: /Sou cliente/i });
+      const client = page.getByRole("radio", { name: /Quero marcar horários/i });
       if ((await client.getAttribute("aria-checked")) !== "true") {
         throw new Error("client intent not preselected");
       }

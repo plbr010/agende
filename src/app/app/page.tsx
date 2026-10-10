@@ -112,17 +112,17 @@ export default async function AppPage({
               <li key={step.title}>
                 <Link
                   href={step.href}
-                  className={`flex items-start gap-3 rounded-2xl px-4 py-3 ring-1 transition-colors hover:bg-secondary/60 ${
+                  className={`flex min-h-14 items-start gap-3 rounded-2xl px-4 py-3 ring-1 transition-colors hover:bg-secondary/60 ${
                     step.done ? "bg-card/70 ring-border" : "bg-card ring-primary/40"
                   }`}
                 >
                   <span
-                    className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                      step.done ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary"
+                    className={`mt-0.5 flex h-7 shrink-0 items-center justify-center rounded-full px-2 text-xs font-semibold ${
+                      step.done ? "bg-primary text-primary-foreground" : "min-w-7 bg-primary/15 text-primary"
                     }`}
                     aria-label={step.done ? "Concluído" : `Passo ${index + 1}`}
                   >
-                    {step.done ? "ok" : index + 1}
+                    {step.done ? "Feito" : index + 1}
                   </span>
                   <span className="min-w-0">
                     <span className="block font-medium">{step.title}</span>
@@ -212,7 +212,7 @@ export default async function AppPage({
                 <Link
                   key={appointment.id}
                   href={`/app/agenda?date=${appointment.localDate}`}
-                  className="group grid grid-cols-[4.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-secondary/60"
+                  className="group grid min-h-16 grid-cols-[4.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-secondary/60"
                 >
                   <div className="rounded-xl bg-secondary px-2 py-2 text-center">
                     <p className="font-serif text-xl leading-none">{formatTimeInTimeZone(appointment.startsAt, timezone)}</p>

@@ -97,13 +97,14 @@ function useCatalogAction(
 async function runFormAction(
   action: (formData: FormData) => Promise<ActionState>,
   formData: FormData,
-) {
+): Promise<ActionState> {
   const result = await action(formData);
   if (result.error) {
     toast.error(result.error);
   } else if (result.success) {
     toast.success(result.success);
   }
+  return result;
 }
 
 export function TeamDirectory({
@@ -172,12 +173,13 @@ export function TeamDirectory({
                   )}
                   <Badge variant="ghost">{member.serviceCount} serviços</Badge>
                   {member.hasProfessionalProfile ? (
-                    <Link
-                      href={`/app/equipe/${member.memberId}/disponibilidade`}
-                      className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    <Button
+                      variant="outline"
+                      className="h-11 w-full sm:ml-auto sm:w-auto"
+                      render={<Link href={`/app/equipe/${member.memberId}/disponibilidade`} />}
                     >
-                      <CalendarDays className="size-3.5" /> Horários de trabalho
-                    </Link>
+                      <CalendarDays className="size-4" /> Horários de trabalho
+                    </Button>
                   ) : null}
                 </CardContent>
               </Card>
@@ -325,15 +327,18 @@ export function ServiceCatalog({
                         Ocultar da lista
                       </Button>
                     }
-                    onConfirm={() => {
+                    onConfirm={async () => {
                       const formData = new FormData();
                       formData.set("id", service.id);
-                      return runFormAction(archiveServiceAction, formData);
+                      const result = await runFormAction(archiveServiceAction, formData);
+                      if (result.error) throw new Error(result.error);
                     }}
                   />
                 ) : null}
                 {canToggleOwn && currentMemberId ? (
-                  <form action={(formData) => runFormAction(toggleOwnServiceAction, formData)}>
+                  <form action={async (formData) => {
+                    await runFormAction(toggleOwnServiceAction, formData);
+                  }}>
                     <input type="hidden" name="serviceId" value={service.id} />
                     <input type="hidden" name="enabled" value={performs ? "false" : "true"} />
                     <Button variant="outline" className="h-11" type="submit">
@@ -509,10 +514,11 @@ export function ClientDirectory({
                           Ocultar da lista
                         </Button>
                       }
-                      onConfirm={() => {
+                      onConfirm={async () => {
                         const formData = new FormData();
                         formData.set("id", client.id);
-                        return runFormAction(archiveClientAction, formData);
+                        const result = await runFormAction(archiveClientAction, formData);
+                        if (result.error) throw new Error(result.error);
                       }}
                     />
                   </div>
