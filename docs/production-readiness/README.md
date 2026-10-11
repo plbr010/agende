@@ -2,6 +2,8 @@
 
 **NO-GO comercial.** Todos os checks locais passaram; dependências de produção sem vulnerabilidades. Ainda faltam ambiente de homologação completo, schema de produção e aceite real de Auth/SMTP/Stripe. Nenhuma escrita remota, migration, deploy manual/Edge, alteração de DNS ou pagamento real foi executado.
 
+Atualização após incorporação do #26: a [rodada de estabilidade](../stability/README.md) corrige uma falha de recarga após reagendamento salvo. Os runners atualizam seus JSON a cada execução; contagens atuais e reconfirmação remota estão nessa rodada.
+
 ## Código
 
 PRs #19–#24 incorporados. Base desta missão `86b909925ca88fcd2ddd2ff9a68394d2de52a885`; branch exclusiva `codex/production-readiness-final`. Next.js e eslint-config-next mantidos em 16.3.8. Não modificou componentes visuais ou branch do Cursor. Contratos e regressões das jornadas anteriores preservados.

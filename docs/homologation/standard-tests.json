@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T04:45:20.150Z",
+  "checked_at": "2026-10-11T05:44:28.356Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
-      "passed": 9,
+      "passed": 10,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 51,
+      "passed": 54,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 233,
+    "passed": 237,
     "failed": 0,
     "skipped": 0
   },
@@ -55,6 +55,12 @@
     {
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
       "category": "pglite_integration_with_mock_auth",
       "status": "passed"
     },
@@ -794,6 +800,24 @@
       "file": "src/lib/booking/catalog-availability.test.ts",
       "name": "agendar page distinguishes unavailable from not found",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "a committed reschedule followed by a failed reload never replaces the list with empty success",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "malformed appointment read models produce an error instead of silently losing rows",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "valid empty and populated lists remain successful after strict read validation",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {

@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T04:17:29.613Z",
+  "checked_at": "2026-10-11T05:43:26.615Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
-      "passed": 9,
+      "passed": 10,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +18,7 @@
     }
   },
   "totals": {
-    "passed": 43,
+    "passed": 44,
     "failed": 0,
     "skipped": 0
   },
@@ -45,6 +45,12 @@
     {
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
       "category": "native_pg17_integration_with_mock_auth",
       "status": "passed"
     },
