@@ -59,5 +59,5 @@ test("cancel errors stay inside the open dialog and primary taps are large", () 
   assert.doesNotMatch(client, /flex h-9 /);
 
   const reviews = source("../reviews/review-center.tsx");
-  assert.match(reviews, /min-h-11 min-w-11/);
+  assert.match(reviews, /size-11 shrink-0/);
 });

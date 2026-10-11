@@ -83,11 +83,29 @@ dos casos corrigidos.
 
 ## 4. Evidências dos testes
 
-A revisão de código e os testes de cópia abaixo fazem parte do commit.
-Os comandos `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`,
-`npm run build` e o Playwright público são registrados na atualização
-desta seção depois de rodarem. Teste com mock ou SQL em memória não é
-sessão autenticada no navegador.
+Ambiente local, Node do sistema, URL e chave públicas sintéticas
+(`example.supabase.co`). Nenhum cookie de usuário. Playwright 1.55 foi
+instalado só para rodar os scripts que já existem; `package.json` e o
+lockfile não mudaram. As capturas em `docs/evidence` foram descartadas
+para não misturar binários desta máquina com o histórico.
+
+| Comando | Resultado | O que isso prova |
+| --- | --- | --- |
+| npm ci | Passou, 401 pacotes | Lockfile da main |
+| npm run lint | Passou | ESLint |
+| npm run typecheck | Passou | next typegen e tsc |
+| npm test | 220 passaram, zero falha | Inclui a cópia nova e os testes dos PRs #20 e #22. SQL em memória não é navegador autenticado |
+| npm run build | Passou | Next 16.3.8, ambiente sintético |
+| npm run test:smoke | 32 rotas passaram | GET anônimo do build. App, cliente e onboarding redirecionam para login |
+| scripts/audit-browser-flows.mjs | 18 passaram, 9 falharam | Desktop 1366, iPhone 14 e Android 360×740. Falhas só em `/p/estudio-luna`: o Supabase sintético não tem esse salão |
+| scripts/audit-browser-polish.mjs | 18 passaram, 3 falharam | Desktop 1366, iPhone 13 e Android 360×740. As 3 falhas são o mesmo perfil inexistente |
+
+Conferência extra, numa página local de exemplo que não foi commitada:
+em 1366×768, iPhone 13 e Android 360×740, a confirmação abre com foco na
+pergunta, Voltar conserva o texto digitado, Esc fecha, e os botões medidos
+ficaram com pelo menos 44px. Desmarcar contra o Supabase sintético manteve
+o diálogo aberto com "Não foi possível concluir. Tente de novo." Isso não
+é um cancelamento real.
 
 ## 5. Melhorias de usabilidade
 
@@ -110,17 +128,20 @@ sem bloquear o uso quando o backend existe:
 
 ## 7. Pull request
 
-O link entra nesta seção quando o PR for aberto. Sem merge.
+https://github.com/plbr010/agende/pull/23
+
+Rascunho, sem merge.
 
 ## 8. Experiência mobile
 
-Alvos novos desta branch usam `h-11` ou `min-h-11` / `min-w-11` (44px):
-editar cadastros, atalhos da agenda, menu da cliente, área profissional,
-página pública do salão, estrelas e caixas de serviço do pacote. Diálogos
-de confirmação empilham os botões em coluna e cabem na largura da tela.
-A verificação visual em 1366×768, iPhone 13 e Android pequeno depende do
-Playwright público; o resultado entra na seção 4. Hidratação local exige
-`http://localhost`, não `127.0.0.1`.
+Landing, cadastro, login, verificação de e-mail e os bloqueios de `/app` e
+`/cliente` passaram no Playwright em 1366×768, iPhone 13 (e iPhone 14 no
+outro script) e Android 360×740. Os botões novos usam 44px: editar
+cadastros, atalhos da agenda vazia, menu da cliente, área profissional,
+página do salão, estrelas e a caixa de serviço do pacote. As estrelas não
+encolhem quando a linha fica curta. Os diálogos empilham Voltar e a ação
+em coluna. No exemplo local, o foco foi para a pergunta e o erro de
+desmarcar apareceu dentro do diálogo nos três tamanhos.
 
 ## 9. Dificuldades para quem está começando
 
