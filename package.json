@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node scripts/run-tests.mjs",
-    "test:smoke": "node scripts/audit-built-site.mjs"
+    "test:smoke": "node scripts/audit-built-site.mjs",
+    "test:postgres": "node scripts/run-pg17-tests.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -37,6 +38,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
+    "pg": "8.23.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"

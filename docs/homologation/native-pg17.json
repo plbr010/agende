@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-11T02:45:00.000Z",
+  "version": "postgres (PostgreSQL) 17.6",
+  "host": "127.0.0.1",
+  "port": 57125,
+  "suites": [
+    "scripts/database.test.mjs",
+    "scripts/launch-readiness.test.mjs",
+    "scripts/final-hardening.test.mjs",
+    "scripts/atomic-service-sql.test.mjs",
+    "scripts/action-sql-integration.test.mjs",
+    "scripts/pg17-concurrency.test.mjs"
+  ],
+  "passed": true,
+  "server_stopped_after_run": true,
+  "auth": "synthetic SQL fixture; no Auth/SMTP service",
+  "data_policy": "owned test databases retained locally, ignored by Git"
+}

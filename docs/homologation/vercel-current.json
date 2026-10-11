@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-11T02:50:11.287Z",
+  "deployment": "dpl_3gUeeX8d6SNZxcwX9NYWu9Gja6C9",
+  "state": "READY",
+  "commit": "e0a716da46ac0f29f65dc400c69b27af7888a7aa",
+  "node": "24.x",
+  "region": "iad1",
+  "alias": "agende-lac.vercel.app",
+  "intended_domain": "agendeapp.online",
+  "dns": "NXDOMAIN",
+  "project_domain_present": false,
+  "public_supabase_config_targets": [
+    "production",
+    "preview",
+    "development"
+  ],
+  "backend_isolated": false,
+  "site_url_config_present": false,
+  "production_anonymous_get_probes": {
+    "passed": 32,
+    "failed": 0
+  },
+  "runtime_error_log_window_minutes": 30,
+  "runtime_logs_preceded_pr23": true,
+  "error_groups_returned": 0,
+  "remote_mutations": 0
+}

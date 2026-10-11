@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-11T02:34:59.680Z",
+  "mode": "configuration read only, not transaction testing",
+  "account": "acct_1UH3D6Kii3CCJXtc",
+  "livemode": true,
+  "webhooks": [
+    {
+      "id": "we_1UJp7rKii3CCJXtctETUZwBY",
+      "api_version": "2026-08-26.dahlia",
+      "url": "https://wohimauqgywshbbejjcl.supabase.co/functions/v1/stripe-webhook",
+      "enabled_events": [
+        "checkout.session.completed",
+        "checkout.session.async_payment_succeeded",
+        "checkout.session.async_payment_failed",
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted",
+        "invoice.paid",
+        "invoice.payment_failed"
+      ],
+      "status": "enabled"
+    }
+  ],
+  "portal": [
+    {
+      "id": "bpc_1UJovBKii3CCJXtcbHEUcBZm",
+      "active": true,
+      "is_default": true,
+      "default_return_url": "https://agende-lac.vercel.app/app/configuracoes/assinatura",
+      "subscription_update": {
+        "billing_cycle_anchor": "unchanged",
+        "default_allowed_updates": [],
+        "enabled": false,
+        "proration_behavior": "none",
+        "schedule_at_period_end": {
+          "conditions": []
+        },
+        "trial_update_behavior": "end_trial"
+      },
+      "subscription_cancel": {
+        "cancellation_reason": {
+          "enabled": true,
+          "feedback_options": [],
+          "options": [
+            "too_expensive",
+            "missing_features",
+            "switched_service",
+            "unused",
+            "too_complex",
+            "customer_service",
+            "low_quality",
+            "other"
+          ]
+        },
+        "enabled": true,
+        "mode": "at_period_end",
+        "proration_behavior": "none"
+      },
+      "subscription_pause": {
+        "enabled": false
+      }
+    }
+  ],
+  "sandbox_available": false,
+  "objects_created": 0
+}

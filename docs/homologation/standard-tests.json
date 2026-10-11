@@ -1,0 +1,1376 @@
+{
+  "checked_at": "2026-10-11T02:54:10.920Z",
+  "groups": {
+    "pglite_integration_with_mock_auth": {
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pglite_sql": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 133,
+      "failed": 0,
+      "skipped": 0
+    },
+    "platform_mocks": {
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 223,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "workspace create action starts one trial and respects Cursor setup redirect",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "profile, service and availability actions persist a bookable catalog",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "public actions book an actual slot and reject overlapping requests",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "completed appointment receives exactly one immutable client review",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client cancellation action frees a second booked slot",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "stock and package actions persist their business operations",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "atomic catalog SQL protects tenant boundaries, roles and existing overrides",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "an error after service insertion rolls back the entire atomic RPC",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "selected plans, invalid plan, confirmed email and anonymous access",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "second workspace never earns another trial",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "trial plan change preserves all dates and rejects invalid/expired trials",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "downgrade rejects excess professionals and admin can change eligible plan",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "professionals, receptionists and other tenants cannot change plans or access management reads",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "Stripe leases serialize attempts, protect tokens and reject user access",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "Stripe binding and subscription lifecycle preserve trial and require service role",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "inventory create, entry, exit, adjustment, edit, archive, reactivate and insufficient stock",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "packages create and sell use real services, clients, sessions and cancellation rules",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "finance income/expense, idempotency, payment, refund limits, cancel and reopen",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "real SQL migrations: trial, tenant authorization and management operations",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "pending migrations dry-run on the observed remote membership state preserves data and definitions",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "owner reconciliation refuses unknown functions and rolls back all changes",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "last-owner trigger protects direct privileged writes and RPCs retain tenant and role checks",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "expiry and payment failure block operational access even before the maintenance job runs",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "paid downgrade with excess seats never retains active access and never blocks cancellation or failed payment",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "client read model exposes stable IDs and slots preserve appointment duration",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "client reschedule rejects unavailable slots and IDOR, then updates same instant safely",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "timezone changes display and slots without changing stored appointment instant",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review rejects incomplete and foreign appointments",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review validates rating/comment, persists once and rejects duplicates",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review RLS isolates tenants and prohibits all direct writes, edits and deletes",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "appointment_reviews uses FORCE RLS and SECURITY DEFINER functions pin empty search_path",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook maps all six sandbox lookup keys and renewal periods instead of stale metadata",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook replay skips rebinding and retries a failed sync after the event was recorded",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "asynchronous payment failure never activates access and pause/resume uses the current subscription",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge preserves original trial end and never resets or charges the last minutes",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge prevents known duplicates, reuses open checkout and requires customer for portal",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook validates signatures and reconciles current state, not stale event or invoice status",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook binds checkout then reconciles; unknown prices and missing bindings retry",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/test-environment-safety.test.mjs",
+      "name": "native SQL harness ignores remote connection variables and requires an owned test directory",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/test-environment-safety.test.mjs",
+      "name": "isolation policy rejects the shared production database observed on Vercel",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/test-environment-safety.test.mjs",
+      "name": "valid separate configuration never claims external Auth or payments were tested",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/agenda/agenda-copy.test.ts",
+      "name": "agenda dialogs tell the professional what to do next in plain language",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/agenda/agenda-copy.test.ts",
+      "name": "working hours editor collapses empty days and can copy a day to the rest of the week",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
+      "name": "signup explains the two paths with everyday words and a visible password hint",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
+      "name": "login keeps the main action large and the password recovery visible",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
+      "name": "salon setup asks for a familiar name and a 7-day trial without a card",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/billing/billing-controls.test.ts",
+      "name": "billing component renders exact monthly and annual prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/billing/billing-controls.test.ts",
+      "name": "portal is only rendered for a manager with a Stripe customer",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/billing/billing-controls.test.ts",
+      "name": "incompatible plans are disabled and return states never claim database activation",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/booking/public-booking-flow.test.ts",
+      "name": "public booking reduces steps and keeps undo actions visible",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/finance/finance-dashboard.test.ts",
+      "name": "finance actions use everyday money words instead of accounting jargon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/marketing/pricing.test.ts",
+      "name": "pricing cards keep monthly prices, annual prices and plan-specific signup links",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/confirm-action.test.ts",
+      "name": "opening and closing a confirmation ignores clicks while it is saving",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/confirm-action.test.ts",
+      "name": "a failed confirmation stays open with a plain message",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/confirm-action.test.ts",
+      "name": "a completed confirmation closes and clears the error",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/confirm-action.test.ts",
+      "name": "confirmation opens from a dialog trigger button, not a clickable span",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "sensitive saves ask inside the page and keep the form",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "stock, packages and reschedule speak in everyday words",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "cancel errors stay inside the open dialog and primary taps are large",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/period-rules.test.ts",
+      "name": "start must come before end and touching ranges are allowed",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/period-rules.test.ts",
+      "name": "overlapping hours are rejected, including when editing another row",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/period-rules.test.ts",
+      "name": "a day off needs a date and only clashes with folgas on that date",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/period-rules.test.ts",
+      "name": "copy fills only empty days and keeps every period",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "session data outages never masquerade as onboarding, missing client profile or missing subscription",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "client and professional signup preserve intent and selected plan without provisioning a trial",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "signup only reports duplicate accounts for the actual duplicate-account error",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "login denies bad credentials, directs unconfirmed users and sanitizes return destinations",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "logout errors do not falsely claim success or redirect an authenticated session",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "confirmation routes exchange valid tokens, preserve safe destinations and reject expired tokens",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "confirmation forwards recovery tokens to the recovery handler without accepting arbitrary OTP types",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "owner: menu and nested routes use the same permissions",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "owner: direct access to /app/estoque is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "owner: direct access to /app/pacotes is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "owner: direct access to /app/financeiro is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "owner: direct access to /app/relatorios is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "admin: menu and nested routes use the same permissions",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "admin: direct access to /app/estoque is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "admin: direct access to /app/pacotes is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "admin: direct access to /app/financeiro is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "admin: direct access to /app/relatorios is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "professional: menu and nested routes use the same permissions",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "professional: direct access to /app/estoque is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "professional: direct access to /app/pacotes is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "professional: direct access to /app/financeiro is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "professional: direct access to /app/relatorios is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "receptionist: menu and nested routes use the same permissions",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "receptionist: direct access to /app/estoque is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "receptionist: direct access to /app/pacotes is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "receptionist: direct access to /app/financeiro is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "receptionist: direct access to /app/relatorios is checked before the backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "missing role denies protected paths without hiding unrelated routes",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "a manager membership in another workspace cannot authorize the active workspace",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/permissions.test.ts",
+      "name": "server guard preserves login, confirmation and onboarding redirects",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/recovery.test.ts",
+      "name": "recovery sends normalized email with a fixed recovery path and no account disclosure",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/recovery.test.ts",
+      "name": "recovery validates PKCE or recovery OTP and rejects expired, missing and wrong-type tokens",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/recovery.test.ts",
+      "name": "password update requires a verified user, validates password and signs out for normal login",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/recovery.test.ts",
+      "name": "redirects reject encoded separators, controls, traversal to auth and untrusted host headers",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/redirects.test.ts",
+      "name": "unconfirmed users always go to email verification",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/redirects.test.ts",
+      "name": "client without workspace lands on /cliente",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/redirects.test.ts",
+      "name": "professional without workspace lands on onboarding",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/redirects.test.ts",
+      "name": "professional with workspace lands on /app",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/redirects.test.ts",
+      "name": "sanitizeNextPath keeps invite return URLs and rejects open redirects",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "all six checkout selections reach stripe-billing with authenticated workspace and no redirect input",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "unauthorized roles, absent workspace and invalid selections never invoke Stripe",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "portal adapter, Edge errors, malformed responses and network failures are safe",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "redirect allowlist rejects credentials, lookalike hosts, ports and protocols",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "checkout and portal redirects work without the optional URL.parse browser API",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "seat limits fail closed and existing subscriptions use portal",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/checkout-attempt.test.ts",
+      "name": "checkout retries reuse a key; A to B to A starts a fresh attempt",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/plans.test.ts",
+      "name": "parsePlanId accepts only Solo, Equipe and Salão",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/plans.test.ts",
+      "name": "planSignupHref carries the chosen plan into cadastro",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/stripe-contract.test.ts",
+      "name": "stripe boundary validates checkout before calling a future adapter",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/stripe-contract.test.ts",
+      "name": "stripe boundary only returns validated https redirects",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/cancel-revalidate.test.ts",
+      "name": "cancelMyAppointmentAction revalidates client and agenda paths",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/catalog-availability.test.ts",
+      "name": "workspace_unavailable maps to a temporary agenda message",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/catalog-availability.test.ts",
+      "name": "agendar page distinguishes unavailable from not found",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "booking details normalize email, phone and optional note",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "omitted booking fields are rejected",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "rejects invalid email and too-long customer note",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "keeps DDD 55 on booking phone",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "step helpers move forward and back without wrapping past service",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "client cancel helpers respect terminal status and 2h lead",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "uniqueClientWorkspaces keeps first name per slug",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "sanitize booking errors never leak internals",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "catalog parser drops private fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "my appointments parser keeps only safe fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "whatsapp and ics helpers stay local",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "central booking rules stay at product constants",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "partition splits upcoming and past without mixing terminal statuses",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "confirmation parser keeps receipt fields only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/catalog/atomic-service.test.ts",
+      "name": "failed professional linkage cannot leave a partially created service",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/catalog/atomic-service.test.ts",
+      "name": "service action derives the tenant from session and calls one atomic RPC",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/catalog/atomic-service.test.ts",
+      "name": "missing atomic service RPC and unprivileged roles never fall back to partial writes",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/finance/queries.test.ts",
+      "name": "finance query adapts the exact get_finance_ui response for a required period",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/finance/queries.test.ts",
+      "name": "financial writes validate the real create and refund contracts",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/finance/queries.test.ts",
+      "name": "payment, cancellation, reopening and refund are distinct finance actions",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/http/site-origin.test.ts",
+      "name": "Vercel production without explicit site URL never sends Auth links to localhost",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/http/site-origin.test.ts",
+      "name": "preview uses its own deployment host and explicit configuration still wins",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/http/site-origin.test.ts",
+      "name": "deployed origins reject missing configuration and malformed values",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/inventory/queries.test.ts",
+      "name": "inventory query adapts the exact get_inventory_ui response",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/inventory/queries.test.ts",
+      "name": "inventory query rejects incomplete remote payloads",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
+      "name": "plans use the exact public prices and seats",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
+      "name": "every plan is presented with a free trial and no card in the primary CTA",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
+      "name": "plans differentiate benefits and show annual prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
+      "name": "header and footer expose the required public links",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
+      "name": "landing covers the product vision without fake WhatsApp automation",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/actions.test.ts",
+      "name": "server actions refuse professional/receptionist even if the outer guard is bypassed",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/actions.test.ts",
+      "name": "server actions derive tenant from session and call the real RPC contract",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/actions.test.ts",
+      "name": "invalid form input never reaches the database",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "periods are inclusive, handle leap years and previous-year transitions",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "periods use the business timezone near midnight",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "plan selection is limited to the catalog and remaining days never go negative",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "stock requires meaningful quantities, but adjustment may set zero",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "package form maps only selected services and refuses an empty package",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "refund requires explicit confirmation, valid amount and a reason",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/operational-loaders.test.ts",
+      "name": "operational loaders expose an honest unavailable state without adapters",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/operational-loaders.test.ts",
+      "name": "operational loaders delegate to a configured normalized adapter",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/onboarding/setup-redirect.test.ts",
+      "name": "createWorkspaceAction sends new salons into setup mode",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/onboarding/setup-redirect.test.ts",
+      "name": "signup only persists plan when professional intent is selected",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/onboarding/setup-redirect.test.ts",
+      "name": "public booking clears stale slots before fetching",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/packages/queries.test.ts",
+      "name": "packages query adapts catalog and sales from the exact get_packages_ui response",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/packages/queries.test.ts",
+      "name": "package mutations validate inputs before reaching the backend",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/packages/queries.test.ts",
+      "name": "package cancellation and redemption reversal call distinct contracts",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reports/queries.test.ts",
+      "name": "advanced reports adapt the exact get_workspace_advanced_report response",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reports/queries.test.ts",
+      "name": "advanced report rejects invalid periods before the adapter",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/availability.test.ts",
+      "name": "missing reviews schema has an unavailable state distinct from empty reviews",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/availability.test.ts",
+      "name": "reviews stay scoped to the active tenant or verified client",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/availability.test.ts",
+      "name": "review action handles an undeployed RPC without claiming submission success",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/availability.test.ts",
+      "name": "both review pages render an unavailable notice without mounting submission UI",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/queries.test.ts",
+      "name": "missing reviews table is treated as a deploy gap, not a crash",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/validation.test.ts",
+      "name": "review draft accepts 1-5 stars and normalizes an empty comment",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/reviews/validation.test.ts",
+      "name": "only completed appointments are eligible and newest comes first",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "Sao Paulo wall midnight is 03:00 UTC",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "end of Sao Paulo day stays on the same local date",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "weekday matches JS/Postgres DOW with Sunday = 0",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "local day bounds do not leak into the previous or next date",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "Manaus wall midnight is 04:00 UTC",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "lead buffer and horizon use workspace timezone",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/timezone.test.ts",
+      "name": "date arithmetic helpers stay calendar-safe",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/workspace-timezone.test.ts",
+      "name": "same appointment instant renders and round-trips correctly in two workspace zones",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/workspace-timezone.test.ts",
+      "name": "workspace day filters and today respect different midnight boundaries",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/time/workspace-timezone.test.ts",
+      "name": "timezoneDisplayName uses the workspace label instead of a hardcoded São Paulo string",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/copy.test.ts",
+      "name": "status actions use verbs a person can tap without guessing",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/copy.test.ts",
+      "name": "booking captions name the current step in plain language",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/copy.test.ts",
+      "name": "a single professional is skipped so the client does not choose from one option",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/copy.test.ts",
+      "name": "priority screens do not show jargon that blocks first use",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/flows.test.ts",
+      "name": "reference tasks stay short enough for unaided first use",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/flows.test.ts",
+      "name": "every recorded flow names a goal and a difficulty note",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/agenda.test.ts",
+      "name": "override wins over catalog price and duration",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/agenda.test.ts",
+      "name": "endsAt is start plus snapshot duration",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/agenda.test.ts",
+      "name": "status transitions keep snapshots untouched and block terminal edits",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/agenda.test.ts",
+      "name": "appointment form does not accept a browser-supplied price",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/agenda.test.ts",
+      "name": "working period requires start before end and weekday 0-6",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "parses Brazilian reais into integer cents",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "formats cents as BRL",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "rejects negative service price and invalid duration",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "service requires at least one professional",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "client phone keeps DDD 55 and rejects short numbers",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "client email is lowercased and empty phone stays null",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/catalog.test.ts",
+      "name": "profile form only reads booking when manageBooking is present",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/phone.test.ts",
+      "name": "normalizes Brazilian mobile with various DDD",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/phone.test.ts",
+      "name": "keeps DDD 55 instead of treating it as country code",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/phone.test.ts",
+      "name": "normalizes landline 10-digit national numbers including DDD 55",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/phone.test.ts",
+      "name": "rejects short, ambiguous, or non-BR numbers",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/validation/phone.test.ts",
+      "name": "formats Brazilian phone for display without stripping DDD 55",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/access.test.ts",
+      "name": "workspace API ids must be canonical UUIDs",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/access.test.ts",
+      "name": "workspace lookup requires an active membership even if RLS is bypassed",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/slug.test.ts",
+      "name": "slugifyPreview lowercases, strips accents and spaces",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/slug.test.ts",
+      "name": "reserved slugs stay blocked including public routes",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/slug.test.ts",
+      "name": "slugError enforces length, charset and reserved words",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/slug.test.ts",
+      "name": "extractPublicWorkspaceSlug accepts slugs and public profile URLs only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/slug.test.ts",
+      "name": "preview uses the current host without a hardcoded domain",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "settings form normalizes slug, phone, instagram and CEP",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "omitted optional settings fields become null",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "reserved slug is rejected in the form",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "invite without email is a secret link; owner role is rejected",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "public profile parser keeps only public fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "bookablePublicServices hides services without a published professional",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    }
+  ]
+}
