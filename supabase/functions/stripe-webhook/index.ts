@@ -21,6 +21,9 @@ async function retrieveSubscription(id: string) {
     if (error || typeof data !== "string" || !data) throw new Error("stripe_api_key_missing");
     key = data;
   }
+  const production = new URL(SUPABASE_URL!).hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";
+  const mode = /^(sk|rk)_live_/.test(key) ? "live" : /^(sk|rk)_test_/.test(key) ? "test" : null;
+  if (mode !== (production ? "live" : "test")) throw new Error("stripe_environment_mode_mismatch");
   const stripe = new Stripe(key, { apiVersion: "2026-08-26.dahlia", httpClient: Stripe.createFetchHttpClient() });
   return await stripe.subscriptions.retrieve(id);
 }
@@ -348,6 +351,8 @@ Deno.serve(async (req: Request) => {
   if (typeof event.id !== "string" || typeof event.type !== "string" || !event.data?.object) {
     return json(400, { error: "invalid_event" });
   }
+  const production = new URL(SUPABASE_URL!).hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";
+  if (event.livemode !== production) return json(400, { error: "stripe_event_mode_mismatch" });
 
   try {
     switch (event.type) {

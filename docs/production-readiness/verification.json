@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-11T04:46:33.688Z",
+  "local_built_deployment_class": "development",
+  "next": "16.3.8",
+  "ci": "pending latest rebased commit",
+  "checks": {
+    "ci_install": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "standard_tests": 233,
+    "native_pg17_tests": 43,
+    "native_concurrency": 8,
+    "native_sql_suites": 5,
+    "build": "PASS",
+    "local_anonymous_smoke": 32,
+    "production_anonymous_smoke": 32,
+    "production_npm_vulnerabilities": 0,
+    "release_plan_local": "PASS"
+  },
+  "external_test_auth_smtp": "BLOCKED",
+  "authenticated_browser": "BLOCKED",
+  "stripe_test": "BLOCKED",
+  "staging_migrations": "BLOCKED",
+  "remote_writes": 0,
+  "payments": 0,
+  "main_integrated": "602ea83"
+}
