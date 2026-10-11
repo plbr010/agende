@@ -12,6 +12,10 @@ O plano é da organização, não de cada projeto: manter staging em organizaç�
 
 Se no futuro houver justificativa objetiva para pago, apresentar nova proposta. Referência pública, **não cotação autorizada**: Pro US$25/mês, primeiro Micro coberto por US$10 de crédito; Micro adicional US$10/mês em mês completo, cobrado por hora; uma organização Pro com dois Micro resulta em referência de US$35/mês antes de impostos/excedentes/add-ons. Não há motivo demonstrado para assumir esse custo agora. Limites Pro incluem8GB de disco e250GB egress, mas não são necessários para nossas fixtures mínimas. A fatura exata depende do cenário e precisa ser verificada antes de qualquer aprovação.
 
+Limitação específica de segurança: [proteção de senhas vazadas gerenciada pelo Supabase](https://supabase.com/docs/guides/auth/password-security) está disponível apenas em Pro ou superior. Free permite homologar Auth funcional, mas não comprovar essa feature gerenciada. Esse gate fica explicitamente pendente; não desligar requisito de segurança nem contratar Pro por conta própria. Se o responsável exigir teste dessa feature no staging hospedado, a justificativa do pago será essa disponibilidade, não tamanho de fixtures.
+
+E-mails: [SMTP padrão](https://supabase.com/docs/guides/auth/auth-smtp) envia apenas para endereços dos membros da organização. Para contas fictícias fora dessa lista, staging hospedado precisa de SMTP controlado próprio (configuração suportada no Free, custo do provedor separado não presumido). Pro não dispensa SMTP próprio. A caixa local permite confirmar geração/links sem entregar mensagens externas; não declarar entrega real aprovada com base nela.
+
 ## Caminho local, sem cobrança Supabase
 
 A [stack CLI local](https://supabase.com/docs/guides/local-development/cli/getting-started) oferece PostgreSQL, GoTrue, PostgREST, Storage e caixa de e-mails de teste no próprio computador. Não é necessário login/link de produção. Utiliza recursos e download de imagens do computador; não pressupor licença comercial gratuita de qualquer runtime particular.
