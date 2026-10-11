@@ -1,0 +1,18 @@
+{
+  "main_integrated": "e0a716da46ac0f29f65dc400c69b27af7888a7aa",
+  "node": "24.19.0",
+  "next": "16.3.8",
+  "npm_ci": "passed; optional cleanup warning EPERM; exit 0",
+  "lint": "passed",
+  "typecheck": "passed",
+  "build": "passed",
+  "built_local_smoke": {"passed": 32, "failed": 0, "mode": "anonymous GET only"},
+  "production_smoke_after_pr23": {"passed": 32, "failed": 0, "mode": "anonymous GET only"},
+  "production_dependency_audit": {"vulnerabilities": 0},
+  "development_dependency_high_vulnerabilities": 5,
+  "stripe_recovery_snapshot_verification": "passed; historical snapshot, not live transaction",
+  "schema_drift_comparison": "completed; pending migrations and platform grant differences retained",
+  "production_writes": 0,
+  "payments_executed": 0,
+  "authenticated_external_flows": "blocked: isolated Auth/SMTP/Stripe not available"
+}

@@ -1,0 +1,286 @@
+{
+  "checked_at": "2026-10-11T02:44:41.223Z",
+  "groups": {
+    "native_pg17_integration_with_mock_auth": {
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_sql": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_concurrency": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "workspace create action starts one trial and respects Cursor setup redirect",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "profile, service and availability actions persist a bookable catalog",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "public actions book an actual slot and reject overlapping requests",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "completed appointment receives exactly one immutable client review",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client cancellation action frees a second booked slot",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "stock and package actions persist their business operations",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "atomic catalog SQL protects tenant boundaries, roles and existing overrides",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "an error after service insertion rolls back the entire atomic RPC",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "selected plans, invalid plan, confirmed email and anonymous access",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "second workspace never earns another trial",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "trial plan change preserves all dates and rejects invalid/expired trials",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "downgrade rejects excess professionals and admin can change eligible plan",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "professionals, receptionists and other tenants cannot change plans or access management reads",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "Stripe leases serialize attempts, protect tokens and reject user access",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "Stripe binding and subscription lifecycle preserve trial and require service role",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "inventory create, entry, exit, adjustment, edit, archive, reactivate and insufficient stock",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "packages create and sell use real services, clients, sessions and cancellation rules",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "finance income/expense, idempotency, payment, refund limits, cancel and reopen",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/database.test.mjs",
+      "name": "real SQL migrations: trial, tenant authorization and management operations",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "pending migrations dry-run on the observed remote membership state preserves data and definitions",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "owner reconciliation refuses unknown functions and rolls back all changes",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "last-owner trigger protects direct privileged writes and RPCs retain tenant and role checks",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "expiry and payment failure block operational access even before the maintenance job runs",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/final-hardening.test.mjs",
+      "name": "paid downgrade with excess seats never retains active access and never blocks cancellation or failed payment",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "client read model exposes stable IDs and slots preserve appointment duration",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "client reschedule rejects unavailable slots and IDOR, then updates same instant safely",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "timezone changes display and slots without changing stored appointment instant",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review rejects incomplete and foreign appointments",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review validates rating/comment, persists once and rejects duplicates",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "review RLS isolates tenants and prohibits all direct writes, edits and deletes",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "appointment_reviews uses FORCE RLS and SECURITY DEFINER functions pin empty search_path",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-readiness.test.mjs",
+      "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent public reservations: one winner for the same professional/slot",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 a rolled-back reservation frees the waiting client to book",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent client reschedules cannot converge on one occupied slot",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 duplicate concurrent reviews persist exactly one immutable rating",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent owner demotions retain one active owner",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent invite acceptance cannot exceed the plan seat limit",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent billing-event replay returns one event ID",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent checkout leases cannot both acquire the same workspace",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    }
+  ]
+}

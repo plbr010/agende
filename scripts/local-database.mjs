@@ -4,7 +4,7 @@ import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
 import { btree_gist } from '@electric-sql/pglite/contrib/btree_gist';
 import { readdirSync, readFileSync } from 'node:fs';
 
-// In-memory PostgreSQL only. No URL, network connection or remote credentials.
+// Default: in-memory PostgreSQL. Explicit native mode verifies an owned loopback cluster.
 // Auth/storage objects emulate the Supabase platform, not application business rules.
 // pg_cron registration is recorded locally; the scheduler itself is not run.
 export async function createLocalDatabase({ throughVersion = '99999999999999' } = {}) {
@@ -24,6 +24,6 @@ export async function createLocalDatabase({ throughVersion = '99999999999999' } 
 }
 if (process.argv[1]?.endsWith('local-database.mjs')) {
   const db = await createLocalDatabase();
-  console.log('All repository migrations applied to in-memory PostgreSQL.');
+  console.log('All repository migrations applied to ' + (db.native ? 'owned native PostgreSQL 17.' : 'in-memory PostgreSQL.'));
   await db.close();
 }

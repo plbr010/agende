@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-11T02:45:40.024411+00:00",
+  "project": "wohimauqgywshbbejjcl",
+  "mode": "read-only",
+  "catalog_unchanged": {
+    "tables": true,
+    "policies": true,
+    "grants": true,
+    "functions": true,
+    "triggers": true,
+    "columns": true,
+    "constraints": true,
+    "indexes": true
+  },
+  "remote_migrations": 63,
+  "local_migrations": 67,
+  "table_count": 32,
+  "public_tables_force_rls": 31,
+  "security_definers_unsafe_paths": 0,
+  "missing": [
+    "appointment_reviews",
+    "submit_appointment_review",
+    "list_my_reschedule_slots",
+    "save_service_with_professionals"
+  ]
+}
