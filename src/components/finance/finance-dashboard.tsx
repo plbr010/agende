@@ -34,7 +34,7 @@ export function FinanceDashboard({ snapshot }: {
         return <p>Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
     const entries = snapshot.entries.filter(e => (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
     return <div className="grid gap-5">
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda em aberto", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="rounded-2xl border bg-card p-5">
+    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda em aberto", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <p className="text-sm text-muted-foreground">{label}</p>
         <p className="font-serif text-2xl">{formatCentsToReais(Number(value))}</p>
         </div>)}</section>
@@ -66,7 +66,7 @@ export function FinanceDashboard({ snapshot }: {
     </label>
     </div>
  {!entries.length && <p className="rounded-2xl bg-secondary p-5">Nada encontrado. Toque em Adicionar dinheiro que entrou ou saiu, ou mude o período.</p>}
- {entries.map(e => <article key={e.id} className="grid gap-3 rounded-2xl border bg-card p-5">
+ {entries.map(e => <article key={e.id} className={"agende-shadow grid gap-3 rounded-3xl border bg-card p-5 " + (e.kind === "income" ? "border-l-4 border-l-success" : "border-l-4 border-l-primary")}>
         <div className="flex flex-wrap justify-between gap-3">
         <div>
         <h2 className="font-semibold">{e.title}</h2>

@@ -31,7 +31,7 @@ export function SubscriptionOverview({ subscription, seats, timezone, capabiliti
         <p>Termina em {formatDateTime(subscription.trialEndsAt, timezone)}</p>
         </div>}</section>
     <p className="rounded-2xl bg-secondary p-4">Trocar de plano durante o teste não reinicia os 7 dias nem altera a data final.</p>
-    {trial && <section className="grid gap-4 lg:grid-cols-3" aria-label="Plano durante o teste">{PLANS.map(p => <article key={p.id} className={"grid content-start gap-4 rounded-2xl border bg-card p-5 " + (p.popular ? "border-primary ring-1 ring-primary" : "")}>
+    {trial && <section className="grid gap-4 lg:grid-cols-3" aria-label="Plano durante o teste">{PLANS.map(p => <article key={p.id} className={"grid content-start gap-4 agende-shadow rounded-3xl border border-primary/10 bg-card p-5 " + (p.popular ? "border-primary ring-1 ring-primary" : "")}>
         <h3 className="text-xl font-semibold">{p.name}{p.popular && <span className="ml-2 text-xs text-primary">Mais escolhido</span>}</h3>
         <p>{p.seats}</p>
         <p>
@@ -39,7 +39,7 @@ export function SubscriptionOverview({ subscription, seats, timezone, capabiliti
         <p className="text-sm text-muted-foreground">{p.annualPrice}</p>{subscription?.plan === p.id ? <p className="font-semibold text-primary">Plano atual</p> : trial ? <ManagementForm action="trial" label={"Trocar para " + p.name}>
             <input type="hidden" name="plan" value={p.id}/>
             </ManagementForm> : <p className="text-sm">Troca disponível durante o teste.</p>}</article>)}</section>}
-    <section className="rounded-2xl border bg-card p-5">
+    <section className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
     <BillingControls canManage={canManage} usedSeats={seats?.usedProfessionals ?? null}
       hasCustomer={subscription?.hasStripeCustomer ?? false} hasSubscription={subscription?.hasStripeSubscription ?? false}
       status={subscription?.status} initialInterval={subscription?.billingInterval ?? "monthly"}

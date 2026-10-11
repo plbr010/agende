@@ -115,7 +115,7 @@ export function AgendaBoard({
 
   return (
     <div className="grid gap-4">
-      <form method="get" action="/app/agenda" className="grid gap-3 rounded-xl bg-secondary/40 p-4 ring-1 ring-border sm:grid-cols-[1fr_auto_auto] sm:items-end">
+      <form method="get" action="/app/agenda" className="agende-shadow grid gap-3 rounded-3xl bg-card p-4 ring-1 ring-primary/10 sm:grid-cols-[1fr_auto_auto] sm:items-end">
         <div className="grid gap-2">
           <Label htmlFor="professional">Profissional</Label>
           <select
@@ -242,15 +242,15 @@ function DayColumn({
 }) {
   const [, month, day] = date.split("-");
   return (
-    <section className="min-w-0 rounded-xl bg-card p-3 ring-1 ring-border">
+    <section className="agende-shadow min-w-0 rounded-3xl bg-card p-3 ring-1 ring-primary/10">
       <header className="mb-3">
         <p className="text-sm text-muted-foreground">{weekdayLabel ?? "Agenda"}</p>
-        <h2 className={cn("font-serif", compact ? "text-lg" : "text-2xl")}>
+        <h2 className={cn("font-serif text-[var(--wine)]", compact ? "text-xl" : "text-3xl")}>
           {day}/{month}
         </h2>
       </header>
       {items.length === 0 ? (
-        <p className="rounded-xl bg-secondary/40 px-3 py-4 text-sm text-muted-foreground">
+        <p className="rounded-2xl bg-secondary/50 px-3 py-4 text-sm leading-6 text-muted-foreground">
           Nada marcado neste dia. Toque em Novo horário para marcar.
         </p>
       ) : (
@@ -260,7 +260,7 @@ function DayColumn({
               key={item.id}
               type="button"
               onClick={() => onOpen(item)}
-              className="rounded-xl bg-secondary/50 p-3 text-left ring-1 ring-border transition-colors hover:bg-secondary"
+              className="min-h-11 rounded-2xl bg-secondary/40 p-3 text-left ring-1 ring-primary/10 transition-colors hover:bg-secondary"
             >
               <p className="text-sm font-medium">
                 {item.localStart}–{item.localEnd}

@@ -35,7 +35,7 @@ export function MarketingProblems() {
           ))}
         </div>
 
-        <div className="mt-8 rounded-[1.8rem] bg-primary px-5 py-7 text-primary-foreground shadow-[0_24px_50px_-28px_oklch(0.45_0.08_18/0.55)] sm:px-8 sm:py-9">
+        <div className="mt-8 rounded-[1.8rem] bg-primary px-5 py-7 text-primary-foreground shadow-[0_24px_50px_-28px_rgb(99_29_56/0.4)] sm:px-8 sm:py-9">
           <p className="text-[0.7rem] font-medium tracking-[0.2em] uppercase opacity-80">
             A solução
           </p>

@@ -28,7 +28,7 @@ export function InventoryDashboard({ timezone, snapshot }: {
         return <p className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive" role="alert">Não foi possível carregar o estoque. Atualize a página para tentar novamente.</p>;
     const products = snapshot.products.filter(p => p.name.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")) && (filter === "archived" ? !!p.archivedAt : !p.archivedAt && (filter === "all" || (filter === "low" ? p.quantity > 0 && p.quantity <= p.minimumQuantity : p.quantity === 0))));
     return <div className="grid gap-5">
-    <div className="grid gap-3 sm:grid-cols-3">{[["Produtos", snapshot.summary.products], ["Estoque baixo", snapshot.summary.lowStock], ["Custo em estoque", formatCentsToReais(snapshot.summary.estimatedCostCents)]].map(([label, value]) => <div className="rounded-2xl border bg-card p-5" key={label}>
+    <div className="grid gap-3 sm:grid-cols-3">{[["Produtos", snapshot.summary.products], ["Estoque baixo", snapshot.summary.lowStock], ["Custo em estoque", formatCentsToReais(snapshot.summary.estimatedCostCents)]].map(([label, value]) => <div className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5" key={label}>
         <p className="text-sm text-muted-foreground">{label}</p>
         <p className="font-serif text-3xl">{value}</p>
         </div>)}</div>
@@ -49,7 +49,7 @@ export function InventoryDashboard({ timezone, snapshot }: {
     </label>
     </div>
  {products.length === 0 && <p className="rounded-2xl bg-secondary p-5">Nenhum produto encontrado. Cadastre seu primeiro produto ou ajuste a busca.</p>}
- <div className="grid gap-4 lg:grid-cols-2">{products.map(p => <article key={p.id} className="grid content-start gap-3 rounded-2xl border bg-card p-5">
+ <div className="grid gap-4 lg:grid-cols-2">{products.map(p => <article key={p.id} className="grid content-start gap-3 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <h2 className="text-lg font-semibold">{p.name}</h2>
         <p>{p.quantity} {p.unit} · Mínimo {p.minimumQuantity} · <strong>{p.archivedAt ? "Arquivado" : p.quantity === 0 ? "Sem estoque" : p.quantity <= p.minimumQuantity ? "Baixo" : "Normal"}</strong>
         </p>
@@ -75,7 +75,7 @@ export function InventoryDashboard({ timezone, snapshot }: {
             <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? Ele some da lista, mas o histórico continua."}/>
             </>}
  </article>)}</div>
-    <section className="rounded-2xl border bg-card p-5">
+    <section className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
     <h2 className="mb-4 text-xl font-semibold">Histórico recente</h2>{!snapshot.recentMovements.length && <p>As entradas, saídas e ajustes aparecerão aqui.</p>}{snapshot.recentMovements.map(m => <div key={m.id} className="flex justify-between gap-4 border-b py-3">
         <div>
         <p>{m.productName} · {m.label}</p>
