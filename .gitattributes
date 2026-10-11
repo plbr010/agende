@@ -2,4 +2,5 @@
 supabase/migrations/20260926*.sql text eol=lf
 supabase/functions/** text eol=lf
 supabase/migrations/20261009*.sql text eol=lf
+supabase/migrations/20261010*.sql text eol=lf
 src/app/shadcn-tailwind.* text eol=lf

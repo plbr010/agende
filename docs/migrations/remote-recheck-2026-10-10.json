@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-10T23:22:49.785409+00:00",
+  "project": "wohimauqgywshbbejjcl",
+  "mode": "read-only",
+  "reference": "remote-final-2026-10-09.json",
+  "reference_sha256": "6db3b30352c8970214dcc58cc21800edaaf75d9058bd6e262825d2bea12b3541",
+  "groups_unchanged": {
+    "tables": true,
+    "policies": true,
+    "grants": true,
+    "functions": true,
+    "triggers": true,
+    "columns": true,
+    "constraints": true,
+    "indexes": true
+  },
+  "counts": {
+    "tables": 32,
+    "policies": 53,
+    "grants": 251,
+    "functions": 224,
+    "triggers": 82,
+    "columns": 306,
+    "constraints": 237,
+    "indexes": 173
+  },
+  "history_unchanged": true,
+  "remote_migrations": 63,
+  "unrecoverable_versions": [
+    "20260919201138"
+  ],
+  "placeholder_versions": [
+    "20260918203839",
+    "20260918203840",
+    "20260918203841"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "checked_at": "2026-10-10T23:22:49.785409+00:00",
+  "mode": "read-only",
+  "project": {
+    "id": "prj_NLQEGsBiUWcKjws9vjIKFgXOvgfx",
+    "name": "agende",
+    "framework": "nextjs",
+    "nodeVersion": "24.x"
+  },
+  "production_deployment": {
+    "id": "dpl_DQDkSHHHcZopha484SeMUkdMYvaX",
+    "name": "agende",
+    "url": "agende-nvddv74uf-pedros-projects-cfddfd39.vercel.app",
+    "created": 1791649979201,
+    "state": "READY",
+    "target": "production",
+    "creator": {
+      "uid": "i57q7uDN9q4jAzl0eATLZqI1",
+      "username": "plbr010"
+    },
+    "meta": {
+      "githubCommitRef": "main",
+      "githubCommitSha": "54be3eb98474acfb4120c06423c621f916cca10e",
+      "githubCommitMessage": "Simplificar a usabilidade para qualquer idade (#20)\n\n* feat: simplificar a usabilidade para qualquer idade\n\nTorna cadastro, onboarding, agenda, serviços, horários, reservas e\nfinanceiro fáceis de usar sem treino: palavras do dia a dia, botões\ngrandes, menos cliques e confirmações claras. Inclui t...",
+      "githubRepo": "agende",
+      "githubOrg": "plbr010"
+    },
+    "inspectorUrl": "https://vercel.com/pedros-projects-cfddfd39/agende/DQDkSHHHcZopha484SeMUkdMYvaX",
+    "isRollbackCandidate": true
+  },
+  "domains": [
+    {
+      "name": "agende-lac.vercel.app",
+      "verified": true,
+      "redirect": null
+    }
+  ],
+  "environment_metadata": [
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ],
+      "type": "encrypted",
+      "visibility": "config"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ],
+      "type": "encrypted",
+      "visibility": "config"
+    }
+  ],
+  "missing_explicit_site_url": true,
+  "database_url_points_to_production": true,
+  "deployment_targets_share_database_configuration": true,
+  "runtime_log_scan": {
+    "window": "30m",
+    "level": [
+      "error",
+      "fatal"
+    ],
+    "group_by": "requestPath",
+    "groups_returned": 0,
+    "retention_limit": "24h request rejected; recent 30m accepted"
+  },
+  "production_anonymous_http_probes": {
+    "count": 32,
+    "passed": 32,
+    "forms_submitted": 0
+  },
+  "custom_domain_probe": {
+    "name": "agendeapp.online",
+    "result": "NXDOMAIN; not configured on this Vercel project",
+    "required_for_launch": "not assumed"
+  }
+}
