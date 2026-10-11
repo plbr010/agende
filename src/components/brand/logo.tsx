@@ -5,10 +5,12 @@ export function BrandLogo({
   className,
   size = "md",
   tone = "default",
+  href = "/",
 }: {
   className?: string;
   size?: "sm" | "md" | "lg";
   tone?: "default" | "light";
+  href?: string;
 }) {
   const text =
     size === "lg" ? "text-4xl" : size === "sm" ? "text-xl" : "text-2xl";
@@ -16,7 +18,7 @@ export function BrandLogo({
 
   return (
     <Link
-      href="/"
+      href={href}
       className={cn(
         "inline-flex min-h-11 items-center gap-1.5 font-serif tracking-tight",
         tone === "light" ? "text-[#fffaf8]" : "text-foreground",
