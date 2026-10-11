@@ -124,8 +124,7 @@ export function AppShell({
           </div>
           <Button
             variant="ghost"
-            size="sm"
-            className="mt-3 w-full justify-start text-xs"
+            className="mt-3 h-11 w-full justify-start"
             render={<Link href={`/p/${workspaceSlug}`} target="_blank" />}
           >
             Ver página do salão <ExternalLink className="ml-auto size-3" />

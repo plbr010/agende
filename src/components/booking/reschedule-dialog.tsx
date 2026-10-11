@@ -47,7 +47,7 @@ export function RescheduleDialog({
       })
       .catch(() => {
         if (active) {
-          setError("Falha ao carregar profissionais.");
+          setError("Não deu certo carregar quem atende. Tente de novo.");
           setLoading(false);
         }
       });
@@ -74,7 +74,7 @@ export function RescheduleDialog({
       })
       .catch(() => {
         if (active) {
-          setError("Falha ao consultar horários. Tente outra data.");
+          setError("Não deu certo ver os horários. Tente outra data.");
           setLoading(false);
         }
       });

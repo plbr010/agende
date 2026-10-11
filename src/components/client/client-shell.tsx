@@ -46,7 +46,7 @@ export function ClientShell({
               const current = item.href === "/cliente" ? pathname === item.href : pathname.startsWith(item.href);
               const Icon = item.icon;
               return (
-                <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
+                <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
                   <Icon className="size-3.5" /> {item.label}
                 </Link>
               );
@@ -55,13 +55,12 @@ export function ClientShell({
           <div className="flex items-center gap-2">
             {hasWorkspace ? (
               <>
-                <Button variant="outline" size="sm" className="hidden rounded-full sm:inline-flex" render={<Link href="/app" />}>
+                <Button variant="outline" className="hidden h-11 rounded-full sm:inline-flex" render={<Link href="/app" />}>
                   Área profissional
                 </Button>
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="rounded-full sm:hidden"
+                  className="size-11 rounded-full sm:hidden"
                   aria-label="Área profissional"
                   render={<Link href="/app" />}
                 >

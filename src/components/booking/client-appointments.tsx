@@ -3,7 +3,7 @@
 import { RescheduleDialog } from "@/components/booking/reschedule-dialog";
 import { WorkspaceFinder } from "@/components/client/workspace-finder";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { CalendarCheck2, CalendarDays, Clock3, ExternalLink, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +42,13 @@ export function ClientAppointments({
   const [messageTone, setMessageTone] = useState<"success" | "error">(loadError ? "error" : "success");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const cancelErrorRef = useRef<HTMLParagraphElement>(null);
   const { upcoming, past } = partitionClientAppointments(items);
+  const cancelError = cancelling && messageTone === "error" ? message : null;
+
+  useEffect(() => {
+    if (cancelError) cancelErrorRef.current?.focus();
+  }, [cancelError]);
   const knownWorkspaces = uniqueClientWorkspaces(items);
 
   function cancel(id: string) {
@@ -89,12 +95,23 @@ export function ClientAppointments({
                 {formatDateTimeInTimeZone(cancelling.startsAt, cancelling.timezone)}.
               </DialogDescription>
             </DialogHeader>
+            {cancelError ? (
+              <p
+                ref={cancelErrorRef}
+                role="alert"
+                tabIndex={-1}
+                className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive outline-none"
+              >
+                {cancelError}
+              </p>
+            ) : null}
             <DialogFooter className="flex-col gap-2 sm:flex-col">
               <Button
                 type="button"
                 variant="destructive"
                 className="h-11 w-full"
                 disabled={pending && pendingId === cancelling.id}
+                aria-busy={pending && pendingId === cancelling.id}
                 onClick={() => cancel(cancelling.id)}
               >
                 {pending && pendingId === cancelling.id ? "Cancelando…" : "Confirmar cancelamento"}
@@ -111,7 +128,7 @@ export function ClientAppointments({
           {loadError}
         </p>
       ) : null}
-      {message ? (
+      {message && !cancelError ? (
         <p
           className={
             messageTone === "error"
