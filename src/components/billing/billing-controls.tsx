@@ -67,7 +67,7 @@ export function BillingControls(props: BillingControlsProps) {
     </fieldset>
     <div className="grid gap-4 lg:grid-cols-3">{PLANS.map(plan => {
       const reason = checkoutDisabledReason(plan.id, props.usedSeats, props.hasSubscription, props.status, props.canManage);
-      return <article key={plan.id} className="grid content-start gap-4 rounded-2xl border bg-card p-5">
+      return <article key={plan.id} className="grid content-start gap-4 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <h4 className="text-xl font-semibold">{plan.name}</h4>
         <p>{plan.seats}</p>
         <p className="text-2xl font-semibold">{interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}</p>

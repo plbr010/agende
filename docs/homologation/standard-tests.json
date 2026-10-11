@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-11T02:54:10.920Z",
+  "checked_at": "2026-10-11T04:24:45.794Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 9,
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 133,
+      "passed": 135,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 223,
+    "passed": 225,
     "failed": 0,
     "skipped": 0
   },
@@ -307,6 +307,18 @@
     {
       "file": "scripts/test-environment-safety.test.mjs",
       "name": "valid separate configuration never claims external Auth or payments were tested",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/app/visual-tokens.test.ts",
+      "name": "the visual reference palette is the semantic source of the product",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/app/visual-tokens.test.ts",
+      "name": "small text does not use the pale reference rose as the primary button",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

@@ -30,12 +30,28 @@ function initials(value: string): string {
     .join("");
 }
 
-function Navigation({ pathname, role, onNavigate }: { pathname: string; role: WorkspaceRole | undefined; onNavigate?: () => void }) {
+function Navigation({
+  pathname,
+  role,
+  onNavigate,
+  tone = "paper",
+}: {
+  pathname: string;
+  role: WorkspaceRole | undefined;
+  onNavigate?: () => void;
+  tone?: "paper" | "wine";
+}) {
+  const currentClass = tone === "wine"
+    ? "bg-secondary text-secondary-foreground shadow-sm"
+    : "bg-primary text-primary-foreground shadow-sm shadow-primary/20";
+  const idleClass = tone === "wine"
+    ? "text-white/85 hover:bg-white/10 hover:text-white"
+    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground";
   return (
     <nav className="grid gap-6" aria-label="Navegação principal">
       {getAppNavigation(role).map((group) => (
         <div key={group.label} className="grid gap-1.5">
-          <p className="px-3 text-[0.68rem] font-semibold tracking-[0.18em] text-muted-foreground/80 uppercase">
+          <p className={cn("px-3 text-[0.68rem] font-semibold tracking-[0.18em] uppercase", tone === "wine" ? "text-white/55" : "text-muted-foreground/80")}>
             {group.label}
           </p>
           {group.items.map((item) => {
@@ -49,15 +65,13 @@ function Navigation({ pathname, role, onNavigate }: { pathname: string; role: Wo
                 aria-current={current ? "page" : undefined}
                 className={cn(
                   "group flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-all",
-                  current
-                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
+                  current ? currentClass : idleClass,
                 )}
               >
                 <Icon className="size-4 shrink-0" aria-hidden="true" />
                 <span className="min-w-0 flex-1 truncate font-medium">{item.label}</span>
                 {item.integrationPending && !current ? (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-[0.65rem] font-medium text-foreground">Em breve</span>
+                  <span className={cn("rounded-full px-2 py-0.5 text-[0.65rem] font-medium", tone === "wine" ? "bg-white/15 text-white" : "bg-accent text-foreground")}>Em breve</span>
                 ) : null}
                 <ChevronRight className={cn("size-3.5 shrink-0 opacity-0 transition-opacity", current && "opacity-70", !current && "group-hover:opacity-60")} aria-hidden="true" />
               </Link>
@@ -65,16 +79,14 @@ function Navigation({ pathname, role, onNavigate }: { pathname: string; role: Wo
           })}
         </div>
       ))}
-      <div className="grid gap-1.5 border-t border-border/70 pt-4">
+      <div className={cn("grid gap-1.5 border-t pt-4", tone === "wine" ? "border-white/15" : "border-border/70")}>
         <Link
           href={settingsNavigationItem.href}
           onClick={onNavigate}
           aria-current={isNavigationItemCurrent(pathname, settingsNavigationItem.href) ? "page" : undefined}
           className={cn(
             "flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition-colors",
-            isNavigationItemCurrent(pathname, settingsNavigationItem.href)
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground",
+            isNavigationItemCurrent(pathname, settingsNavigationItem.href) ? currentClass : idleClass,
           )}
         >
           <settingsNavigationItem.icon className="size-4" aria-hidden="true" />
@@ -105,45 +117,45 @@ export function AppShell({
 
   return (
     <div className="agende-bloom min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
-      <aside className="hidden h-screen border-r border-border/70 bg-card/70 p-4 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col">
+      <aside className="hidden h-screen bg-sidebar p-4 text-sidebar-foreground lg:sticky lg:top-0 lg:flex lg:flex-col">
         <div className="px-3 py-2">
-          <BrandLogo size="md" />
-          <p className="mt-1 text-xs text-muted-foreground">Agenda do seu salão</p>
+          <BrandLogo size="md" tone="light" />
+          <p className="mt-1 text-xs text-white/70">Agenda do seu salão</p>
         </div>
-        <div className="my-5 rounded-2xl bg-secondary/60 p-3 ring-1 ring-border/70">
+        <div className="my-5 rounded-2xl bg-white/10 p-3">
           <div className="flex items-center gap-3">
             <Avatar size="lg">
-              <AvatarFallback className="bg-primary text-primary-foreground">
+              <AvatarFallback className="bg-secondary text-secondary-foreground">
                 {initials(workspaceName)}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{workspaceName}</p>
-              <p className="truncate text-xs text-muted-foreground">{roleLabel}</p>
+              <p className="truncate text-xs text-white/70">{roleLabel}</p>
             </div>
           </div>
           <Button
             variant="ghost"
-            className="mt-3 h-11 w-full justify-start"
+            className="mt-3 h-11 w-full justify-start text-sidebar-foreground hover:bg-white/10 hover:text-white"
             render={<Link href={`/p/${workspaceSlug}`} target="_blank" />}
           >
             Ver página do salão <ExternalLink className="ml-auto size-3" />
           </Button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <Navigation pathname={pathname} role={role} />
+          <Navigation pathname={pathname} role={role} tone="wine" />
         </div>
-        <div className="mt-4 border-t border-border/70 pt-4">
+        <div className="mt-4 border-t border-white/15 pt-4">
           <div className="flex items-center gap-3 px-2">
             <Avatar>
-              <AvatarFallback>{initials(userName)}</AvatarFallback>
+              <AvatarFallback className="bg-secondary text-secondary-foreground">{initials(userName)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{userName}</p>
-              <Badge variant="outline" className="mt-1">Conta profissional</Badge>
+              <Badge variant="outline" className="mt-1 border-white/30 text-white">Conta profissional</Badge>
             </div>
             <form action={signOutAction}>
-              <Button type="submit" variant="ghost" className="h-11 px-3" aria-label="Sair">
+              <Button type="submit" variant="ghost" className="h-11 px-3 text-sidebar-foreground hover:bg-white/10 hover:text-white" aria-label="Sair">
                 <LogOut className="size-4" /> Sair
               </Button>
             </form>

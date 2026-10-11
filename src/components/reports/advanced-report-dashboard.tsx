@@ -27,7 +27,7 @@ export function AdvancedReportDashboard({ report }: { report: AdvancedReport | n
         </Card>
         <Card className="rounded-3xl border-border/70 bg-card/85 shadow-sm">
           <CardHeader><CardTitle className="text-xl">Financeiro por categoria</CardTitle><CardDescription>Entradas e saídas líquidas no período.</CardDescription></CardHeader>
-          <CardContent className="grid gap-3">{!report.financeByCategory.length && <p>Nenhum lançamento no período.</p>}{report.financeByCategory.map((category) => <div key={`${category.entryType}-${category.categoryName}`} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/45 px-4 py-3 text-sm"><span>{category.categoryName}</span><span className={category.entryType === "expense" ? "font-medium text-destructive" : "font-medium text-primary"}>{category.entryType === "expense" ? "−" : "+"}{formatCentsToReais(category.netCents)}</span></div>)}</CardContent>
+          <CardContent className="grid gap-3">{!report.financeByCategory.length && <p>Nenhum lançamento no período.</p>}{report.financeByCategory.map((category) => <div key={`${category.entryType}-${category.categoryName}`} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/45 px-4 py-3 text-sm"><span>{category.categoryName}</span><span className={category.entryType === "expense" ? "font-medium text-destructive" : "font-medium text-success"}>{category.entryType === "expense" ? "−" : "+"}{formatCentsToReais(category.netCents)}</span></div>)}</CardContent>
         </Card>
       </section>
       <section className="grid gap-4 sm:grid-cols-2">

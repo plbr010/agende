@@ -57,7 +57,7 @@ export function SignupForm({
             aria-checked={intent === "client"}
             onClick={() => setIntent("client")}
             className={cn(
-              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 agende-shadow rounded-3xl border border-primary/10 bg-card p-4 text-left ring-1 ring-border transition",
               intent === "client" && "ring-2 ring-primary",
             )}
           >
@@ -70,7 +70,7 @@ export function SignupForm({
             aria-checked={intent === "professional"}
             onClick={() => setIntent("professional")}
             className={cn(
-              "min-h-16 rounded-2xl border bg-card p-4 text-left ring-1 ring-border transition",
+              "min-h-16 agende-shadow rounded-3xl border border-primary/10 bg-card p-4 text-left ring-1 ring-border transition",
               intent === "professional" && "ring-2 ring-primary",
             )}
           >

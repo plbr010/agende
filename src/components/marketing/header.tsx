@@ -34,7 +34,7 @@ export function MarketingHeader() {
             <MarketingHashLink
               key={item.href}
               href={item.href}
-              className="rounded-full px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="inline-flex min-h-11 items-center rounded-full px-3 text-sm text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
             >
               {item.label}
             </MarketingHashLink>

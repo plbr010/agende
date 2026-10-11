@@ -26,7 +26,7 @@ export function MarketingPricing() {
               className={cn(
                 "relative flex min-w-0 flex-col rounded-[1.8rem] p-6 ring-1 sm:p-7",
                 plan.popular
-                  ? "bg-primary text-primary-foreground shadow-[0_28px_60px_-32px_oklch(0.42_0.08_18/0.6)] ring-primary lg:-translate-y-2"
+                  ? "bg-primary text-primary-foreground shadow-[0_28px_60px_-32px_rgb(99_29_56/0.45)] ring-primary lg:-translate-y-2"
                   : "bg-card/90 text-foreground shadow-[0_18px_40px_-30px_oklch(0.4_0.04_25/0.35)] ring-border",
               )}
             >
