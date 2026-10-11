@@ -19,10 +19,16 @@ test("working hours editor collapses empty days and can copy a day to the rest o
   const source = readFileSync(join(dir, "availability-editor.tsx"), "utf8");
   assert.match(source, /Horários de trabalho/);
   assert.match(source, /Usar estes horários nos outros dias/);
-  assert.match(source, /Folga — toque para definir/);
+  assert.match(source, /Definir horário/);
+  assert.match(source, /Sem atendimento neste dia/);
+  assert.match(source, /Alterar horário/);
+  assert.match(source, /describePeriodProblem/);
+  assert.match(source, /planHourCopy/);
+  assert.match(source, /htmlFor=\{startId\}/);
   assert.match(source, />De</);
   assert.match(source, />Até</);
   assert.match(source, /ConfirmAction/);
+  assert.doesNotMatch(source, /<details/);
   assert.doesNotMatch(source, /window\.confirm/);
   assert.doesNotMatch(source, /interpretadas em São Paulo/);
 });

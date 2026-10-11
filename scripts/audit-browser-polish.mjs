@@ -63,11 +63,11 @@ try {
 
     await checkPage(context, `${profile.name}-cadastro-plan`, "/cadastro?plan=equipe", async (page, status) => {
       if (status !== 200) throw new Error(`status ${status}`);
-      const pro = page.getByRole("radio", { name: /Sou profissional/i });
+      const pro = page.getByRole("radio", { name: /Tenho salão ou atendo/i });
       if ((await pro.getAttribute("aria-checked")) !== "true") {
         throw new Error("professional intent not preselected for plan");
       }
-      await page.getByRole("radio", { name: /Sou cliente/i }).click();
+      await page.getByRole("radio", { name: /Quero marcar horários/i }).click();
       const body = await page.locator("body").innerText();
       if (!/plano selecionado vale só para a conta profissional/i.test(body)) {
         throw new Error("missing plan/intent clarification");
