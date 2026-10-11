@@ -30,9 +30,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm test
       - run: node scripts/verify-stripe-recovery.mjs
       - run: node scripts/audit-local-flows.mjs
+      - run: node scripts/audit-schema-drift.mjs
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
