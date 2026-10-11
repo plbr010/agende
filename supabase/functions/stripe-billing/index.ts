@@ -26,8 +26,17 @@ const PRICE_CATALOG: Record<Plan, Record<BillingInterval, {
   },
 };
 
-const SITE_URL = (Deno.env.get("AGENDE_SITE_URL") ?? "https://agende-lac.vercel.app").replace(/\/$/, "");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const PRODUCTION_BACKEND = SUPABASE_URL && new URL(SUPABASE_URL).hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";
+const configuredSite = Deno.env.get("AGENDE_SITE_URL") ?? (PRODUCTION_BACKEND ? "https://agende-lac.vercel.app" : null);
+if (!configuredSite) throw new Error("billing_site_origin_missing");
+const siteOrigin = new URL(configuredSite);
+const localSite = ["localhost", "127.0.0.1", "[::1]"].includes(siteOrigin.hostname);
+if (siteOrigin.username || siteOrigin.password || siteOrigin.pathname !== "/" || siteOrigin.search || siteOrigin.hash ||
+  (siteOrigin.protocol !== "https:" && !(localSite && !PRODUCTION_BACKEND && siteOrigin.protocol === "http:"))) {
+  throw new Error("billing_site_origin_invalid");
+}
+const SITE_URL = siteOrigin.origin;
 
 function getAdminKey(): string | null {
   const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
@@ -71,12 +80,18 @@ function isUuid(value: unknown): value is string {
 
 async function getStripeApiKey(): Promise<string> {
   const env = Deno.env.get("STRIPE_API_KEY");
-  if (env) return env;
+  if (env) return assertStripeKeyMode(env);
 
   const { data, error } = await admin.rpc("get_stripe_api_key");
-  if (!error && typeof data === "string" && data.length > 0) return data;
+  if (!error && typeof data === "string" && data.length > 0) return assertStripeKeyMode(data);
 
   throw new Error("stripe_api_key_missing");
+}
+
+function assertStripeKeyMode(key: string): string {
+  const mode = /^(sk|rk)_live_/.test(key) ? "live" : /^(sk|rk)_test_/.test(key) ? "test" : null;
+  if (mode !== (PRODUCTION_BACKEND ? "live" : "test")) throw new Error("stripe_environment_mode_mismatch");
+  return key;
 }
 
 async function authenticate(req: Request) {
