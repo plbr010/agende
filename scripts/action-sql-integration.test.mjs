@@ -178,6 +178,18 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     const paidDay=(await db.query("select (now() at time zone 'America/Sao_Paulo')::date::text d")).rows[0].d;
     const result=await client.rpc('get_finance_ui',{p_workspace_id:workspaceId,p_start_date:paidDay,p_end_date:localDate});assert.ok(result.data.entries.some(row=>row.id===entry&&row.status==='paid'));
   });
+  await t.test('expired identity and foreign user cannot mutate bookings or read finance',async()=>{
+    const before=(await db.query('select id,status,starts_at from public.appointments where workspace_id=$1 order by id',[workspaceId])).rows;
+    for(const identity of [null,other]){
+      actor=identity;
+      assert.ok((await booking.cancelMyAppointmentAction(appointmentId)).error);
+      assert.ok((await booking.rescheduleMyAppointmentAction({appointmentId,professionalMemberId:memberId,startsAt:before[0].starts_at instanceof Date?before[0].starts_at.toISOString():before[0].starts_at})).error);
+      const finance=await client.rpc('get_finance_ui',{p_workspace_id:workspaceId,p_start_date:localDate,p_end_date:localDate});
+      assert.ok(finance.error);assert.equal(finance.data,null);
+      assert.deepEqual((await db.query('select id,status,starts_at from public.appointments where workspace_id=$1 order by id',[workspaceId])).rows,before);
+    }
+    actor=owner;
+  });
   await t.test('stock and package actions persist their business operations',async()=>{
     assert.ok((await management.managementAction({},form({action:'product-create',name:'Shampoo',description:'',sku:'',unit:'unidade',minimum:'1',cost:'10,00',quantity:'5'}))).success);
     const product=(await db.query('select id from public.inventory_products where workspace_id=$1',[workspaceId])).rows[0].id;

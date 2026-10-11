@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T05:43:45.742Z",
+  "checked_at": "2026-10-11T06:01:02.537Z",
   "version": "postgres (PostgreSQL) 17.6",
   "host": "127.0.0.1",
-  "port": 52374,
+  "port": 63167,
   "suites": [
     "scripts/database.test.mjs",
     "scripts/launch-readiness.test.mjs",

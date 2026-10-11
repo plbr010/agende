@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T05:43:26.615Z",
+  "checked_at": "2026-10-11T06:00:47.714Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
-      "passed": 10,
+      "passed": 11,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +18,7 @@
     }
   },
   "totals": {
-    "passed": 44,
+    "passed": 45,
     "failed": 0,
     "skipped": 0
   },
@@ -69,6 +69,12 @@
     {
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "expired identity and foreign user cannot mutate bookings or read finance",
       "category": "native_pg17_integration_with_mock_auth",
       "status": "passed"
     },
