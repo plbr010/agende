@@ -55,14 +55,15 @@ export function InventoryDashboard({ timezone, snapshot }: {
         </p>
         <p className="text-sm text-muted-foreground">{p.costCents === null ? "Custo não informado" : formatCentsToReais(p.costCents)}</p>
  {p.archivedAt ? <ManagementForm action="product-reactivate" id={p.id} label="Reativar produto"/> : <>
-            <ActionPanel title="Entrada / Saída / Ajustar estoque">
-            <ManagementForm action="movement" id={p.id} label="Registrar movimentação">
-            <SelectField name="type" label="Movimentação">
-            <option value="entry">Entrada</option>
-            <option value="exit">Saída</option>
-            <option value="adjustment">Ajustar estoque</option>
+            <ActionPanel title="Registrar entrada, saída ou correção">
+            <ManagementForm action="movement" id={p.id} label="Salvar no estoque">
+            <SelectField name="type" label="O que aconteceu">
+            <option value="entry">Chegou produto</option>
+            <option value="exit">Saiu produto</option>
+            <option value="adjustment">Corrigir a quantidade</option>
             </SelectField>
-            <Field name="quantity" label="Quantidade (no ajuste, informe o saldo final)" type="number" min={0} step="0.001"/>
+            <Field name="quantity" label="Quantidade" type="number" min={0} step="0.001"/>
+            <p className="text-sm text-muted-foreground">Se for correção, escreva quanto deve ficar no estoque.</p>
             <Field name="reason" label="Motivo"/>
             </ManagementForm>
             </ActionPanel>
@@ -71,7 +72,7 @@ export function InventoryDashboard({ timezone, snapshot }: {
             <ProductFields product={p}/>
             </ManagementForm>
             </ActionPanel>
-            <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? O histórico será preservado."}/>
+            <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? Ele some da lista, mas o histórico continua."}/>
             </>}
  </article>)}</div>
     <section className="rounded-2xl border bg-card p-5">

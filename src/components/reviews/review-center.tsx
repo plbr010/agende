@@ -87,7 +87,7 @@ export function ReviewCenter({ appointments, initialReviews }: { appointments: M
               <legend className="text-sm font-medium">Sua nota</legend>
               <div className="flex gap-1" role="radiogroup" aria-label="Nota da avaliação">
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <button key={value} type="button" role="radio" aria-checked={rating === value} onClick={() => setRating(value)} className="rounded-xl p-2 transition-colors hover:bg-secondary" aria-label={`${value} estrela${value > 1 ? "s" : ""}`}>
+                  <button key={value} type="button" role="radio" aria-checked={rating === value} onClick={() => setRating(value)} className="flex min-h-11 min-w-11 items-center justify-center rounded-xl transition-colors hover:bg-secondary" aria-label={`${value} estrela${value > 1 ? "s" : ""}`}>
                     <Star className={cn("size-7", value <= rating ? "fill-primary text-primary" : "text-border")} />
                   </button>
                 ))}
@@ -99,7 +99,7 @@ export function ReviewCenter({ appointments, initialReviews }: { appointments: M
             </div>
             <div className="flex items-start gap-2 rounded-2xl bg-secondary/60 p-4 text-xs leading-5 text-muted-foreground">
               <LockKeyhole className="mt-0.5 size-3.5 shrink-0 text-primary" />
-              Após enviar, sua avaliação não poderá ser editada ou excluída por aqui. Ela será visível à equipe do estabelecimento.
+              Depois de enviar, esta nota fica registrada. A equipe do salão consegue ver o que você escreveu.
             </div>
           </div>
           <DialogFooter>
