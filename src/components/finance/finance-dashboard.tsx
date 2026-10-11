@@ -3,7 +3,17 @@ import { useState } from "react";
 import type { FinancialSnapshot } from "@/lib/finance/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
-const statuses = { pending: "A pagar", paid: "Pago", cancelled: "Cancelado" };
+const statusFilters = [
+  ["pending", "Ainda não entrou ou saiu"],
+  ["paid", "Já entrou ou saiu"],
+  ["cancelled", "Cancelado"],
+] as const;
+
+function entryStatusLabel(kind: "income" | "expense", status: "pending" | "paid" | "cancelled") {
+  if (status === "cancelled") return "Cancelado";
+  if (status === "paid") return kind === "income" ? "Já entrou" : "Já saiu";
+  return kind === "income" ? "Ainda vai entrar" : "Ainda vai sair";
+}
 function PaymentField() {
     return <SelectField label="Como recebeu ou pagou" name="method">
     <option value="pix">Pix</option>
@@ -24,7 +34,7 @@ export function FinanceDashboard({ snapshot }: {
         return <p>Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
     const entries = snapshot.entries.filter(e => (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
     return <div className="grid gap-5">
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda a pagar", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="rounded-2xl border bg-card p-5">
+    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda em aberto", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="rounded-2xl border bg-card p-5">
         <p className="text-sm text-muted-foreground">{label}</p>
         <p className="font-serif text-2xl">{formatCentsToReais(Number(value))}</p>
         </div>)}</section>
@@ -45,7 +55,7 @@ export function FinanceDashboard({ snapshot }: {
     </label>
     <label className="grid gap-1 text-sm">Situação
       <select className="h-11 rounded-xl border border-input bg-background px-3" value={status} onChange={e => setStatus(e.target.value)}>
-    <option value="all">Todas</option>{Object.entries(statuses).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select>
+    <option value="all">Todas</option>{statusFilters.map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select>
     </label>
     <label className="grid gap-1 text-sm">Tipo
       <select className="h-11 rounded-xl border border-input bg-background px-3" value={kind} onChange={e => setKind(e.target.value)}>
@@ -60,11 +70,11 @@ export function FinanceDashboard({ snapshot }: {
         <div className="flex flex-wrap justify-between gap-3">
         <div>
         <h2 className="font-semibold">{e.title}</h2>
-        <p className="text-sm text-muted-foreground">{e.kind === "income" ? "Entrou" : "Saiu"} · {e.categoryLabel} · {e.clientName}</p>
+        <p className="text-sm text-muted-foreground">{e.kind === "income" ? "Entrada" : "Saída"} · {e.categoryLabel} · {e.clientName}</p>
         </div>
         <div>
         <strong>{formatCentsToReais(e.amountCents)}</strong>
-        <p>{statuses[e.status]}</p>
+        <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
         <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>

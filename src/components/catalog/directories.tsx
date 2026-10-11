@@ -155,7 +155,7 @@ export function TeamDirectory({
                   </CardDescription>
                   {canEdit ? (
                     <CardAction className="col-start-3">
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(member)}>
+                      <Button type="button" variant="ghost" className="h-11" onClick={() => setEditing(member)}>
                         Editar
                       </Button>
                     </CardAction>
@@ -303,7 +303,7 @@ export function ServiceCatalog({
                 </CardDescription>
                 {canManage ? (
                   <CardAction>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setEditing(service)}>
+                    <Button type="button" variant="outline" className="h-11" onClick={() => setEditing(service)}>
                       Editar
                     </Button>
                   </CardAction>
@@ -501,7 +501,7 @@ export function ClientDirectory({
               {canEdit ? (
                 <CardAction className="col-start-3">
                   <div className="flex flex-wrap justify-end gap-1">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setEditing(client)}>
+                    <Button type="button" variant="outline" className="h-11" onClick={() => setEditing(client)}>
                       Editar
                     </Button>
                     <ConfirmAction

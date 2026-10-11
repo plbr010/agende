@@ -336,19 +336,19 @@ function AppointmentFormDialog({
           <div className="grid gap-3 rounded-2xl bg-secondary/50 px-4 py-4 text-sm text-muted-foreground">
             <p className="font-medium text-foreground">Antes de agendar, complete o básico:</p>
             {clients.length === 0 ? (
-              <Link href="/app/clientes?novo=1" className="underline underline-offset-4">
+              <Button variant="outline" className="h-11 w-full justify-start" render={<Link href="/app/clientes?novo=1" />}>
                 Cadastre ao menos uma cliente
-              </Link>
+              </Button>
             ) : null}
             {services.length === 0 ? (
-              <Link href="/app/servicos" className="underline underline-offset-4">
+              <Button variant="outline" className="h-11 w-full justify-start" render={<Link href="/app/servicos" />}>
                 Cadastre um serviço com profissional
-              </Link>
+              </Button>
             ) : null}
             {professionals.length === 0 ? (
-              <Link href="/app/equipe" className="underline underline-offset-4">
+              <Button variant="outline" className="h-11 w-full justify-start" render={<Link href="/app/equipe" />}>
                 Ative um profissional na equipe
-              </Link>
+              </Button>
             ) : null}
             <p>Depois, em Equipe, toque em Horários de trabalho e informe quando você atende.</p>
           </div>
