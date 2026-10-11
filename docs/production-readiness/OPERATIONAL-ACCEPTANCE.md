@@ -1,5 +1,7 @@
 # Homologação operacional — 11/10/2026
 
+Estado anterior ao provisionamento autorizado. Para resultados posteriores em staging real e sandbox TEST, consultar [relatório atual](../staging/README.md).
+
 **NO-GO.** A entrega anterior (#27) foi integrada pelo responsável em main `d20d6fd518d4b13840a5d31ef6f0b65b4c707d6d`. Ela corrigiu a lista vazia após reagendamento salvo e leitura posterior com falha; a correção e os testes foram preservados. Branch desta etapa: `codex/operational-acceptance`. Nenhum componente visual ou branch do Cursor foi alterado.
 
 ## Evidência atual e alcance

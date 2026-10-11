@@ -1,0 +1,113 @@
+{
+  "checked_at": "2026-10-11T14:38:04.018Z",
+  "account": "acct_1UPNGJQQUyqAaZvS",
+  "livemode": false,
+  "clock_id": "clock_1UPNjCQQUyqAaZvS15VymFtP",
+  "tests": [
+    {
+      "stage": "created_trial",
+      "trial_end": 1791988070,
+      "status": "trialing"
+    },
+    {
+      "stage": "after_clock_advance_7_days",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "trial_end": 1791988070,
+      "invoice_id": "in_1UPNlZQQUyqAaZvS8A8Ayh04",
+      "invoice_status": "paid",
+      "amount_paid": 8990,
+      "livemode": false
+    },
+    {
+      "stage": "upgrade",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "trial_end": 1791988070,
+      "livemode": false,
+      "price": "price_1UPNLYQQUyqAaZvSzHa3n654",
+      "trial_deadline_unchanged": true
+    },
+    {
+      "stage": "downgrade",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "trial_end": 1791988070,
+      "livemode": false,
+      "price": "price_1UPNLQQQUyqAaZvS12LNMgbZ",
+      "trial_deadline_unchanged": true
+    },
+    {
+      "stage": "renewal_after_clock_advance_month",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "invoice_id": "in_1UPNnxQQUyqAaZvSZec97dsY",
+      "invoice_status": "paid",
+      "amount_paid": 8990,
+      "livemode": false
+    },
+    {
+      "stage": "declined_payment_after_clock",
+      "id": "sub_1UPNpNQQUyqAaZvS0JhFeDHa",
+      "status": "past_due",
+      "invoice_id": "in_1UPNprQQUyqAaZvSMLfkrnAW",
+      "invoice_status": "open",
+      "amount_paid": 0,
+      "livemode": false
+    },
+    {
+      "stage": "cancellation_scheduled",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "cancel_at_period_end": true,
+      "cancel_at": 1797258470,
+      "livemode": false
+    },
+    {
+      "stage": "cancellation_scheduled",
+      "id": "sub_1UPNpNQQUyqAaZvS0JhFeDHa",
+      "status": "past_due",
+      "cancel_at_period_end": true,
+      "cancel_at": 1797863270,
+      "livemode": false
+    },
+    {
+      "stage": "after_scheduled_cancellation_clock",
+      "id": "sub_1UPNpNQQUyqAaZvS0JhFeDHa",
+      "status": "canceled",
+      "livemode": false,
+      "canceled_at": 1795616870,
+      "ended_at": 1795744603
+    },
+    {
+      "stage": "after_scheduled_cancellation_clock",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "active",
+      "livemode": false,
+      "canceled_at": 1795616870,
+      "ended_at": null
+    },
+    {
+      "stage": "clock_ready_after_scheduled_cancellations",
+      "id": "sub_1UPNpNQQUyqAaZvS0JhFeDHa",
+      "status": "canceled",
+      "livemode": false,
+      "canceled_at": 1795616870,
+      "ended_at": 1795744603
+    },
+    {
+      "stage": "clock_ready_after_scheduled_cancellations",
+      "id": "sub_1UPNjMQQUyqAaZvSj2hUiigc",
+      "status": "canceled",
+      "livemode": false,
+      "canceled_at": 1795616870,
+      "ended_at": 1797258470
+    }
+  ],
+  "application_sync_tested": false,
+  "webhook_delivery_tested": false,
+  "portal_tested": false,
+  "checkout_sessions_completed": 0,
+  "live_charges": 0,
+  "notes": "Direct Stripe TEST API and test clock UI. Upgrade/downgrade use proration none for diagnostic isolation, not approval of LIVE commercial policy. Six hosted Checkout sessions created, still open."
+}
