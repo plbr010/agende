@@ -1,0 +1,119 @@
+{
+  "checked_at": "2026-10-11T05:45:07.890Z",
+  "main": "31c05278635275b76cb0b4dc92ba8cbbd2ceb369",
+  "remote_writes": 0,
+  "supabase": {
+    "project": "wohimauqgywshbbejjcl",
+    "status": "ACTIVE_HEALTHY",
+    "version": "17.6.1.166",
+    "organization_plan": "free",
+    "staging_projects": 0,
+    "branches": 0,
+    "remote_migrations": 63,
+    "local_files": 67,
+    "pending": [
+      "20260927014947_launch_readiness_reviews",
+      "20261008131859_launch_hardening_reviews_force_rls",
+      "20261009172028_launch_observed_owner_guard",
+      "20261009173042_billing_reconcile_excess_seats",
+      "20261010232248_atomic_service_professional_links"
+    ],
+    "catalog_checked_at": "2026-10-11T05:42:26.610302+00:00",
+    "catalog_unchanged_groups": [
+      "tables",
+      "columns",
+      "constraints",
+      "indexes",
+      "policies",
+      "grants",
+      "functions",
+      "triggers"
+    ],
+    "backup_and_restore_verified": false
+  },
+  "stripe": {
+    "connected_accounts": [
+      {
+        "id": "acct_1UH3D6Kii3CCJXtc",
+        "livemode": true
+      }
+    ],
+    "test_available": false,
+    "portal": [
+      {
+        "id": "bpc_1UJovBKii3CCJXtcbHEUcBZm",
+        "active": true,
+        "subscription_update": {
+          "billing_cycle_anchor": "unchanged",
+          "default_allowed_updates": [],
+          "enabled": false,
+          "proration_behavior": "none",
+          "schedule_at_period_end": {
+            "conditions": []
+          },
+          "trial_update_behavior": "end_trial"
+        },
+        "default_return_url": "https://agende-lac.vercel.app/app/configuracoes/assinatura"
+      }
+    ],
+    "webhook": [
+      {
+        "id": "we_1UJp7rKii3CCJXtctETUZwBY",
+        "status": "enabled",
+        "url": "https://wohimauqgywshbbejjcl.supabase.co/functions/v1/stripe-webhook",
+        "api_version": "2026-08-26.dahlia",
+        "enabled_events": [
+          "checkout.session.completed",
+          "checkout.session.async_payment_succeeded",
+          "checkout.session.async_payment_failed",
+          "customer.subscription.created",
+          "customer.subscription.updated",
+          "customer.subscription.deleted",
+          "invoice.paid",
+          "invoice.payment_failed"
+        ]
+      }
+    ],
+    "transactions_executed": 0
+  },
+  "vercel": {
+    "production_deployment": "dpl_7xR5i9zea2vUgw4EMt6imP2bE6N8",
+    "state": "READY",
+    "commit": "31c05278635275b76cb0b4dc92ba8cbbd2ceb369",
+    "env_metadata": [
+      {
+        "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "target": [
+          "production",
+          "preview",
+          "development"
+        ],
+        "type": "encrypted"
+      },
+      {
+        "key": "NEXT_PUBLIC_SUPABASE_URL",
+        "target": [
+          "production",
+          "preview",
+          "development"
+        ],
+        "type": "encrypted"
+      }
+    ],
+    "isolated_staging_binding": false,
+    "error_fatal_log_window_minutes": 30,
+    "error_fatal_log_groups_returned": 0
+  },
+  "domain": {
+    "name": "agendeapp.online",
+    "dns": "NXDOMAIN",
+    "project_domain_present": false
+  },
+  "local_stack": {
+    "container_runtime_found": false,
+    "windows_native_supabase_stack_supported": false,
+    "postgres_native_available": true
+  },
+  "native_auth_smtp_postgrest": "BLOCKED",
+  "stripe_test": "BLOCKED"
+}
