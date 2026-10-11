@@ -1,5 +1,7 @@
 # Runbook final — 11/10/2026
 
+Rodada operacional posterior ao merge #27: [matriz de evidências, jornadas e aprovações A1–A10](./OPERATIONAL-ACCEPTANCE.md). Seguir cada gate individualmente; aprovação de staging não autoriza produção.
+
 Todas as operações remotas abaixo estão **pendentes de aprovação**, inclusive staging. Organização confirmada não autoriza provisionamento. Não fazer merge/deploy manual, DDL, repair, pagamentos reais, DNS ou alteração de variáveis remotas nesta missão.
 
 ## Pré-lançamento
