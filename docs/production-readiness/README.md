@@ -6,6 +6,8 @@
 
 PRs #19–#24 incorporados. Base desta missão `86b909925ca88fcd2ddd2ff9a68394d2de52a885`; branch exclusiva `codex/production-readiness-final`. Next.js e eslint-config-next mantidos em 16.3.8. Não modificou componentes visuais ou branch do Cursor. Contratos e regressões das jornadas anteriores preservados.
 
+Depois da confirmação de custo mínimo, main recebeu #25 (`602ea83`), com redesign do Cursor. Branch própria atualizada por rebase; único conflito era a evidência gerada, regenerada pelos testes completos de ambos os trabalhos. Nenhum componente do redesign foi alterado. Organização foi confirmada como Free; veja [opção de custo zero](./ZERO-COST-STAGING.md). Nenhuma contratação autorizada/executada.
+
 Corrigido nesta rodada:
 
 1. Factories Supabase recusam o backend produtivo conhecido em Preview/Development. A classe do deployment é compilada em servidor/browser; NODE_ENV=production local não permite acesso ao projeto produtivo. Servidor exige também runtime Vercel production. Testes cobrem browser, runtime divergente, host com ponto final e URLs malformadas.
@@ -23,7 +25,7 @@ No primeiro CI, o verificador de recuperação falhou ao comparar hashes histór
 |---|---|
 | npm ci | PASS, Node24.19.0; cinco alertas dev preexistentes |
 | lint e typecheck | PASS |
-| npm test | **231 PASS**, zero falhas/skips: 133 unitários/contratos estáticos, 51 mocks plataforma, 12 mocks Stripe, 26 SQL PGlite, nove integrações SQL com Auth simulado |
+| npm test | **233 PASS** após integrar #25, zero falhas/skips: 135 unitários/contratos estáticos, 51 mocks plataforma, 12 mocks Stripe, 26 SQL PGlite, nove integrações SQL com Auth simulado |
 | build Next.js16.3.8 | PASS |
 | test:smoke | **32 PASS** no build local, GETs anônimos |
 | executor test:postgres | **43 PASS**, zero falhas/skips, PostgreSQL17.6 real local: 26 SQL, nove integrações com Auth simulado, oito concorrências de sessões independentes |
@@ -32,7 +34,7 @@ No primeiro CI, o verificador de recuperação falhou ao comparar hashes histór
 | validate-release-plan.mjs | PASS hashes e checks read-only no alvo PGlite; histórico CLI usa fixture vazia para testar sintaxe |
 | produção atual | 32 GETs HTTPS PASS; nenhum login/formulário/pagamento; certificado do alias válido e autorizado em tls.json |
 
-Evidências detalhadas dos runners em `../homologation/{standard-tests,native-tests,native-pg17,pg17-concurrency}.json`, atualizadas nesta rodada. SQL/Auth fixtures não são GoTrue/PostgREST. Os 35 casos SQL/integração repetem casos da suíte padrão; não somar 231 +43 como casos únicos. O cluster PostgreSQL foi parado após execução, com dados sintéticos preservados/ignorados pelo Git.
+Evidências detalhadas dos runners em `../homologation/{standard-tests,native-tests,native-pg17,pg17-concurrency}.json`, atualizadas nesta rodada. SQL/Auth fixtures não são GoTrue/PostgREST. Os 35 casos SQL/integração repetem casos da suíte padrão; não somar 233 +43 como casos únicos. O cluster PostgreSQL foi parado após execução, com dados sintéticos preservados/ignorados pelo Git. #25 não mudou SQL/migrations; seus dois testes visuais foram preservados, e lint/typecheck/build/smoke repetidos após rebase.
 
 A primeira validação local do SQL de pós-migration encontrou ausência do schema de histórico CLI no harness; foi corrigida no validador com fixture explicitamente vazia. Não houve falha de migration nem alteração de histórico remoto. A suíte final passou depois da correção de origem billing. Build/typecheck não cobrem Deno: entradas Edge foram executadas por transpilation com imports de plataforma substituídos; execução Deno/PostgREST/Stripe real segue bloqueada.
 

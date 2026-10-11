@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-11T04:24:45.794Z",
+  "checked_at": "2026-10-11T04:45:20.150Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 9,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 8,
+      "passed": 12,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 47,
+      "passed": 51,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 225,
+    "passed": 233,
     "failed": 0,
     "skipped": 0
   },
@@ -242,6 +242,30 @@
       "file": "scripts/launch-readiness.test.mjs",
       "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge rejects LIVE keys in staging and TEST keys in production before constructing Stripe",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "staging billing cannot default redirects to the production origin",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook rejects a signed event from the wrong environment before billing writes",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook subscription retrieval rejects a LIVE key on the test backend",
+      "category": "stripe_mocks",
       "status": "passed"
     },
     {
@@ -1106,6 +1130,30 @@
       "file": "src/lib/reviews/validation.test.ts",
       "name": "only completed appointments are eligible and newest comes first",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "preview and local production-mode builds cannot initialize the production backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "production access requires the build class and rejects a preview runtime",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "browser preview guard also rejects the DNS trailing-dot form of production",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "isolated HTTPS and local Supabase work while malformed origins fail closed",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {
