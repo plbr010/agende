@@ -2,6 +2,8 @@
 
 **Decisão: NO-GO para clientes pagantes.** A aplicação compila e os testes locais passam, mas produção ainda não contém objetos necessários e não houve homologação de Auth/SMTP/Stripe em serviços isolados. As evidências JSON têm timestamps UTC (11/10 corresponde à noite de 10/10 BRT).
 
+Este texto registra a rodada de 10/10. Os JSON dos runners são atualizados a cada execução; consulte a [rodada final de 11/10](../production-readiness/README.md) para correções, contagens e bloqueios atuais.
+
 ## Código e alterações
 
 Base inicial: `f391d5d5bb8d4c88c8f20f22634ffe158573c96d`, com PRs #19–#22 integrados. A main recebeu #23 durante a auditoria e foi integrada sem conflitos: `e0a716da46ac0f29f65dc400c69b27af7888a7aa`. Branch: `codex/launch-final-integration`. Nenhuma alteração da branch do Cursor. Next.js e eslint-config-next permanecem em **16.3.8**; regressões anteriores preservadas.

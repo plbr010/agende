@@ -1,0 +1,141 @@
+{
+  "checked_at": "2026-10-11T04:24:21.156Z",
+  "mode": "LIVE configuration GET only, zero transactions",
+  "prices": [
+    {
+      "id": "price_1UJognKii3CCJXtcCwqEgJMv",
+      "product": "prod_VJbcPYJLS8G5Rs",
+      "lookup_key": "agende_salao_annual",
+      "livemode": true,
+      "unit_amount": 279900,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UJogkKii3CCJXtczVBirqG2",
+      "product": "prod_VJbbUacCXrCNId",
+      "lookup_key": "agende_equipe_annual",
+      "livemode": true,
+      "unit_amount": 149900,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UJogVKii3CCJXtcWCZ22oO2",
+      "product": "prod_VJbYy153cJF1v6",
+      "lookup_key": "agende_solo_annual",
+      "livemode": true,
+      "unit_amount": 79900,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyQ6Kii3CCJXtcAZiIDRqj",
+      "product": "prod_VJbdwcxLNfmtYI",
+      "lookup_key": null,
+      "livemode": true,
+      "unit_amount": 279990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyPDKii3CCJXtcQhJK0sHo",
+      "product": "prod_VJbcPYJLS8G5Rs",
+      "lookup_key": "agende_salao_monthly",
+      "livemode": true,
+      "unit_amount": 29990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "month",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyOTKii3CCJXtcijStLJAv",
+      "product": "prod_VJbbEoLhGQpfp5",
+      "lookup_key": null,
+      "livemode": true,
+      "unit_amount": 149990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyO6Kii3CCJXtcWlOr85tW",
+      "product": "prod_VJbbUacCXrCNId",
+      "lookup_key": "agende_equipe_monthly",
+      "livemode": true,
+      "unit_amount": 16990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "month",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyNPKii3CCJXtc1ojTKn1v",
+      "product": "prod_VJba2vu4jieH8o",
+      "lookup_key": null,
+      "livemode": true,
+      "unit_amount": 79990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    },
+    {
+      "id": "price_1UIyLoKii3CCJXtckWStrnuQ",
+      "product": "prod_VJbYy153cJF1v6",
+      "lookup_key": "agende_solo_monthly",
+      "livemode": true,
+      "unit_amount": 8990,
+      "currency": "brl",
+      "recurring": {
+        "interval": "month",
+        "interval_count": 1,
+        "meter": null,
+        "trial_period_days": null,
+        "usage_type": "licensed"
+      }
+    }
+  ]
+}
