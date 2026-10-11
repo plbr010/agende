@@ -5,10 +5,11 @@ import { execFileSync } from "node:child_process";
 
 const manifest = JSON.parse(readFileSync("docs/migrations/remote-history-2026-09-26.json", "utf8"));
 const history = JSON.parse(readFileSync("docs/migrations/remote-inventory-2026-09-27.json", "utf8"));
-function verify(path, expected) {
-  const actual = createHash("sha256").update(readFileSync(path)).digest("hex");
+function verify(path, expected, revision = null) {
+  const source = revision ? execFileSync("git", ["show", `${revision}:${path}`]) : readFileSync(path);
+  const actual = createHash("sha256").update(source).digest("hex");
   assert.equal(actual, expected, path);
-  console.log(`${actual}  ${path}`);
+  console.log(`${actual}  ${path}${revision ? " @ " + revision : ""}`);
 }
 for (const migration of manifest.migrations) {
   assert.equal(migration.statement_count, 1);
@@ -51,10 +52,14 @@ assert.equal(checkout?.name, "stripe_checkout_guards");
 assert.equal(checkout.statement_count, 1);
 verify(`supabase/migrations/${checkout.version}_${checkout.name}.sql`, checkout.sha256);
 const deployed = JSON.parse(readFileSync("docs/migrations/edge-v2-2026-09-27.json", "utf8"));
+assert.match(deployed.compared_pr_sha, /^[0-9a-f]{40}$/, "Historical comparison requires an exact commit");
 for (const fn of deployed.functions) {
   assert.equal(fn.version, 2);
   assert.equal(fn.status, "ACTIVE");
-  for (const file of fn.source_files) verify(file.path, file.sha256);
+  // This manifest proves the deployed historical version. Current source may
+  // evolve in reviewed PRs; its behavior is verified by stripe-edge.test.mjs.
+  // Never rewrite the historical hashes to make current files match.
+  for (const file of fn.source_files) verify(file.path, file.sha256, deployed.compared_pr_sha);
 }
 console.log({ local: local.length, remote: remote.length, missing, extra });
 console.log("Verified against the read-only remote snapshot captured on 2026-09-27 UTC.");

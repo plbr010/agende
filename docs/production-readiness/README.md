@@ -15,6 +15,8 @@ Corrigido nesta rodada:
 
 Estas proteções ainda são código no PR. Preview atual continua com bindings errados e será bloqueado quando usar o backend produtivo; só poderá homologar após isolamento aprovado. Edge Functions precisam de publicação aprovada separada; não foram redeployadas.
 
+No primeiro CI, o verificador de recuperação falhou ao comparar hashes históricos das Edge v2 com o arquivo atual modificado. Corrigido para verificar o commit exato `compared_pr_sha` já registrado no manifesto imutável. Nenhum hash histórico foi alterado, e as fontes atuais continuam verificadas pelos testes de comportamento Edge.
+
 ## Verificação e evidências
 
 | Verificação | Resultado / categoria |
@@ -55,6 +57,8 @@ Advisor: senha vazada desativada; wrappers SECURITY DEFINER públicos intenciona
 Stripe: só LIVE acessível, nenhum sandbox. Nove preços recorrentes ativos, sendo seis lookup keys esperados com valores corretos e três anuais adicionais sem lookup. Portal updates=false / opção inativa end_trial; webhook ativo com oito eventos, API2026-08-26.dahlia. Nenhuma assinatura/Checkout externo criado, nenhum dado de assinante lido.
 
 Vercel: production READY `dpl_77p22CGciyCTEscpELNHqCS4aXAo`, commit86b9099. Preview/Development ainda compartilham as duas variáveis Supabase de produção; Site URL explícita ausente. Consulta error/fatal dos últimos30min sem grupos; alcance limitado, não prova zero erros em todas as jornadas. Alias agende-lac.vercel.app tem HTTPS validado; agendeapp.online está NXDOMAIN, não associado ao projeto, TLS desse domínio não verificável.
+
+Preview do PR26 READY `dpl_2tSuErY6vMJB1jVbr8jahGsTkqGk`: GET `/login` retorna500 porque a configuração compartilhada é recusada. Logs filtrados confirmaram `Production Supabase is forbidden` nessa rota. É evidência do bloqueio no build real, não homologação de login; configurar staging aprovado para usar o Preview. Supabase Edge remoto ainda tem billing/webhook ACTIVE versão2; código desta missão não foi publicado lá.
 
 ## Pendências classificadas
 
