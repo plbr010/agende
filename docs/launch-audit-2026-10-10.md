@@ -1,5 +1,13 @@
 # Agendê — auditoria técnica final de 10/10/2026
 
+Atualização de integração Git: a main avançou para `74dcd30` com os merges
+dos PRs #19 e #22. Foi incorporada ao PR #21, preservando as correções técnicas
+e o editor/confirmador do Cursor. A fixture de integração agora carrega também
+as regras de períodos introduzidas pelo #22. Os snapshots de produção abaixo
+continuam sendo evidências da leitura original, não uma nova auditoria remota.
+Validação local após integração: npm ci, lint, typecheck, build e 32 sondagens
+smoke aprovados; 217 testes passaram antes e depois do build, sem falhas/skips.
+
 **Conclusão:** código preparado e verificado em isolamento; produção ainda
 não pode ser declarada pronta para clientes pagantes. Nenhuma configuração,
 migration, dado de produção ou cobrança real foi alterado nesta missão.
