@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-12",
+  "base_commit": "e202347f1a4584d4492fa724bd15ae37c91ec8ba",
+  "production_mutations": false,
+  "frontend_mutations": false,
+  "staging": {
+    "project": "fkpdudnnperufnmdwdlv",
+    "public_tables": 32,
+    "public_tables_with_rls_and_force_rls": 32,
+    "app_public_definers_without_empty_search_path": 0,
+    "vault_stripe_api_key_present": false,
+    "vault_webhook_secret_present": true,
+    "edge_versions": {"stripe-webhook": 2, "stripe-billing": 1},
+    "smtp": "owner confirms unavailable",
+    "signup_confirmation_recovery": "blocked, not validated"
+  },
+  "production": {
+    "project": "wohimauqgywshbbejjcl",
+    "migration_history_count": 63,
+    "public_tables": 31,
+    "public_tables_with_rls_and_force_rls": 31,
+    "pending_git_migrations": 5,
+    "backup_restore": "not demonstrated",
+    "agendeapp_online_dns": "NXDOMAIN"
+  },
+  "npm_audit_omit_dev": {"vulnerabilities": 0},
+  "decision": "NO-GO",
+  "secrets_in_report": false
+}

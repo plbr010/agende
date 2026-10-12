@@ -387,8 +387,10 @@ Deno.serve(async (req: Request) => {
       default:
         break;
     }
-  } catch (error) {
-    console.error("stripe_webhook_processing_failed", event.id, event.type, error);
+  } catch {
+    // Keep only validated Stripe identifiers; never log raw provider errors.
+    console.error("stripe_webhook_processing_failed",
+      /^evt_[A-Za-z0-9]+$/.test(event.id) ? event.id : "invalid_event_id");
     return json(409, { error: "event_processing_deferred" });
   }
 

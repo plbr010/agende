@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-11T15:13:52.490Z",
+  "checked_at": "2026-10-12T23:38:22.644Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 12,
+      "passed": 13,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 238,
+    "passed": 239,
     "failed": 0,
     "skipped": 0
   },
@@ -277,6 +277,12 @@
     {
       "file": "scripts/stripe-edge.test.mjs",
       "name": "Webhook subscription retrieval rejects a LIVE key on the test backend",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge failures do not expose raw provider secrets in logs or HTTP responses",
       "category": "stripe_mocks",
       "status": "passed"
     },
