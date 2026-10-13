@@ -2,6 +2,14 @@
 
 **Projeto de backend, não implementado nem integrado.** Nenhuma migration, backfill ou alteração visual. Integração espera aceite do Cursor e do proprietário; P0 de lançamento tem prioridade. Deve funcionar com permissão negada, por qualquer cidade do cadastro e por busca global, sem geolocalizar pelo IP automaticamente.
 
+## Compatibilidade com o contrato já proposto pelo Cursor no PR33
+
+O PR33 novo foi lido nesta rodada: docs/discovery/backend-contract.md, src/lib/discovery/contract.ts e LocationDiscovery. Preservar os nomes list_public_localities e search_public_workspaces e o DTO name/slug/description/city/state/logo_path/booking_open. O adaptador do Cursor usa camelCase logoPath/bookingOpen; conversão deve ser explícita. Não substituir isso por uma API paralela sem acordo. O HTTP abaixo é uma evolução opcional/gateway; Supabase rpc já faz POST e pode atender ao requisito de não colocar GPS na URL.
+
+Base v1 do Cursor: list_public_localities(p_state,p_query,p_limit) → {localities:[{city,state,workspace_count}]}; search_public_workspaces(p_city,p_state,p_query,p_postal_code,p_limit,p_offset) → {items,total}. Dados partem de workspace_settings.city/state, não cidade de residência de cliente. Manter apenas perfis opt-in/publicados/entitled e projeção mínima. Offset legado deve ser limitado e cursor keyset adicionado em contrato revisado, com next_cursor compatível, sem sobrecargas ambíguas no PostgREST.
+
+Pontos que precisam de aceite antes de qualquer integração: city hoje é obrigatória no helper; mode global/nearby precisa permitir ausência de cidade quando apropriado. Coordenadas estão apenas em useState no código lido, sem persistência; manter isso e limpar/ignorar GPS quando a pessoa escolher city/global. Raio/distance são fase posterior a ponto coarse/PostGIS e aprovação de schema. O helper atual devolve unavailable mesmo se somente a flag mudar para true: é necessário implementar o adaptador real e teste de contrato, não apenas ligar DISCOVERY_BACKEND_READY. A flag permanece false; nenhum salão fictício ou coordenada real foi usado.
+
 ## Contrato HTTP proposto
 
 POST /api/discovery/search (JSON, mesmo site). POST evita colocar localização do visitante em URLs/logs de acesso. Body estrito, maximum2KB:
