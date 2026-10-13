@@ -199,3 +199,8 @@
 .agende-shadow {
   box-shadow: var(--shadow-card);
 }
+
+.agende-panel {
+  background: var(--paper);
+  box-shadow: 0 18px 40px -32px rgb(92 26 46 / 0.45);
+}

@@ -54,11 +54,11 @@ export default async function VerificarEmailPage({
     <div className="space-y-6">
       <OnboardingProgressSteps current={1} />
       <div>
-        <p className="text-sm font-medium tracking-[0.16em] text-primary uppercase">Próximo passo</p>
-        <h1 className="mt-2 font-serif text-3xl">{content.title}</h1>
+        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Próximo passo</p>
+        <h1 className="mt-2 font-serif text-3xl text-wine-deep">{content.title}</h1>
         <p className="mt-3 text-muted-foreground">{content.body}</p>
       </div>
-      <div className="rounded-2xl bg-card p-5 ring-1 ring-border">
+      <div className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de]">
         <p className="text-sm text-muted-foreground">E-mail enviado para</p>
         <p className="mt-1 font-medium">
           {pendingEmail ?? session?.user.email ?? "o endereço informado no cadastro"}

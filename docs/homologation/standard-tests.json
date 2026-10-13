@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T00:52:51.478Z",
+  "checked_at": "2026-10-13T13:53:51.002Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 142,
+      "passed": 152,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 246,
+    "passed": 256,
     "failed": 0,
     "skipped": 0
   },
@@ -360,6 +360,12 @@
     },
     {
       "file": "src/app/visual-tokens.test.ts",
+      "name": "shared panel class keeps cream cards consistent across launch screens",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/app/visual-tokens.test.ts",
       "name": "small text does not use the pale reference rose as the primary button",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -373,6 +379,30 @@
     {
       "file": "src/components/agenda/agenda-copy.test.ts",
       "name": "working hours editor collapses empty days and can copy a day to the rest of the week",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "approved dashboard identity stays on the launch screens",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "auth, onboarding and billing keep the next step obvious",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "catalog and money modules explain the empty next step",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "discovery is honest and not limited to the city of residence",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -977,6 +1007,24 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "discovery never defaults to a residence city",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "a person can search any registered locality, not only where they live",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "search does not invent establishments while the backend is missing",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/finance/queries.test.ts",
       "name": "finance query adapts the exact get_finance_ui response for a required period",
       "category": "unit_or_static_contract",
@@ -1315,6 +1363,18 @@
     {
       "file": "src/lib/usability/copy.test.ts",
       "name": "priority screens do not show jargon that blocks first use",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/field-validity.test.ts",
+      "name": "empty required fields explain the next step in Portuguese",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/field-validity.test.ts",
+      "name": "invalid emails tell the person what a valid address looks like",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

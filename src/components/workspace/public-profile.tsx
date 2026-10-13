@@ -117,7 +117,7 @@ export function PublicWorkspacePage({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h3 className="font-medium">{service.name}</h3>
+                      <h3 className="font-serif text-xl text-wine-deep">{service.name}</h3>
                       {service.description ? (
                         <p className="mt-1 text-sm text-muted-foreground">{service.description}</p>
                       ) : null}
@@ -127,12 +127,12 @@ export function PublicWorkspacePage({
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm text-muted-foreground">{service.duration_minutes} minutos</p>
                     {bookingOpen ? (
-                      <Link
-                        href={serviceBookingHref(profile.slug, service.id)}
-                        className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                      <Button
+                        className="h-11 rounded-full"
+                        render={<Link href={serviceBookingHref(profile.slug, service.id)} />}
                       >
                         Agendar este serviço
-                      </Link>
+                      </Button>
                     ) : (
                       <p className="text-sm text-muted-foreground">Reservas pausadas</p>
                     )}

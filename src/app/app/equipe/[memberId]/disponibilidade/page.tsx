@@ -12,7 +12,9 @@ import {
   loadWorkingHours,
 } from "@/lib/agenda/queries";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
+import { CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/app/page-header";
 
 export default async function AvailabilityPage({
   params,
@@ -44,9 +46,17 @@ export default async function AvailabilityPage({
 
   return (
     <>
-      <Button variant="outline" className="h-11 w-fit" render={<Link href="/app/equipe" />}>
-        Voltar para a equipe
-      </Button>
+      <PageHeader
+        eyebrow="Horários de trabalho"
+        title={member.displayName ?? member.fullName}
+        description="Informe de que horas até que horas esta pessoa atende. Assim a agenda só mostra o que está livre."
+        icon={CalendarClock}
+        actions={
+          <Button variant="outline" className="h-11 w-fit" render={<Link href="/app/equipe" />}>
+            Voltar para a equipe
+          </Button>
+        }
+      />
       <AvailabilityEditor
         memberId={member.memberId}
         memberName={member.displayName ?? member.fullName}

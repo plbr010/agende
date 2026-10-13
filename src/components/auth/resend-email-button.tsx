@@ -17,8 +17,16 @@ export function ResendEmailButton() {
       <Button type="submit" variant="outline" className="h-11 w-full" disabled={pending}>
         {pending ? "Enviando..." : "Enviar e-mail de novo"}
       </Button>
-      {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
-      {state.success ? <p className="text-sm text-success-foreground">{state.success}</p> : null}
+      {state.error ? (
+        <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {state.error}
+        </p>
+      ) : null}
+      {state.success ? (
+        <p role="status" className="rounded-2xl bg-[var(--status-confirmed-bg)] px-4 py-3 text-sm text-[var(--status-confirmed-fg)]">
+          {state.success}
+        </p>
+      ) : null}
     </form>
   );
 }

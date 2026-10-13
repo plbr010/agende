@@ -1,8 +1,9 @@
 import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cn } from "cn"
+import { applyPortugueseValidity } from "@/lib/usability/field-validity"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({ className, type, onInvalid, onInput, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive
       type={type}
@@ -12,6 +13,14 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         className
       )}
       {...props}
+      onInvalid={(event) => {
+        applyPortugueseValidity(event.currentTarget);
+        onInvalid?.(event);
+      }}
+      onInput={(event) => {
+        applyPortugueseValidity(event.currentTarget);
+        onInput?.(event);
+      }}
     />
   )
 }

@@ -25,6 +25,11 @@ test("the visual reference palette is the semantic source of the product", () =>
   assert.match(root, /--card:\s*var\(--paper\)/);
 });
 
+test("shared panel class keeps cream cards consistent across launch screens", () => {
+  assert.match(css, /\.agende-panel/);
+  assert.match(css, /\.agende-app/);
+});
+
 test("small text does not use the pale reference rose as the primary button", () => {
   assert.doesNotMatch(root, /--primary:\s*#b95b76/i);
   assert.match(root, /--rose-ink:\s*#8e3a55/);

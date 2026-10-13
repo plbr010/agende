@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordField } from "@/components/usability/password-field";
+import { PortugueseForm } from "@/components/usability/portuguese-form";
 import { cn } from "@/lib/utils";
 
 const initial: ActionState = {};
@@ -34,14 +35,14 @@ export function SignupForm({
   const canSubmit = !pending && (intent === "client" || intent === "professional") && terms;
 
   return (
-    <form action={action} className="space-y-6">
+    <PortugueseForm action={action} className="space-y-6">
       {next ? <input type="hidden" name="next" value={next} /> : null}
       {plan && intent === "professional" ? <input type="hidden" name="plan" value={plan} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />
       <input type="hidden" name="termsAccepted" value={terms ? "true" : "false"} />
 
       <div className="space-y-3">
-        <h1 className="font-serif text-3xl leading-tight">O que você quer fazer no Agendê?</h1>
+        <h2 className="font-serif text-3xl leading-tight text-wine-deep">O que você quer fazer no Agendê?</h2>
         <p className="text-muted-foreground">
           Toque em uma opção. Depois você pode usar as duas áreas na mesma conta.
         </p>
@@ -57,8 +58,8 @@ export function SignupForm({
             aria-checked={intent === "client"}
             onClick={() => setIntent("client")}
             className={cn(
-              "min-h-16 agende-shadow rounded-3xl border border-primary/10 bg-card p-4 text-left ring-1 ring-border transition",
-              intent === "client" && "ring-2 ring-primary",
+              "min-h-16 agende-panel rounded-[1.25rem] p-4 text-left ring-1 ring-[#f0e4de] transition",
+              intent === "client" && "ring-2 ring-primary bg-metric-blush",
             )}
           >
             <p className="text-xs font-medium tracking-[0.16em] text-primary uppercase">Quero marcar horários</p>
@@ -70,8 +71,8 @@ export function SignupForm({
             aria-checked={intent === "professional"}
             onClick={() => setIntent("professional")}
             className={cn(
-              "min-h-16 agende-shadow rounded-3xl border border-primary/10 bg-card p-4 text-left ring-1 ring-border transition",
-              intent === "professional" && "ring-2 ring-primary",
+              "min-h-16 agende-panel rounded-[1.25rem] p-4 text-left ring-1 ring-[#f0e4de] transition",
+              intent === "professional" && "ring-2 ring-primary bg-metric-blush",
             )}
           >
             <p className="text-xs font-medium tracking-[0.16em] text-primary uppercase">Tenho salão ou atendo clientes</p>
@@ -83,7 +84,7 @@ export function SignupForm({
         ) : null}
       </div>
 
-      <Card className="border-none ring-1 ring-border">
+      <Card className="border-none ring-1 ring-[#f0e4de]">
         <CardHeader>
           <CardTitle>Seus dados</CardTitle>
           <CardDescription>Preencha abaixo. Vamos mandar um e-mail para você confirmar.</CardDescription>
@@ -163,6 +164,6 @@ export function SignupForm({
           </Button>
         </CardContent>
       </Card>
-    </form>
+    </PortugueseForm>
   );
 }

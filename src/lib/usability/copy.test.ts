@@ -27,6 +27,8 @@ const USER_FACING_FILES = [
   "src/components/finance/finance-dashboard.tsx",
   "src/components/client/workspace-finder.tsx",
   "src/components/workspace/team-admin.tsx",
+  "src/components/discovery/location-discovery.tsx",
+  "src/lib/discovery/contract.ts",
 ];
 
 test("status actions use verbs a person can tap without guessing", () => {

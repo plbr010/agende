@@ -44,7 +44,7 @@ const STEP_LABEL: Record<BookingStep, string> = {
 };
 
 const PICKER_BUTTON =
-  "rounded-3xl bg-card p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+  "agende-panel rounded-[1.25rem] p-5 text-left ring-1 ring-[#f0e4de] transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
 
 const SLOT_BUTTON =
   "min-h-12 rounded-2xl bg-card text-sm font-medium ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60";
@@ -273,7 +273,7 @@ export function PublicBookingFlow({
       <main className="mx-auto grid w-full max-w-lg gap-6 px-4 py-6 pb-28">
         <div>
           <p className="text-xs tracking-[0.18em] text-primary uppercase">{catalog.name}</p>
-          <h1 className="font-serif text-3xl">Agendar horário</h1>
+          <h1 className="font-serif text-3xl text-wine-deep">Agendar horário</h1>
         </div>
 
         <ol className="flex gap-1" aria-label="Etapas do agendamento">
@@ -283,10 +283,10 @@ export function PublicBookingFlow({
                 className={`h-1.5 rounded-full ${index <= stepIndex ? "bg-primary" : "bg-border"}`}
                 aria-current={item === step ? "step" : undefined}
               />
-              <span className="sr-only">
+              <p className={`mt-1 truncate text-[0.65rem] font-medium ${item === step ? "text-wine-deep" : "text-muted-foreground"}`}>
                 {STEP_LABEL[item]}
-                {item === step ? " (atual)" : ""}
-              </span>
+                <span className="sr-only">{item === step ? " (atual)" : ""}</span>
+              </p>
             </li>
           ))}
         </ol>
@@ -308,7 +308,7 @@ export function PublicBookingFlow({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-medium">{item.name}</h2>
+                      <h2 className="font-serif text-xl text-wine-deep">{item.name}</h2>
                       {item.description ? (
                         <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
                       ) : null}

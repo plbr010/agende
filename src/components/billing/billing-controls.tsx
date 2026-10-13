@@ -7,6 +7,8 @@ import { billingRedirectSchema } from "@/lib/billing/stripe-contract";
 import { checkoutDisabledReason, checkoutReturnMessage } from "@/lib/billing/presentation";
 import { nextCheckoutAttempt, type CheckoutAttempt } from "@/lib/billing/checkout-attempt";
 import type { BillingActionInput, BillingActionResult } from "@/lib/billing/action-handler";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export type BillingControlsProps = {
   canManage: boolean;
@@ -52,37 +54,92 @@ export function BillingControls(props: BillingControlsProps) {
     });
   }
 
-  return <section className="grid gap-5" aria-label="Cobrança Stripe" aria-busy={pending}>
-    <h3 className="text-xl font-semibold">Assinar com Stripe</h3>
-    {returnMessage && <div role="status" className="rounded-2xl bg-secondary p-4">{returnMessage}</div>}
-    {error && <p role="alert" className="rounded-xl border border-destructive p-4 text-destructive">{error}</p>}
-    {pending && <p role="status">Abrindo o ambiente seguro do Stripe…</p>}
-    <p className="text-sm text-muted-foreground">O período restante do teste será respeitado. Assinar não reinicia o teste.</p>
-    <fieldset disabled={pending || !props.canManage} className="flex gap-4">
-      <legend className="mb-2 font-medium">Periodicidade</legend>
-      {(["monthly", "annual"] as const).map(value => <label key={value} className="flex items-center gap-2">
-        <input type="radio" name="billingInterval" value={value} checked={interval === value} onChange={() => setInterval(value)} />
-        {value === "monthly" ? "Mensal" : "Anual"}
-      </label>)}
-    </fieldset>
-    <div className="grid gap-4 lg:grid-cols-3">{PLANS.map(plan => {
-      const reason = checkoutDisabledReason(plan.id, props.usedSeats, props.hasSubscription, props.status, props.canManage);
-      return <article key={plan.id} className="grid content-start gap-4 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
-        <h4 className="text-xl font-semibold">{plan.name}</h4>
-        <p>{plan.seats}</p>
-        <p className="text-2xl font-semibold">{interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}</p>
-        <button type="button" className="h-11 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
-          disabled={pending || !props.capabilities.checkout || Boolean(reason)}
-          aria-describedby={reason ? `billing-${plan.id}-reason` : undefined}
-          onClick={() => submit("checkout", plan.id)}>Assinar {plan.name} {interval === "annual" ? "anual" : "mensal"}</button>
-        {reason && <p id={`billing-${plan.id}-reason`} className="text-sm text-muted-foreground">{reason}</p>}
-      </article>;
-    })}</div>
-    <div className="flex flex-wrap gap-3">
-      {props.canManage && props.hasCustomer && props.capabilities.portal &&
-        <button type="button" disabled={pending} onClick={() => submit("portal")} className="h-11 rounded-full border px-4 text-sm disabled:opacity-50">Abrir Portal Stripe</button>}
-      <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())} className="h-11 rounded-full border px-4 text-sm">Atualizar dados da assinatura</button>
-    </div>
-    {props.hasCustomer && <p className="text-sm text-muted-foreground">No Portal você pode consultar faturas, atualizar o cartão e cancelar a assinatura ao fim do período.</p>}
-  </section>;
+  return (
+    <section className="grid gap-5" aria-label="Cobrança Stripe" aria-busy={pending}>
+      <div>
+        <h3 className="font-serif text-2xl text-wine-deep">Assinar o plano</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Escolha Solo, Equipe ou Salão e se prefere pagar todo mês ou o ano. O período restante do teste será respeitado. Assinar não reinicia o teste.
+        </p>
+      </div>
+      {returnMessage ? <div role="status" className="rounded-2xl bg-metric-blush p-4">{returnMessage}</div> : null}
+      {error ? <p role="alert" className="rounded-xl border border-destructive p-4 text-destructive">{error}</p> : null}
+      {pending ? <p role="status">Abrindo o ambiente seguro do Stripe…</p> : null}
+      <fieldset disabled={pending || !props.canManage} className="grid gap-2">
+        <legend className="mb-2 font-medium">Periodicidade</legend>
+        <div className="grid grid-cols-2 gap-2 rounded-full bg-[#fff6f4] p-1 ring-1 ring-[#eadfd8]">
+          {(["monthly", "annual"] as const).map((value) => (
+            <label
+              key={value}
+              className={cn(
+                "flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full text-sm font-medium",
+                interval === value ? "bg-primary text-primary-foreground" : "text-wine-deep",
+              )}
+            >
+              <input
+                type="radio"
+                name="billingInterval"
+                value={value}
+                checked={interval === value}
+                onChange={() => setInterval(value)}
+                className="sr-only"
+              />
+              {value === "monthly" ? "Mensal" : "Anual"}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {PLANS.map((plan) => {
+          const reason = checkoutDisabledReason(plan.id, props.usedSeats, props.hasSubscription, props.status, props.canManage);
+          return (
+            <article key={plan.id} className="agende-panel grid content-start gap-4 rounded-[1.25rem] p-5 ring-1 ring-[#f0e4de]">
+              <div>
+                <h4 className="font-serif text-2xl text-wine-deep">{plan.name}</h4>
+                <p className="mt-1 text-sm text-muted-foreground">{plan.seats}</p>
+              </div>
+              <p className="font-serif text-3xl text-wine-deep">
+                {interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}
+              </p>
+              <ul className="grid gap-1 text-sm text-muted-foreground">
+                {plan.highlights.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                className="h-11 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                disabled={pending || !props.capabilities.checkout || Boolean(reason)}
+                aria-describedby={reason ? `billing-${plan.id}-reason` : undefined}
+                onClick={() => submit("checkout", plan.id)}
+              >
+                Assinar {plan.name} {interval === "annual" ? "anual" : "mensal"}
+              </button>
+              {reason ? <p id={`billing-${plan.id}-reason`} className="text-sm text-muted-foreground">{reason}</p> : null}
+            </article>
+          );
+        })}
+      </div>
+      <div className="flex flex-wrap gap-3">
+        {props.canManage && props.hasCustomer && props.capabilities.portal ? (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => submit("portal")}
+            className="h-11 rounded-full border px-4 text-sm disabled:opacity-50"
+          >
+            Abrir Portal Stripe
+          </button>
+        ) : null}
+        <Button type="button" variant="outline" disabled={pending} onClick={() => startTransition(() => router.refresh())}>
+          Atualizar dados da assinatura
+        </Button>
+      </div>
+      {props.hasCustomer ? (
+        <p className="text-sm text-muted-foreground">
+          No Portal você pode consultar faturas, atualizar o cartão e cancelar a assinatura ao fim do período.
+        </p>
+      ) : null}
+    </section>
+  );
 }

@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
+import { CircleDollarSign, Clock3, ReceiptText, Wallet } from "lucide-react";
 import type { FinancialSnapshot } from "@/lib/finance/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
+import { EmptyState } from "@/components/app/empty-state";
+import { MetricCard } from "@/components/app/metric-card";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
 const statusFilters = [
   ["pending", "Ainda não entrou ou saiu"],
@@ -31,13 +34,15 @@ export function FinanceDashboard({ snapshot }: {
     const [status, setStatus] = useState("all");
     const [kind, setKind] = useState("all");
     if (!snapshot)
-        return <p>Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
+        return <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
     const entries = snapshot.entries.filter(e => (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
     return <div className="grid gap-5">
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Dinheiro que entrou", snapshot.summary.paidRevenueCents], ["Dinheiro que saiu", snapshot.summary.paidExpenseCents], ["Ainda em aberto", snapshot.summary.pendingCents], ["Quanto sobrou", snapshot.summary.balanceCents]].map(([label, value]) => <div key={label} className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="font-serif text-2xl">{formatCentsToReais(Number(value))}</p>
-        </div>)}</section>
+    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Resumo do dinheiro">
+        <MetricCard label="Dinheiro que entrou" value={formatCentsToReais(snapshot.summary.paidRevenueCents)} hint="já recebido neste período" icon={CircleDollarSign} tone="success" />
+        <MetricCard label="Dinheiro que saiu" value={formatCentsToReais(snapshot.summary.paidExpenseCents)} hint="já pago neste período" icon={ReceiptText} />
+        <MetricCard label="Ainda em aberto" value={formatCentsToReais(snapshot.summary.pendingCents)} hint="falta entrar ou sair" icon={Clock3} tone="warning" />
+        <MetricCard label="Quanto sobrou" value={formatCentsToReais(snapshot.summary.balanceCents)} hint="entradas menos saídas" icon={Wallet} tone="neutral" />
+    </section>
  <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "Adicionar dinheiro que entrou" : "Adicionar dinheiro que saiu"}>
         <ManagementForm action="finance-create" label="Salvar" idempotent>
         <input type="hidden" name="kind" value={type}/>
@@ -65,7 +70,11 @@ export function FinanceDashboard({ snapshot }: {
     </select>
     </label>
     </div>
- {!entries.length && <p className="rounded-2xl bg-secondary p-5">Nada encontrado. Toque em Adicionar dinheiro que entrou ou saiu, ou mude o período.</p>}
+ {!entries.length && (
+        <div className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de]">
+            <EmptyState icon={Wallet} title="Nada encontrado" description="Nada encontrado. Toque em Adicionar dinheiro que entrou ou saiu, ou mude o período." />
+        </div>
+    )}
  {entries.map(e => <article key={e.id} className={"agende-shadow grid gap-3 rounded-3xl border bg-card p-5 " + (e.kind === "income" ? "border-l-4 border-l-success" : "border-l-4 border-l-primary")}>
         <div className="flex flex-wrap justify-between gap-3">
         <div>

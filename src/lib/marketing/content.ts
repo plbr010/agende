@@ -2,6 +2,7 @@ export const MARKETING_NAV = [
   { href: "/#funcionalidades", label: "Funcionalidades" },
   { href: "/#como-funciona", label: "Como funciona" },
   { href: "/#planos", label: "Planos" },
+  { href: "/descobrir", label: "Encontrar salão" },
 ] as const;
 
 export const MARKETING_CTAS = {
@@ -167,6 +168,7 @@ export const HOW_IT_WORKS = [
 
 export const FOOTER_LINKS = [
   { href: "/#funcionalidades", label: "Produto" },
+  { href: "/descobrir", label: "Encontrar salão" },
   { href: "/termos", label: "Termos" },
   { href: "/privacidade", label: "Privacidade" },
   { href: "/login", label: "Entrar" },
