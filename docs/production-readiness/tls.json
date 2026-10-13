@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-11T04:23:45.896Z",
+  "host": "agende-lac.vercel.app",
+  "authorized": true,
+  "subject": {
+    "CN": "*.vercel.app"
+  },
+  "issuer": {
+    "C": "US",
+    "O": "Google Trust Services",
+    "CN": "WR1"
+  },
+  "valid_from": "Aug 29 19:48:09 2026 GMT",
+  "valid_to": "Nov 27 19:48:08 2026 GMT",
+  "subjectaltname": "DNS:*.vercel.app"
+}

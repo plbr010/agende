@@ -43,6 +43,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
   const customer = await user('client@action-sql.invalid','client');
   const other = await user('other@action-sql.invalid');
   let actor = owner, workspaceId, memberId, serviceId, appointmentId, localDate, clientId;
+  let failAppointmentRead = false;
   const execute = (sql, args=[]) => db.transaction(async tx => {
     if (actor) await tx.query("select set_config('request.jwt.claim.sub',$1,true),set_config('request.jwt.claim.role','authenticated',true)",[actor]);
     await tx.exec(actor ? 'set local role authenticated' : 'set local role anon');
@@ -51,6 +52,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
   const client = {
     auth: { getUser: async () => ({ data: { user: actor ? { id:actor,email:actor===customer?'client@action-sql.invalid':'owner@action-sql.invalid',email_confirmed_at:'2026-10-01' } : null } }) },
     async rpc(name,args={}) {
+      if (name === 'list_my_appointments' && failAppointmentRead) return {data:null,error:{message:'synthetic follow-up read failure'}};
       try {
         const keys = Object.keys(args);
         const values = keys.map(key => key==='p_items'?JSON.stringify(args[key]):args[key]);
@@ -137,6 +139,18 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     assert.ok(result.appointments,result.error);assert.ok(result.appointments.some(row=>row.id===appointmentId));
     actor=other;assert.ok((await booking.cancelMyAppointmentAction(appointmentId)).error);
   });
+  await t.test('reschedule remains committed when its follow-up read fails, without returning an empty success',async()=>{
+    actor=customer;
+    const slots=await booking.fetchMyRescheduleSlots({appointmentId,professionalMemberId:memberId,localDate});
+    const target=slots.slots[0];assert.ok(target);
+    failAppointmentRead=true;
+    let result;
+    try{result=await booking.rescheduleMyAppointmentAction({appointmentId,professionalMemberId:memberId,startsAt:target});}finally{failAppointmentRead=false;}
+    assert.match(result.error,/Reagendamento salvo/);assert.equal(result.appointments,undefined);
+    const stored=(await db.query('select starts_at from public.appointments where id=$1',[appointmentId])).rows[0].starts_at;
+    assert.equal(new Date(stored).toISOString(),new Date(target).toISOString());
+    assert.equal((await queries.loadMyAppointmentsResult()).appointments[0].id,appointmentId);
+  });
   await t.test('completed appointment receives exactly one immutable client review',async()=>{
     actor=owner;
     for(const status of ['confirmed','in_progress','completed']) assert.ok((await agenda.setAppointmentStatusAction(form({appointmentId,status}))).success);
@@ -163,6 +177,18 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     assert.ok((await management.managementAction({},form({action:'finance-paid',id:entry,method:'pix'}))).success);
     const paidDay=(await db.query("select (now() at time zone 'America/Sao_Paulo')::date::text d")).rows[0].d;
     const result=await client.rpc('get_finance_ui',{p_workspace_id:workspaceId,p_start_date:paidDay,p_end_date:localDate});assert.ok(result.data.entries.some(row=>row.id===entry&&row.status==='paid'));
+  });
+  await t.test('expired identity and foreign user cannot mutate bookings or read finance',async()=>{
+    const before=(await db.query('select id,status,starts_at from public.appointments where workspace_id=$1 order by id',[workspaceId])).rows;
+    for(const identity of [null,other]){
+      actor=identity;
+      assert.ok((await booking.cancelMyAppointmentAction(appointmentId)).error);
+      assert.ok((await booking.rescheduleMyAppointmentAction({appointmentId,professionalMemberId:memberId,startsAt:before[0].starts_at instanceof Date?before[0].starts_at.toISOString():before[0].starts_at})).error);
+      const finance=await client.rpc('get_finance_ui',{p_workspace_id:workspaceId,p_start_date:localDate,p_end_date:localDate});
+      assert.ok(finance.error);assert.equal(finance.data,null);
+      assert.deepEqual((await db.query('select id,status,starts_at from public.appointments where workspace_id=$1 order by id',[workspaceId])).rows,before);
+    }
+    actor=owner;
   });
   await t.test('stock and package actions persist their business operations',async()=>{
     assert.ok((await management.managementAction({},form({action:'product-create',name:'Shampoo',description:'',sku:'',unit:'unidade',minimum:'1',cost:'10,00',quantity:'5'}))).success);

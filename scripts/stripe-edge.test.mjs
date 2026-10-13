@@ -12,10 +12,44 @@ const snapshot = (status = 'active', lookup = 'agende_equipe_annual') => ({
   items: { data: [{ price: { id: 'test_price', lookup_key: lookup }, current_period_start: now, current_period_end: now + 86400 }] },
 });
 
+test('Edge rejects LIVE keys in staging and TEST keys in production before constructing Stripe', async () => {
+  for (const overrides of [
+    { apiKey: 'sk_live_synthetic' }, { envApiKey: 'rk_live_synthetic' },
+    { apiKey: 'invalid_synthetic' },
+    { supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co', apiKey: 'sk_test_synthetic' },
+  ]) {
+    const h = harness('stripe-billing', overrides);
+    assert.ok((await h.billing()).status >= 400);
+    assert.equal(h.state.calls.some(c => c.name === 'stripe_client' || c.name === 'checkout' || c.name === 'bind_billing_customer'), false);
+  }
+  assert.equal((await harness('stripe-billing', { apiKey: 'rk_test_synthetic' }).billing()).status, 200);
+});
+test('staging billing cannot default redirects to the production origin', () => {
+  assert.throws(() => harness('stripe-billing', { siteUrl: null }), /billing_site_origin_missing/);
+  for (const siteUrl of ['https://user:secret@agende.test', 'https://agende.test/path', 'https://agende.test?x=y', 'http://agende.test']) {
+    assert.throws(() => harness('stripe-billing', { siteUrl }), /billing_site_origin_invalid/);
+  }
+  assert.doesNotThrow(() => harness('stripe-billing', { supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co', siteUrl: null }));
+});
+test('Webhook rejects a signed event from the wrong environment before billing writes', async () => {
+  for (const [overrides, livemode] of [[{}, true], [{ supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co' }, false]]) {
+    const h = harness('stripe-webhook', overrides);
+    const result = await h.event('customer.subscription.updated', snapshot(), { livemode });
+    assert.equal(result.status, 400);
+    assert.equal((await result.json()).error, 'stripe_event_mode_mismatch');
+    assert.equal(h.state.calls.some(c => ['sync_billing_subscription', 'record_billing_event', 'stripe_client'].includes(c.name)), false);
+  }
+});
+test('Webhook subscription retrieval rejects a LIVE key on the test backend', async () => {
+  const h = harness('stripe-webhook', { envApiKey: 'sk_live_synthetic' });
+  assert.equal((await h.event('customer.subscription.updated', snapshot())).status, 409);
+  assert.equal(h.state.calls.some(c => ['stripe_client', 'sync_billing_subscription', 'record_billing_event'].includes(c.name)), false);
+});
+
 // Execute the actual Edge entrypoints with only their platform imports replaced.
 // All Stripe/Supabase calls are mocks; network access is never provided to the VM.
 function harness(kind, overrides = {}) {
-  const state = { calls: [], role: 'owner', seats: 1, subscriptions: [], sessions: [],
+  const state = { calls: [], logs: [], role: 'owner', seats: 1, subscriptions: [], sessions: [],
     subscription: { status: 'trialing', trial_ends_at: new Date((now + 7 * 86400) * 1000).toISOString(),
       external_customer_id: 'cus_test', external_subscription_id: null }, current: snapshot(), ...overrides };
   const admin = {
@@ -37,7 +71,7 @@ function harness(kind, overrides = {}) {
       state.calls.push({ name, args });
       if (state.rpcErrors?.[name]) return { data: null, error: { message: state.rpcErrors[name] } };
       if (name === 'get_stripe_webhook_secret') return { data: 'whsec_mock', error: null };
-      if (name === 'get_stripe_api_key') return { data: 'mock_key', error: null };
+      if (name === 'get_stripe_api_key') return { data: state.apiKey ?? 'sk_test_mock', error: null };
       if (name === 'acquire_stripe_checkout') return { data: !state.locked, error: null };
       return { data: null, error: null };
     },
@@ -57,25 +91,37 @@ function harness(kind, overrides = {}) {
     } } },
     billingPortal: { sessions: { create: async args => { state.calls.push({ name: 'portal', args }); return { url: 'https://billing.stripe.com/p/session/test' }; } } },
   };
-  class Stripe { constructor() { return stripe; } static createFetchHttpClient() {} }
+  class Stripe { constructor() { state.calls.push({ name: 'stripe_client' }); return stripe; } static createFetchHttpClient() {} }
   let handler;
   const source = readFileSync(`supabase/functions/${kind}/index.ts`, 'utf8').replace(/^import .*;\r?\n/gm, '');
   const js = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
-  runInNewContext(js, { createClient: () => admin, Stripe, crypto: webcrypto, TextEncoder, Response, Date, console: { error() {} },
-    Deno: { env: { get: name => ({ SUPABASE_URL: 'https://local.invalid', SUPABASE_SERVICE_ROLE_KEY: 'mock', AGENDE_SITE_URL: 'https://agende.test' })[name] }, serve: fn => { handler = fn; } } });
+  runInNewContext(js, { createClient: () => admin, Stripe, crypto: webcrypto, TextEncoder, Response, Date, URL, console: { error(...args) { state.logs.push(args); } },
+    Deno: { env: { get: name => ({ SUPABASE_URL: state.supabaseUrl ?? 'https://local.invalid', SUPABASE_SERVICE_ROLE_KEY: 'mock', AGENDE_SITE_URL: state.siteUrl === undefined ? 'https://agende.test' : state.siteUrl, STRIPE_API_KEY: state.envApiKey })[name] }, serve: fn => { handler = fn; } } });
   return { state,
     async billing(body = {}) {
       return handler(new Request('https://local.invalid', { method: 'POST', headers: { authorization: 'Bearer mock' },
         body: JSON.stringify({ action: 'checkout', workspaceId: wid, plan: 'solo', billingInterval: 'monthly', idempotencyKey: 'attempt-1234567890', ...body }) }));
     },
-    async event(type, object, { invalidSignature = false, timestamp = now, eventId = 'evt_mock' } = {}) {
-      const body = JSON.stringify({ id: eventId, type, created: timestamp, data: { object } });
+    async event(type, object, { invalidSignature = false, timestamp = now, eventId = 'evt_mock', livemode = false } = {}) {
+      const body = JSON.stringify({ id: eventId, type, created: timestamp, livemode, data: { object } });
       const signature = createHmac('sha256', 'whsec_mock').update(`${timestamp}.${body}`).digest('hex');
       return handler(new Request('https://local.invalid', { method: 'POST', body,
         headers: { 'stripe-signature': `t=${timestamp},v1=${invalidSignature ? 'bad' : signature}` } }));
     },
   };
 }
+
+test('Edge failures do not expose raw provider secrets in logs or HTTP responses', async () => {
+  const sensitive = 'sk_test_SYNTHETIC_SECRET customer@example.invalid';
+  for (const [kind, rpc] of [['stripe-billing', 'acquire_stripe_checkout'], ['stripe-webhook', 'sync_billing_subscription']]) {
+    const h = harness(kind, { rpcErrors: { [rpc]: sensitive } });
+    const response = kind === 'stripe-billing' ? await h.billing() : await h.event('customer.subscription.updated', snapshot());
+    assert.ok(response.status >= 400);
+    assert.equal((await response.text()).includes(sensitive), false);
+    assert.ok(h.state.logs.length);
+    assert.equal(JSON.stringify(h.state.logs).includes(sensitive), false);
+  }
+});
 
 test('Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers', async () => {
   for (const plan of ['solo', 'equipe', 'salao']) for (const billingInterval of ['monthly', 'annual']) {

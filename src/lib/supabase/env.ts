@@ -3,6 +3,22 @@ export function getSupabaseUrl(): string {
   if (!url) {
     throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
   }
+  const parsed = new URL(url);
+  const deployment = process.env.NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV;
+  const productionBackend = parsed.hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(parsed.hostname);
+  if (parsed.username || parsed.password || parsed.pathname !== "/" || parsed.search || parsed.hash ||
+    (parsed.protocol !== "https:" && !(local && parsed.protocol === "http:" && deployment !== "production"))) {
+    throw new Error("Invalid Supabase origin configuration");
+  }
+  if (productionBackend && deployment !== "production") {
+    throw new Error("Production Supabase is forbidden outside the production deployment");
+  }
+  // Server-side runtime must also agree with the build's deployment class.
+  if (productionBackend && typeof window === "undefined" &&
+    (process.env.VERCEL !== "1" || process.env.VERCEL_ENV !== "production")) {
+    throw new Error("Production Supabase is forbidden in this runtime");
+  }
   return url;
 }
 

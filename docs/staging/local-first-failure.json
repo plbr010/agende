@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-11T15:08:36.360Z",
+  "totals": {
+    "passed": 234,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failures": [
+    {
+      "file": "src/lib/auth/recovery.test.ts",
+      "name": "src\\lib\\auth\\recovery.test.ts",
+      "category": "platform_mocks",
+      "status": "failed"
+    }
+  ],
+  "isolated_recovery_rerun": {
+    "passed": 4,
+    "failed": 0
+  },
+  "cause": "not determined; preserve first failed run instead of treating it as a pass"
+}

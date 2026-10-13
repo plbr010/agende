@@ -1,0 +1,34 @@
+{
+  "checked_date_utc": "2026-10-11",
+  "main": "d20d6fd518d4b13840a5d31ef6f0b65b4c707d6d",
+  "mode": "read-only metadata; no remote writes",
+  "supabase": {
+    "production_project": "wohimauqgywshbbejjcl",
+    "status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6.1.166",
+    "available_staging_projects": 0,
+    "remote_migrations": 63,
+    "public_tables": 31,
+    "public_tables_without_rls": 0,
+    "public_tables_without_force_rls": 0,
+    "reviews_present": false,
+    "reschedule_slots_present": false,
+    "pending_plan": "migration-plan.json",
+    "backup_restore_acceptance": "not verified"
+  },
+  "stripe": {
+    "accessible_accounts": [{"id": "acct_1UH3D6Kii3CCJXtc", "livemode": true}],
+    "test_accessible": false,
+    "portal": {"id": "bpc_1UJovBKii3CCJXtcbHEUcBZm", "active": true, "subscription_update_enabled": false, "cancel_mode": "at_period_end", "cancel_proration": "none"},
+    "transactions_performed": 0
+  },
+  "vercel": {
+    "production_deployment": "dpl_AaDBBEnuhfFVTPuvDsDz1astdaGH",
+    "state": "READY",
+    "commit": "d20d6fd518d4b13840a5d31ef6f0b65b4c707d6d",
+    "authenticated_acceptance": "blocked: no isolated backend"
+  },
+  "cursor_open_pr_observed": 28,
+  "cursor_branch_modified": false,
+  "decision": "NO-GO"
+}

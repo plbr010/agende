@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { loadMyAppointments, type MyAppointment } from "@/lib/booking/queries";
+import { loadMyAppointmentsResult, type MyAppointment } from "@/lib/booking/queries";
 import { hashClientIp } from "@/lib/booking/ip";
 import {
   parsePublicBookingConfirmation,
@@ -120,7 +120,9 @@ export async function rescheduleMyAppointmentAction(input: {
   revalidatePath("/cliente");
   revalidatePath("/cliente/agendamentos");
   revalidatePath("/app/agenda");
-  return { appointments: await loadMyAppointments() };
+  const refreshed = await loadMyAppointmentsResult();
+  if (refreshed.error) return { error: "Reagendamento salvo. Não foi possível atualizar a lista. Atualize a página antes de tentar novamente." };
+  return { appointments: refreshed.appointments };
 }
 
 export async function fetchMyRescheduleSlots(input: { appointmentId: string; professionalMemberId: string; localDate: string }): Promise<{ slots: string[]; error?: string }> {

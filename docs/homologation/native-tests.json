@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T02:44:41.223Z",
+  "checked_at": "2026-10-12T23:32:32.453Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
-      "passed": 9,
+      "passed": 11,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +18,7 @@
     }
   },
   "totals": {
-    "passed": 43,
+    "passed": 45,
     "failed": 0,
     "skipped": 0
   },
@@ -50,6 +50,12 @@
     },
     {
       "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
       "name": "completed appointment receives exactly one immutable client review",
       "category": "native_pg17_integration_with_mock_auth",
       "status": "passed"
@@ -63,6 +69,12 @@
     {
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "expired identity and foreign user cannot mutate bookings or read finance",
       "category": "native_pg17_integration_with_mock_auth",
       "status": "passed"
     },

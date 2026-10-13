@@ -1,0 +1,448 @@
+{
+  "checked_at": "2026-10-11T14:23:58.640Z",
+  "supabase_project": "fkpdudnnperufnmdwdlv",
+  "postgres": "17.11",
+  "applied_source_files": [
+    {
+      "file": "20260918150334_foundation_types_and_tables.sql",
+      "sha256": "6cf747e084360d280e2d2a7fdab2595e6ce9853e18efce24ed1f2c1b9dc2453f",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150401_foundation_functions.sql",
+      "sha256": "b7d3735968b5adc5166edba1c3cbcbbff0ef02b366c2228e90f358fb26d7712f",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150422_foundation_guards.sql",
+      "sha256": "584e9e825776bc7f6e27251af050ee57eb84ee36291ae8b4f24e7d613143de87",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150434_foundation_auth_sync.sql",
+      "sha256": "ae79aa0077550a37d91c235dba225f69a0649180e2f1b17cc0d783e31dcfbe7c",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150443_foundation_workspace_rpc.sql",
+      "sha256": "1a3d9a1eb8b37ca4949033076dfb6d590f685bf529cca373a2cdc694b8797eb1",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150456_foundation_invites.sql",
+      "sha256": "cb40ba9872c8ddd47064f29b4471bcd66771f97c1310c4ac93ad5243d09c325f",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150505_foundation_rpc_wrappers_and_triggers.sql",
+      "sha256": "d6e191d7f40a97ba052aa092e199aa3d2387813ed8c0d5d5af25b9cbe0f52a2b",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150516_foundation_rls.sql",
+      "sha256": "60e17717d1afff531d3c76add8619947c36df385af93be974d42b1f75218b0d0",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918150607_foundation_fk_indexes.sql",
+      "sha256": "880330f1aa3ed7a3b64b5e3a696de832b5693ec6918bc5f8f4441dec836f7e6f",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918183729_foundation_hardening.sql",
+      "sha256": "53712d27ee0a88e0278f9632c0b94cc20a702a46896c4f3c44f399ddaa8cf749",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918183827_foundation_hardening_seats_invites.sql",
+      "sha256": "1d66284a0286e0d46797370b9d2dddf1defc3105cc09e920b3fb91d8655353ed",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918183848_foundation_hardening_invites_grants.sql",
+      "sha256": "271fe9754ba114232cbeb9c8d29ee3db4bb0727e639c20071eb9373bb8a99c06",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918191634_catalog_professionals_services_clients.sql",
+      "sha256": "66b07f4efcda0125b00a0986897a7ca847aeb3982afe03063fad5896e478f639",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918191706_catalog_professionals_services_clients_rls.sql",
+      "sha256": "d289e5fbd1e7eea2cf6d0ebfe0fadff32c3702dd71bfa842658e2ccf205502bc",
+      "application_mode": "apply_migration with generated tool timestamp"
+    },
+    {
+      "file": "20260918192038_catalog_indexes_and_policy_merge.sql",
+      "sha256": "54b72e1bf6b3e717a0f26646edd30c2e9a87786ced9d729603f712c1acb4c7b5",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194255_workspace_settings_schema.sql",
+      "sha256": "360abb9843ccc44e0a28c183ba768f8bf4cb26efd05aed8f7d106ddae6311d51",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194304_agenda_types_and_tables.sql",
+      "sha256": "c9fd865ba2769a40da6efc6d0c950d46da766e54eb4318f7463cd0d57a7e9923",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194355_agenda_functions.sql",
+      "sha256": "80508abdafc3ebcdbc2fbb557447196a419406e5b5b81c33a0d08c2d6dec84ae",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194427_workspace_settings_rpcs.sql",
+      "sha256": "33192d66bfc23caf5d2fb100a7c8cc17d07c7bf6ab2e48de0595bbef08c6b328",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194437_agenda_availability_helpers.sql",
+      "sha256": "8cbb65110f43a07d15474d4534bcb5102c4f59348804306bc454a5b5d5b118b1",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194446_workspace_settings_rls_storage.sql",
+      "sha256": "7650b97402d7fe1edc92953ecb4d42e12e4810beeb2cd25be564112f9a67ff11",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194454_agenda_list_available_slots.sql",
+      "sha256": "17deca68970c65458354b9d4b1059e4b71a58c70adb196eb00d307764ea8d5fc",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194510_agenda_appointment_rpcs.sql",
+      "sha256": "10e60f955921dd75327c861c36be9a9f1a6aec3e0ac9308bc4244ddd4f63f85b",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194527_agenda_triggers.sql",
+      "sha256": "8b81d2648b1910f818b8a0839b312363d5c54c64d97be1f8acf35651029e621d",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194551_agenda_rls.sql",
+      "sha256": "5ae8247d9e599845a2177d31bf317e14105dfa9aa6bf99a896ab90102908217e",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194708_agenda_indexes_and_policy_split.sql",
+      "sha256": "f22447268bfa7090b0d2306cf3eacba22aeb6e397181a6d472b7252e35e8fe43",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918194722_agenda_write_policies.sql",
+      "sha256": "083d8759899e92133c8796627955ef62711cf523c71544bf36f68f673ce95f25",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918195354_agenda_snapshot_professional_and_select.sql",
+      "sha256": "0f0585bea29b98f9e7901f2f0e638bfcc6a8588bc8ef045c7c85fb831da8b1df",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918203839_public_booking_schema.sql",
+      "sha256": "d257fe0cdb215ceaed6424ddb292b8f1e719a0a3a96f7132e53d3659d13a2674",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918203840_public_booking_functions.sql",
+      "sha256": "f85b1ccc82848cbd16cfa08d937a90ea96e30d9b184ac901e2d014917ffe2c81",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260918203841_public_booking_rpcs_rls.sql",
+      "sha256": "c9d2bc191a489df071b2a3064f6a5c2aca0a67561b69fb5150a1a956dc6e243e",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260919201409_inventory_schema.sql",
+      "sha256": "b46afca9a31d83b1dd68e8225d68e45b9a9abb71f9de158a6d2129c0554aeeda",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260919201432_inventory_rpcs.sql",
+      "sha256": "68154ddf866fbfcdf098bc7560d02072d7c84adb72d04dd62ab018cd5aa22a60",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260919201509_inventory_rls.sql",
+      "sha256": "da1103e98c4ca88955ff86b68831b8d9da88fd2b537c2aad418963ee04f24bbb",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921165035_inventory_fk_indexes.sql",
+      "sha256": "4fa5a117b278dfa2df918629efa4a6da7fed1aac3e3a73b234d5c09eca06fd1a",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921171533_packages_core.sql",
+      "sha256": "9b4285b6ed54d2092f4d6d42ede7096eb2608a915a937abfd5e2702c22265d70",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921171751_finance_core.sql",
+      "sha256": "2c26558cb6d4d57bff8af7c29fd6af4293e5d7d2a4a0704a1027b3d9a4345548",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921171949_reports_core.sql",
+      "sha256": "f826a3aa9c0f1200e0e93d4c14f7a4d38c586dcc18166360ae831b51676d1a0f",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921172021_packages_finance_fk_indexes.sql",
+      "sha256": "f8574c260187436dec2b5370e3c196ed1b79b1a6fbcf7dbd27c4334eb35b5658",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921172331_secure_public_default_privileges.sql",
+      "sha256": "1e142864d55c9ca7decc8b0922f6713cc9de18506915006a015760552ceb5ac6",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921174123_subscription_entitlement_enforcement.sql",
+      "sha256": "7355e8185dd62952b5c82fa1ae2c55e73a55dcb8830f30f10e73b6d7ba72b2a8",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921174239_audit_events.sql",
+      "sha256": "720dcd81106d1ba11a8bc80426e5cf596dc1f6ee84a8f8c5d41bb51e1f6ca452",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921174332_finance_refunds_package_hardening.sql",
+      "sha256": "19553f852d2935665372210e2f729c36620edc1a9f30a0fda45ad1d468bf77e6",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921174537_billing_intervals_annual_ready.sql",
+      "sha256": "ae321dfac780bebd4f61ddd1eab1271e0f42a55e4ed73a74b89fd1402a88df24",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921174547_database_maintenance_cron.sql",
+      "sha256": "cf2ffd387c6a8ea1dc61e7589a7f464c662cbf146e6f22164a12e12fe88413ff",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921175259_package_lifecycle_hardening.sql",
+      "sha256": "7bb7158b45b5aee303ba2d3fcfed600f44703f746e7901de525c6b8463ac92c3",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921175525_finance_categories_idempotency.sql",
+      "sha256": "6070e17a4c2c644fe6b7f8141ab277584adf835d529e011a1abf1ce5dde59d88",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921175704_agenda_client_reschedule_deadlock_hardening.sql",
+      "sha256": "d88f28d238c3843f577d85f486603bd8f5371ca93639fd1d6d24f7c058e78c3f",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921175824_advanced_reports.sql",
+      "sha256": "3cb11eaf4bc63f2243ffcc3a31b9024210fec09db8614c52c63afdf29403c08a",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921175927_privacy_requests_export_audit_expansion.sql",
+      "sha256": "81db104eb17443384a330e668bbf5e9eb2bc106b07b0d1708c23b0fdd46fc6d0",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921180139_public_booking_duplicate_concurrency_guard.sql",
+      "sha256": "91183202e0db710eb472a1bcfbc50cb9e7e301cecbab14cbc9157efe1b1b871f",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921180256_client_packages_and_billing_foundation.sql",
+      "sha256": "da3fb092e0354f3329fed9d0fc3d3ec5c9bbd480b131a2647e77d92ecb89e915",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921181255_frontend_read_models.sql",
+      "sha256": "01d34e39b1b7fdb8968d90edb7c0fbd445ce2e32301eabb94358bae3780b4dce",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260921181317_frontend_read_models_inventory_fix.sql",
+      "sha256": "a7143d5b67309b2018eb6e5020d6ff2e4d17f964463527549a16cbf6d9a6990f",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926062411_stripe_billing_sync_foundation.sql",
+      "sha256": "3122323936de97fa3d71df75c35de388dd69f78e07f0fd9387e24303edfdf984",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926062835_stripe_webhook_hardening.sql",
+      "sha256": "9149a13a0f0d8b7ab83e3995cf02c8d259f5fafa570ffc04e316315e4ed7ab6e",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926063106_stripe_billing_resubscribe_hardening.sql",
+      "sha256": "0bb141301ad8d4ba6949f2b3b456b0ab87558d54f794d3f3bbbb1c57c06f9bac",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926063212_stripe_billing_sync_reconcile.sql",
+      "sha256": "5d286e451826e3ddc53fdce9ea27abfa6ec7287ab7ff4e2d29060578b92e5d96",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926063514_stripe_checkout_resubscribe_hardening.sql",
+      "sha256": "3d3f6f46f5a5bcbbe1e77a49561c38055114d75946d5d6172a10c96933b8f68a",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926063534_stripe_api_key_vault_access.sql",
+      "sha256": "d695c7f4d3b5623dfa07183378943758c16bdfc0acdbd0e4bac75e370a000f85",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260926194038_trial_selected_plan.sql",
+      "sha256": "3fb3c3cf7322e96ca9cef8c7de83d63dc0485cd237b228e5eef8e49b685268d4",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260927005815_stripe_checkout_guards.sql",
+      "sha256": "9b35bc4047883abd6a82f7884b191493454b7410d7584a1976a51c601b8a115a",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20260927014947_launch_readiness_reviews.sql",
+      "sha256": "a2c04bef47aef5abb6c60957c05ca52820dd569d4f74872e5f672782a33e11f8",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20261008131859_launch_hardening_reviews_force_rls.sql",
+      "sha256": "43f7703526687a25abfac200086b1999ea179b71ec144ca5da6e03a339b6e2ec",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20261009172028_launch_observed_owner_guard.sql",
+      "sha256": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20261009173042_billing_reconcile_excess_seats.sql",
+      "sha256": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    },
+    {
+      "file": "20261010232248_atomic_service_professional_links.sql",
+      "sha256": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37",
+      "application_mode": "exact SQL bootstrap; no migration-history record"
+    }
+  ],
+  "migration_history_repaired": false,
+  "stripe_account": "acct_1UPNGJQQUyqAaZvS",
+  "livemode": false,
+  "prices": [
+    {
+      "id": "price_1UPNLQQQUyqAaZvS12LNMgbZ",
+      "product": "agende_staging_solo",
+      "lookup_key": "agende_solo_monthly",
+      "livemode": false,
+      "unit_amount": 8990,
+      "currency": "brl",
+      "interval": "month"
+    },
+    {
+      "id": "price_1UPNLUQQUyqAaZvSk2JbwcPG",
+      "product": "agende_staging_solo",
+      "lookup_key": "agende_solo_annual",
+      "livemode": false,
+      "unit_amount": 79900,
+      "currency": "brl",
+      "interval": "year"
+    },
+    {
+      "id": "price_1UPNLYQQUyqAaZvSzHa3n654",
+      "product": "agende_staging_equipe",
+      "lookup_key": "agende_equipe_monthly",
+      "livemode": false,
+      "unit_amount": 16990,
+      "currency": "brl",
+      "interval": "month"
+    },
+    {
+      "id": "price_1UPNLcQQUyqAaZvSZSNdOnwu",
+      "product": "agende_staging_equipe",
+      "lookup_key": "agende_equipe_annual",
+      "livemode": false,
+      "unit_amount": 149900,
+      "currency": "brl",
+      "interval": "year"
+    },
+    {
+      "id": "price_1UPNLfQQUyqAaZvSt5F9bxBV",
+      "product": "agende_staging_salao",
+      "lookup_key": "agende_salao_monthly",
+      "livemode": false,
+      "unit_amount": 29990,
+      "currency": "brl",
+      "interval": "month"
+    },
+    {
+      "id": "price_1UPNLkQQUyqAaZvSV3GACF7D",
+      "product": "agende_staging_salao",
+      "lookup_key": "agende_salao_annual",
+      "livemode": false,
+      "unit_amount": 279900,
+      "currency": "brl",
+      "interval": "year"
+    }
+  ],
+  "checkout_sessions": [
+    {
+      "id": "cs_test_a10JKtuSP1w8F8xm1eoPdoVy6v5sY8yiYjyBH1zqOgGP8X6ab9icjEsZBP",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_solo_monthly",
+      "amount_total": 8990
+    },
+    {
+      "id": "cs_test_a17uAyttZO7X2IQv2hK5403kymkxk55eRVcXuYKkWsjNllDjk4lXQsfZ5L",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_solo_annual",
+      "amount_total": 79900
+    },
+    {
+      "id": "cs_test_a1B2PcL1URDl4fbsY1YpwX0QH6bljeipZswtUogyZwLLiMb9Ffnx6ONPEj",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_equipe_monthly",
+      "amount_total": 16990
+    },
+    {
+      "id": "cs_test_a1PMwC32Emj7RPMCbbMhfU4HZavMSBg8RALiJraqqfie9JkqOQbaRFuBhW",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_equipe_annual",
+      "amount_total": 149900
+    },
+    {
+      "id": "cs_test_a1gucTAUIs8wWX2jiPEqwH7vjQBDld0CEYcD4cFUALN9nZM5Gl3HhnunPN",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_salao_monthly",
+      "amount_total": 29990
+    },
+    {
+      "id": "cs_test_a1gp7DduX4m2mmisGmXvVJz7hZcOomeFuByenzMA5Y5op59x9KyzjMsQga",
+      "livemode": false,
+      "status": "open",
+      "lookup_key": "agende_salao_annual",
+      "amount_total": 279900
+    }
+  ],
+  "checkout_acceptance": "created/open only; no payment, webhook or application synchronization acceptance",
+  "smtp": "not configured",
+  "production_writes": 0
+}

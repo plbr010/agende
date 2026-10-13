@@ -243,7 +243,11 @@ export async function loadMyAppointmentsResult(): Promise<{
       error: "Não foi possível carregar seus agendamentos. Atualize a página para tentar de novo.",
     };
   }
-  return { appointments: parseMyAppointments(data), error: null };
+  const appointments = parseMyAppointments(data);
+  if (!Array.isArray(data) || appointments.length !== data.length) {
+    return { appointments: [], error: "Não foi possível carregar seus agendamentos. Atualize a página para tentar de novo." };
+  }
+  return { appointments, error: null };
 }
 
 export async function loadMyAppointments(): Promise<MyAppointment[]> {

@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-11T04:31:01.286Z",
+  "preview": {
+    "deployment": "dpl_2tSuErY6vMJB1jVbr8jahGsTkqGk",
+    "commit": "6ac0d7cbe519ce004fc7499760a5b9ce3a6b2253",
+    "state": "READY",
+    "url": "https://agende-he3p76woc-pedros-projects-cfddfd39.vercel.app",
+    "anonymous_login_get_status": 500,
+    "filtered_error": "Production Supabase is forbidden",
+    "matching_error_log_groups": [
+      {
+        "requestPath": "/login",
+        "count": 1
+      }
+    ],
+    "meaning": "intentional refusal of shared production backend; not functional Auth acceptance"
+  },
+  "remote_edge_functions": [
+    {
+      "slug": "stripe-webhook",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "updated_at": 1790470703101,
+      "ezbr_sha256": "303dab1b1dc243b0e1922298e0397719fe5573f6fa3dc6daf06d2298aeed43b6"
+    },
+    {
+      "slug": "stripe-billing",
+      "version": 2,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "updated_at": 1790470699496,
+      "ezbr_sha256": "fe6c5ca3ad3f8fb385ba79bd4ba42bbda57c698e2ca19486852aff6a99cd0312"
+    }
+  ],
+  "edge_deploys_performed": 0,
+  "first_ci_failure": "historical Edge v2 hash comparison used current files; fixed to exact original compared_pr_sha; original hashes preserved"
+}

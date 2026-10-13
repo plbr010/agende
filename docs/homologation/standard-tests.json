@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-11T05:57:45.054Z",
+  "checked_at": "2026-10-13T00:52:51.478Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
-      "passed": 9,
+      "passed": 11,
       "failed": 0,
       "skipped": 0
     },
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 8,
+      "passed": 13,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 47,
+      "passed": 54,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 232,
+    "passed": 246,
     "failed": 0,
     "skipped": 0
   },
@@ -60,6 +60,12 @@
     },
     {
       "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
       "name": "completed appointment receives exactly one immutable client review",
       "category": "pglite_integration_with_mock_auth",
       "status": "passed"
@@ -73,6 +79,12 @@
     {
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "expired identity and foreign user cannot mutate bookings or read finance",
       "category": "pglite_integration_with_mock_auth",
       "status": "passed"
     },
@@ -242,6 +254,36 @@
       "file": "scripts/launch-readiness.test.mjs",
       "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge rejects LIVE keys in staging and TEST keys in production before constructing Stripe",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "staging billing cannot default redirects to the production origin",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook rejects a signed event from the wrong environment before billing writes",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Webhook subscription retrieval rejects a LIVE key on the test backend",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge failures do not expose raw provider secrets in logs or HTTP responses",
+      "category": "stripe_mocks",
       "status": "passed"
     },
     {
@@ -773,6 +815,24 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "a committed reschedule followed by a failed reload never replaces the list with empty success",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "malformed appointment read models produce an error instead of silently losing rows",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/read-after-write.test.ts",
+      "name": "valid empty and populated lists remain successful after strict read validation",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/booking/validation.test.ts",
       "name": "booking details normalize email, phone and optional note",
       "category": "unit_or_static_contract",
@@ -1148,6 +1208,30 @@
       "file": "src/lib/reviews/validation.test.ts",
       "name": "only completed appointments are eligible and newest comes first",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "preview and local production-mode builds cannot initialize the production backend",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "production access requires the build class and rejects a preview runtime",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "browser preview guard also rejects the DNS trailing-dot form of production",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "isolated HTTPS and local Supabase work while malformed origins fail closed",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {

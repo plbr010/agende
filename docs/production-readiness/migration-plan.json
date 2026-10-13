@@ -1,0 +1,40 @@
+{
+  "target": "wohimauqgywshbbejjcl",
+  "generated_at": "2026-10-11T04:21:19.320Z",
+  "approved": false,
+  "execution": "not performed; prepare only",
+  "remote_history_count": 63,
+  "local_files": 67,
+  "migrations": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20260927014947_launch_readiness_reviews.sql",
+      "sha256": "a2c04bef47aef5abb6c60957c05ca52820dd569d4f74872e5f672782a33e11f8",
+      "remote_applied": false
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20261008131859_launch_hardening_reviews_force_rls.sql",
+      "sha256": "43f7703526687a25abfac200086b1999ea179b71ec144ca5da6e03a339b6e2ec",
+      "remote_applied": false
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20261009172028_launch_observed_owner_guard.sql",
+      "sha256": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673",
+      "remote_applied": false
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20261009173042_billing_reconcile_excess_seats.sql",
+      "sha256": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab",
+      "remote_applied": false
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20261010232248_atomic_service_professional_links.sql",
+      "sha256": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37",
+      "remote_applied": false
+    }
+  ]
+}
