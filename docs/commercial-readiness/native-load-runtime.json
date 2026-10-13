@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-13T19:57:49.959Z",
+  "version": "postgres (PostgreSQL) 17.6",
+  "host": "127.0.0.1",
+  "port": 51208,
+  "suites": [
+    "scripts/capacity-load.test.mjs"
+  ],
+  "passed": true,
+  "server_stopped_after_run": true,
+  "auth": "synthetic SQL fixture; no Auth/SMTP service",
+  "data_policy": "owned test databases retained locally, ignored by Git"
+}

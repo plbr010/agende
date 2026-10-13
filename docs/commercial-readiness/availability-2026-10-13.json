@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T19:50:15.218Z",
+  "checked_at": "2026-10-13T19:57:45.904Z",
   "origin": "https://agendeapp.online",
   "mode": "four public GETs; no authenticated or business operations",
   "passed": true,
@@ -7,25 +7,25 @@
     {
       "path": "/",
       "status": 200,
-      "milliseconds": 803,
+      "milliseconds": 1698,
       "passed": true
     },
     {
       "path": "/login",
       "status": 200,
-      "milliseconds": 1302,
+      "milliseconds": 1437,
       "passed": true
     },
     {
       "path": "/recuperar-senha",
       "status": 200,
-      "milliseconds": 455,
+      "milliseconds": 462,
       "passed": true
     },
     {
       "path": "/descobrir",
       "status": 200,
-      "milliseconds": 469,
+      "milliseconds": 567,
       "passed": true
     }
   ]

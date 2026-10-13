@@ -24,6 +24,7 @@ import { MEMBER_ROLE_LABEL, PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { addDaysIso, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
+import { trialDaysRemaining } from "@/lib/billing/plans";
 
 function monthHref(month: string, setup?: string): string {
   const params = new URLSearchParams();
@@ -185,6 +186,7 @@ export default async function AppPage({
         statusLabel: SUBSCRIPTION_STATUS_LABEL[session.subscription?.status ?? "expired"],
         trialStarted: formatDateTime(session.subscription?.trialStartedAt ?? null, timezone),
         trialEnds: formatDateTime(session.subscription?.trialEndsAt ?? null, timezone),
+        trialDaysRemaining: trialDaysRemaining(session.subscription?.trialEndsAt),
         roleLabel: workspace ? MEMBER_ROLE_LABEL[workspace.role] : "Profissional",
         publicPath: workspace ? `/p/${workspace.slug}` : null,
         hasClientProfile: session.context.hasClientProfile,
