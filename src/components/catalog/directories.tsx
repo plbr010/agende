@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, UserRound } from "lucide-react";
+import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, UserRound, UsersRound, WandSparkles } from "lucide-react";
+import { EmptyState } from "@/components/app/empty-state";
 import type { ActionState } from "@/lib/auth/actions";
 import {
   archiveClientAction,
@@ -124,14 +125,18 @@ export function TeamDirectory({
   return (
     <div className="grid gap-4">
       {members.length === 0 ? (
-        <Card className="border-none ring-1 ring-border">
-          <CardContent className="grid gap-3 py-8">
-            <p className="text-sm text-muted-foreground">Nenhuma pessoa nesta equipe ainda.</p>
-            {canManage ? (
-              <Button className="h-11 w-fit rounded-full" render={<Link href="/app/configuracoes/equipe" />}>
-                Convidar a primeira pessoa
-              </Button>
-            ) : null}
+        <Card className="border-none ring-1 ring-[#f0e4de]">
+          <CardContent>
+            <EmptyState
+              icon={UsersRound}
+              title="Equipe vazia"
+              description="Nenhuma pessoa nesta equipe ainda."
+              action={canManage ? (
+                <Button className="h-11 w-fit rounded-full" render={<Link href="/app/configuracoes/equipe" />}>
+                  Convidar a primeira pessoa
+                </Button>
+              ) : undefined}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -274,14 +279,18 @@ export function ServiceCatalog({
         </div>
       ) : null}
       {services.length === 0 ? (
-        <Card className="border-none ring-1 ring-border">
-          <CardContent className="grid gap-3 py-8">
-            <p className="text-sm text-muted-foreground">Nenhum serviço cadastrado ainda.</p>
-            {canManage ? (
-              <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
-                Cadastrar o primeiro serviço
-              </Button>
-            ) : null}
+        <Card className="border-none ring-1 ring-[#f0e4de]">
+          <CardContent>
+            <EmptyState
+              icon={WandSparkles}
+              title="Nenhum serviço ainda"
+              description="Nenhum serviço cadastrado ainda. Cadastre o primeiro para as clientes poderem marcar."
+              action={canManage ? (
+                <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
+                  Cadastrar o primeiro serviço
+                </Button>
+              ) : undefined}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -473,14 +482,18 @@ export function ClientDirectory({
         </div>
       ) : null}
       {clients.length === 0 ? (
-        <Card className="border-none ring-1 ring-border">
-          <CardContent className="grid gap-3 py-8">
-            <p className="text-sm text-muted-foreground">Nenhum cliente cadastrado neste negócio.</p>
-            {canEdit ? (
-              <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
-                Cadastrar o primeiro cliente
-              </Button>
-            ) : null}
+        <Card className="border-none ring-1 ring-[#f0e4de]">
+          <CardContent>
+            <EmptyState
+              icon={UserRound}
+              title="Nenhuma cliente ainda"
+              description="Nenhum cliente cadastrado neste negócio. Cadastre a primeira ou espere ela marcar pelo link."
+              action={canEdit ? (
+                <Button type="button" className="h-11 w-fit rounded-full" onClick={() => setEditing("new")}>
+                  Cadastrar o primeiro cliente
+                </Button>
+              ) : undefined}
+            />
           </CardContent>
         </Card>
       ) : (

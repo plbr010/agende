@@ -276,16 +276,16 @@ export function PublicBookingFlow({
           <h1 className="font-serif text-3xl">Agendar horário</h1>
         </div>
 
-        <ol className="flex gap-1" aria-label="Etapas do agendamento">
+        <ol className="grid grid-cols-3 gap-2 sm:grid-cols-6" aria-label="Etapas do agendamento">
           {visibleSteps.map((item, index) => (
-            <li key={item} className="min-w-0 flex-1">
+            <li key={item} className="min-w-0">
               <div
                 className={`h-1.5 rounded-full ${index <= stepIndex ? "bg-primary" : "bg-border"}`}
                 aria-current={item === step ? "step" : undefined}
               />
-              <span className="sr-only">
+              <span className={`mt-1 block truncate text-[0.7rem] font-medium ${item === step ? "text-wine-deep" : "text-muted-foreground"}`}>
                 {STEP_LABEL[item]}
-                {item === step ? " (atual)" : ""}
+                <span className="sr-only">{item === step ? " (atual)" : ""}</span>
               </span>
             </li>
           ))}
@@ -308,7 +308,7 @@ export function PublicBookingFlow({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-medium">{item.name}</h2>
+                      <h2 className="font-serif text-xl text-wine-deep">{item.name}</h2>
                       {item.description ? (
                         <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
                       ) : null}

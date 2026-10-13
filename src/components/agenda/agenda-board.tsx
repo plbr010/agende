@@ -19,12 +19,11 @@ import {
   STATUS_LABEL,
   canRescheduleStatus,
   statusActions,
-  type AppointmentStatus,
 } from "@/lib/agenda/status";
 import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { WEEKDAYS } from "@/lib/validation/agenda";
 import { formatCentsToReais } from "@/lib/validation/money";
-import { Badge } from "@/components/ui/badge";
+import { STATUS_CHIP_CLASS } from "@/lib/agenda/status-style";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -72,15 +71,6 @@ async function runFormAction(action: (formData: FormData) => Promise<ActionState
     toast.success(result.success);
   }
 }
-
-const statusVariant: Record<AppointmentStatus, "default" | "secondary" | "outline" | "ghost" | "destructive"> = {
-  scheduled: "outline",
-  confirmed: "default",
-  in_progress: "secondary",
-  completed: "ghost",
-  cancelled: "destructive",
-  no_show: "destructive",
-};
 
 export function AgendaBoard({
   timezone,
@@ -135,7 +125,7 @@ export function AgendaBoard({
         <input type="hidden" name="view" value={view} />
         <input type="hidden" name="date" value={date} />
         <Button type="submit" variant="outline" className="h-11">
-          Mostrar
+          Aplicar filtro
         </Button>
         <Button type="button" className="h-11" onClick={() => setCreating(true)}>
           Novo horário
@@ -262,16 +252,16 @@ function DayColumn({
               onClick={() => onOpen(item)}
               className="min-h-11 rounded-2xl bg-secondary/40 p-3 text-left ring-1 ring-primary/10 transition-colors hover:bg-secondary"
             >
-              <p className="text-sm font-medium">
+              <p className="font-serif text-lg leading-none text-wine-deep">
                 {item.localStart}–{item.localEnd}
               </p>
-              <p className="truncate font-serif text-base">{item.clientName}</p>
-              <p className="truncate text-sm text-muted-foreground">{item.serviceName}</p>
-              <p className="truncate text-sm text-muted-foreground">{item.professionalName}</p>
-              <div className="mt-2 flex flex-wrap gap-1">
-                <Badge variant={statusVariant[item.status]}>{STATUS_LABEL[item.status]}</Badge>
-                <Badge variant="ghost">{item.durationMinutes} min</Badge>
-                <Badge variant="ghost">{formatCentsToReais(item.priceCents)}</Badge>
+              <p className="mt-2 truncate font-medium">{item.clientName}</p>
+              <p className="truncate text-sm text-muted-foreground">{item.serviceName} · {item.professionalName}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[item.status])}>
+                  {STATUS_LABEL[item.status]}
+                </span>
+                <span className="text-xs text-muted-foreground">{item.durationMinutes} min · {formatCentsToReais(item.priceCents)}</span>
               </div>
             </button>
           ))}
@@ -506,9 +496,9 @@ function AppointmentDetailDialog({
             <p>Duração: {appointment.durationMinutes} min</p>
             <p>Preço: {formatCentsToReais(appointment.priceCents)}</p>
             {appointment.notes ? <p>Obs.: {appointment.notes}</p> : null}
-            <Badge variant={statusVariant[appointment.status]} className="w-fit">
+            <span className={cn("w-fit rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[appointment.status])}>
               {STATUS_LABEL[appointment.status]}
-            </Badge>
+            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {canEdit ? (

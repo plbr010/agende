@@ -6,40 +6,28 @@ import { requestPasswordRecovery, updateRecoveredPassword } from "@/lib/auth/rec
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordField } from "@/components/usability/password-field";
+import { PortugueseForm } from "@/components/usability/portuguese-form";
 
 export function RecoveryForm({ reset = false }: { reset?: boolean }) {
   const [state, action, pending] = useActionState(reset ? updateRecoveredPassword : requestPasswordRecovery, {});
   return (
-    <form action={action} className="grid gap-4">
+    <PortugueseForm action={action} className="grid gap-4">
       {reset ? (
         <>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Nova senha</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              maxLength={128}
-              required
-              className="h-11"
-            />
-            <p className="text-sm text-muted-foreground">Use no mínimo 8 caracteres, com letras e números.</p>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirme a nova senha</Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              maxLength={128}
-              required
-              className="h-11"
-            />
-          </div>
+          <PasswordField
+            id="password"
+            name="password"
+            label="Nova senha"
+            autoComplete="new-password"
+          />
+          <PasswordField
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirme a nova senha"
+            autoComplete="new-password"
+            hint={null}
+          />
         </>
       ) : (
         <div className="grid gap-2">
@@ -48,12 +36,12 @@ export function RecoveryForm({ reset = false }: { reset?: boolean }) {
         </div>
       )}
       {state.error ? (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {state.error}
         </p>
       ) : null}
       {state.success ? (
-        <p role="status" className="text-sm">
+        <p role="status" className="rounded-2xl bg-metric-blush px-4 py-3 text-sm">
           {state.success}
         </p>
       ) : null}
@@ -63,6 +51,6 @@ export function RecoveryForm({ reset = false }: { reset?: boolean }) {
       <Link href="/login" className="text-sm underline underline-offset-4">
         Voltar para entrar
       </Link>
-    </form>
+    </PortugueseForm>
   );
 }

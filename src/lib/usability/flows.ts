@@ -75,7 +75,7 @@ export const USABILITY_FLOWS: readonly UsabilityFlow[] = [
     title: "Encontrar o próximo atendimento",
     audience: "profissional",
     goal: "Ver o próximo horário em poucos segundos",
-    steps: ["Abrir a Visão geral", "Olhar o card Próximos atendimentos no topo da rotina"],
+    steps: ["Abrir Início", "Olhar o card Próximos agendamentos"],
     difficultyNotes: ["O horário aparece em número grande, com nome da cliente."],
   },
   {

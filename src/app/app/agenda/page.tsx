@@ -71,7 +71,13 @@ export default async function AgendaPage({
         <MetricCard label="Na agenda" value={visibleAppointments.length} hint={view === "week" ? "na semana selecionada" : "no dia selecionado"} icon={CalendarCheck2} />
         <MetricCard label="Confirmados" value={confirmed} hint="clientes confirmados" icon={Clock3} tone="success" />
         <MetricCard label="Em atendimento" value={inProgress} hint="acontecendo agora" icon={Clock3} tone="warning" />
-        <MetricCard label="Total do dia" value={formatCentsToReais(revenue)} hint="só horários que ainda valem" icon={CircleDollarSign} tone="neutral" />
+        <MetricCard
+          label={view === "week" ? "Total da semana" : "Total do dia"}
+          value={formatCentsToReais(revenue)}
+          hint="só horários que ainda valem"
+          icon={CircleDollarSign}
+          tone="neutral"
+        />
       </section>
       <AgendaBoard
         timezone={timezone}

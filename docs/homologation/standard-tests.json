@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-11T15:13:52.490Z",
+  "checked_at": "2026-10-13T00:16:22.050Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 135,
+      "passed": 146,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 238,
+    "passed": 249,
     "failed": 0,
     "skipped": 0
   },
@@ -367,6 +367,18 @@
     {
       "file": "src/components/agenda/agenda-copy.test.ts",
       "name": "working hours editor collapses empty days and can copy a day to the rest of the week",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "approved dashboard identity stays on the launch screens",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "auth, onboarding and billing keep the next step obvious",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -929,6 +941,48 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "day totals ignore cancelled visits and leave no-shows out of the money",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "percent change stays empty when yesterday has nothing to compare",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "rating average uses real notes only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "upcoming list keeps the next open visits after today",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "month grid starts on Sunday and marks today",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "month navigation rejects invalid cursors",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "owner menu follows the reference and still reaches avaliações",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/finance/queries.test.ts",
       "name": "finance query adapts the exact get_finance_ui response for a required period",
       "category": "unit_or_static_contract",
@@ -1267,6 +1321,18 @@
     {
       "file": "src/lib/usability/copy.test.ts",
       "name": "priority screens do not show jargon that blocks first use",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/field-validity.test.ts",
+      "name": "empty required fields explain the next step in Portuguese",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/field-validity.test.ts",
+      "name": "invalid emails tell the person what a valid address looks like",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
