@@ -16,6 +16,20 @@ async function fixture(db,label){
 const save=(db,user,workspace,id,members,name='Corte')=>as(db,user,
   'select public.save_service_with_professionals($1,$2,$3,null,30,5000,true,$4) id',[workspace,id,name,members]);
 
+test('missing production service contract is restored by the exact additive migration',async t=>{
+  const db=await createLocalDatabase();t.after(()=>db.close());
+  await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
+  const owner=await fixture(db,'Migration Service');
+  await db.exec('drop function public.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[]); drop function app.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[])');
+  await assert.rejects(save(db,owner.uid,owner.wid,null,[owner.member]),/does not exist/);
+  assert.equal((await db.query('select count(*)::int n from public.services where workspace_id=$1',[owner.wid])).rows[0].n,0);
+  await db.exec(readFileSync('supabase/migrations/20261010232248_atomic_service_professional_links.sql','utf8'));
+  const id=(await save(db,owner.uid,owner.wid,null,[owner.member])).rows[0].id;
+  assert.ok(id);
+  assert.equal((await db.query('select count(*)::int n from public.professional_services where workspace_id=$1 and service_id=$2',[owner.wid,id])).rows[0].n,1);
+  await assert.rejects(save(db,null,owner.wid,null,[owner.member]),/permission denied/);
+});
+
 test('atomic catalog SQL protects tenant boundaries, roles and existing overrides',async t=>{
   const db=await createLocalDatabase();t.after(()=>db.close());await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
   const owner=await fixture(db,'Owner Atomic'),foreign=await fixture(db,'Foreign Atomic');

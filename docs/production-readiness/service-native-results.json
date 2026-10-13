@@ -1,0 +1,107 @@
+{
+  "checked_at": "2026-10-13T00:06:47.087Z",
+  "groups": {
+    "native_pg17_integration_with_mock_auth": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_sql": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "workspace create action starts one trial and respects Cursor setup redirect",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "profile, service and availability actions persist a bookable catalog",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "public actions book an actual slot and reject overlapping requests",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "completed appointment receives exactly one immutable client review",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client cancellation action frees a second booked slot",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "expired identity and foreign user cannot mutate bookings or read finance",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "stock and package actions persist their business operations",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "missing production service contract is restored by the exact additive migration",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "atomic catalog SQL protects tenant boundaries, roles and existing overrides",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "an error after service insertion rolls back the entire atomic RPC",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    }
+  ]
+}
