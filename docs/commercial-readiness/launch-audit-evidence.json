@@ -1,0 +1,95 @@
+{
+  "checked_at": "2026-10-13T19:52:48.248Z",
+  "base_commit": "1507908c12000e9d9dc8de712d54dfc4b320e71d",
+  "production": {
+    "supabase_project": "wohimauqgywshbbejjcl",
+    "status": "ACTIVE_HEALTHY",
+    "postgres": "17.6",
+    "service_rpc_count": 0,
+    "service_migration_count": 0,
+    "public_tables_without_forced_rls": 0,
+    "history_records": 63,
+    "vercel_deployment": "dpl_2hzXnnbAd94RG249XcZNoszFYb9W",
+    "vercel_status": "READY",
+    "edge_versions": {
+      "stripe-billing": 2,
+      "stripe-webhook": 2
+    },
+    "environment_bindings_shared": true,
+    "site_url_variable_present": false,
+    "writes": 0,
+    "exports": 0
+  },
+  "service_migration_sha256": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37",
+  "staging": {
+    "project": "fkpdudnnperufnmdwdlv",
+    "stripe_api_key_present": false,
+    "discovery_rpcs_present": 0,
+    "real_api_groups": 10,
+    "real_api_passed": true,
+    "email_acceptance": false
+  },
+  "tests": {
+    "npm_ci": true,
+    "lint": true,
+    "typecheck": true,
+    "build": true,
+    "standard": {
+      "passed": 262,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native": {
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0
+    },
+    "smoke_gets": 34
+  },
+  "backup": {
+    "synthetic_restore": true,
+    "checked_at": "2026-10-13T19:48:02.817Z",
+    "rto_seconds": 32.975,
+    "tls": "TLSv1.3; verify-full CA and hostname; no authentication",
+    "full_platform_restore_verified": false,
+    "production_backup_verified": false,
+    "checksum_tampering_rejected": true,
+    "manifest_tampering_rejected": true,
+    "wrong_passphrase_rejected": true,
+    "temporary_plaintext_removed": true
+  },
+  "stripe": {
+    "sandbox": "acct_1UPNGJQQUyqAaZvS",
+    "livemode": false,
+    "prices_verified": [
+      {
+        "plan": "solo",
+        "monthly_cents": 8990,
+        "annual_cents": 79900
+      },
+      {
+        "plan": "equipe",
+        "monthly_cents": 16990,
+        "annual_cents": 149900
+      },
+      {
+        "plan": "salao",
+        "monthly_cents": 29990,
+        "annual_cents": 279900
+      }
+    ],
+    "integration_accepted": false
+  },
+  "audit": {
+    "production_vulnerabilities": 0,
+    "dev_high": 5,
+    "advisory": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+  },
+  "commercial_acceptance": {
+    "passed_gates": 4,
+    "total_gates": 12,
+    "percentage": 33.333333333333336,
+    "decision": "NO-GO",
+    "code_completion_percentage": null
+  }
+}
