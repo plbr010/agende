@@ -34,7 +34,7 @@
     }
   ],
   "restore": {
-    "checked_at": "2026-10-13T01:25:58.513Z",
+    "checked_at": "2026-10-13T13:57:24.889Z",
     "passed": true,
     "scope": [
       "app",
@@ -54,7 +54,7 @@
     "restored_tables": 2,
     "production_writes": 0,
     "staging_connections": 0,
-    "rto_seconds": 20.057,
+    "rto_seconds": 18.727,
     "owned_cluster_stopped": true,
     "temporary_plaintext_cluster_removed": true
   },
