@@ -1,0 +1,150 @@
+{
+  "checked_at": "2026-10-13T14:00:16.249Z",
+  "mode": "native PG17 synthetic SQL burst; not HTTP/cloud capacity validation",
+  "production_or_staging_requests": 0,
+  "auth": "SQL identity fixtures; no GoTrue",
+  "stripe": "not called",
+  "fixture": {
+    "workspaces": 100,
+    "clients": 10000,
+    "services": 100,
+    "professionals": 100
+  },
+  "hardware": {
+    "cpu": "AMD Ryzen 5 4600G with Radeon Graphics",
+    "logical_cpus": 12,
+    "total_ram_bytes": 16961015808,
+    "os": "win32"
+  },
+  "server": {
+    "version": "PostgreSQL 17.6 on x86_64-windows, compiled by msvc-19.44.35213, 64-bit",
+    "max_connections": "100"
+  },
+  "scenarios": [
+    {
+      "virtual_actors": 100,
+      "simultaneous_submission": true,
+      "db_pool_limit": 16,
+      "identities_shared_across_actors": 100,
+      "counts": {
+        "public_read": 60,
+        "tenant_read": 20,
+        "booking": 20
+      },
+      "unexpected_errors": 0,
+      "error_rate": 0,
+      "elapsed_ms": 1405.7596999999987,
+      "throughput_actions_per_second": 71.13591320052787,
+      "end_to_end_including_queue_ms": {
+        "p50": 895.122800000001,
+        "p95": 1265.4251000000004,
+        "p99": 1293.5906999999988
+      },
+      "db_transaction_ms": {
+        "p50": 91.45709999999963,
+        "p95": 385.2858000000015,
+        "p99": 672.4326000000001
+      },
+      "peak_pool_waiters": 84,
+      "slo": {
+        "p95_ms": 2000,
+        "max_error_rate": 0.01,
+        "passed": true
+      }
+    },
+    {
+      "virtual_actors": 500,
+      "simultaneous_submission": true,
+      "db_pool_limit": 16,
+      "identities_shared_across_actors": 100,
+      "counts": {
+        "public_read": 300,
+        "tenant_read": 100,
+        "booking": 100
+      },
+      "unexpected_errors": 20,
+      "error_rate": 0.04,
+      "elapsed_ms": 1175.0421000000006,
+      "throughput_actions_per_second": 425.51666872191197,
+      "end_to_end_including_queue_ms": {
+        "p50": 838.0288,
+        "p95": 1132.3100999999988,
+        "p99": 1161.0456999999988
+      },
+      "db_transaction_ms": {
+        "p50": 32.65890000000036,
+        "p95": 77.9369999999999,
+        "p99": 113.38100000000122
+      },
+      "peak_pool_waiters": 500,
+      "slo": {
+        "p95_ms": 2000,
+        "max_error_rate": 0.01,
+        "passed": false
+      }
+    },
+    {
+      "virtual_actors": 1000,
+      "simultaneous_submission": true,
+      "db_pool_limit": 16,
+      "identities_shared_across_actors": 100,
+      "counts": {
+        "public_read": 600,
+        "tenant_read": 200,
+        "booking": 200
+      },
+      "unexpected_errors": 100,
+      "error_rate": 0.1,
+      "elapsed_ms": 1677.2240000000002,
+      "throughput_actions_per_second": 596.2232832346782,
+      "end_to_end_including_queue_ms": {
+        "p50": 610.6641,
+        "p95": 1589.5961000000007,
+        "p99": 1658.6427000000003
+      },
+      "db_transaction_ms": {
+        "p50": 24.322299999999814,
+        "p95": 54.401200000000244,
+        "p99": 87.70230000000083
+      },
+      "peak_pool_waiters": 1000,
+      "slo": {
+        "p95_ms": 2000,
+        "max_error_rate": 0.01,
+        "passed": false
+      }
+    },
+    {
+      "virtual_actors": 5000,
+      "simultaneous_submission": true,
+      "db_pool_limit": 16,
+      "identities_shared_across_actors": 100,
+      "counts": {
+        "public_read": 3000,
+        "tenant_read": 1000,
+        "booking": 1000
+      },
+      "unexpected_errors": 500,
+      "error_rate": 0.1,
+      "elapsed_ms": 7679.7508,
+      "throughput_actions_per_second": 651.062792297896,
+      "end_to_end_including_queue_ms": {
+        "p50": 3930.696100000001,
+        "p95": 7247.3058,
+        "p99": 7575.349299999998
+      },
+      "db_transaction_ms": {
+        "p50": 22.187300000001414,
+        "p95": 43.665499999999156,
+        "p99": 59.06450000000041
+      },
+      "peak_pool_waiters": 5000,
+      "slo": {
+        "p95_ms": 2000,
+        "max_error_rate": 0.01,
+        "passed": false
+      }
+    }
+  ],
+  "production_capacity_certified": false
+}
