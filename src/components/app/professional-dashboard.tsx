@@ -8,11 +8,13 @@ import {
 } from "lucide-react";
 import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { CopyLinkButton } from "@/components/usability/copy-link-button";
+import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { enableClientProfileAction } from "@/lib/auth/actions";
 import type { CalendarDay } from "@/lib/dashboard/summary";
 import { STATUS_LABEL, type AppointmentStatus } from "@/lib/agenda/status";
+import { STATUS_CHIP_CLASS } from "@/lib/agenda/status-style";
 import { cn } from "@/lib/utils";
 
 export type DashboardVisit = {
@@ -48,15 +50,6 @@ const METRIC_ICON = {
   ivory: UsersRound,
   lilac: Star,
 } as const;
-
-const STATUS_CLASS: Record<AppointmentStatus, string> = {
-  scheduled: "bg-[var(--status-scheduled-bg)] text-[var(--status-scheduled-fg)]",
-  confirmed: "bg-[var(--status-confirmed-bg)] text-[var(--status-confirmed-fg)]",
-  in_progress: "bg-[var(--status-progress-bg)] text-[var(--status-progress-fg)]",
-  completed: "bg-[var(--status-done-bg)] text-[var(--status-done-fg)]",
-  cancelled: "bg-[var(--status-muted-bg)] text-[var(--status-muted-fg)]",
-  no_show: "bg-[var(--status-muted-bg)] text-[var(--status-muted-fg)]",
-};
 
 const AVATAR_CLASS = [
   "bg-[#f3c8c7] text-[#631d38]",
@@ -135,7 +128,7 @@ function VisitRow({
           </span>
         </span>
       </span>
-      <span className={cn("col-span-2 w-fit rounded-full px-2.5 py-1 text-xs font-medium sm:col-span-1 sm:justify-self-end", STATUS_CLASS[visit.status])}>
+      <span className={cn("col-span-2 w-fit rounded-full px-2.5 py-1 text-xs font-medium sm:col-span-1 sm:justify-self-end", STATUS_CHIP_CLASS[visit.status])}>
         {STATUS_LABEL[visit.status]}
       </span>
     </Link>
@@ -183,6 +176,7 @@ export function ProfessionalDashboard({
     statusLabel: string;
     trialStarted: string;
     trialEnds: string;
+    trialDaysRemaining: number;
     roleLabel: string;
     publicPath: string | null;
     hasClientProfile: boolean;
@@ -198,7 +192,7 @@ export function ProfessionalDashboard({
       ) : null}
 
       {setup ? (
-        <section className="rounded-[1.5rem] bg-white px-5 py-5 shadow-[0_18px_40px_-32px_rgba(92,26,46,0.45)] ring-1 ring-[#f3c8c7] sm:px-6" aria-label="Primeiros passos">
+        <section className="agende-panel rounded-[1.5rem] px-5 py-5 ring-1 ring-[#f3c8c7] sm:px-6" aria-label="Primeiros passos">
           <OnboardingProgressSteps current={3} className="mb-5" />
           {setup.showWelcome ? (
             <p className="mb-3 rounded-2xl bg-metric-blush px-4 py-3 text-sm" role="status">
@@ -307,7 +301,7 @@ export function ProfessionalDashboard({
       </section>
 
       <section className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(18.5rem,0.78fr)]">
-        <article className="rounded-[1.5rem] bg-white p-4 shadow-[0_18px_40px_-32px_rgba(92,26,46,0.45)] ring-1 ring-[#f0e4de] sm:p-5">
+        <article className="agende-panel rounded-[1.5rem] p-4 ring-1 ring-[#f0e4de] sm:p-5">
           <div className="flex items-end justify-between gap-3 px-2">
             <div>
               <h2 className="font-serif text-2xl text-wine-deep sm:text-3xl">Agenda de hoje</h2>
@@ -319,18 +313,16 @@ export function ProfessionalDashboard({
           </div>
           <div className="mt-3 grid gap-1">
             {todayVisits.length === 0 ? (
-              <div className="grid place-items-center gap-3 px-4 py-12 text-center">
-                <div className="grid size-12 place-items-center rounded-full bg-metric-blush text-wine-deep">
-                  <CalendarDays className="size-5" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="font-medium">Agenda livre por enquanto</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Quando houver horário hoje, ele aparece aqui com a hora e o nome.</p>
-                </div>
-                <Button variant="outline" className="h-11 rounded-full" render={<Link href={setup ? setup.nextHref : "/app/agenda?novo=1"} />}>
-                  {setup ? "Cadastrar serviço" : "Novo horário"}
-                </Button>
-              </div>
+              <EmptyState
+                icon={CalendarDays}
+                title="Agenda livre por enquanto"
+                description="Quando houver horário hoje, ele aparece aqui com a hora e o nome."
+                action={
+                  <Button variant="outline" className="h-11 rounded-full" render={<Link href={setup ? setup.nextHref : "/app/agenda?novo=1"} />}>
+                    {setup ? "Cadastrar serviço" : "Novo horário"}
+                  </Button>
+                }
+              />
             ) : (
               todayVisits.map((visit) => (
                 <VisitRow key={visit.id} visit={visit} showProfessional={showProfessional} />
@@ -345,7 +337,7 @@ export function ProfessionalDashboard({
         </article>
 
         <div className="grid gap-4">
-          <article className="rounded-[1.5rem] bg-white p-4 shadow-[0_18px_40px_-32px_rgba(92,26,46,0.45)] ring-1 ring-[#f0e4de] sm:p-5">
+          <article className="agende-panel rounded-[1.5rem] p-4 ring-1 ring-[#f0e4de] sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <h2 className="font-serif text-2xl text-wine-deep">{calendar.title}</h2>
               <div className="flex gap-1">
@@ -397,7 +389,7 @@ export function ProfessionalDashboard({
             </div>
           </article>
 
-          <article className="rounded-[1.5rem] bg-white p-4 shadow-[0_18px_40px_-32px_rgba(92,26,46,0.45)] ring-1 ring-[#f0e4de] sm:p-5">
+          <article className="agende-panel rounded-[1.5rem] p-4 ring-1 ring-[#f0e4de] sm:p-5">
             <div className="flex items-end justify-between gap-3">
               <h2 className="font-serif text-2xl text-wine-deep">Próximos agendamentos</h2>
               <Link href="/app/agenda" className="inline-flex h-11 items-center text-sm font-medium text-[var(--rose-ink)]">
@@ -433,7 +425,7 @@ export function ProfessionalDashboard({
         </div>
       </section>
 
-      <section className="rounded-[1.5rem] bg-white p-5 shadow-[0_18px_40px_-32px_rgba(92,26,46,0.4)] ring-1 ring-[#f0e4de]">
+      <section className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Plano do salão</p>
@@ -441,6 +433,11 @@ export function ProfessionalDashboard({
               <p className="font-serif text-3xl text-wine-deep">{plan.planLabel}</p>
               <Badge variant="secondary">{plan.statusLabel}</Badge>
             </div>
+            {plan.trialDaysRemaining > 0 ? (
+              <p className="mt-2 font-medium text-wine-deep">
+                {plan.trialDaysRemaining === 1 ? "1 dia restante de teste grátis" : `${plan.trialDaysRemaining} dias restantes de teste grátis`}
+              </p>
+            ) : null}
             <p className="mt-2 text-sm text-muted-foreground">
               Teste grátis: {plan.trialStarted} até {plan.trialEnds}. Sua função: {plan.roleLabel}.
             </p>

@@ -26,6 +26,7 @@ test("approved dashboard identity stays on the launch screens", () => {
   const dashboard = source("src/components/app/professional-dashboard.tsx");
   assert.match(dashboard, /Olá, \{firstName\}!/);
   assert.match(dashboard, /Agenda de hoje/);
+  assert.match(dashboard, /dias restantes de teste/);
   assert.match(dashboard, /Teste grátis/);
   assert.match(dashboard, /Gerenciar plano/);
   assert.match(dashboard, /\/app\/configuracoes\/assinatura/);
