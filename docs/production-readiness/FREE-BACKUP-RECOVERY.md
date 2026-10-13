@@ -68,3 +68,5 @@ Para avaliar liberação exclusiva da migration20261010232248: autorização de 
 ## Fontes
 
 [Backup/restauração Supabase](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore), [pg_dump17](https://www.postgresql.org/docs/17/app-pgdump.html), [roles/pg_dumpall17](https://www.postgresql.org/docs/17/app-pg-dumpall.html), [pg_restore17](https://www.postgresql.org/docs/17/app-pgrestore.html), [TLS libpq](https://www.postgresql.org/docs/17/libpq-ssl.html).
+
+Manifesto formato3 autenticado com HMAC-SHA256, incluindo projeto, horarios e hashes. Ensaio final: PASS; senha incorreta, checksum adulterado e alteracao do timestamp do manifesto recusados. RTO sintetico medido20,057s (nao representa RTO produtivo). TLS, checksums sinteticos e resultados em backup-preparation-evidence.json. Lint do executor, parser PowerShell e git diff --check passaram. As falhas iniciais de ensaio (schema public preexistente e extensoes omitidas pelo filtro de schema) foram corrigidas no alvo/seletores locais, sem ignorar erros ou alterar fonte produtiva.
