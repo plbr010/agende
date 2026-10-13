@@ -49,7 +49,7 @@ test('Webhook subscription retrieval rejects a LIVE key on the test backend', as
 // Execute the actual Edge entrypoints with only their platform imports replaced.
 // All Stripe/Supabase calls are mocks; network access is never provided to the VM.
 function harness(kind, overrides = {}) {
-  const state = { calls: [], role: 'owner', seats: 1, subscriptions: [], sessions: [],
+  const state = { calls: [], logs: [], role: 'owner', seats: 1, subscriptions: [], sessions: [],
     subscription: { status: 'trialing', trial_ends_at: new Date((now + 7 * 86400) * 1000).toISOString(),
       external_customer_id: 'cus_test', external_subscription_id: null }, current: snapshot(), ...overrides };
   const admin = {
@@ -95,7 +95,7 @@ function harness(kind, overrides = {}) {
   let handler;
   const source = readFileSync(`supabase/functions/${kind}/index.ts`, 'utf8').replace(/^import .*;\r?\n/gm, '');
   const js = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
-  runInNewContext(js, { createClient: () => admin, Stripe, crypto: webcrypto, TextEncoder, Response, Date, URL, console: { error() {} },
+  runInNewContext(js, { createClient: () => admin, Stripe, crypto: webcrypto, TextEncoder, Response, Date, URL, console: { error(...args) { state.logs.push(args); } },
     Deno: { env: { get: name => ({ SUPABASE_URL: state.supabaseUrl ?? 'https://local.invalid', SUPABASE_SERVICE_ROLE_KEY: 'mock', AGENDE_SITE_URL: state.siteUrl === undefined ? 'https://agende.test' : state.siteUrl, STRIPE_API_KEY: state.envApiKey })[name] }, serve: fn => { handler = fn; } } });
   return { state,
     async billing(body = {}) {
@@ -110,6 +110,18 @@ function harness(kind, overrides = {}) {
     },
   };
 }
+
+test('Edge failures do not expose raw provider secrets in logs or HTTP responses', async () => {
+  const sensitive = 'sk_test_SYNTHETIC_SECRET customer@example.invalid';
+  for (const [kind, rpc] of [['stripe-billing', 'acquire_stripe_checkout'], ['stripe-webhook', 'sync_billing_subscription']]) {
+    const h = harness(kind, { rpcErrors: { [rpc]: sensitive } });
+    const response = kind === 'stripe-billing' ? await h.billing() : await h.event('customer.subscription.updated', snapshot());
+    assert.ok(response.status >= 400);
+    assert.equal((await response.text()).includes(sensitive), false);
+    assert.ok(h.state.logs.length);
+    assert.equal(JSON.stringify(h.state.logs).includes(sensitive), false);
+  }
+});
 
 test('Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers', async () => {
   for (const plan of ['solo', 'equipe', 'salao']) for (const billingInterval of ['monthly', 'annual']) {
