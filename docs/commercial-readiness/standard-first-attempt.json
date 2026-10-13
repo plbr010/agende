@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-10-13T14:45:17.126Z",
+  "original_full_evidence_path": "docs/commercial-readiness/standard-first-attempt.json",
+  "observed_loader_error": "Extension bundle not found (pgcrypto file existed afterward)",
+  "groups": {
+    "pglite_integration_with_mock_auth": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    },
+    "pglite_sql": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 137,
+      "failed": 2,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "platform_mocks": {
+      "passed": 54,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "failed_cases": [
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
+      "category": "pglite_integration_with_mock_auth",
+      "status": "failed"
+    },
+    {
+      "file": "src/components/billing/billing-controls.test.ts",
+      "name": "src\\components\\billing\\billing-controls.test.ts",
+      "category": "unit_or_static_contract",
+      "status": "failed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "src\\lib\\billing\\billing-actions.test.ts",
+      "category": "unit_or_static_contract",
+      "status": "failed"
+    }
+  ],
+  "totals": {
+    "passed": 230,
+    "failed": 3,
+    "skipped": 0
+  },
+  "application_guards_weakened": false,
+  "original_full_evidence_commit": "a57b5b0",
+  "cause": "not established; affected tests passed isolated and full Node24 repeat passed"
+}

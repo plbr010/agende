@@ -1,0 +1,633 @@
+{
+  "generated_at": "2026-10-13T14:59:14.576Z",
+  "assumptions": {
+    "fx_brl_per_usd": 5.5,
+    "foreign_cost_reserve": 0.05,
+    "annual_share": 0.2,
+    "mix": {
+      "solo": 0.4,
+      "equipe": 0.4,
+      "salao": 0.2
+    },
+    "card_percent": 0.0399,
+    "billing_percent": 0.007,
+    "card_fixed_brl": 0.5,
+    "tax_mode": "illustrative_anexo_v",
+    "risk_reserve": 0.03,
+    "support_per_salon_brl": 10,
+    "advertising_brl": 1000,
+    "owner_compensation_brl": 2000,
+    "accounting_brl": 300,
+    "domain_reserve_brl": 10,
+    "backup_equipment_reserve_brl": 50,
+    "appointments_per_month": 400,
+    "staff_per_salon": 4,
+    "auth_mau_per_salon": 36,
+    "emails_per_salon": 10,
+    "email_active_days": 26,
+    "email_peak_factor": 2,
+    "dynamic_requests_per_salon": 5000,
+    "cdn_requests_per_salon": 13000,
+    "queries_per_dynamic_request": 3,
+    "bytes_per_query": 2048,
+    "bytes_per_appointment_with_indexes_audit": 8192,
+    "retention_months": 12
+  },
+  "exchange_rate_is_planning_assumption": true,
+  "prices_checked_on": "2026-10-13",
+  "sources": [
+    "https://supabase.com/pricing",
+    "https://vercel.com/docs/plans/pro-plan",
+    "https://vercel.com/docs/pricing/flat-rate-cdn",
+    "https://vercel.com/docs/functions/usage-and-pricing",
+    "https://stripe.com/br/pricing",
+    "https://stripe.com/br/billing/pricing",
+    "https://resend.com/pricing.md",
+    "https://normas.receita.fazenda.gov.br/sijut2consulta/link.action?idAto=92278"
+  ],
+  "scenarios": [
+    {
+      "base": {
+        "establishments": 100,
+        "mrr_brl": 15577,
+        "arr_brl": 186924,
+        "stripe_estimate_brl": 771.39,
+        "estimated_effective_tax_percent": 15.59,
+        "tax_estimate_brl": 2428.86,
+        "risk_reserve_brl": 467.31,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 100,
+            "staff": 400,
+            "auth_mau": 3600,
+            "appointments_per_month": 40000,
+            "api_queries_per_month": 1500000,
+            "dynamic_requests_per_month": 500000,
+            "cdn_requests_per_month": 1300000,
+            "auth_emails_per_month": 1000,
+            "booking_emails_if_two_per_booking": 80000,
+            "storage_gb": 0.5,
+            "database_gb_at_retention": 4.0499600000000004,
+            "egress_gb": 3.072
+          },
+          "production_compute_assumption": "Micro planning allowance",
+          "supabase_usd": 35,
+          "vercel_usd": 40,
+          "email_usd": 0,
+          "total_usd": 75,
+          "total_brl": 433.13,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 2.78,
+          "vercel_memory_gb_hours": 41.67,
+          "vercel_usage_usd_before_credit": 6.1,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 78
+        },
+        "fixed_brl": 3360,
+        "support_brl": 1000,
+        "operating_brl": 4793.13,
+        "operating_usd_equivalent": 871.48,
+        "economic_monthly_net_brl": 7116.31,
+        "not_confirmed_fiscal_classification": true
+      },
+      "stress": {
+        "establishments": 100,
+        "mrr_brl": 15577,
+        "arr_brl": 186924,
+        "stripe_estimate_brl": 771.39,
+        "estimated_effective_tax_percent": 15.59,
+        "tax_estimate_brl": 2428.86,
+        "risk_reserve_brl": 467.31,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 100,
+            "staff": 400,
+            "auth_mau": 3600,
+            "appointments_per_month": 40000,
+            "api_queries_per_month": 3000000,
+            "dynamic_requests_per_month": 1000000,
+            "cdn_requests_per_month": 2600000,
+            "auth_emails_per_month": 1000,
+            "booking_emails_if_two_per_booking": 80000,
+            "storage_gb": 0.5,
+            "database_gb_at_retention": 4.0499600000000004,
+            "egress_gb": 6.144
+          },
+          "production_compute_assumption": "Micro planning allowance",
+          "supabase_usd": 35,
+          "vercel_usd": 40,
+          "email_usd": 0,
+          "total_usd": 75,
+          "total_brl": 433.13,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 27.78,
+          "vercel_memory_gb_hours": 333.33,
+          "vercel_usage_usd_before_credit": 12.69,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 78
+        },
+        "fixed_brl": 3360,
+        "support_brl": 1000,
+        "operating_brl": 4793.13,
+        "operating_usd_equivalent": 871.48,
+        "economic_monthly_net_brl": 7116.31,
+        "not_confirmed_fiscal_classification": true
+      }
+    },
+    {
+      "base": {
+        "establishments": 300,
+        "mrr_brl": 46731,
+        "arr_brl": 560772,
+        "stripe_estimate_brl": 2314.18,
+        "estimated_effective_tax_percent": 17.73,
+        "tax_estimate_brl": 8287.55,
+        "risk_reserve_brl": 1401.93,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 300,
+            "staff": 1200,
+            "auth_mau": 10800,
+            "appointments_per_month": 120000,
+            "api_queries_per_month": 4500000,
+            "dynamic_requests_per_month": 1500000,
+            "cdn_requests_per_month": 3900000,
+            "auth_emails_per_month": 3000,
+            "booking_emails_if_two_per_booking": 240000,
+            "storage_gb": 1.5,
+            "database_gb_at_retention": 12.11428,
+            "egress_gb": 9.216
+          },
+          "production_compute_assumption": "Small planning allowance",
+          "supabase_usd": 40.51,
+          "vercel_usd": 40,
+          "email_usd": 20,
+          "total_usd": 100.51,
+          "total_brl": 580.47,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 8.33,
+          "vercel_memory_gb_hours": 125,
+          "vercel_usage_usd_before_credit": 8.29,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 232
+        },
+        "fixed_brl": 3360,
+        "support_brl": 3000,
+        "operating_brl": 6940.47,
+        "operating_usd_equivalent": 1261.9,
+        "economic_monthly_net_brl": 27786.87,
+        "not_confirmed_fiscal_classification": true
+      },
+      "stress": {
+        "establishments": 300,
+        "mrr_brl": 46731,
+        "arr_brl": 560772,
+        "stripe_estimate_brl": 2314.18,
+        "estimated_effective_tax_percent": 17.73,
+        "tax_estimate_brl": 8287.55,
+        "risk_reserve_brl": 1401.93,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 300,
+            "staff": 1200,
+            "auth_mau": 10800,
+            "appointments_per_month": 120000,
+            "api_queries_per_month": 9000000,
+            "dynamic_requests_per_month": 3000000,
+            "cdn_requests_per_month": 7800000,
+            "auth_emails_per_month": 3000,
+            "booking_emails_if_two_per_booking": 240000,
+            "storage_gb": 1.5,
+            "database_gb_at_retention": 12.11428,
+            "egress_gb": 18.432
+          },
+          "production_compute_assumption": "Small planning allowance",
+          "supabase_usd": 40.51,
+          "vercel_usd": 48.07,
+          "email_usd": 20,
+          "total_usd": 108.58,
+          "total_brl": 627.05,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 83.33,
+          "vercel_memory_gb_hours": 1000,
+          "vercel_usage_usd_before_credit": 28.07,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 232
+        },
+        "fixed_brl": 3360,
+        "support_brl": 3000,
+        "operating_brl": 6987.05,
+        "operating_usd_equivalent": 1270.37,
+        "economic_monthly_net_brl": 27740.29,
+        "not_confirmed_fiscal_classification": true
+      }
+    },
+    {
+      "base": {
+        "establishments": 1000,
+        "mrr_brl": 155770,
+        "arr_brl": 1869240,
+        "stripe_estimate_brl": 7713.95,
+        "estimated_effective_tax_percent": 19.68,
+        "tax_estimate_brl": 30652.1,
+        "risk_reserve_brl": 4673.1,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 1000,
+            "staff": 4000,
+            "auth_mau": 36000,
+            "appointments_per_month": 400000,
+            "api_queries_per_month": 15000000,
+            "dynamic_requests_per_month": 5000000,
+            "cdn_requests_per_month": 13000000,
+            "auth_emails_per_month": 10000,
+            "booking_emails_if_two_per_booking": 800000,
+            "storage_gb": 5,
+            "database_gb_at_retention": 40.3394,
+            "egress_gb": 30.72
+          },
+          "production_compute_assumption": "Medium planning allowance",
+          "supabase_usd": 89.04,
+          "vercel_usd": 120,
+          "email_usd": 20,
+          "total_usd": 229.04,
+          "total_brl": 1322.72,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 27.78,
+          "vercel_memory_gb_hours": 416.67,
+          "vercel_usage_usd_before_credit": 15.97,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 770
+        },
+        "fixed_brl": 3360,
+        "support_brl": 10000,
+        "operating_brl": 14682.72,
+        "operating_usd_equivalent": 2669.59,
+        "economic_monthly_net_brl": 98048.13,
+        "not_confirmed_fiscal_classification": true
+      },
+      "stress": {
+        "establishments": 1000,
+        "mrr_brl": 155770,
+        "arr_brl": 1869240,
+        "stripe_estimate_brl": 7713.95,
+        "estimated_effective_tax_percent": 19.68,
+        "tax_estimate_brl": 30652.1,
+        "risk_reserve_brl": 4673.1,
+        "infrastructure": {
+          "demand": {
+            "paying_establishments": 1000,
+            "staff": 4000,
+            "auth_mau": 36000,
+            "appointments_per_month": 400000,
+            "api_queries_per_month": 30000000,
+            "dynamic_requests_per_month": 10000000,
+            "cdn_requests_per_month": 26000000,
+            "auth_emails_per_month": 10000,
+            "booking_emails_if_two_per_booking": 800000,
+            "storage_gb": 5,
+            "database_gb_at_retention": 40.3394,
+            "egress_gb": 61.44
+          },
+          "production_compute_assumption": "Medium planning allowance",
+          "supabase_usd": 89.04,
+          "vercel_usd": 181.89,
+          "email_usd": 20,
+          "total_usd": 290.93,
+          "total_brl": 1680.13,
+          "foreign_cost_reserve_not_confirmed_tax": true,
+          "vercel_cpu_hours": 277.78,
+          "vercel_memory_gb_hours": 3333.33,
+          "vercel_usage_usd_before_credit": 81.89,
+          "supabase_backup_policy": "Pro daily7d assumed; no PITR add-on",
+          "smtp_daily_free_limit": 100,
+          "projected_peak_emails_per_day": 770
+        },
+        "fixed_brl": 3360,
+        "support_brl": 10000,
+        "operating_brl": 15040.13,
+        "operating_usd_equivalent": 2734.57,
+        "economic_monthly_net_brl": 97690.72,
+        "not_confirmed_fiscal_classification": true
+      }
+    }
+  ],
+  "minimum_for_5000": {
+    "mixed": {
+      "establishments": 81,
+      "result": {
+        "mrr_brl": 12617.37,
+        "operating_brl": 4603.13,
+        "stripe_estimate_brl": 624.83,
+        "tax_estimate_brl": 1955.69,
+        "risk_reserve_brl": 378.52,
+        "economic_monthly_net_brl": 5055.2,
+        "not_confirmed_fiscal_classification": true
+      }
+    },
+    "by_plan": [
+      {
+        "plan": "solo",
+        "monthly": {
+          "establishments": 153,
+          "result": {
+            "mrr_brl": 13754.7,
+            "operating_brl": 5438.63,
+            "stripe_estimate_brl": 721.6,
+            "tax_estimate_brl": 2131.98,
+            "risk_reserve_brl": 412.64,
+            "economic_monthly_net_brl": 5049.86,
+            "not_confirmed_fiscal_classification": true
+          }
+        },
+        "annual": {
+          "establishments": 217,
+          "result": {
+            "mrr_brl": 14448.58,
+            "operating_brl": 6079.18,
+            "stripe_estimate_brl": 686.68,
+            "tax_estimate_brl": 2239.53,
+            "risk_reserve_brl": 433.46,
+            "economic_monthly_net_brl": 5009.74,
+            "not_confirmed_fiscal_classification": true
+          }
+        }
+      },
+      {
+        "plan": "equipe",
+        "monthly": {
+          "establishments": 73,
+          "result": {
+            "mrr_brl": 12402.7,
+            "operating_brl": 4407.63,
+            "stripe_estimate_brl": 618.19,
+            "tax_estimate_brl": 1922.42,
+            "risk_reserve_brl": 372.08,
+            "economic_monthly_net_brl": 5082.38,
+            "not_confirmed_fiscal_classification": true
+          }
+        },
+        "annual": {
+          "establishments": 103,
+          "result": {
+            "mrr_brl": 12866.42,
+            "operating_brl": 4823.13,
+            "stripe_estimate_brl": 607.73,
+            "tax_estimate_brl": 1994.29,
+            "risk_reserve_brl": 385.99,
+            "economic_monthly_net_brl": 5055.27,
+            "not_confirmed_fiscal_classification": true
+          }
+        }
+      },
+      {
+        "plan": "salao",
+        "monthly": {
+          "establishments": 40,
+          "result": {
+            "mrr_brl": 11996,
+            "operating_brl": 4077.63,
+            "stripe_estimate_brl": 582.61,
+            "tax_estimate_brl": 1859.38,
+            "risk_reserve_brl": 359.88,
+            "economic_monthly_net_brl": 5116.5,
+            "not_confirmed_fiscal_classification": true
+          }
+        },
+        "annual": {
+          "establishments": 52,
+          "result": {
+            "mrr_brl": 12129,
+            "operating_brl": 4197.63,
+            "stripe_estimate_brl": 571.02,
+            "tax_estimate_brl": 1880,
+            "risk_reserve_brl": 363.87,
+            "economic_monthly_net_brl": 5116.49,
+            "not_confirmed_fiscal_classification": true
+          }
+        }
+      }
+    ],
+    "tax_sensitivity": [
+      {
+        "tax_mode": "illustrative_anexo_iii",
+        "establishments": 70,
+        "result": {
+          "mrr_brl": 10903.9,
+          "operating_brl": 4377.63,
+          "stripe_estimate_brl": 539.98,
+          "tax_estimate_brl": 654.23,
+          "risk_reserve_brl": 327.12,
+          "economic_monthly_net_brl": 5004.94,
+          "not_confirmed_fiscal_classification": true
+        }
+      },
+      {
+        "tax_mode": "illustrative_flat_12pct",
+        "establishments": 76,
+        "result": {
+          "mrr_brl": 11838.52,
+          "operating_brl": 4437.63,
+          "stripe_estimate_brl": 586.26,
+          "tax_estimate_brl": 1420.62,
+          "risk_reserve_brl": 355.16,
+          "economic_monthly_net_brl": 5038.85,
+          "not_confirmed_fiscal_classification": true
+        }
+      },
+      {
+        "tax_mode": "illustrative_anexo_v",
+        "establishments": 81,
+        "result": {
+          "mrr_brl": 12617.37,
+          "operating_brl": 4603.13,
+          "stripe_estimate_brl": 624.83,
+          "tax_estimate_brl": 1955.69,
+          "risk_reserve_brl": 378.52,
+          "economic_monthly_net_brl": 5055.2,
+          "not_confirmed_fiscal_classification": true
+        }
+      }
+    ],
+    "fx_sensitivity": [
+      {
+        "fx_brl_per_usd": 5,
+        "establishments": 81,
+        "result": {
+          "mrr_brl": 12617.37,
+          "operating_brl": 4563.75,
+          "stripe_estimate_brl": 624.83,
+          "tax_estimate_brl": 1955.69,
+          "risk_reserve_brl": 378.52,
+          "economic_monthly_net_brl": 5094.58,
+          "not_confirmed_fiscal_classification": true
+        }
+      },
+      {
+        "fx_brl_per_usd": 5.5,
+        "establishments": 81,
+        "result": {
+          "mrr_brl": 12617.37,
+          "operating_brl": 4603.13,
+          "stripe_estimate_brl": 624.83,
+          "tax_estimate_brl": 1955.69,
+          "risk_reserve_brl": 378.52,
+          "economic_monthly_net_brl": 5055.2,
+          "not_confirmed_fiscal_classification": true
+        }
+      },
+      {
+        "fx_brl_per_usd": 6,
+        "establishments": 81,
+        "result": {
+          "mrr_brl": 12617.37,
+          "operating_brl": 4642.5,
+          "stripe_estimate_brl": 624.83,
+          "tax_estimate_brl": 1955.69,
+          "risk_reserve_brl": 378.52,
+          "economic_monthly_net_brl": 5015.83,
+          "not_confirmed_fiscal_classification": true
+        }
+      }
+    ]
+  },
+  "cohort_example_100": [
+    {
+      "month": 1,
+      "gross_cash_brl": 42692,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 2052.25,
+      "tax_on_receipts_illustrative_brl": 6655.68,
+      "cash_after_opex_and_risk_brl": 27910.17,
+      "cumulative_cash_brl": 27910.17,
+      "annual_revenue_not_yet_earned_brl": 27115,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 2,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 33136.57,
+      "annual_revenue_not_yet_earned_brl": 24650,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 3,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 38362.97,
+      "annual_revenue_not_yet_earned_brl": 22185,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 4,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 43589.36,
+      "annual_revenue_not_yet_earned_brl": 19720,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 5,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 48815.76,
+      "annual_revenue_not_yet_earned_brl": 17255,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 6,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 54042.15,
+      "annual_revenue_not_yet_earned_brl": 14790,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 7,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 59268.55,
+      "annual_revenue_not_yet_earned_brl": 12325,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 8,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 64494.95,
+      "annual_revenue_not_yet_earned_brl": 9860,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 9,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 69721.34,
+      "annual_revenue_not_yet_earned_brl": 7395,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 10,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 74947.74,
+      "annual_revenue_not_yet_earned_brl": 4930,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 11,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 80174.14,
+      "annual_revenue_not_yet_earned_brl": 2465,
+      "not_confirmed_tax_cash_regime": true
+    },
+    {
+      "month": 12,
+      "gross_cash_brl": 13112,
+      "economic_mrr_brl": 15577,
+      "fees_cash_brl": 654.95,
+      "tax_on_receipts_illustrative_brl": 2044.16,
+      "cash_after_opex_and_risk_brl": 5226.4,
+      "cumulative_cash_brl": 85400.53,
+      "annual_revenue_not_yet_earned_brl": 0,
+      "not_confirmed_tax_cash_regime": true
+    }
+  ]
+}

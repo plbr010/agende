@@ -1,0 +1,43 @@
+{
+  "frontend_files_modified": 0,
+  "repo": "plbr010/agende",
+  "production_ready": true,
+  "real_backups_exported": 0,
+  "pg_max_connections": 60,
+  "checked_at": "2026-10-13T15:14:08.0870491Z",
+  "vercel_plan": "hobby",
+  "public_tables_rls_force": 31,
+  "history_count": 63,
+  "production_get_login": 200,
+  "vercel_billing_usage": "unavailable; not zero",
+  "real_card_charges": 0,
+  "service_migration_applied": false,
+  "production_mutations": 0,
+  "auth": {
+    "mailer_autoconfirm": false,
+    "disable_signup": false,
+    "anonymous_users_enabled": false,
+    "signup_smtp_recovery_verified": false,
+    "email_enabled": true
+  },
+  "base_main": "bba86bc8288ec9317ce972f9e3fcf530a9a67e5f",
+  "preview_get_login": 500,
+  "production_get_root": 200,
+  "supabase_plan": "free",
+  "service_rpc_count": 0,
+  "database_bytes": 17771667,
+  "decision": "NO-GO",
+  "pg_version": "17.6",
+  "upgrades_purchased": 0,
+  "production_deployment": "dpl_4uyPZNjL81he71UWYchVGtaKBRuQ",
+  "stripe": {
+    "live_legacy_annual_prices_without_lookup": 3,
+    "test_checkouts_expired_unpaid": 5,
+    "staging_authenticated_billing_probe_status": 503,
+    "expected_prices_test_and_live_verified": 6,
+    "integrated_sync_verified": false,
+    "staging_authenticated_billing_probe_error": "stripe_api_key_missing",
+    "live_portal_updates_enabled": false,
+    "test_checkouts_paid": 1
+  }
+}

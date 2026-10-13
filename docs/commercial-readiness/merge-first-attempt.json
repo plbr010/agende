@@ -1,0 +1,21 @@
+{
+  "totals": {
+    "passed": 250,
+    "failed": 1,
+    "skipped": 0
+  },
+  "cause": "File-level execution failure; isolated tests passed; root cause not established",
+  "isolated_plans_repeat": {
+    "passed": 2,
+    "failed": 0
+  },
+  "checked_at": "2026-10-13T15:48:36.812Z",
+  "failed_cases": [
+    {
+      "file": "src/lib/billing/plans.test.ts",
+      "name": "src\\lib\\billing\\plans.test.ts",
+      "category": "unit_or_static_contract",
+      "status": "failed"
+    }
+  ]
+}
