@@ -1,4 +1,4 @@
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { canAccessWorkspacePath } from "@/lib/auth/permissions";
 import { ProfessionalDashboard, type DashboardMetric, type DashboardVisit } from "@/components/app/professional-dashboard";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
@@ -41,9 +41,9 @@ export default async function AppPage({
 }) {
   const { clientError, setup, mes } = await searchParams;
   const session = await requireConfirmedSession("/app");
-  const workspace = session.workspaces[0];
-  const settings = workspace ? await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug) : null;
-  const timezone = settings?.timezone ?? "America/Sao_Paulo";
+  const workspace = requireActiveWorkspace(session);
+  const settings = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
+  const timezone = settings.timezone;
   const today = todayInTimeZone(timezone);
   const month = parseMonthParam(mes, today);
   const yesterday = addDaysIso(today, -1);
@@ -52,20 +52,17 @@ export default async function AppPage({
   const monthEnd = shiftMonth(month, 1) + "-01";
   const range = rangeCovering([yesterday, today, horizon, monthStart, addDaysIso(monthEnd, -1)]);
 
-  const [team, services, clients, appointments, reviewsResult] = workspace
-    ? await Promise.all([
-        loadTeam(workspace.id),
-        loadServices(workspace.id),
-        loadClients(workspace.id),
-        loadAgendaRange(workspace.id, range.from, range.toExclusive),
-        loadReviewsResult(workspace.id),
-      ])
-    : [[], [], [], [], { reviews: [], schemaReady: true }] as const;
+  const [team, services, clients, appointments, reviewsResult] = await Promise.all([
+    loadTeam(workspace.id),
+    loadServices(workspace.id),
+    loadClients(workspace.id),
+    loadAgendaRange(workspace.id, range.from, range.toExclusive),
+    loadReviewsResult(workspace.id),
+  ]);
 
   const guideMember =
     team.find((member) => member.hasProfessionalProfile && member.bookingEnabled !== false) ?? team[0];
-  const workingHours =
-    workspace && guideMember ? await loadWorkingHours(workspace.id, guideMember.memberId) : [];
+  const workingHours = guideMember ? await loadWorkingHours(workspace.id, guideMember.memberId) : [];
 
   const activeServices = services.filter((service) => service.active);
   const servicesWithPros = activeServices.filter((service) => service.professionalMemberIds.length > 0);
@@ -85,7 +82,7 @@ export default async function AppPage({
     {
       done: servicesWithPros.length > 0 && workingHours.length > 0,
       title: "Envie o link para clientes",
-      href: workspace ? `/p/${workspace.slug}` : "/app/configuracoes/geral",
+      href: `/p/${workspace.slug}`,
       hint: "Copie e mande no WhatsApp. Elas marcam sozinhas.",
     },
   ] as const;
@@ -96,7 +93,7 @@ export default async function AppPage({
   const todayRevenue = dayRevenueCents(appointments, today);
   const yesterdayRevenue = dayRevenueCents(appointments, yesterday);
   const rating = reviewsResult.schemaReady ? averageRating(reviewsResult.reviews.map((review) => review.rating)) : null;
-  const canOpenFinance = canAccessWorkspacePath("/app/financeiro", workspace?.role);
+  const canOpenFinance = canAccessWorkspacePath("/app/financeiro", workspace.role);
   const occupied = new Set(
     appointments.filter((item) => item.status !== "cancelled" && item.status !== "no_show").map((item) => item.localDate),
   );
@@ -160,7 +157,7 @@ export default async function AppPage({
   return (
     <ProfessionalDashboard
       firstName={firstName}
-      salonName={workspace?.name ?? "Seu salão"}
+      salonName={workspace.name}
       todayLabel={formatDashboardDate(today, timezone)}
       clientError={Boolean(clientError)}
       metrics={metrics}
@@ -178,15 +175,15 @@ export default async function AppPage({
         showWelcome: setup === "1",
         steps: [...setupSteps],
         nextHref: setupSteps.find((step) => !step.done)?.href ?? "/app/servicos",
-        publicPath: workspace ? `/p/${workspace.slug}` : null,
+        publicPath: `/p/${workspace.slug}`,
       } : null}
       plan={{
         planLabel: PLAN_LABEL[session.subscription?.plan ?? "solo"],
         statusLabel: SUBSCRIPTION_STATUS_LABEL[session.subscription?.status ?? "expired"],
         trialStarted: formatDateTime(session.subscription?.trialStartedAt ?? null, timezone),
         trialEnds: formatDateTime(session.subscription?.trialEndsAt ?? null, timezone),
-        roleLabel: workspace ? MEMBER_ROLE_LABEL[workspace.role] : "Profissional",
-        publicPath: workspace ? `/p/${workspace.slug}` : null,
+        roleLabel: MEMBER_ROLE_LABEL[workspace.role],
+        publicPath: `/p/${workspace.slug}`,
         hasClientProfile: session.context.hasClientProfile,
       }}
       primaryAction={setupIncomplete ? {

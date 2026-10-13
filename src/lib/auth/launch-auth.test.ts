@@ -61,6 +61,7 @@ function actions(error: { code?: string; message: string; status?: number } | nu
     signUpAction: (previous: object, form: FormData) => Promise<{ error?: string }>;
     signInAction: (previous: object, form: FormData) => Promise<{ error?: string }>;
     signOutAction: () => Promise<void>;
+    resendConfirmationAction: () => Promise<{ error?: string; success?: string }>;
   }>("./actions.ts", {
     "@/lib/billing/plans": plans,
     "next/headers": { cookies: async () => ({ get: (name: string) => ({ value: cookies.get(name) }),
@@ -76,6 +77,7 @@ function actions(error: { code?: string; message: string; status?: number } | nu
       signUp: async (value: unknown) => { calls.push({ name: "signup", value }); return { error }; },
       signInWithPassword: async (value: unknown) => { calls.push({ name: "login", value }); return { error }; },
       signOut: async () => { calls.push({ name: "logout" }); return { error }; },
+      resend: async (value: unknown) => { calls.push({ name: "resend", value }); return { error }; },
     } }) },
   });
   return { ...mod, calls, cookies };
@@ -101,6 +103,19 @@ test("client and professional signup preserve intent and selected plan without p
   const h = actions();
   assert.ok((await h.signUpAction({}, signupForm("owner"))).error);
   assert.equal(h.calls.length, 0);
+});
+
+test("resend confirmation preserves a safe invite destination", async () => {
+  const form = new FormData();
+  for (const [key, value] of Object.entries({ intendedUse: "professional", fullName: "Test User", email: "TEST@example.invalid",
+    phone: "55999999999", password: "Password123", confirmPassword: "Password123", termsAccepted: "on", next: "/convite/abc" })) form.set(key, value);
+  const h = actions();
+  await assert.rejects(h.signUpAction({}, form), /redirect:\/verificar-email\?status=sent/);
+  assert.equal(h.cookies.get("agende_pending_next"), "/convite/abc");
+  const resent = await h.resendConfirmationAction();
+  assert.equal(resent.success, "Enviamos um novo e-mail de confirmação.");
+  const payload = h.calls.find((call) => call.name === "resend")?.value as { options: { emailRedirectTo: string } };
+  assert.equal(payload.options.emailRedirectTo, "https://agende.test/auth/callback?next=%2Fconvite%2Fabc");
 });
 
 test("signup only reports duplicate accounts for the actual duplicate-account error", async () => {

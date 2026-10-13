@@ -7,7 +7,7 @@ import { DISCOVERY_COPY } from "@/lib/discovery/contract";
 export const metadata: Metadata = {
   title: "Encontrar um salão",
   description:
-    "Procure estabelecimentos do Agendê em qualquer cidade. A busca não fica limitada à cidade onde você mora.",
+    "Procure estabelecimentos do Agendê perto de você, em qualquer cidade ou pelo nome. A busca não fica limitada à cidade onde você mora.",
 };
 
 export default function DescobrirPage() {

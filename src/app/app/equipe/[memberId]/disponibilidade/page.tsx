@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { AvailabilityEditor } from "@/components/agenda/availability-editor";
 import { loadTeam } from "@/lib/catalog/queries";
 import {
@@ -22,10 +22,7 @@ export default async function AvailabilityPage({
   params: Promise<{ memberId: string }>;
 }) {
   const session = await requireConfirmedSession("/app/equipe");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
 
   const { memberId } = await params;
   const [team, currentMemberId, hours, breaks, blocks, settings] = await Promise.all([

@@ -98,7 +98,7 @@ export function InviteAcceptance({
                   Entrar para aceitar
                 </Link>
                 <Link
-                  href={`/cadastro?next=${encodeURIComponent(next)}`}
+                  href={`/cadastro?intent=professional&next=${encodeURIComponent(next)}`}
                   className={cn(buttonVariants({ variant: "outline" }), "h-12")}
                 >
                   Criar conta
