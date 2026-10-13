@@ -14,22 +14,22 @@
   "ciphertext_checksums": [
     {
       "file": "database.dump.enc",
-      "sha256": "43de091344ab712787940902330fb4c872ae6953d84e86082e7e6f10082ce14d",
+      "sha256": "0fdae2342bc87a3a6719c3104dd4b7813f9fc9757da6aee07921b5f6ddca76bb",
       "bytes": 6683
     },
     {
       "file": "core.dump.enc",
-      "sha256": "ebd158386f443fd3c931d6ff74095e9396e7f84ba50709de3c5233f5075ff680",
+      "sha256": "d60d36f6c7761b7a6961e6f5bf7db96bdf0e125a2acd26aba7d9dc9d8f483e5f",
       "bytes": 7071
     },
     {
       "file": "roles.sql.enc",
-      "sha256": "664995cafcbb84aa05991b1e83d5a71b7052cec9864a12e6f25de4dab26fcd4d",
+      "sha256": "8239929c2674a53390ab03b613aeb71f0dcc7c0b40c15c0f90f87cdee1984b4b",
       "bytes": 973
     },
     {
       "file": "snapshot.json.enc",
-      "sha256": "5e4b12fadb40e03937b3c1876f8e2412d52c1eea9c363c13a13980bca6b130f1",
+      "sha256": "5330e90f3286ffe6c13128ef3eab8fb41bbdcc3cb5b979dc0b2b98eaaeaec96b",
       "bytes": 3697
     }
   ],
@@ -59,7 +59,7 @@
     "temporary_plaintext_cluster_removed": true
   },
   "manifest_timestamp_tampering_rejected": true,
-  "snapshot_at": "2026-10-13T01:25:38.595Z",
+  "snapshot_at": "2026-10-13T13:57:05.798Z",
   "production_export_executed": false,
   "checksum_tampering_rejected": true,
   "staging_used": false
