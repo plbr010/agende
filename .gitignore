@@ -41,3 +41,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.test-postgres/
+
+# Recovery artifacts contain customer/Auth data. Store outside the repository.
+/.private-recovery/
+/backups/
+*.dump
+*.dump.enc
+*.backup
+*.backup.enc
+*.sql.enc
+*.json.enc
+*.pgpass
+*.pgpass.conf
+roles.sql
+data.sql
+schema.sql
