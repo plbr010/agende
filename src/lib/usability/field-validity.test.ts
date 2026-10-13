@@ -24,12 +24,12 @@ function fakeField(partial: Partial<ValidityState> & { type?: string; minLength?
 
 test("empty required fields explain the next step in Portuguese", () => {
   const field = fakeField({ valueMissing: true });
-  applyPortugueseValidity(field as unknown as HTMLInputElement);
+  applyPortugueseValidity(field);
   assert.equal(field.message, REQUIRED_FIELD_MESSAGE);
 });
 
 test("invalid emails tell the person what a valid address looks like", () => {
   const field = fakeField({ type: "email", typeMismatch: true });
-  applyPortugueseValidity(field as unknown as HTMLInputElement);
+  applyPortugueseValidity(field);
   assert.match(field.message, /e-mail válido/);
 });

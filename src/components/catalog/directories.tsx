@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, UserRound, UsersRound, WandSparkles } from "lucide-react";
+import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, Sparkles, UserRound, WandSparkles } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import type { ActionState } from "@/lib/auth/actions";
 import {
@@ -128,9 +128,9 @@ export function TeamDirectory({
         <Card className="border-none ring-1 ring-[#f0e4de]">
           <CardContent>
             <EmptyState
-              icon={UsersRound}
-              title="Equipe vazia"
-              description="Nenhuma pessoa nesta equipe ainda."
+              icon={Sparkles}
+              title="Ninguém na equipe ainda"
+              description="Nenhuma pessoa nesta equipe ainda. Convide a primeira para dividir a agenda."
               action={canManage ? (
                 <Button className="h-11 w-fit rounded-full" render={<Link href="/app/configuracoes/equipe" />}>
                   Convidar a primeira pessoa

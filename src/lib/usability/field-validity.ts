@@ -1,6 +1,13 @@
 export const REQUIRED_FIELD_MESSAGE = "Preencha este campo para continuar.";
 
-export function applyPortugueseValidity(field: HTMLInputElement | HTMLTextAreaElement) {
+export type ValidityTarget = {
+  type: string;
+  minLength: number;
+  validity: Pick<ValidityState, "valueMissing" | "typeMismatch" | "tooShort">;
+  setCustomValidity: (message: string) => void;
+};
+
+export function applyPortugueseValidity(field: ValidityTarget) {
   if (field.validity.valueMissing) {
     field.setCustomValidity(REQUIRED_FIELD_MESSAGE);
     return;

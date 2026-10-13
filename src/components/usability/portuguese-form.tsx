@@ -1,10 +1,13 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import type { ComponentProps, MouseEvent } from "react";
 import { applyPortugueseValidity } from "@/lib/usability/field-validity";
 
 function syncField(target: EventTarget | null) {
-  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+  if (
+    (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) &&
+    "validity" in target
+  ) {
     applyPortugueseValidity(target);
   }
 }
@@ -20,7 +23,7 @@ export function PortugueseForm({
   onInput,
   onClick,
   ...props
-}: React.ComponentProps<"form">) {
+}: ComponentProps<"form">) {
   return (
     <form
       {...props}

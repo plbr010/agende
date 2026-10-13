@@ -44,7 +44,7 @@ const STEP_LABEL: Record<BookingStep, string> = {
 };
 
 const PICKER_BUTTON =
-  "rounded-3xl bg-card p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+  "agende-panel rounded-[1.25rem] p-5 text-left ring-1 ring-[#f0e4de] transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
 
 const SLOT_BUTTON =
   "min-h-12 rounded-2xl bg-card text-sm font-medium ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60";
@@ -273,7 +273,7 @@ export function PublicBookingFlow({
       <main className="mx-auto grid w-full max-w-lg gap-6 px-4 py-6 pb-28">
         <div>
           <p className="text-xs tracking-[0.18em] text-primary uppercase">{catalog.name}</p>
-          <h1 className="font-serif text-3xl">Agendar horário</h1>
+          <h1 className="font-serif text-3xl text-wine-deep">Agendar horário</h1>
         </div>
 
         <ol className="grid grid-cols-3 gap-2 sm:grid-cols-6" aria-label="Etapas do agendamento">

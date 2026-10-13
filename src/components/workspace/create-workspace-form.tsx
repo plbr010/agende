@@ -58,7 +58,11 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
               <span className="min-w-0">
                 <span className="flex flex-wrap items-center gap-2">
                   <strong className="font-serif text-xl text-wine-deep">{plan.name}</strong>
-                  {plan.popular ? <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">Mais escolhido</span> : null}
+                  {plan.popular ? (
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                      Mais escolhido
+                    </span>
+                  ) : null}
                 </span>
                 <span className="mt-1 block text-sm text-muted-foreground">{plan.seats}</span>
                 <span className="mt-2 block font-serif text-2xl text-wine-deep">
@@ -78,7 +82,9 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
       </fieldset>
       <p className="rounded-2xl bg-metric-ivory px-4 py-3 text-sm text-muted-foreground">{TRIAL_PLAIN}</p>
       {state.error ? (
-        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{state.error}</p>
+        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {state.error}
+        </p>
       ) : null}
       <Button type="submit" className="h-12" disabled={pending}>
         {pending ? "Criando..." : "Criar salão e começar teste grátis"}

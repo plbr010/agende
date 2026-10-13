@@ -169,17 +169,20 @@ export function AgendaBoard({
           onOpen={setEditing}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-7 lg:gap-2">
-          {weekDates.map((day, index) => (
-            <DayColumn
-              key={day}
-              date={day}
-              weekdayLabel={WEEKDAYS[index]?.label ?? ""}
-              compact
-              items={appointments.filter((item) => item.localDate === day)}
-              onOpen={setEditing}
-            />
-          ))}
+        <div className="-mx-4 overflow-x-auto px-4 pb-2 lg:mx-0 lg:overflow-visible lg:px-0">
+          <p className="mb-2 text-sm text-muted-foreground lg:hidden">Deslize para o lado para ver os 7 dias.</p>
+          <div className="grid min-w-[56rem] grid-cols-7 gap-2 lg:min-w-0">
+            {weekDates.map((day, index) => (
+              <DayColumn
+                key={day}
+                date={day}
+                weekdayLabel={WEEKDAYS[index]?.label ?? ""}
+                compact
+                items={appointments.filter((item) => item.localDate === day)}
+                onOpen={setEditing}
+              />
+            ))}
+          </div>
         </div>
       )}
 

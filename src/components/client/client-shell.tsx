@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, House, LogOut, Sparkles, Star } from "lucide-react";
+import { CalendarDays, House, LogOut, MapPin, Sparkles, Star } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { href: "/cliente", label: "Início", icon: House },
+  { href: "/cliente/descobrir", label: "Encontrar", icon: MapPin },
   { href: "/cliente/agendamentos", label: "Agendamentos", icon: CalendarDays },
   { href: "/cliente/avaliacoes", label: "Avaliações", icon: Star },
 ];

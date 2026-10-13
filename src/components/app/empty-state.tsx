@@ -18,8 +18,8 @@ export function EmptyState({
         <Icon className="size-5" aria-hidden="true" />
       </div>
       <div>
-        <p className="font-medium">{title}</p>
-        <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
+        <p className="font-serif text-xl text-wine-deep">{title}</p>
+        <p className="mt-1 max-w-md text-sm leading-6 text-muted-foreground">{description}</p>
       </div>
       {action}
     </div>

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T15:58:40.063Z",
+  "checked_at": "2026-10-13T19:45:03.554Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 150,
+      "passed": 156,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 256,
+    "passed": 262,
     "failed": 0,
     "skipped": 0
   },
@@ -396,6 +396,12 @@
     },
     {
       "file": "src/app/visual-tokens.test.ts",
+      "name": "shared panel class keeps cream cards consistent across launch screens",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/app/visual-tokens.test.ts",
       "name": "small text does not use the pale reference rose as the primary button",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -421,6 +427,18 @@
     {
       "file": "src/components/app/launch-frontend.test.ts",
       "name": "auth, onboarding and billing keep the next step obvious",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "catalog and money modules explain the empty next step",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
+      "name": "discovery is honest and not limited to the city of residence",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1021,6 +1039,24 @@
     {
       "file": "src/lib/dashboard/summary.test.ts",
       "name": "owner menu follows the reference and still reaches avaliações",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "discovery never defaults to a residence city",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "a person can search any registered locality, not only where they live",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "search does not invent establishments while the backend is missing",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
