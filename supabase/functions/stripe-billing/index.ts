@@ -420,7 +420,8 @@ Deno.serve(async (req: Request) => {
       known.includes(message) ? 409 :
       500;
 
-    if (status === 500) console.error("stripe_billing_failed", message);
+    // Provider/database errors can include credentials or customer data.
+    if (status === 500) console.error("stripe_billing_failed");
     return json(status, { error: known.includes(message) ? message : "billing_unavailable" });
   }
 });

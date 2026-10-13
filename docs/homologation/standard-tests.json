@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T00:16:22.050Z",
+  "checked_at": "2026-10-13T15:58:40.063Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,17 +7,17 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 26,
-      "failed": 0,
-      "skipped": 0
-    },
-    "stripe_mocks": {
-      "passed": 12,
+      "passed": 28,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 146,
+      "passed": 150,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 13,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 249,
+    "passed": 256,
     "failed": 0,
     "skipped": 0
   },
@@ -102,6 +102,18 @@
     },
     {
       "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "missing production service contract is restored by the exact additive migration",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
       "name": "atomic catalog SQL protects tenant boundaries, roles and existing overrides",
       "category": "pglite_sql",
       "status": "passed"
@@ -110,6 +122,30 @@
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "an error after service insertion rolls back the entire atomic RPC",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "annual Solo cash is 799 once, while revenue recognition is 799/12",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "monthly Solo uses the published 89.90 and twelve monthly cash charges",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "illustrative fiscal bands change at RBT12 and do not assume eligibility",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "net target respects all operating expenses and returns the first viable integer",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -277,6 +313,12 @@
     {
       "file": "scripts/stripe-edge.test.mjs",
       "name": "Webhook subscription retrieval rejects a LIVE key on the test backend",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge failures do not expose raw provider secrets in logs or HTTP responses",
       "category": "stripe_mocks",
       "status": "passed"
     },

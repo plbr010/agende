@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-11T15:16:58.920Z",
+  "checked_at": "2026-10-13T15:49:17.789Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "native_pg17_sql": {
-      "passed": 26,
+      "passed": 28,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +18,7 @@
     }
   },
   "totals": {
-    "passed": 45,
+    "passed": 47,
     "failed": 0,
     "skipped": 0
   },
@@ -88,6 +88,18 @@
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
       "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "missing production service contract is restored by the exact additive migration",
+      "category": "native_pg17_sql",
       "status": "passed"
     },
     {

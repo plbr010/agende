@@ -13,7 +13,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node scripts/run-tests.mjs",
     "test:smoke": "node scripts/audit-built-site.mjs",
-    "test:postgres": "node scripts/run-pg17-tests.mjs"
+    "test:postgres": "node scripts/run-pg17-tests.mjs",
+    "test:commercial": "node --test scripts/commercial-model.test.mjs",
+    "test:load:local": "node scripts/run-pg17-tests.mjs scripts/capacity-load.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

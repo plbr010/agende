@@ -63,6 +63,8 @@ test("missing atomic service RPC and unprivileged roles never fall back to parti
   for (const role of ["professional", "receptionist"]) {
     assert.ok((await isolatedServiceAction({ rpc: () => assert.fail("unauthorized write") }, role)({}, form())).error);
   }
-  const result = await isolatedServiceAction({ rpc: async () => ({ error: { code: "PGRST202", message: "schema cache" } }), from: () => assert.fail("no unsafe fallback") })({}, form());
-  assert.match(result.error!, /temporariamente|atualização/);
+  for (const code of ["PGRST202", "42883"]) {
+    const result = await isolatedServiceAction({ rpc: async () => ({ error: { code, message: "missing function" } }), from: () => assert.fail("no unsafe fallback") })({}, form());
+    assert.match(result.error!, /temporariamente|atualização/);
+  }
 });

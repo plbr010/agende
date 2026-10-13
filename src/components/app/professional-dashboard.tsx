@@ -274,7 +274,7 @@ export function ProfessionalDashboard({
               )}
             >
               <span className="flex items-start justify-between gap-2">
-                <span className="text-xs font-medium text-muted-foreground sm:text-sm">{metric.label}</span>
+                <span className="text-[0.78rem] leading-4 font-medium text-muted-foreground sm:text-sm">{metric.label}</span>
                 <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/80 text-wine-deep">
                   <Icon className="size-3.5" aria-hidden="true" />
                 </span>

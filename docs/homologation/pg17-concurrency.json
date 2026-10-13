@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-11T15:16:58.853Z",
+  "checked_at": "2026-10-13T15:49:17.717Z",
   "engine": "native PostgreSQL 17",
   "authentication": "SQL identity fixture, not Auth service",
   "cases": [
     {
       "name": "same slot",
-      "pid_a": 90984,
-      "pid_b": 93212,
+      "pid_a": 195168,
+      "pid_b": 195652,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": false,
@@ -14,8 +14,8 @@
     },
     {
       "name": "booking rollback",
-      "pid_a": 93892,
-      "pid_b": 93920,
+      "pid_a": 195964,
+      "pid_b": 193776,
       "verified_wait": "Lock",
       "release_a": "rollback",
       "b_success": true,
@@ -23,8 +23,8 @@
     },
     {
       "name": "reschedule collision",
-      "pid_a": 92132,
-      "pid_b": 90976,
+      "pid_a": 196296,
+      "pid_b": 187160,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": false,
@@ -32,8 +32,8 @@
     },
     {
       "name": "review uniqueness",
-      "pid_a": 89704,
-      "pid_b": 89604,
+      "pid_a": 189756,
+      "pid_b": 71284,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": false,
@@ -41,8 +41,8 @@
     },
     {
       "name": "last owner",
-      "pid_a": 93980,
-      "pid_b": 94016,
+      "pid_a": 196076,
+      "pid_b": 196216,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": false,
@@ -50,8 +50,8 @@
     },
     {
       "name": "seat limit",
-      "pid_a": 94112,
-      "pid_b": 88360,
+      "pid_a": 192184,
+      "pid_b": 99764,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": false,
@@ -59,8 +59,8 @@
     },
     {
       "name": "billing replay",
-      "pid_a": 77512,
-      "pid_b": 91208,
+      "pid_a": 191524,
+      "pid_b": 192088,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": true,
@@ -68,8 +68,8 @@
     },
     {
       "name": "checkout lease",
-      "pid_a": 91040,
-      "pid_b": 93552,
+      "pid_a": 85172,
+      "pid_b": 71284,
       "verified_wait": "Lock",
       "release_a": "commit",
       "b_success": true,
