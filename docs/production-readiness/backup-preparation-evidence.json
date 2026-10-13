@@ -1,0 +1,66 @@
+{
+  "manifest_format": 3,
+  "wrong_passphrase_rejected": true,
+  "tls": {
+    "port": 5432,
+    "chain_and_hostname_verified": true,
+    "host": "aws-0-us-east-2.pooler.supabase.com",
+    "ca_file_sha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+    "authentication_attempted": false,
+    "peer_certificate_sha256": "03:70:9C:A4:4D:1B:06:E4:50:4D:A0:A8:3B:6C:A0:65:76:1E:DC:70:4C:D5:63:4B:CC:38:94:FD:5C:7B:32:48",
+    "protocol": "TLSv1.3"
+  },
+  "mode": "synthetic_selftest_only",
+  "ciphertext_checksums": [
+    {
+      "file": "database.dump.enc",
+      "sha256": "0fdae2342bc87a3a6719c3104dd4b7813f9fc9757da6aee07921b5f6ddca76bb",
+      "bytes": 6683
+    },
+    {
+      "file": "core.dump.enc",
+      "sha256": "d60d36f6c7761b7a6961e6f5bf7db96bdf0e125a2acd26aba7d9dc9d8f483e5f",
+      "bytes": 7071
+    },
+    {
+      "file": "roles.sql.enc",
+      "sha256": "8239929c2674a53390ab03b613aeb71f0dcc7c0b40c15c0f90f87cdee1984b4b",
+      "bytes": 973
+    },
+    {
+      "file": "snapshot.json.enc",
+      "sha256": "5330e90f3286ffe6c13128ef3eab8fb41bbdcc3cb5b979dc0b2b98eaaeaec96b",
+      "bytes": 3697
+    }
+  ],
+  "restore": {
+    "checked_at": "2026-10-13T13:57:24.889Z",
+    "passed": true,
+    "scope": [
+      "app",
+      "public",
+      "auth",
+      "extensions",
+      "supabase_migrations"
+    ],
+    "all_encrypted_files_authenticated": true,
+    "full_archive_toc_readable": true,
+    "table_content_fingerprints_equal": true,
+    "catalog_equal": true,
+    "role_attributes_and_memberships_equal": true,
+    "sequences_checked": 1,
+    "auth_database_rows_verified": true,
+    "full_platform_restore_verified": false,
+    "restored_tables": 2,
+    "production_writes": 0,
+    "staging_connections": 0,
+    "rto_seconds": 18.727,
+    "owned_cluster_stopped": true,
+    "temporary_plaintext_cluster_removed": true
+  },
+  "manifest_timestamp_tampering_rejected": true,
+  "snapshot_at": "2026-10-13T13:57:05.798Z",
+  "production_export_executed": false,
+  "checksum_tampering_rejected": true,
+  "staging_used": false
+}
