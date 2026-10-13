@@ -16,6 +16,25 @@ async function fixture(db,label){
 const save=(db,user,workspace,id,members,name='Corte')=>as(db,user,
   'select public.save_service_with_professionals($1,$2,$3,null,30,5000,true,$4) id',[workspace,id,name,members]);
 
+test('prepared one-migration transaction preserves existing catalog and other history',async t=>{
+  const db=await createLocalDatabase();t.after(()=>db.close());
+  await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
+  const owner=await fixture(db,'Existing Catalog');
+  await save(db,owner.uid,owner.wid,null,[owner.member]);
+  const catalog=async()=>({services:(await db.query('select * from public.services order by id')).rows,
+    links:(await db.query('select * from public.professional_services order by id')).rows});
+  const before=await catalog();
+  await db.exec("create schema if not exists supabase_migrations; create table if not exists supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); insert into supabase_migrations.schema_migrations(version,name) values('synthetic_prior','preserve'); drop function public.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[]); drop function app.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[])");
+  const payload=readFileSync('docs/production-readiness/apply-service-rpc-only.sql','utf8');
+  await db.transaction(async tx=>tx.exec(payload));
+  assert.deepEqual(await catalog(),before);
+  const history=(await db.query('select version,name from supabase_migrations.schema_migrations order by version')).rows;
+  assert.deepEqual(history,[{version:'20261010232248',name:'atomic_service_professional_links'},
+    {version:'synthetic_prior',name:'preserve'}]);
+  await assert.rejects(db.transaction(async tx=>tx.exec(payload)),/service_migration_already_present_or_drift/);
+  assert.deepEqual(await catalog(),before);
+});
+
 test('missing production service contract is restored by the exact additive migration',async t=>{
   const db=await createLocalDatabase();t.after(()=>db.close());
   await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));

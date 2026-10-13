@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-13T00:21:26.757Z",
+  "groups": {
+    "native_pg17_sql": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "missing production service contract is restored by the exact additive migration",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "atomic catalog SQL protects tenant boundaries, roles and existing overrides",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "an error after service insertion rolls back the entire atomic RPC",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    }
+  ]
+}
