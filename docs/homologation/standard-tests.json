@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-12T23:38:22.644Z",
+  "checked_at": "2026-10-13T00:52:51.478Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 135,
+      "passed": 142,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 239,
+    "passed": 246,
     "failed": 0,
     "skipped": 0
   },
@@ -932,6 +932,48 @@
       "file": "src/lib/catalog/atomic-service.test.ts",
       "name": "missing atomic service RPC and unprivileged roles never fall back to partial writes",
       "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "day totals ignore cancelled visits and leave no-shows out of the money",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "percent change stays empty when yesterday has nothing to compare",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "rating average uses real notes only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "upcoming list keeps the next open visits after today",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "month grid starts on Sunday and marks today",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "month navigation rejects invalid cursors",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/dashboard/summary.test.ts",
+      "name": "owner menu follows the reference and still reaches avaliações",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {

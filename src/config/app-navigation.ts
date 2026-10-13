@@ -31,7 +31,7 @@ export const appNavigation: AppNavigationGroup[] = [
   {
     label: "Rotina",
     items: [
-      { href: "/app", label: "Visão geral", description: "Seu dia em um só lugar", icon: House },
+      { href: "/app", label: "Início", description: "Seu dia em um só lugar", icon: House },
       { href: "/app/agenda", label: "Agenda", description: "Horários e atendimentos", icon: CalendarDays },
       { href: "/app/clientes", label: "Clientes", description: "Nomes e histórico", icon: UsersRound },
       { href: "/app/servicos", label: "Serviços", description: "O que você oferece e os preços", icon: WandSparkles },

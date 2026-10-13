@@ -18,6 +18,8 @@ const USER_FACING_FILES = [
   "src/components/auth/login-form.tsx",
   "src/components/workspace/create-workspace-form.tsx",
   "src/app/app/page.tsx",
+  "src/components/app/professional-dashboard.tsx",
+  "src/components/app/app-shell.tsx",
   "src/components/agenda/agenda-board.tsx",
   "src/components/agenda/availability-editor.tsx",
   "src/components/booking/public-booking-flow.tsx",
