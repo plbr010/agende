@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T13:46:18.950Z",
+  "checked_at": "2026-10-13T15:50:35.001Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -11,13 +11,13 @@
       "failed": 0,
       "skipped": 0
     },
-    "stripe_mocks": {
-      "passed": 13,
+    "unit_or_static_contract": {
+      "passed": 146,
       "failed": 0,
       "skipped": 0
     },
-    "unit_or_static_contract": {
-      "passed": 142,
+    "stripe_mocks": {
+      "passed": 13,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 248,
+    "passed": 252,
     "failed": 0,
     "skipped": 0
   },
@@ -122,6 +122,30 @@
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "an error after service insertion rolls back the entire atomic RPC",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "annual Solo cash is 799 once, while revenue recognition is 799/12",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "monthly Solo uses the published 89.90 and twelve monthly cash charges",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "illustrative fiscal bands change at RBT12 and do not assume eligibility",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-model.test.mjs",
+      "name": "net target respects all operating expenses and returns the first viable integer",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
