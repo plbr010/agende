@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
+import { Boxes, PackageMinus, Wallet } from "lucide-react";
 import type { InventorySnapshot, InventoryProduct } from "@/lib/inventory/queries";
 import { formatCentsInput, formatCentsToReais } from "@/lib/validation/money";
+import { EmptyState } from "@/components/app/empty-state";
+import { MetricCard } from "@/components/app/metric-card";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
 function ProductFields({ product }: {
     product?: InventoryProduct;
@@ -28,10 +31,11 @@ export function InventoryDashboard({ timezone, snapshot }: {
         return <p className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive" role="alert">Não foi possível carregar o estoque. Atualize a página para tentar novamente.</p>;
     const products = snapshot.products.filter(p => p.name.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")) && (filter === "archived" ? !!p.archivedAt : !p.archivedAt && (filter === "all" || (filter === "low" ? p.quantity > 0 && p.quantity <= p.minimumQuantity : p.quantity === 0))));
     return <div className="grid gap-5">
-    <div className="grid gap-3 sm:grid-cols-3">{[["Produtos", snapshot.summary.products], ["Estoque baixo", snapshot.summary.lowStock], ["Custo em estoque", formatCentsToReais(snapshot.summary.estimatedCostCents)]].map(([label, value]) => <div className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5" key={label}>
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="font-serif text-3xl">{value}</p>
-        </div>)}</div>
+    <div className="grid gap-3 sm:grid-cols-3" aria-label="Resumo do estoque">
+        <MetricCard label="Produtos" value={snapshot.summary.products} hint="cadastrados e ativos" icon={Boxes} />
+        <MetricCard label="Estoque baixo" value={snapshot.summary.lowStock} hint="precisa repor em breve" icon={PackageMinus} tone="warning" />
+        <MetricCard label="Custo em estoque" value={formatCentsToReais(snapshot.summary.estimatedCostCents)} hint="estimativa do que está na prateleira" icon={Wallet} tone="neutral" />
+    </div>
  <ActionPanel title="+ Novo produto">
     <ManagementForm action="product-create" label="Criar produto">
     <ProductFields />
@@ -48,7 +52,11 @@ export function InventoryDashboard({ timezone, snapshot }: {
     </select>
     </label>
     </div>
- {products.length === 0 && <p className="rounded-2xl bg-secondary p-5">Nenhum produto encontrado. Cadastre seu primeiro produto ou ajuste a busca.</p>}
+ {products.length === 0 && (
+        <div className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de]">
+            <EmptyState icon={Boxes} title="Nenhum produto encontrado" description="Cadastre seu primeiro produto ou ajuste a busca." />
+        </div>
+    )}
  <div className="grid gap-4 lg:grid-cols-2">{products.map(p => <article key={p.id} className="grid content-start gap-3 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <h2 className="text-lg font-semibold">{p.name}</h2>
         <p>{p.quantity} {p.unit} · Mínimo {p.minimumQuantity} · <strong>{p.archivedAt ? "Arquivado" : p.quantity === 0 ? "Sem estoque" : p.quantity <= p.minimumQuantity ? "Baixo" : "Normal"}</strong>

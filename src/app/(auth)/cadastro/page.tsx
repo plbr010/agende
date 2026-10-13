@@ -20,8 +20,15 @@ export default async function CadastroPage({
 
   return (
     <div className="space-y-6">
+      <div>
+        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Começar no Agendê</p>
+        <h1 className="mt-2 font-serif text-3xl text-wine-deep">Criar conta</h1>
+        <p className="mt-2 text-muted-foreground">
+          Escolha se você quer marcar horários ou organizar o salão. Os dois cabem na mesma conta.
+        </p>
+      </div>
       {selectedPlan ? (
-        <p className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm">
+        <p className="rounded-[1.25rem] bg-metric-blush px-4 py-3 text-sm">
           Você escolheu o plano <strong>{selectedPlan.name}</strong> ({selectedPlan.seats}). Depois de confirmar o
           e-mail, começam <strong>7 dias grátis</strong> nesse plano — sem cartão.
         </p>

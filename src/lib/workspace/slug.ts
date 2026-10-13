@@ -25,6 +25,7 @@ export const RESERVED_WORKSPACE_SLUGS = [
   "clientes",
   "assinatura",
   "perfil",
+  "descobrir",
 ] as const;
 
 export const SLUG_MIN = 3;

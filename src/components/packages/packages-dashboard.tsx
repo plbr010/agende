@@ -1,6 +1,8 @@
+import { PackageCheck, WandSparkles } from "lucide-react";
 import type { PackagesSnapshot } from "@/lib/packages/queries";
 import type { ServiceRow, ClientRow } from "@/lib/catalog/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
+import { EmptyState } from "@/components/app/empty-state";
 import { ManagementForm, Field, SelectField, ActionPanel } from "@/components/modules/management-form";
 const statuses = { active: "Ativo", exhausted: "Esgotado", expired: "Expirado", cancelled: "Cancelado" };
 export function PackagesDashboard({ timezone, snapshot, services, clients }: {
@@ -10,7 +12,7 @@ export function PackagesDashboard({ timezone, snapshot, services, clients }: {
     clients: ClientRow[];
 }) {
     if (!snapshot)
-        return <p>Não foi possível carregar os pacotes. Atualize a página para tentar novamente.</p>;
+        return <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível carregar os pacotes. Atualize a página para tentar novamente.</p>;
     const available = services.filter(s => s.active && !s.archivedAt);
     return <div className="grid gap-5">
     <ActionPanel title="+ Criar pacote">{available.length ? <ManagementForm action="package-create" label="Criar pacote">
@@ -25,7 +27,11 @@ export function PackagesDashboard({ timezone, snapshot, services, clients }: {
             <Field label="Quantidade de sessões" name={"sessions-" + s.id} type="number" min={1} max={100} value={1}/>
             </div>)}</fieldset>
         </ManagementForm> : <p>Cadastre um serviço ativo em Serviços antes de criar seu pacote.</p>}</ActionPanel>
- <section className="grid gap-4 lg:grid-cols-2">{!snapshot.catalog.length && <p>Crie um pacote para oferecer uma sequência de cuidados aos seus clientes.</p>}{snapshot.catalog.map(p => <article key={p.id} className="grid content-start gap-3 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
+ <section className="grid gap-4 lg:grid-cols-2">{!snapshot.catalog.length && (
+        <div className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de] lg:col-span-2">
+            <EmptyState icon={WandSparkles} title="Nenhum pacote ainda" description="Crie um pacote para oferecer uma sequência de cuidados aos seus clientes." />
+        </div>
+    )}{snapshot.catalog.map(p => <article key={p.id} className="grid content-start gap-3 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <h2 className="text-xl font-semibold">{p.name}</h2>
         <p>{p.description}</p>
         <p className="font-medium">{formatCentsToReais(p.priceCents)} · {p.validityDays ? p.validityDays + " dias" : "Sem prazo de validade"}</p>
@@ -35,7 +41,11 @@ export function PackagesDashboard({ timezone, snapshot, services, clients }: {
                 <p className="text-sm">A venda entra no financeiro do salão automaticamente.</p>
                 </ManagementForm> : <p>Cadastre um cliente antes de vender.</p>}</ActionPanel>}</article>)}</section>
  <section className="grid gap-3">
-    <h2 className="text-xl font-semibold">Pacotes dos clientes</h2><p className="text-sm text-muted-foreground">Últimas 30 vendas.</p>{!snapshot.sales.length && <p>Nenhum pacote vendido. Escolha um pacote acima para registrar uma venda.</p>}{snapshot.sales.map(s => <article key={s.id} className="grid gap-2 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
+    <h2 className="font-serif text-xl text-wine-deep">Pacotes dos clientes</h2><p className="text-sm text-muted-foreground">Últimas 30 vendas.</p>{!snapshot.sales.length && (
+        <div className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de]">
+            <EmptyState icon={PackageCheck} title="Nenhum pacote vendido" description="Escolha um pacote acima para registrar uma venda." />
+        </div>
+    )}{snapshot.sales.map(s => <article key={s.id} className="grid gap-2 agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
         <h3 className="font-semibold">{s.clientName} · {s.packageName}</h3>
         <p>{statuses[s.status]} · {s.usedTotal} usadas / {Math.max(0, s.includedTotal - s.usedTotal)} restantes</p>
         <p>{formatCentsToReais(s.priceCents)} · Validade: {s.expiresAt ? new Date(s.expiresAt).toLocaleDateString("pt-BR", { timeZone: timezone }) : "Sem prazo"}</p>{s.status === "active" && <ManagementForm action="package-cancel" id={s.id} label="Cancelar pacote" confirm="Cancelar este pacote? As sessões que ainda não foram usadas deixam de valer."/>}</article>)}</section>

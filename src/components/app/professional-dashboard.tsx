@@ -447,6 +447,9 @@ export function ProfessionalDashboard({
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             {plan.publicPath ? <CopyLinkButton path={plan.publicPath} label="Copiar link do salão" className="h-11" /> : null}
+            <Button variant="outline" className="h-11 rounded-full" render={<Link href="/app/configuracoes/assinatura" />}>
+              Gerenciar plano
+            </Button>
             <Button variant="outline" className="h-11 rounded-full" render={<Link href="/app/agenda" />}>
               Abrir agenda
             </Button>
