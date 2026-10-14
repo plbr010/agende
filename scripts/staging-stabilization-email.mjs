@@ -13,8 +13,13 @@ const [mode,intent]=process.argv.slice(2);
 assert.ok(['signup','resend','confirm','recovery','recovery-confirm','expiry-confirm','negative'].includes(mode));
 assert.ok(['client','professional'].includes(intent));
 const statePath=`.env.stabilization-email-${intent}.json`;
+const alias=suffix=>{
+ const mailbox=process.env.AGENDE_STAGING_MAILBOX?.trim().toLowerCase();
+ assert.ok(mailbox&&/^[^@\s+]+@gmail\.com$/.test(mailbox),'Authorized AGENDE_STAGING_MAILBOX required for new identities');
+ const [local,domain]=mailbox.split('@');return `${local}+agende-stab-${suffix}@${domain}`;
+};
 const state=existsSync(statePath)?JSON.parse(readFileSync(statePath,'utf8')):
- {email:`plbrpc+agende-stab-${intent==='client'?'cliente':'pro'}@gmail.com`,password:randomUUID()+'aA1!',cookies:[]};
+ {email:alias(intent==='client'?'cliente':'pro'),password:randomUUID()+'aA1!',cookies:[]};
 const jar=new Map(state.cookies.map(c=>[c.name,c.value]));
 const client=createServerClient(config.url,config.publishable_key,{cookies:{
  getAll:()=>[...jar].map(([name,value])=>({name,value})),

@@ -13,8 +13,11 @@ const origin='http://localhost:3000',slug='staging-studio-a',checks=[];
 const fresh=()=>createClient(config.url,config.publishable_key,{auth:{persistSession:false,autoRefreshToken:false}});
 const client=fresh(),owner=fresh(),professionalClient=fresh();
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,'Backend operation failed');return r.data;};
-const fixtures={client:{email:'plbrpc+agende-stab-jornada@gmail.com',password:randomUUID()+'aA1!',phone:'329'+randomInt(10000000,99999999)},
- professional:{email:'plbrpc+agende-stab-pro2@gmail.com',password:randomUUID()+'aA1!',phone:'329'+randomInt(10000000,99999999)}};
+const mailbox=process.env.AGENDE_STAGING_MAILBOX?.trim().toLowerCase();
+assert.ok(mailbox&&/^[^@\s+]+@gmail\.com$/.test(mailbox),'Authorized AGENDE_STAGING_MAILBOX required');
+const [mailLocal,mailDomain]=mailbox.split('@');
+const fixtures={client:{email:`${mailLocal}+agende-stab-jornada@${mailDomain}`,password:randomUUID()+'aA1!',phone:'329'+randomInt(10000000,99999999)},
+ professional:{email:`${mailLocal}+agende-stab-pro2@${mailDomain}`,password:randomUUID()+'aA1!',phone:'329'+randomInt(10000000,99999999)}};
 const privateState='.env.stabilization-browser-fixtures.json';assert.ok(!existsSync(privateState),'Never replace an existing acceptance context');
 writeFileSync(privateState,JSON.stringify(fixtures));
 const report=()=>writeFileSync('docs/staging/stabilization-signup-booking-browser.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',mode:'real browser + SSR actions + delivered email links + staging GoTrue/PostgREST',production_touched:false,checks},null,2)+'\n');
@@ -79,7 +82,6 @@ try {
  await proPage.goto(await waitLink('professional'));await proPage.waitForURL('**/onboarding');
  await ok(professionalClient.auth.signInWithPassword(fixtures.professional));
  assert.equal((await ok(professionalClient.rpc('list_my_appointments'))).some(r=>r.id===appointment),false);record('professional delivered email callback lands on onboarding; customer reservation isolated');
- await page.reload();await page.getByRole('button',{name:'Reservar este horário',exact:true}).count();
  await ok(client.rpc('cancel_my_appointment',{p_appointment_id:appointment}));appointment=null;record('synthetic reservation cancelled through authorized RPC; history retained');
 } catch(e) {
  let message=String(e.message);for(const f of Object.values(fixtures))message=message.replaceAll(f.password,'[redacted]');

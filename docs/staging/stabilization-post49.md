@@ -11,6 +11,7 @@ Checkout original `agende-client-phase2`, branch `codex/client-phase2-2026-10-14
 - `.env.example` documenta a origem opcional de runtime e corrige a descrição da service role: ela é necessária para a API de avatar e deve pertencer ao mesmo projeto da URL pública, exclusivamente no servidor.
 - **Runner:** quatro workers limitam o consumo simultâneo dos bancos WASM. A execução irrestrita no Node 24 falhou em seis arquivos SQL; os mesmos testes passaram isoladamente e na execução completa com limite. Nenhum caso foi removido, ignorado ou teve validações relaxadas.
 - Runner de foto aceita somente o hostname do Preview desta branch para homologação remota. Runner de e-mail guarda cookies PKCE/senhas/links apenas em arquivos `.env*` ignorados e não usa confirmação administrativa.
+- Novas identidades SMTP derivam da caixa autorizada em `AGENDE_STAGING_MAILBOX`; o endereço pessoal não fica hardcoded nos runners publicados. Estado existente é retomado pelos arquivos privados ignorados.
 - **CI:** o verificador de histórico ainda exigia 68 migrations e recusava as duas já revisadas no PR #49. Agora exige exatamente 70 e inclui somente esses dois nomes na allowlist; hashes históricos seguem intactos. `.gitattributes` preserva LF também nas migrations de 27/09, evitando diferença de hash causada pelo checkout Windows. Nenhum SQL foi modificado.
 
 Nenhum componente, página ou estilo sob responsabilidade do Cursor foi modificado.
