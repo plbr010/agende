@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button";
 const copy: Record<string, { title: string; body: string }> = {
   sent: {
     title: "Abra o e-mail que enviamos",
-    body: "Toque no link da mensagem para entrar no Agendê. Se não achar, olhe também o spam.",
+    body: "Abra o link da mensagem neste mesmo navegador e dispositivo para entrar no Agendê. Se não achar, olhe também o spam.",
   },
   unconfirmed: {
     title: "Falta confirmar seu e-mail",
-    body: "Sua conta já existe. Abra o e-mail no celular, toque no link e volte para cá.",
+    body: "Sua conta já existe. Abra o link do e-mail neste mesmo navegador e dispositivo.",
   },
   expired: {
     title: "Este link não vale mais",
@@ -22,7 +22,11 @@ const copy: Record<string, { title: string; body: string }> = {
   },
   error: {
     title: "Não foi possível confirmar",
-    body: "Tente enviar o e-mail de novo. Se o problema continuar, use outro endereço.",
+    body: "Se você já confirmou seu e-mail, entre com sua senha. Caso contrário, peça um novo e-mail e abra o link neste mesmo navegador e dispositivo.",
+  },
+  browser_mismatch: {
+    title: "Continue no navegador do cadastro",
+    body: "Este navegador não tem a verificação iniciada no cadastro. Volte ao navegador e dispositivo onde criou a conta. Se o e-mail já foi confirmado, entre com sua senha.",
   },
   success: {
     title: "E-mail confirmado",
@@ -30,7 +34,7 @@ const copy: Record<string, { title: string; body: string }> = {
   },
   loading: {
     title: "Falta confirmar seu e-mail",
-    body: "Abra o e-mail no celular, toque no link e volte para esta tela.",
+    body: "Abra o link do e-mail neste mesmo navegador e dispositivo.",
   },
 };
 
@@ -48,7 +52,7 @@ export default async function VerificarEmailPage({
   const pendingEmail = await getPendingEmail();
   const key = status && copy[status] ? status : "loading";
   const content = copy[key];
-  const showLoginCta = key === "success" || key === "loading" || key === "sent";
+  const showLoginCta = ["success", "loading", "sent", "error", "browser_mismatch"].includes(key);
 
   return (
     <div className="space-y-6">
