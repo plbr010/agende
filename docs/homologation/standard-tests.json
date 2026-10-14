@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T18:31:22.153Z",
+  "checked_at": "2026-10-14T19:24:12.695Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 201,
+      "passed": 206,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 321,
+    "passed": 326,
     "failed": 0,
     "skipped": 0
   },
@@ -630,13 +630,13 @@
     },
     {
       "file": "src/components/client/client-experience.test.ts",
-      "name": "favorites stay honest and never persist in the browser",
+      "name": "favorites use the account API and never persist in the browser",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
       "file": "src/components/client/client-experience.test.ts",
-      "name": "profile edits only name and phone already granted on profiles",
+      "name": "profile edits name, phone and optional city, and reuses the private avatar route",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -739,6 +739,24 @@
     {
       "file": "src/components/usability/pending-form.test.ts",
       "name": "sensitive one-click actions lock while the request is in flight",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/account/avatar-ui.test.ts",
+      "name": "avatar messages hide technical codes and 503 is not treated as saved",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/account/avatar-ui.test.ts",
+      "name": "avatar cache version does not reveal the storage path",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/account/avatar-ui.test.ts",
+      "name": "crop keeps the photo covering the frame",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1249,6 +1267,18 @@
     {
       "file": "src/lib/client/avatar-image.test.ts",
       "name": "avatars reject SVG executables corruption size and invalid dimensions",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/favorites.test.ts",
+      "name": "favorites parse only explicit workspace ids and keep empty distinct from invalid",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/favorites.test.ts",
+      "name": "favorite errors stay in plain language",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

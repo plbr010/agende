@@ -3,6 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
+import * as avatarUi from "../account/avatar-ui";
 import * as plans from "../billing/plans";
 import * as redirects from "./redirects";
 import * as signup from "../validation/signup";
@@ -33,7 +34,7 @@ function sessionLoader(failingTable?: string) {
     subscriptions: { plan: "solo", status: "trialing" },
   };
   return sourceModule<{ loadAppSession: () => Promise<{ workspaces: unknown[] }> }>("./session.ts", {
-    "next/navigation": {}, "@/lib/auth/redirects": redirects,
+    "next/navigation": {}, "@/lib/account/avatar-ui": avatarUi, "@/lib/auth/redirects": redirects,
     "@/lib/auth/session-guard": { createConfirmedSessionGuard: () => null },
     "@/lib/supabase/server": { createClient: async () => ({
       auth: { getUser: async () => ({ data: { user } }) },

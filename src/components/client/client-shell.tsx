@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Compass, Heart, House, Sparkles, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AccountAvatar } from "@/components/account/account-avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -15,10 +15,6 @@ export const CLIENT_NAVIGATION = [
   { href: "/cliente/favoritos", label: "Favoritos", icon: Heart },
   { href: "/cliente/perfil", label: "Perfil", icon: UserRound },
 ] as const;
-
-function initials(value: string): string {
-  return value.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
-}
 
 function previewAsClientPath(pathname: string): string {
   if (pathname === "/identidade/cliente" || pathname.startsWith("/identidade/cliente/")) {
@@ -35,10 +31,14 @@ function isCurrentPath(pathname: string, href: string): boolean {
 export function ClientShell({
   userName,
   hasWorkspace,
+  hasAvatar = false,
+  avatarVersion = null,
   children,
 }: {
   userName: string;
   hasWorkspace: boolean;
+  hasAvatar?: boolean;
+  avatarVersion?: string | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -90,14 +90,12 @@ export function ClientShell({
               </>
             ) : null}
             <Link href="/cliente/perfil" aria-label="Abrir perfil" className="rounded-full focus-visible:ring-3 focus-visible:ring-ring/50">
-              <Avatar>
-                <AvatarFallback className="bg-metric-blush text-xs text-wine-deep">{initials(userName)}</AvatarFallback>
-              </Avatar>
+              <AccountAvatar name={userName} hasAvatar={hasAvatar} version={avatarVersion} alt="" />
             </Link>
           </div>
         </div>
       </header>
-      <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 pb-28 sm:px-6 sm:py-9 lg:pb-9">{children}</main>
+      <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 pb-32 sm:px-6 sm:py-9 lg:pb-9">{children}</main>
       <nav
         className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f0e4de] bg-[color-mix(in_srgb,var(--cream)_92%,white)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
         aria-label="Área da cliente"

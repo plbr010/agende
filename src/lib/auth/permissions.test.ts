@@ -16,7 +16,7 @@ const routes = ["/app/estoque", "/app/pacotes", "/app/financeiro", "/app/relator
 function sessionFor(role: WorkspaceRole): AppSession {
   return {
     user: { id: "user-1", email: "user@example.test", emailConfirmed: true },
-    profile: { fullName: "Test", email: "user@example.test", phone: null, intendedUse: "professional" },
+    profile: { fullName: "Test", email: "user@example.test", phone: null, residenceCity: null, hasAvatar: false, avatarVersion: null, intendedUse: "professional" },
     context: { emailConfirmed: true, intendedUse: "professional", hasWorkspace: true, hasClientProfile: false },
     workspaces: [{ id: "workspace-1", name: "Test", slug: "test", role }],
     subscription: null,

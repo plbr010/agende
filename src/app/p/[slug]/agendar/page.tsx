@@ -43,12 +43,14 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
   let draft = session?.user.emailConfirmed ? decodeBookingDraft((await cookies()).get(BOOKING_DRAFT_COOKIE)?.value, slug) : null;
   const resumedServiceId = draft?.serviceId ?? null;
   let draftSlotUnavailable = false;
+  let professionalUnavailable = false;
   if (draft) {
     const selection = draft;
     const serviceExists = catalog.services.some(s => s.id === selection.serviceId);
     const professionalExists = selection.professionalMemberId === null || catalog.professionals.some(p =>
       p.id === selection.professionalMemberId && p.serviceIds.includes(selection.serviceId));
-    if (!serviceExists || !professionalExists) draft = null;
+    if (!serviceExists) draft = null;
+    else if (!professionalExists) professionalUnavailable = true;
     else {
       const slots = await fetchPublicSlotsAction(selection);
       draftSlotUnavailable = !slots.slots.some(s => Date.parse(s) === Date.parse(selection.startsAt));
@@ -65,6 +67,7 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
       initialServiceId={initialServiceId}
       initialDraft={draft}
       initialDraftSlotUnavailable={draftSlotUnavailable}
+      initialProfessionalUnavailable={professionalUnavailable}
       authenticated={session?.user.emailConfirmed ?? false}
       hasClientProfile={session?.context.hasClientProfile ?? false}
       prefill={{

@@ -32,6 +32,11 @@ export default async function CadastroPage({
           Escolha se você quer marcar horários ou organizar o salão. Os dois cabem na mesma conta.
         </p>
       </div>
+      {safeNext?.includes("/agendar") ? (
+        <p role="status" className="rounded-[1.25rem] bg-metric-blush px-4 py-3 text-sm leading-6">
+          Serviço, profissional, dia e horário continuam escolhidos. Depois de criar a conta e confirmar o e-mail, você volta para concluir. Se o horário for ocupado nesse meio-tempo, avisamos para escolher outro.
+        </p>
+      ) : null}
       {selectedPlan ? (
         <p className="rounded-[1.25rem] bg-metric-blush px-4 py-3 text-sm">
           Você escolheu o plano <strong>{selectedPlan.name}</strong> ({selectedPlan.seats}). Depois de confirmar o

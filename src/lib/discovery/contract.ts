@@ -1,3 +1,5 @@
+import { readPublicWorkspaceId } from "@/lib/client/favorites";
+
 /**
  * Public discovery of establishments.
  *
@@ -34,6 +36,7 @@ export type DiscoverySearchInput = {
 };
 
 export type DiscoveryWorkspaceCard = {
+  workspaceId: string | null;
   name: string;
   slug: string;
   description: string | null;
@@ -162,6 +165,7 @@ export function parseDiscoveryWorkspaceCard(raw: unknown): DiscoveryWorkspaceCar
   if (!name || !slug) return null;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
   return {
+    workspaceId: readPublicWorkspaceId(data),
     name,
     slug,
     description: asString(data.description),

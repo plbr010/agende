@@ -74,6 +74,7 @@ export function PublicBookingFlow({
   authenticated = false,
   initialDraft = null,
   initialDraftSlotUnavailable = false,
+  initialProfessionalUnavailable = false,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
@@ -83,16 +84,33 @@ export function PublicBookingFlow({
   authenticated?: boolean;
   initialDraft?: BookingDraft | null;
   initialDraftSlotUnavailable?: boolean;
+  initialProfessionalUnavailable?: boolean;
 }) {
   const initialService =
     initialServiceId && catalog.services.some((item) => item.id === initialServiceId)
       ? initialServiceId
       : null;
-  const [step, setStep] = useState<BookingStep>(initialDraft ? (initialDraftSlotUnavailable ? "slot" : parsePublicBookingDetails({ ...prefill, customerNote: "" }).success ? "confirm" : "details") : initialService ? "professional" : "service");
+  const [step, setStep] = useState<BookingStep>(
+    initialProfessionalUnavailable
+      ? "professional"
+      : initialDraft
+        ? initialDraftSlotUnavailable
+          ? "slot"
+          : parsePublicBookingDetails({ ...prefill, customerNote: "" }).success
+            ? "confirm"
+            : "details"
+        : initialService
+          ? "professional"
+          : "service",
+  );
   const [serviceId, setServiceId] = useState<string | null>(initialDraft?.serviceId ?? initialService);
-  const [professionalId, setProfessionalId] = useState<string | null | typeof ANY_PROFESSIONAL>(initialDraft ? initialDraft.professionalMemberId ?? ANY_PROFESSIONAL : null);
-  const [localDate, setLocalDate] = useState<string | null>(initialDraft?.localDate ?? null);
-  const [startsAt, setStartsAt] = useState<string | null>(initialDraftSlotUnavailable ? null : initialDraft?.startsAt ?? null);
+  const [professionalId, setProfessionalId] = useState<string | null | typeof ANY_PROFESSIONAL>(
+    initialProfessionalUnavailable ? null : initialDraft ? initialDraft.professionalMemberId ?? ANY_PROFESSIONAL : null,
+  );
+  const [localDate, setLocalDate] = useState<string | null>(initialProfessionalUnavailable ? null : initialDraft?.localDate ?? null);
+  const [startsAt, setStartsAt] = useState<string | null>(
+    initialProfessionalUnavailable || initialDraftSlotUnavailable ? null : initialDraft?.startsAt ?? null,
+  );
   const [fullName, setFullName] = useState(prefill.fullName);
   const [phone, setPhone] = useState(prefill.phone);
   const [email, setEmail] = useState(prefill.email);
@@ -100,7 +118,13 @@ export function PublicBookingFlow({
   const [slots, setSlots] = useState<string[]>([]);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [slotsLoading, setSlotsLoading] = useState(initialDraftSlotUnavailable);
-  const [formError, setFormError] = useState<string | null>(initialDraftSlotUnavailable ? "Seu horário ficou indisponível enquanto você entrava. Escolha outro horário." : null);
+  const [formError, setFormError] = useState<string | null>(
+    initialProfessionalUnavailable
+      ? "Essa profissional não atende mais este serviço. Escolha outra pessoa."
+      : initialDraftSlotUnavailable
+        ? "Esse horário foi ocupado enquanto você entrava. Escolha outro."
+        : null,
+  );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmation, setConfirmation] = useState<PublicBookingConfirmation | null>(null);
   const [pending, startTransition] = useTransition();
@@ -394,6 +418,11 @@ export function PublicBookingFlow({
             {localDate ? (
               <p className="text-sm font-medium">Horários para {formatIsoDateLabel(localDate)}</p>
             ) : null}
+            {authenticated ? null : (
+              <p className="text-sm leading-6 text-muted-foreground">
+                Ao escolher o horário, você entra ou cria uma conta. Serviço, profissional, dia e horário continuam selecionados.
+              </p>
+            )}
             {slotsLoading ? (
               <p className="text-sm text-muted-foreground" role="status">
                 Buscando horários…
@@ -566,7 +595,7 @@ export function PublicBookingFlow({
         ) : null}
 
         {formError ? (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
             {formError}
           </p>
         ) : null}
@@ -704,7 +733,7 @@ function DateStep({
         const pad = weekdayInTimeZone(zonedWallTimeToUtc(days[0] ?? today, "12:00", timezone), timezone);
         return (
           <div key={monthKey} className="grid gap-2">
-            <h2 className="font-serif text-2xl capitalize">{monthLabel}</h2>
+            <h2 className="font-serif text-2xl">{monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}</h2>
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
               {WEEKDAY_LABELS.map((label, index) => (
                 <span key={`${monthKey}-${label}-${index}`} className="py-1">
@@ -803,12 +832,14 @@ function BookingSuccess({
           </p>
         </section>
         <article className="rounded-[2rem] bg-card p-5 ring-1 ring-border">
+          <SummaryRow label="Salão" value={confirmation.workspaceName} />
           <SummaryRow label="Serviço" value={confirmation.serviceName} />
           <SummaryRow label="Profissional" value={confirmation.professionalName} />
           <SummaryRow
             label="Quando"
             value={formatDateTimeInTimeZone(confirmation.startsAt, confirmation.timezone)}
           />
+          <SummaryRow label="Duração" value={`${confirmation.durationMinutes} minutos`} />
           <SummaryRow label="Valor" value={formatCentsToReais(confirmation.priceCents)} />
         </article>
         <div className="grid gap-3">

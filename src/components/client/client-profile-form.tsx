@@ -15,10 +15,12 @@ export function ClientProfileForm({
   fullName,
   phone,
   email,
+  residenceCity = "",
 }: {
   fullName: string;
   phone: string | null;
   email: string;
+  residenceCity?: string | null;
 }) {
   const [state, action, pending] = useActionState(updateClientProfileAction, initial);
   const [phoneValue, setPhoneValue] = useState(phone ? formatPhoneBr(phone) : "");
@@ -46,6 +48,21 @@ export function ClientProfileForm({
         />
         {state.fieldErrors?.phone ? (
           <p className="text-sm text-destructive" role="alert">{state.fieldErrors.phone}</p>
+        ) : null}
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="residenceCity">Cidade onde você mora</Label>
+        <Input
+          id="residenceCity"
+          name="residenceCity"
+          defaultValue={residenceCity ?? ""}
+          autoComplete="address-level2"
+          className="h-11"
+          placeholder="Opcional"
+        />
+        <p className="text-xs text-muted-foreground">Opcional. Não muda a busca de salões.</p>
+        {state.fieldErrors?.residenceCity ? (
+          <p className="text-sm text-destructive" role="alert">{state.fieldErrors.residenceCity}</p>
         ) : null}
       </div>
       <div className="grid gap-2">

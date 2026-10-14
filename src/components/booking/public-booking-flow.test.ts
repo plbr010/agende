@@ -10,6 +10,10 @@ test("public booking reduces steps and keeps undo actions visible", () => {
   assert.match(source, /shouldSkipProfessionalStep/);
   assert.match(source, /proceedAfterSlot/);
   assert.match(source, /Reservar este horário/);
+  assert.match(source, /Esse horário foi ocupado enquanto você entrava/);
+  assert.match(source, /não atende mais este serviço/);
+  assert.match(source, /você entra ou cria uma conta/);
+  assert.match(source, /Duração/);
   assert.match(source, /Mudar horário/);
   assert.match(source, /Alterar meus dados/);
   assert.match(source, /bookingStepCaption/);

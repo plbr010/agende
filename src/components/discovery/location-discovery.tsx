@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Navigation, Search } from "lucide-react";
+import { FavoriteButton } from "@/components/client/favorite-button";
 import { EmptyState } from "@/components/app/empty-state";
 import { WorkspaceFinder } from "@/components/client/workspace-finder";
 import { Button } from "@/components/ui/button";
@@ -35,8 +36,12 @@ const MODES: { id: DiscoveryMode; label: string }[] = [
 
 export function LocationDiscovery({
   knownWorkspaces = [],
+  savedFavorites = {},
+  canSaveFavorites = false,
 }: {
   knownWorkspaces?: { slug: string; name: string }[];
+  savedFavorites?: Record<string, string>;
+  canSaveFavorites?: boolean;
 }) {
   const modeGroupId = useId();
   const [mode, setMode] = useState<DiscoveryMode>("city");
@@ -372,11 +377,8 @@ export function LocationDiscovery({
             </p>
             <ul className="grid gap-3">
               {result.items.map((item) => (
-                <li key={item.slug}>
-                  <a
-                    href={`/p/${item.slug}`}
-                    className="agende-panel flex min-h-16 flex-col rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de] transition hover:ring-primary"
-                  >
+                <li key={item.slug} className="agende-panel grid gap-3 rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de]">
+                  <a href={`/p/${item.slug}`} className="flex min-h-16 flex-col rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
                     <p className="font-serif text-xl text-wine-deep">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {[item.city, item.state].filter(Boolean).join(" · ") || "Localidade cadastrada"}
@@ -385,6 +387,14 @@ export function LocationDiscovery({
                       {item.bookingOpen ? DISCOVERY_COPY.bookingOpen : DISCOVERY_COPY.bookingClosed}
                     </p>
                   </a>
+                  {canSaveFavorites ? (
+                    <FavoriteButton
+                      slug={item.slug}
+                      workspaceId={item.workspaceId ?? savedFavorites[item.slug] ?? null}
+                      initialSaved={Boolean(savedFavorites[item.slug])}
+                      name={item.name}
+                    />
+                  ) : null}
                 </li>
               ))}
             </ul>

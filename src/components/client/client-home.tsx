@@ -3,6 +3,7 @@ import { CalendarDays, ChevronRight, Compass, Heart, RefreshCcw, Sparkles } from
 import { FloralBranch, FloralCorner } from "@/components/brand/floral";
 import { FavoritesPanel } from "@/components/client/favorites-panel";
 import { Button } from "@/components/ui/button";
+import type { FavoritesView } from "@/lib/client/favorites";
 import type { MyAppointment } from "@/lib/booking/queries";
 import { bookAgainPath } from "@/lib/booking/validation";
 import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
@@ -15,12 +16,14 @@ export function ClientHome({
   loadError,
   recentWorkspaces,
   completed,
+  favorites,
 }: {
   firstName: string;
   next: MyAppointment | null;
   loadError: string | null;
   recentWorkspaces: { slug: string; name: string }[];
   completed: MyAppointment[];
+  favorites: FavoritesView;
 }) {
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
 
@@ -110,7 +113,7 @@ export function ClientHome({
           <p className="text-xs font-semibold tracking-[0.18em] text-wine-deep uppercase">Seus favoritos</p>
           <h2 className="mt-1 font-serif text-2xl text-wine-deep sm:text-3xl">Salões para voltar</h2>
         </div>
-        <FavoritesPanel compact />
+        <FavoritesPanel compact favorites={favorites} />
         <Link href="/cliente/favoritos" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-wine-deep underline-offset-4 hover:underline">
           <Heart className="size-4" aria-hidden="true" /> Ver detalhes
         </Link>
