@@ -147,6 +147,12 @@ export function PublicBookingFlow({
   function go(next: BookingStep) {
     if (pending || reserving.current) return;
     setFormError(null);
+    if (next === "slot") {
+      setStartsAt(null);
+      setSlots([]);
+      setSlotsError(null);
+      setSlotsLoading(true);
+    }
     setStep(next);
   }
 
@@ -395,7 +401,7 @@ export function PublicBookingFlow({
                   <button
                     key={slot}
                     type="button"
-                    disabled={pending}
+                    disabled={pending || slotsLoading}
                     onClick={() => proceedAfterSlot(slot)}
                     className={SLOT_BUTTON}
                   >

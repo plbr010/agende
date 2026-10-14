@@ -9,6 +9,7 @@ assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,'fkpdudnnperufnmdwdlv');
 assert.ok(process.env.AGENDE_PLAYWRIGHT_MODULE_PATH,'Set the installed Playwright module path');
 const {chromium}=createRequire(import.meta.url)(process.env.AGENDE_PLAYWRIGHT_MODULE_PATH);
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));
+const redact=value=>String(value??'').replaceAll(config.fixture_password,'[redacted]').replaceAll(config.publishable_key,'[redacted]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted]');
 assert.equal(config.url,'https://fkpdudnnperufnmdwdlv.supabase.co');
 const client=createClient(config.url,config.publishable_key,{auth:{persistSession:false,autoRefreshToken:false}});
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error?.message);return r.data;};
@@ -74,7 +75,7 @@ try{
   await check('browser logout clears the session and a protected route returns to login',async()=>{
     await page.getByRole('button',{name:'Sair',exact:true}).click();await page.waitForURL(url=>url.pathname==='/');await page.goto(base+'/app/servicos');await page.waitForURL('**/login*');
   });
-}catch(error){failure=error;if(lastPage)await lastPage.screenshot({path:evidence+'/browser-failure.png',fullPage:true}).catch(()=>{});}finally{
+}catch(error){failure=error;failure.message=redact(error.message);failure.stack=redact(error.stack);if(lastPage)await lastPage.screenshot({path:evidence+'/browser-failure.png',fullPage:true}).catch(()=>{});}finally{
   await browser?.close();if(server){server.kill();}
   if(w&&s){try{
     await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:false}));
@@ -83,6 +84,6 @@ try{
     if(serviceId)await ok(client.from('services').update({archived_at:new Date().toISOString(),active:false}).eq('id',serviceId));
   }catch{restored=false;}}
   await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');
-  if(failure) console.error(serverDiagnostics.replaceAll(config.fixture_password,'[redacted]').replaceAll(config.publishable_key,'[redacted]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted]'));
+  if(failure) console.error(redact(serverDiagnostics));
 }
 if(failure)throw failure;assert.equal(restored,true);

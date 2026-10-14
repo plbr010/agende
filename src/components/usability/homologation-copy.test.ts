@@ -77,4 +77,16 @@ test("cancel errors stay inside the open dialog and primary taps are large", () 
   assert.match(reviews, /onKeyDown/);
   assert.match(reviews, /tabIndex/);
   assert.match(reviews, /review-rating-/);
+  assert.match(reviews, /sending\.current/);
+  assert.match(reviews, /if \(!selected \|\| pending \|\| sending\.current \|\| rating < 1\) return/);
+});
+
+test("profile preview opens the slug being edited and finder unlocks after a failed open", () => {
+  const settings = source("../workspace/settings-forms.tsx");
+  assert.match(settings, /href=\{`\/p\/\$\{slugifyPreview\(slug\) \|\| settings\.slug\}`\}/);
+  assert.doesNotMatch(settings, /href=\{`\/p\/\$\{settings\.slug\}`\}/);
+
+  const finder = source("../client/workspace-finder.tsx");
+  assert.match(finder, /setOpening\(false\)/);
+  assert.match(finder, /8000/);
 });

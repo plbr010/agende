@@ -28,6 +28,8 @@ import { PERIOD_MESSAGES } from "@/lib/agenda/period-rules";
 export type SlotActionState = ActionState & {
   slots?: string[];
   localDate?: string;
+  professionalMemberId?: string;
+  serviceId?: string;
 };
 
 function fieldErrorsFromZod(error: { issues: ReadonlyArray<{ path: readonly PropertyKey[]; message: string }> }) {
@@ -269,14 +271,19 @@ export async function loadSlotsAction(
     parsed.data.serviceId,
     parsed.data.localDate,
   );
+  const query = {
+    localDate: parsed.data.localDate,
+    professionalMemberId: parsed.data.professionalMemberId,
+    serviceId: parsed.data.serviceId,
+  };
   if (slots.length === 0) {
     return {
       error: "Nenhum horário livre neste dia.",
       slots: [],
-      localDate: parsed.data.localDate,
+      ...query,
     };
   }
-  return { slots, localDate: parsed.data.localDate };
+  return { slots, ...query };
 }
 
 export async function addWorkingHourAction(

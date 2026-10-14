@@ -47,6 +47,14 @@ test("auth, onboarding and billing keep the next step obvious", () => {
   assert.doesNotMatch(source("src/components/billing/billing-controls.tsx"), /Assinatura ativada/);
 });
 
+test("authenticated search fields use a client Input so name and events reach the form", () => {
+  const input = source("src/components/ui/input.tsx");
+  assert.match(input, /["']use client["']/);
+  assert.match(input, /applyPortugueseValidity/);
+  assert.match(source("src/app/app/clientes/page.tsx"), /name="q"/);
+  assert.match(source("src/app/app/servicos/page.tsx"), /name="q"/);
+});
+
 test("catalog and money modules explain the empty next step", () => {
   assert.match(source("src/components/catalog/directories.tsx"), /EmptyState/);
   assert.match(source("src/components/catalog/directories.tsx"), /Cadastrar o primeiro serviço/);

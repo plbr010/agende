@@ -23,3 +23,10 @@ test("public booking locks navigation while a reservation is in flight", () => {
   assert.match(source, /disabled=\{pending\}/);
   assert.match(source, /aria-disabled=\{pending\}/);
 });
+
+test("returning to the slot step clears stale times before refetch", () => {
+  assert.match(source, /if \(next === "slot"\)/);
+  assert.match(source, /setSlots\(\[\]\)/);
+  assert.match(source, /setSlotsLoading\(true\)/);
+  assert.match(source, /disabled=\{pending \|\| slotsLoading\}/);
+});
