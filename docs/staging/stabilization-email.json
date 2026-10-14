@@ -93,7 +93,13 @@
       "intent": "professional",
       "status": "PASS",
       "detail": "GoTrue accepted; delivered link and password change not yet verified"
+    },
+    {
+      "name": "actual unused PKCE recovery code expires by real elapsed time; callback rejects session",
+      "intent": "professional",
+      "status": "PASS",
+      "detail": "elapsed_seconds=330; clocks, timestamps and Auth settings unchanged"
     }
   ],
-  "checked_at": "2026-10-14T18:55:38.667Z"
+  "checked_at": "2026-10-14T19:01:56.004Z"
 }
