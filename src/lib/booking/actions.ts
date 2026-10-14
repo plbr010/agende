@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { cookies } from "next/headers";
+import { BOOKING_DRAFT_COOKIE } from "./draft";
 import { revalidatePath } from "next/cache";
 import { loadMyAppointmentsResult, type MyAppointment } from "@/lib/booking/queries";
 import { hashClientIp } from "@/lib/booking/ip";
@@ -65,6 +67,8 @@ export async function createPublicAppointmentAction(
 
   const supabase = await createClient();
   const ipHash = await hashClientIp();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email_confirmed_at) return { error: "Entre na sua conta para confirmar o agendamento." };
   const { data, error } = await supabase.rpc("create_public_appointment", {
     p_slug: input.slug,
     p_service_id: input.serviceId,
@@ -72,7 +76,7 @@ export async function createPublicAppointmentAction(
     p_starts_at: input.startsAt,
     p_full_name: parsed.data.fullName,
     p_phone: parsed.data.phone,
-    p_email: parsed.data.email,
+    p_email: user.email ?? parsed.data.email,
     p_customer_note: parsed.data.customerNote,
     p_ip_hash: ipHash,
   });
@@ -84,6 +88,9 @@ export async function createPublicAppointmentAction(
   if (!confirmation) {
     return { error: "Reserva criada, mas não foi possível montar o comprovante." };
   }
+  (await cookies()).delete(BOOKING_DRAFT_COOKIE);
+  revalidatePath("/cliente");
+  revalidatePath("/cliente/agendamentos");
   return { confirmation };
 }
 

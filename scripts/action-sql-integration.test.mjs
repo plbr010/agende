@@ -83,7 +83,8 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
   };
   const dependencies={
     'next/cache':{revalidatePath(){}}, 'next/navigation':{redirect:path=>{throw new Error('redirect:'+path);}},
-    'next/headers':{cookies:async()=>({get(){},set(){}})}, zod:{z},
+    'next/headers':{cookies:async()=>({get(){},set(){},delete(){}})}, zod:{z},
+    './draft':{BOOKING_DRAFT_COOKIE:'agende_booking_draft'},
     '@/lib/supabase/server':{createClient:async()=>client}, '@/lib/billing/plans':plans,
     '@/lib/auth/redirects':redirects, '@/lib/auth/session':{loadAppSession:async()=>null,requireConfirmedSession:async()=>({user:{id:actor},workspaces:[{id:workspaceId,role:actor===owner?'owner':'professional'}]})},
     '@/lib/http/origin':{getRequestOrigin:async()=>'http://127.0.0.1:3000'}, '@/lib/validation/email':email,'@/lib/validation/signup':signup,
@@ -124,6 +125,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     assert.equal(data.services[0].priceCents,5000);assert.equal(data.professionals[0].id,memberId);
   });
   await t.test('public actions book an actual slot and reject overlapping requests',async()=>{
+    actor=customer; // Confirmation now requires the customer's verified session.
     const slug=(await db.query('select slug from public.workspaces where id=$1',[workspaceId])).rows[0].slug;
     const slots=await booking.fetchPublicSlotsAction({slug,serviceId,professionalMemberId:memberId,localDate});assert.ok(slots.slots.length);
     const request={slug,serviceId,professionalMemberId:memberId,startsAt:slots.slots[2],fullName:'Client Local',phone:'55999999999',email:'client@action-sql.invalid',customerNote:null};
@@ -159,7 +161,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     assert.ok((await review.submitReview({appointmentId,rating:4,comment:''})).error);
   });
   await t.test('client cancellation action frees a second booked slot',async()=>{
-    actor=null;
+    actor=customer;
     const slug=(await db.query('select slug from public.workspaces where id=$1',[workspaceId])).rows[0].slug;
     const slots=await booking.fetchPublicSlotsAction({slug,serviceId,professionalMemberId:memberId,localDate});
     const result=await booking.createPublicAppointmentAction({slug,serviceId,professionalMemberId:memberId,startsAt:slots.slots[2],fullName:'Client Local',phone:'55999999999',email:'client@action-sql.invalid',customerNote:null});

@@ -258,10 +258,10 @@ BEGIN
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
     INTO v_receipt2
     USING v_slug_a, v_service_a, v_member_pro, v_start2,
-          'Maria S', '32998880001', 'outra-maria@agende-public-booking.test';
+          'Maria S', '32998880001', 'guest-a@agende-public-booking.test';
   EXECUTE 'RESET ROLE';
   SELECT a.client_id INTO v_client_id2 FROM public.appointments a WHERE a.id = (v_receipt2->>'appointment_id')::uuid;
-  PERFORM test_helpers.assert_eq(v_client_id, v_client_id2, 'same phone reuses workspace client');
+  PERFORM test_helpers.assert_eq(v_client_id, v_client_id2, 'same email reuses unlinked guest client; phone alone is not identity');
   PERFORM test_helpers.assert_eq(
     (SELECT c.workspace_id FROM public.workspace_clients c WHERE c.id = v_client_id),
     v_ws_a,

@@ -25,6 +25,8 @@ function harness(data: unknown, readError=false) {
     "@/lib/booking/validation":validation,
     "@/lib/booking/ip":{hashClientIp:async()=>null},
     "next/cache":{revalidatePath:(path:string)=>paths.push(path)},
+    "next/headers":{cookies:async()=>({delete(){}})},
+    "./draft":{BOOKING_DRAFT_COOKIE:"agende_booking_draft"},
     zod:{z},
   };
   function load(file:string){

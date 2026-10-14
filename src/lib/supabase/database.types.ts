@@ -293,6 +293,27 @@ export type Database = {
           { foreignKeyName: "client_profiles_user_id_fkey"; columns: ["user_id"]; isOneToOne: true; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
         ];
       };
+      client_workspace_favorites: {
+        Row: {
+          user_id: string;
+          workspace_id: string;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          workspace_id: string;
+          created_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          workspace_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "client_workspace_favorites_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "client_workspace_favorites_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
       financial_categories: {
         Row: {
           id: string;
@@ -894,6 +915,8 @@ export type Database = {
           privacy_accepted_at: string | null;
           created_at: string;
           updated_at: string;
+          residence_city: string | null;
+          avatar_path: string | null;
         };
         Insert: {
           user_id: string;
@@ -905,6 +928,8 @@ export type Database = {
           privacy_accepted_at?: string | null;
           created_at?: string;
           updated_at?: string;
+          residence_city?: string | null;
+          avatar_path?: string | null;
         };
         Update: {
           user_id?: string;
@@ -916,6 +941,8 @@ export type Database = {
           privacy_accepted_at?: string | null;
           created_at?: string;
           updated_at?: string;
+          residence_city?: string | null;
+          avatar_path?: string | null;
         };
         Relationships: [
         ];
@@ -1273,6 +1300,7 @@ export type Database = {
           timezone: string;
           created_at: string;
           updated_at: string;
+          discovery_enabled: boolean;
         };
         Insert: {
           workspace_id: string;
@@ -1288,6 +1316,7 @@ export type Database = {
           timezone?: string;
           created_at?: string;
           updated_at?: string;
+          discovery_enabled?: boolean;
         };
         Update: {
           workspace_id?: string;
@@ -1303,6 +1332,7 @@ export type Database = {
           timezone?: string;
           created_at?: string;
           updated_at?: string;
+          discovery_enabled?: boolean;
         };
         Relationships: [
           { foreignKeyName: "workspace_settings_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: true; referencedRelation: "workspaces"; referencedColumns: ["id"] },
@@ -1340,10 +1370,9 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
-      get_workspace_discovery: { Args: { p_workspace_id: string }; Returns: boolean };
-      set_workspace_discovery: { Args: { p_workspace_id: string; p_enabled: boolean }; Returns: boolean };
       accept_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       acquire_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: boolean };
+      add_my_workspace_favorite: { Args: { p_workspace_id: string | null }; Returns: undefined };
       apply_inventory_movement: { Args: { p_workspace_id: string | null; p_product_id: string | null; p_type: Database["public"]["Enums"]["inventory_movement_type"] | null; p_quantity?: number | null; p_new_quantity?: number | null; p_reason?: string | null }; Returns: Json };
       archive_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null }; Returns: string };
       archive_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
@@ -1367,6 +1396,7 @@ export type Database = {
       create_workspace_invite: { Args: { p_workspace_id: string | null; p_role: Database["public"]["Enums"]["member_role"] | null; p_email?: string | null }; Returns: Json };
       deactivate_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
       export_my_personal_data: { Args: Record<PropertyKey, never>; Returns: Json };
+      finish_avatar_cleanup: { Args: { p_path: string | null }; Returns: undefined };
       get_finance_ui: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_inventory_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_packages_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
@@ -1374,18 +1404,21 @@ export type Database = {
       get_stripe_api_key: { Args: Record<PropertyKey, never>; Returns: string };
       get_stripe_webhook_secret: { Args: Record<PropertyKey, never>; Returns: string };
       get_workspace_advanced_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
+      get_workspace_discovery: { Args: { p_workspace_id: string | null }; Returns: boolean };
       get_workspace_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_seat_usage: { Args: { p_workspace_id: string | null }; Returns: Json };
       list_available_slots: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
+      list_avatar_cleanup: { Args: Record<PropertyKey, never>; Returns: string[] };
       list_my_appointments: { Args: Record<PropertyKey, never>; Returns: Json };
       list_my_packages: { Args: Record<PropertyKey, never>; Returns: Json };
       list_my_reschedule_slots: { Args: { p_appointment_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
+      list_my_workspace_favorites: { Args: Record<PropertyKey, never>; Returns: Json };
       list_public_available_slots: { Args: { p_slug: string | null; p_service_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_public_booking_catalog: { Args: { p_slug: string | null }; Returns: Json };
       list_public_localities: { Args: { p_state?: string | null; p_query?: string | null; p_limit?: number | null }; Returns: Json };
-      search_public_workspaces: { Args: { p_city?: string | null; p_state?: string | null; p_query?: string | null; p_postal_code?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       mark_financial_entry_paid: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_paid_at?: string | null }; Returns: string };
       peek_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
+      queue_account_avatar_upload: { Args: { p_user_id: string | null; p_path: string | null }; Returns: undefined };
       reactivate_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
       reactivate_service_package: { Args: { p_workspace_id: string | null; p_package_id: string | null }; Returns: string };
       reactivate_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
@@ -1393,16 +1426,20 @@ export type Database = {
       redeem_client_package: { Args: { p_workspace_id: string | null; p_client_package_id: string | null; p_appointment_id: string | null }; Returns: Json };
       refund_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_amount_cents: number | null; p_reason: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_refunded_at?: string | null; p_idempotency_key?: string | null }; Returns: string };
       release_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: undefined };
+      remove_my_workspace_favorite: { Args: { p_workspace_id: string | null }; Returns: undefined };
       remove_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
       reopen_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null }; Returns: string };
       reschedule_appointment: { Args: { p_appointment_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_starts_at: string | null; p_notes?: string | null }; Returns: string };
       reschedule_my_appointment: { Args: { p_appointment_id: string | null; p_starts_at: string | null; p_professional_member_id?: string | null }; Returns: Json };
       reverse_package_redemption: { Args: { p_workspace_id: string | null; p_redemption_id: string | null; p_reason: string | null }; Returns: Json };
       revoke_workspace_invite: { Args: { p_workspace_id: string | null; p_invite_id: string | null }; Returns: Json };
+      save_service_with_professionals: { Args: { p_workspace_id: string | null; p_service_id: string | null; p_name: string | null; p_description: string | null; p_duration_minutes: number | null; p_price_cents: number | null; p_active: boolean | null; p_professional_member_ids: (string)[] | null }; Returns: string };
+      search_public_workspaces: { Args: { p_city?: string | null; p_state?: string | null; p_query?: string | null; p_postal_code?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       sell_service_package: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_package_id: string | null }; Returns: string };
       set_appointment_status: { Args: { p_appointment_id: string | null; p_status: Database["public"]["Enums"]["appointment_status"] | null }; Returns: string };
-      save_service_with_professionals: { Args: { p_workspace_id: string; p_service_id: string | null; p_name: string; p_description: string | null; p_duration_minutes: number; p_price_cents: number; p_active: boolean; p_professional_member_ids: string[] }; Returns: string };
+      set_workspace_discovery: { Args: { p_workspace_id: string | null; p_enabled: boolean | null }; Returns: boolean };
       submit_appointment_review: { Args: { p_appointment_id: string | null; p_rating: number | null; p_comment?: string | null }; Returns: Json };
+      swap_account_avatar: { Args: { p_user_id: string | null; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
       sync_billing_subscription: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_status: Database["public"]["Enums"]["subscription_status"] | null; p_current_period_start?: string | null; p_current_period_end?: string | null; p_canceled_at?: string | null }; Returns: undefined };
       update_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null; p_name: string | null }; Returns: string };
       update_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_description: string | null; p_amount_cents: number | null; p_due_date: string | null }; Returns: string };

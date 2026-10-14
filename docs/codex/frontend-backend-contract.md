@@ -75,6 +75,8 @@ O frontend só aceita hosts `checkout.stripe.com` e `billing.stripe.com`, sem cr
 
 Detalhe: [client-experience-fase1.md](./client-experience-fase1.md). Favoritos, foto, cidade, preferências de notificação e rascunho de reserva pós-login **não** devem ser improvisados no browser.
 
+Backend da Fase 2 e tarefas de integração do Cursor: [client-experience-fase2.md](./client-experience-fase2.md). Favoritos/cidade e fotos privadas possuem contratos persistentes; fotos usam proxy autenticado, não URLs públicas. Cookie HttpOnly da reserva armazena apenas seletores e disponibilidade é revalidada após login.
+
 ## Como desbloquear PASS E2E
 
 1. Preview/local apontando só para o projeto staging, nunca para produção.
