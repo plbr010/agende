@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T16:48:32.857Z",
+  "checked_at": "2026-10-14T17:04:34.659Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 14,
+      "passed": 16,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 309,
+    "passed": 311,
     "failed": 0,
     "skipped": 0
   },
@@ -367,6 +367,18 @@
     {
       "file": "scripts/stripe-edge.test.mjs",
       "name": "Edge failures do not expose raw provider secrets in logs or HTTP responses",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "restricted-key failures expose only the operation and safe reason, never provider credentials",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "billing SDK application identification uses ASCII to avoid provider HTTP 400",
       "category": "stripe_mocks",
       "status": "passed"
     },

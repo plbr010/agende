@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-14T15:36:56.437Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "status": 502,
+  "error": "stripe_operation_failed",
+  "operation": "customers_write",
+  "reason": "provider_request_failed",
+  "provider_type": "StripeInvalidRequestError",
+  "provider_status": 400,
+  "checkout_created": false,
+  "secrets_in_report": false
+}

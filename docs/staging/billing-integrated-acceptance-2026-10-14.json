@@ -1,0 +1,229 @@
+{
+  "checked_at": "2026-10-14T16:40:55.236Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "stripe_account": "acct_1UPNGJQQUyqAaZvS",
+  "livemode": false,
+  "status": "PASS",
+  "scope": "six real application Checkouts, browser TEST payments, signed provider webhooks and authenticated staging access checks",
+  "production_changed": false,
+  "live_charges": 0,
+  "secrets_in_report": false,
+  "restricted_key": {
+    "vault_name": "stripe_api_key",
+    "accessible": true,
+    "additional_permissions_required": []
+  },
+  "plans": [
+    {
+      "workspace_id": "ad9278f6-874c-4923-b376-74d65d087921",
+      "session_id": "cs_test_a1nZQsXiTJZTXMtCYbUSSJWdwSYD7oWFYy5pkH6VIy5qu6jcELHBsmB2Re",
+      "amount_cents": 279900,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUeRQQUyqAaZvSdLMnyzJT",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "ad9278f6-874c-4923-b376-74d65d087921",
+        "plan": "salao",
+        "status": "active",
+        "billing_interval": "annual",
+        "external_subscription_id": "sub_1UQUeRQQUyqAaZvSdLMnyzJT",
+        "customer_bound": true,
+        "current_period_start": "2026-10-14 16:03:33+00",
+        "current_period_end": "2027-10-14 16:03:33+00",
+        "canceled_at": null,
+        "max_professionals": 15,
+        "entitled": true,
+        "paid_events": 1,
+        "checkout_events": 1
+      },
+      "selected_plan": "salao",
+      "selected_interval": "annual"
+    },
+    {
+      "workspace_id": "2293888c-83c7-4252-a5bb-ba2c4e381c66",
+      "session_id": "cs_test_a1kWhkjfsfkD2QrKQ5sP7fkiKtO75BpK4mdCJmSw91ksJ8i3KEYtSJcSZL",
+      "amount_cents": 29990,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUdEQQUyqAaZvSDw1l8OOA",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "2293888c-83c7-4252-a5bb-ba2c4e381c66",
+        "plan": "salao",
+        "status": "active",
+        "billing_interval": "monthly",
+        "external_subscription_id": "sub_1UQUdEQQUyqAaZvSDw1l8OOA",
+        "customer_bound": true,
+        "current_period_start": "2026-10-14 16:02:18+00",
+        "current_period_end": "2026-11-14 16:02:18+00",
+        "canceled_at": null,
+        "max_professionals": 15,
+        "entitled": true,
+        "paid_events": 1,
+        "checkout_events": 1
+      },
+      "selected_plan": "salao",
+      "selected_interval": "monthly"
+    },
+    {
+      "workspace_id": "20a23122-0164-489f-b6c2-c9ea78c774a1",
+      "session_id": "cs_test_a1WkLGN29RbQ2TFR5ectdb1D7NHMIWvLCj2gkNN9cgdZ2k2lVTGjzB9uBY",
+      "amount_cents": 149900,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUbVQQUyqAaZvStWn7a5Zc",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "20a23122-0164-489f-b6c2-c9ea78c774a1",
+        "plan": "equipe",
+        "status": "active",
+        "billing_interval": "annual",
+        "external_subscription_id": "sub_1UQUbVQQUyqAaZvStWn7a5Zc",
+        "customer_bound": true,
+        "current_period_start": "2026-10-14 16:00:31+00",
+        "current_period_end": "2027-10-14 16:00:31+00",
+        "canceled_at": null,
+        "max_professionals": 5,
+        "entitled": true,
+        "paid_events": 1,
+        "checkout_events": 1
+      },
+      "selected_plan": "equipe",
+      "selected_interval": "annual"
+    },
+    {
+      "workspace_id": "98874cf9-cebb-44ac-9011-4b749067178b",
+      "session_id": "cs_test_a1vykyLYRn6szWPyRcXHZVUKVxSDQW4t7dKj7GZm3zXhKq9JkgjtugY7IK",
+      "amount_cents": 16990,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUZtQQUyqAaZvS3VB7OUDs",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "98874cf9-cebb-44ac-9011-4b749067178b",
+        "plan": "equipe",
+        "status": "past_due",
+        "billing_interval": "monthly",
+        "external_subscription_id": "sub_1UQUZtQQUyqAaZvS3VB7OUDs",
+        "customer_bound": true,
+        "current_period_start": "2026-12-14 15:58:51+00",
+        "current_period_end": "2027-01-14 15:58:51+00",
+        "canceled_at": null,
+        "max_professionals": 5,
+        "entitled": false,
+        "paid_events": 2,
+        "checkout_events": 1
+      },
+      "selected_plan": "equipe",
+      "selected_interval": "monthly"
+    },
+    {
+      "workspace_id": "454f310e-9160-4075-ac70-a37750f6d136",
+      "session_id": "cs_test_a1tyiKOQgCyAdEYGdPyU3InUwCczATG5h33meE17RngsSnPYzer4fZMoAX",
+      "amount_cents": 79900,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUYMQQUyqAaZvS9tXDnrTj",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "454f310e-9160-4075-ac70-a37750f6d136",
+        "plan": "solo",
+        "status": "active",
+        "billing_interval": "annual",
+        "external_subscription_id": "sub_1UQUYMQQUyqAaZvS9tXDnrTj",
+        "customer_bound": true,
+        "current_period_start": "2026-10-14 15:57:17+00",
+        "current_period_end": "2027-10-14 15:57:17+00",
+        "canceled_at": null,
+        "max_professionals": 1,
+        "entitled": true,
+        "paid_events": 1,
+        "checkout_events": 1
+      },
+      "selected_plan": "solo",
+      "selected_interval": "annual"
+    },
+    {
+      "workspace_id": "cb236b03-3401-4b65-8aef-1632aee76083",
+      "session_id": "cs_test_a1GeDeCvqSJKE0dAHJvrHmwGjbAKK6sHFm4Ams6RtEE1D2JLGGPhVI6nOu",
+      "amount_cents": 8990,
+      "currency": "brl",
+      "payment_status": "paid",
+      "subscription_id": "sub_1UQUPpQQUyqAaZvSP1cHuQ9G",
+      "result": "PASS",
+      "final_subscription": {
+        "workspace_id": "cb236b03-3401-4b65-8aef-1632aee76083",
+        "plan": "equipe",
+        "status": "canceled",
+        "billing_interval": "monthly",
+        "external_subscription_id": "sub_1UQUPpQQUyqAaZvSP1cHuQ9G",
+        "customer_bound": true,
+        "current_period_start": "2026-10-14 15:48:27+00",
+        "current_period_end": "2026-11-14 15:48:27+00",
+        "canceled_at": "2026-10-14 16:08:15+00",
+        "max_professionals": 5,
+        "entitled": false,
+        "paid_events": 2,
+        "checkout_events": 1
+      },
+      "selected_plan": "solo",
+      "selected_interval": "monthly"
+    }
+  ],
+  "lifecycle": {
+    "upgrade": {
+      "from": "solo",
+      "to": "equipe",
+      "max_professionals_before": 1,
+      "max_professionals_after": 5,
+      "status": "PASS"
+    },
+    "portal_cancellation": {
+      "effective": "end_of_paid_period",
+      "kept_access_until_end": true,
+      "final_status": "canceled",
+      "final_entitlement": false,
+      "status": "PASS"
+    },
+    "renewal": {
+      "invoice_id": "in_1UQUqAQQUyqAaZvSp1l4AZRb",
+      "amount_cents": 16990,
+      "period_extended": true,
+      "status": "PASS"
+    },
+    "renewal_decline": {
+      "invoice_id": "in_1UQUw8QQUyqAaZvSMnV6Cdpv",
+      "stripe_status": "past_due",
+      "supabase_status": "past_due",
+      "entitled": false,
+      "manager_write_denied": true,
+      "status": "PASS"
+    },
+    "initial_decline": {
+      "plan": "solo",
+      "interval": "annual",
+      "no_subscription_bound": true,
+      "entitled": false,
+      "status": "PASS"
+    },
+    "webhook_recovery": {
+      "initial_out_of_order_http": 409,
+      "real_dashboard_resend_http": 200,
+      "replayed_event": "evt_1UQUeSQQUyqAaZvSapPV3MBD",
+      "database_rows_after_replay": 1,
+      "old_paid_event_did_not_reactivate_past_due": true,
+      "pending_invoice_or_subscription_creation_events": 0,
+      "status": "PASS"
+    }
+  },
+  "frontend": {
+    "checkout_session": "cs_test_a1TdybDAHZY5MvJHWPSOGswCz8NuoAU0NoEdU3csZxx41lW2wdCxFtVLPa",
+    "origin": "https://agende-7ixgp4pxw-pedros-projects-cfddfd39.vercel.app",
+    "initial_localhost_return": "failed before origin correction",
+    "corrected_return": "PASS: signed-in application displayed Ativa after real Checkout",
+    "portal_from_application": "PASS: application opened real TEST Portal with paid invoice, then returned to same Preview",
+    "frontend_workspace_id": "04c9fd27-f4b6-4a63-aad5-1c1d67bd215a"
+  },
+  "commercial_launch": "NO-GO: production rollout and recovery criteria remain separate"
+}

@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-10-14T16:47:12.566Z",
+  "project": "prj_NLQEGsBiUWcKjws9vjIKFgXOvgfx",
+  "branch": "codex/stripe-test-homologation-2026-10-14",
+  "supabase_staging": "fkpdudnnperufnmdwdlv",
+  "envs": [
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "id": "ZSKchacjGZ7kfpb1",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "id": "jsAei1pafWpnMIAi",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SITE_URL",
+      "id": "kxAnvaOvjYIJ3dcG",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    }
+  ],
+  "production_targets": 0,
+  "secrets_in_report": false
+}

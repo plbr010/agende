@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-14T15:27:35.481Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "livemode": false,
+  "status": "BLOCKED",
+  "checks": [],
+  "synthetic_workspace_ids": [
+    "04c9fd27-f4b6-4a63-aad5-1c1d67bd215a"
+  ],
+  "error": "billing_unavailable",
+  "payment_completed": false,
+  "provider_webhook_delivery_verified": false,
+  "subscription_activation_verified": false,
+  "commercial_acceptance": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

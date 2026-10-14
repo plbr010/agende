@@ -85,7 +85,7 @@ function harness(kind, overrides = {}) {
   };
   const iterable = values => ({ async *[Symbol.asyncIterator]() { yield* values; } });
   const stripe = {
-    customers: { retrieve: async () => ({ id: 'cus_test' }), create: async () => ({ id: 'cus_test' }) },
+    customers: { retrieve: async () => ({ id: 'cus_test' }), create: async () => { if(state.stripeError)throw state.stripeError;return { id: 'cus_test' }; } },
     prices: { list: async ({ lookup_keys: [lookup] }) => {
       const plan = lookup.split('_')[1], annual = lookup.endsWith('annual');
       return { data: [{ id: 'price_test', lookup_key: lookup, currency: 'brl', unit_amount: state.badPrice ? 1 :
@@ -98,7 +98,7 @@ function harness(kind, overrides = {}) {
     } } },
     billingPortal: { sessions: { create: async args => { state.calls.push({ name: 'portal', args }); return { url: 'https://billing.stripe.com/p/session/test' }; } } },
   };
-  class Stripe { constructor() { state.calls.push({ name: 'stripe_client' }); return stripe; } static createFetchHttpClient() {} }
+  class Stripe { constructor(_key, options) { state.calls.push({ name: 'stripe_client', options }); return stripe; } static createFetchHttpClient() {} }
   let handler;
   const source = readFileSync(`supabase/functions/${kind}/index.ts`, 'utf8').replace(/^import .*;\r?\n/gm, '');
   const js = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
@@ -128,6 +128,21 @@ test('Edge failures do not expose raw provider secrets in logs or HTTP responses
     assert.ok(h.state.logs.length);
     assert.equal(JSON.stringify(h.state.logs).includes(sensitive), false);
   }
+});
+test('restricted-key failures expose only the operation and safe reason, never provider credentials',async()=>{
+  const sensitive='rk_test_syntheticsecret';
+  const h=harness('stripe-billing',{subscription:{status:'expired',external_customer_id:null,external_subscription_id:null},stripeError:{statusCode:403,message:sensitive,param:sensitive}});
+  const response=await h.billing();assert.equal(response.status,403);
+  const body=await response.json();assert.deepEqual(body,{error:'stripe_operation_failed',operation:'customers_write',reason:'permission_missing',provider_status:403});
+  assert.equal(JSON.stringify(body).includes(sensitive),false);assert.equal(JSON.stringify(h.state.logs).includes(sensitive),false);
+});
+
+test('billing SDK application identification uses ASCII to avoid provider HTTP 400',async()=>{
+  const h=harness('stripe-billing');
+  assert.equal((await h.billing()).status,200);
+  const options=h.state.calls.find(c=>c.name==='stripe_client').options;
+  assert.equal(options.appInfo.name,'Agende');
+  assert.match(options.appInfo.name,/^[\x20-\x7e]+$/);
 });
 
 test('Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers', async () => {
