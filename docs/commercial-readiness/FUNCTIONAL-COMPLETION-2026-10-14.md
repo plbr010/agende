@@ -33,7 +33,7 @@ Metadados GitHub confrontados com commits/diffs locais. Vercel confirmou main64b
 |npm ci|PASS usando Node24.19.0 explicitamente; invólucro npm Windows inicialmente usava Node20, corrigido na execução|
 |npm run lint|PASS, repetido após os últimos runners/documentação|
 |npm run typecheck|PASS; build final também concluiu TypeScript|
-|npm test|271 PASS, zero falhas/skips; 161 unit/contrato,57 mocks plataforma,13 mocks Stripe,29 SQL PGlite,11 integrações com Auth fixture|
+|npm test|284 PASS na integração final, zero falhas/skips;173 unit/contrato,58 mocks plataforma,13 mocks Stripe,29 SQL PGlite,11 integrações com Auth fixture|
 |npm run build|PASS Next16.3.8/Turbopack após Input corrigido; cache anterior preservado em pasta ignorada ao resolver falha local de processo auxiliar|
 |PostgreSQL17.6 isolado|48 PASS e cinco suítes SQL; cluster parado; inclui catálogo atômico, discovery, autorização e concorrência|
 |Smoke HTTP local|34 PASS; configuração sintética, nenhuma escrita|
@@ -45,7 +45,7 @@ Metadados GitHub confrontados com commits/diffs locais. Vercel confirmou main64b
 |Stripe TEST|Seis Prices ativos BRL/periodicidades oficiais confirmados por API; não comprova checkout/webhook integrado|
 |npm audit --omit=dev|Zero vulnerabilidades de runtime; cinco HIGH dev da cadeia ESLint permanecem|
 
-Não somar casos PostgreSQL aos271 como casos únicos: há repetição intencional. Contas de homologação foram confirmadas por fixture SQL; login real não comprova signup, confirmação/SMTP ou reset. E2E usa Edge headless em sessão própria, não a sessão do proprietário. Dados de teste identificados como sintéticos; produto de estoque e pacote arquivados, venda cancelada, resgate revertido. Atendimento sintético concluído retido para rastreabilidade; nenhuma linha produtiva manipulada.
+Não somar casos PostgreSQL aos284 como casos únicos: há repetição intencional. Contas de homologação foram confirmadas por fixture SQL; login real não comprova signup, confirmação/SMTP ou reset. E2E usa Edge headless em sessão própria, não a sessão do proprietário. Dados de teste identificados como sintéticos; produto de estoque e pacote arquivados, venda cancelada, resgate revertido. Atendimento sintético concluído retido para rastreabilidade; nenhuma linha produtiva manipulada.
 
 Falhas iniciais preservadas: Chromium empacotado ausente (usado Edge instalado), error boundary de Input, expectativa incorreta do harness sobre logout (produto retorna home), e resgate antecipado corretamente recusado antes de concluir atendimento. Erros do produto e do harness são distintos; nenhum guard removido para fazer teste passar.
 
@@ -86,3 +86,11 @@ Preços TEST confirmados: Solo8990/79900; Equipe até5 16990/149900; Equipe até
 6. Rollback: antes do commit, abortar transação; depois, preferir correção aditiva e rollback da aplicação compatível. Descoberta pode ser contida revogando EXECUTE apenas de suas duas RPCs por aprovação; manter coluna/consentimentos e dados. Não apagar dados ou restaurar banco inteiro sobre gravações posteriores. Recuperação de desastre usa ambiente vazio e procedimento revisado; RPO/RTO produtivos ainda desconhecidos.
 
 **Prontidão verificável:4/12 gates completos =33,3% do checklist de aceite comercial anterior, não porcentagem de código.** Passam integridade de repo/build, regressão local, autorização/concorrência SQL e operações/papéis via API staging. Backend de discovery e E2E fortaleceram o último gate; não recebem crédito de lançamento completo enquanto rollout/abuso/ambientes estiverem pendentes. Permanecem oito gates incompletos: backup, RPC produtiva, signup/SMTP/reset, billing integrado, bindings/origens, descoberta produtiva completa, capacidade/monitoramento e aceite comercial/recuperação. Um P0 aberto basta para NO-GO.
+
+## Integração final com Cursor
+
+Main avançou durante a rodada com PR38 `8c8d8eb` (paginação, cenário Muriaé/Juiz de Fora e prevenção de cliques duplicados) e PR39 `f108438` (E2E público isolado e teclado do radiogroup). Ambos confirmados merged. Integrados nesta branch, sem merge na main. Preservados teclado, searchLock, paginação e textos mais recentes do Cursor; reaplicados somente descarte de sugestões atrasadas, aviso de localização e limite do backend. Conflitos de contrato foram resolvidos por união; JSON de testes foi regenerado, não escolhido por preferência de branch.
+
+Base final `f10843851d7e58ca95ae7836814022952351052d`. Vercel produção READY `dpl_CYvCrqk7j3GjHtPuyehhLckhFcP4`, observado após merge do proprietário; nenhuma implantação manual nossa. `npm ci` final410 pacotes, lint e284 testes PASS; build/TypeScript PASS. E2E de staging novamente7 jornadas PASS em14/10 às03:53Z. Runner público do Cursor11 PASS usando configuração sintética; GPS desse runner é simulado, não geocoder externo validado. Correção de portabilidade permite escolher Edge e pasta de artefatos local, sem modificar sua intenção de teste. PostgreSQL48 e cinco suítes permanecem aplicáveis: PR38/39 não alteraram migrations nem ações SQL verificadas.
+
+Evidências finais: `../staging/{browser-functional,public-browser-final,discovery-real-api,modules-real-api,real-api-results}.json`, `../homologation/{standard-tests,native-tests,native-pg17}.json`, `functional-evidence-2026-10-14.json`. Os screenshots de jornadas reais usam exclusivamente fixtures de staging. O roteiro/proteções de produção e a decisão NO-GO permanecem os mesmos.

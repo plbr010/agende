@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { MapPin, Navigation, Search } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { WorkspaceFinder } from "@/components/client/workspace-finder";
@@ -10,14 +10,18 @@ import { Label } from "@/components/ui/label";
 import { listPublicLocalitiesAction, searchPublicWorkspacesAction } from "@/lib/discovery/actions";
 import {
   DISCOVERY_COPY,
+  discoveryHasMorePage,
   discoverySearchBlockedReason,
+  formatDiscoveryShowingCount,
+  mergeDiscoveryPages,
   type DiscoveryCoordinates,
   type DiscoveryLocality,
   type DiscoveryMode,
-  type DiscoverySearchResult,
   type DiscoverySearchInput,
+  type DiscoverySearchResult,
 } from "@/lib/discovery/contract";
 import { reverseGeocodeLocality } from "@/lib/discovery/geocode";
+import { nextRadioIndex } from "@/lib/usability/roving-radio";
 import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
 import { cn } from "@/lib/utils";
 
@@ -44,8 +48,10 @@ export function LocationDiscovery({
   const [formError, setFormError] = useState<string | null>(null);
   const [result, setResult] = useState<DiscoverySearchResult | null>(null);
   const [pending, setPending] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastSearch, setLastSearch] = useState<DiscoverySearchInput | null>(null);
   const [suggestions, setSuggestions] = useState<DiscoveryLocality[]>([]);
-  const [searchedInput, setSearchedInput] = useState<DiscoverySearchInput | null>(null);
+  const searchLock = useRef(false);
 
   useEffect(() => {
     if (mode !== "city" || city.trim().length < 2) {
@@ -53,9 +59,9 @@ export function LocationDiscovery({
     }
     let cancelled = false;
     const handle = window.setTimeout(() => {
-      void listPublicLocalitiesAction(city, state || undefined).then((items) => {
-        if (!cancelled) setSuggestions(items);
-      }).catch(() => { if (!cancelled) setSuggestions([]); });
+      void listPublicLocalitiesAction(city, state || undefined)
+        .then((items) => { if (!cancelled) setSuggestions(items); })
+        .catch(() => { if (!cancelled) setSuggestions([]); });
     }, 300);
     return () => { cancelled = true; window.clearTimeout(handle); };
   }, [city, state, mode]);
@@ -64,9 +70,34 @@ export function LocationDiscovery({
     setMode(next);
     setFormError(null);
     setResult(null);
+    setLastSearch(null);
     if (next !== "nearby") {
       setCoordinates(undefined);
     }
+  }
+
+  function onModeKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, current: DiscoveryMode) {
+    const index = MODES.findIndex((item) => item.id === current);
+    const next = nextRadioIndex(index, MODES.length, event.key);
+    if (next === null) return;
+    event.preventDefault();
+    const id = MODES[next]?.id;
+    if (!id) return;
+    applyMode(id);
+    window.requestAnimationFrame(() => {
+      document.getElementById(`discovery-mode-${id}`)?.focus();
+    });
+  }
+
+  function currentSearchInput(offset = 0): DiscoverySearchInput {
+    return {
+      mode,
+      city,
+      state,
+      query,
+      coordinates: mode === "nearby" ? coordinates : undefined,
+      offset,
+    };
   }
 
   async function requestNearby() {
@@ -101,42 +132,62 @@ export function LocationDiscovery({
 
   async function runSearch(event: React.FormEvent) {
     event.preventDefault();
-    const input = {
-      mode,
-      city,
-      state,
-      query,
-      coordinates: mode === "nearby" ? coordinates : undefined,
-    };
+    if (pending || loadingMore || searchLock.current) return;
+    const input = currentSearchInput(0);
     const blocked = discoverySearchBlockedReason(input);
     if (blocked) {
       setFormError(blocked);
       setResult(null);
+      setLastSearch(null);
       return;
     }
     setFormError(null);
-    setSearchedInput(input);
+    searchLock.current = true;
     setPending(true);
     try {
-      setResult(await searchPublicWorkspacesAction(input));
+      const next = await searchPublicWorkspacesAction(input);
+      setResult(next);
+      setLastSearch(input);
     } catch {
       setResult({ status: "error", message: DISCOVERY_COPY.searchError, items: [] });
+      setLastSearch(null);
     } finally {
+      searchLock.current = false;
       setPending(false);
     }
   }
 
   async function loadMore() {
-    if (!searchedInput || result?.status !== "ready" || pending) return;
-    setPending(true);
+    if (!lastSearch || !result || result.status !== "ready" || pending || loadingMore || searchLock.current) return;
+    if (!discoveryHasMorePage(result.items.length, result.total)) return;
+    setFormError(null);
+    searchLock.current = true;
+    setLoadingMore(true);
     try {
-      const next = await searchPublicWorkspacesAction({ ...searchedInput, offset: result.items.length });
+      const next = await searchPublicWorkspacesAction({ ...lastSearch, offset: result.items.length });
       if (next.status === "ready") {
-        const cards = new Map([...result.items, ...next.items].map((item) => [item.slug, item]));
-        setResult({ ...next, items: [...cards.values()] });
-      } else setFormError(DISCOVERY_COPY.searchError);
-    } catch { setFormError(DISCOVERY_COPY.searchError); }
-    finally { setPending(false); }
+        if (next.items.length === 0) {
+          setResult({ status: "ready", items: result.items, total: result.items.length });
+          return;
+        }
+        setResult({
+          status: "ready",
+          items: mergeDiscoveryPages(result.items, next.items),
+          total: next.total,
+        });
+        return;
+      }
+      if (next.status === "error") {
+        setFormError(next.message);
+        return;
+      }
+      setFormError(DISCOVERY_COPY.searchError);
+    } catch {
+      setFormError(DISCOVERY_COPY.searchError);
+    } finally {
+      searchLock.current = false;
+      setLoadingMore(false);
+    }
   }
 
   return (
@@ -147,6 +198,7 @@ export function LocationDiscovery({
           <p className="mt-1 text-sm text-muted-foreground">
             Perto de você, em qualquer cidade, ou pelo nome. A busca nunca fica presa à cidade de residência.
           </p>
+          <p className="mt-2 text-sm text-muted-foreground">{DISCOVERY_COPY.scenarioHint}</p>
         </div>
 
         <div role="radiogroup" aria-labelledby={modeGroupId} className="grid gap-2 sm:grid-cols-3">
@@ -156,10 +208,13 @@ export function LocationDiscovery({
           {MODES.map((item) => (
             <button
               key={item.id}
+              id={`discovery-mode-${item.id}`}
               type="button"
               role="radio"
               aria-checked={mode === item.id}
+              tabIndex={mode === item.id ? 0 : -1}
               onClick={() => applyMode(item.id)}
+              onKeyDown={(event) => onModeKeyDown(event, item.id)}
               className={cn(
                 "min-h-11 rounded-full px-4 text-sm font-medium ring-1 ring-[#f0e4de] transition",
                 mode === item.id ? "bg-primary text-primary-foreground ring-primary" : "bg-background text-foreground",
@@ -273,7 +328,7 @@ export function LocationDiscovery({
               {formError}
             </p>
           ) : null}
-          <Button type="submit" className="h-12 rounded-full" disabled={pending}>
+          <Button type="submit" className="h-12 rounded-full" disabled={pending || loadingMore} aria-busy={pending}>
             <Search className="size-4" aria-hidden="true" />
             {pending ? "Procurando..." : DISCOVERY_COPY.submit}
           </Button>
@@ -304,25 +359,41 @@ export function LocationDiscovery({
         ) : null}
 
         {result?.status === "ready" && result.items.length > 0 ? (
-          <><ul className="grid gap-3">
-            {result.items.map((item) => (
-              <li key={item.slug}>
-                <a
-                  href={`/p/${item.slug}`}
-                  className="agende-panel flex min-h-16 flex-col rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de] transition hover:ring-primary"
-                >
-                  <p className="font-serif text-xl text-wine-deep">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {[item.city, item.state].filter(Boolean).join(" · ") || "Localidade cadastrada"}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-wine-deep">
-                    {item.bookingOpen ? DISCOVERY_COPY.bookingOpen : DISCOVERY_COPY.bookingClosed}
-                  </p>
-                </a>
-              </li>
-            ))}
-          </ul>
-          {result.items.length < result.total && result.items.length < 10000 ? <Button type="button" onClick={loadMore} disabled={pending} className="mt-3">{pending ? "Carregando..." : "Mostrar mais salões"}</Button> : null}</>
+          <div className="grid gap-3">
+            <p className="text-sm text-muted-foreground">
+              {formatDiscoveryShowingCount(result.items.length, result.total)}
+            </p>
+            <ul className="grid gap-3">
+              {result.items.map((item) => (
+                <li key={item.slug}>
+                  <a
+                    href={`/p/${item.slug}`}
+                    className="agende-panel flex min-h-16 flex-col rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de] transition hover:ring-primary"
+                  >
+                    <p className="font-serif text-xl text-wine-deep">{item.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {[item.city, item.state].filter(Boolean).join(" · ") || "Localidade cadastrada"}
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-wine-deep">
+                      {item.bookingOpen ? DISCOVERY_COPY.bookingOpen : DISCOVERY_COPY.bookingClosed}
+                    </p>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {discoveryHasMorePage(result.items.length, result.total) && result.items.length <= 10000 ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 rounded-full"
+                onClick={() => void loadMore()}
+                disabled={pending || loadingMore}
+                aria-busy={loadingMore}
+              >
+                {loadingMore ? DISCOVERY_COPY.loadingMore : DISCOVERY_COPY.loadMore}
+              </Button>
+            ) : null}
+          </div>
         ) : null}
       </div>
 

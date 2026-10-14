@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, type ReactNode } from "react";
+import { useActionState, useState, useTransition, type ReactNode } from "react";
 import { toast } from "sonner";
 import { CalendarDays, Clock3, Mail, NotebookText, Phone, Scissors, Sparkles, UserRound, WandSparkles } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
@@ -263,6 +263,7 @@ export function ServiceCatalog({
   const [state, action, pending] = useCatalogAction(saveServiceAction, () => {
     setEditing(null);
   });
+  const [togglePending, startToggle] = useTransition();
   const bookable = professionals.filter((member) => member.hasProfessionalProfile);
   const canToggleOwn = Boolean(currentMemberId) && !canManage &&
     professionals.some((member) => member.memberId === currentMemberId && member.hasProfessionalProfile);
@@ -345,13 +346,18 @@ export function ServiceCatalog({
                   />
                 ) : null}
                 {canToggleOwn && currentMemberId ? (
-                  <form action={async (formData) => {
-                    await runFormAction(toggleOwnServiceAction, formData);
-                  }}>
+                  <form
+                    action={(formData) => {
+                      if (togglePending) return;
+                      startToggle(() => {
+                        void runFormAction(toggleOwnServiceAction, formData);
+                      });
+                    }}
+                  >
                     <input type="hidden" name="serviceId" value={service.id} />
                     <input type="hidden" name="enabled" value={performs ? "false" : "true"} />
-                    <Button variant="outline" className="h-11" type="submit">
-                      {performs ? "Não faço mais este serviço" : "Eu faço este serviço"}
+                    <Button variant="outline" className="h-11" type="submit" disabled={togglePending} aria-busy={togglePending}>
+                      {togglePending ? "Salvando..." : performs ? "Não faço mais este serviço" : "Eu faço este serviço"}
                     </Button>
                   </form>
                 ) : null}

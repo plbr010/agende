@@ -60,10 +60,18 @@ test("discovery is honest and not limited to the city of residence", () => {
   assert.match(contract, /DISCOVERY_BACKEND_READY = false/);
   assert.match(contract, /qualquer cidade/i);
   assert.match(contract, /Não usamos a cidade de residência/i);
+  assert.match(contract, /Muriaé/);
+  assert.match(contract, /Juiz de Fora/);
+  assert.match(contract, /p_offset: sanitizeDiscoveryOffset/);
   const ui = source("src/components/discovery/location-discovery.tsx");
   assert.match(ui, /searchPublicWorkspacesAction/);
   assert.match(ui, /modeNearby/);
   assert.match(ui, /modeGlobal/);
+  assert.match(ui, /loadMore/);
+  assert.match(ui, /scenarioHint/);
+  assert.match(ui, /nextRadioIndex/);
+  assert.match(ui, /\.catch\(/);
+  assert.match(ui, /if \(!cancelled\) setSuggestions/);
   assert.match(source("src/lib/discovery/contract.ts"), /Perto de mim/);
   assert.match(source("src/lib/discovery/contract.ts"), /Nome do salão/);
   assert.match(source("src/app/descobrir/page.tsx"), /LocationDiscovery/);

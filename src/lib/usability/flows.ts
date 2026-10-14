@@ -9,6 +9,23 @@ export type UsabilityFlow = {
 
 export const USABILITY_FLOWS: readonly UsabilityFlow[] = [
   {
+    id: "client-discover",
+    title: "Encontrar um salão em outra cidade",
+    audience: "cliente",
+    goal: "Achar um estabelecimento perto de onde está agora ou na cidade que escolher",
+    steps: [
+      "Abrir Encontrar um salão",
+      "Permitir ou recusar a localização",
+      "Se permitiu, ver salões da cidade em que está agora",
+      "Para outra cidade, escolher Uma cidade e escrever o nome — por exemplo Muriaé mesmo estando em Juiz de Fora",
+      "Toque no salão para abrir o perfil e agendar",
+    ],
+    difficultyNotes: [
+      "A busca nunca usa a cidade de residência da conta.",
+      "Sem GPS, cidade e nome do salão continuam disponíveis.",
+    ],
+  },
+  {
     id: "client-book",
     title: "Agendar um horário",
     audience: "cliente",

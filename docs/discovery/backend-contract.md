@@ -25,7 +25,7 @@ Nada disto deve ser implementado com migrations em produção sem autorização.
 | `p_state` | se a pessoa escolheu UF | `^[A-Z]{2}$` |
 | `p_query` | modo global (obrigatório); outros modos opcional | nome do estabelecimento ou profissional |
 | `p_postal_code` | sempre null nesta versão | reservado |
-| `p_limit` / `p_offset` | 20 / página solicitada | paginação v1 |
+| `p_limit` / `p_offset` | 20 / página atual | A UI envia `p_offset = itens já exibidos` em “Ver mais”. Honrar `total` no JSON. Offset negativo/inválido vira 0; fracionário é arredondado para baixo e limitado a10.000. |
 
 A cidade de residência da conta **não existe** no schema atual (`profiles` / `client_profiles`) e **não deve** ser injetada pelo backend.
 
@@ -67,7 +67,17 @@ Returns Json: {
 - Não expor telefone, e-mail interno ou IDs internos.
 - Sem `latitude`/`longitude` no schema hoje: raio geográfico **não é suportado** nesta versão.
 
-O frontend converte `logo_path`/`booking_open` para `logoPath`/`bookingOpen`. Itens sem `name`+`slug` válido são descartados; nenhum estabelecimento é inventado.
+O frontend converte `logo_path`/`booking_open` para `logoPath`/`bookingOpen`. Itens sem `name`+`slug` válido são descartados; nenhum estabelecimento é inventado. Páginas seguintes são concatenadas por `slug`; se `items` vier vazio, a UI esconde “Ver mais”.
+
+## Cenário de aceite — residência ≠ posição atual
+
+Uma pessoa mora em Muriaé e está fisicamente em Juiz de Fora:
+
+1. Com GPS autorizado, a busca “Perto de mim” usa a cidade reverse-geocodificada (Juiz de Fora), nunca a residência.
+2. “Uma cidade” + Muriaé lista só estabelecimentos daquela localidade, se existirem no RPC.
+3. “Nome do salão” não exige cidade.
+4. Sem GPS, cidade e nome continuam disponíveis.
+5. Coordenadas do visitante **não** entram no body v1 (`p_latitude`/`p_longitude` ausentes).
 
 ## Flags no frontend
 

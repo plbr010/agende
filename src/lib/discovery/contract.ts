@@ -64,6 +64,27 @@ export function roundDiscoveryCoordinate(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
 
+export function sanitizeDiscoveryOffset(offset: number | undefined): number {
+  if (typeof offset !== "number" || !Number.isFinite(offset) || offset < 0) return 0;
+  return Math.min(Math.floor(offset), 10_000);
+}
+
+export function mergeDiscoveryPages(
+  current: DiscoveryWorkspaceCard[],
+  incoming: DiscoveryWorkspaceCard[],
+): DiscoveryWorkspaceCard[] {
+  const seen = new Set(current.map((item) => item.slug));
+  return [...current, ...incoming.filter((item) => !seen.has(item.slug))];
+}
+
+export function discoveryHasMorePage(shown: number, total: number): boolean {
+  return shown > 0 && total > shown;
+}
+
+export function formatDiscoveryShowingCount(shown: number, total: number): string {
+  return `Mostrando ${shown} de ${total}`;
+}
+
 export function sanitizeDiscoveryCoordinates(
   coordinates: DiscoveryCoordinates | undefined,
 ): DiscoveryCoordinates | undefined {
@@ -85,7 +106,7 @@ export function normalizeDiscoverySearch(input: DiscoverySearchInput): Discovery
 
   return {
     mode,
-    offset: Number.isInteger(input.offset) && input.offset! >= 0 && input.offset! <= 10000 ? input.offset : 0,
+    offset: sanitizeDiscoveryOffset(input.offset),
     city: mode !== "global" && city.length >= 2 ? city : undefined,
     state: mode !== "global" && /^[A-Z]{2}$/.test(state) ? state : undefined,
     query: query.length >= 2 ? query : undefined,
@@ -193,7 +214,7 @@ export function discoveryRpcArgs(input: DiscoverySearchInput): Record<string, un
     p_query: normalized.query ?? null,
     p_postal_code: null,
     p_limit: DISCOVERY_PAGE_SIZE,
-    p_offset: normalized.offset ?? 0,
+    p_offset: sanitizeDiscoveryOffset(input.offset),
   };
 }
 
@@ -256,6 +277,8 @@ export const DISCOVERY_COPY = {
   title: "Encontrar um salão",
   description:
     "Procure perto de onde você está agora, em qualquer cidade do Brasil, ou pelo nome do salão. Não precisa ser a cidade onde você mora. Se o salão já te mandou um link, use-o abaixo — é o jeito que já funciona hoje.",
+  scenarioHint:
+    "Exemplo: se você mora em Muriaé e está em Juiz de Fora, “Perto de mim” procura em Juiz de Fora. Para ver salões de Muriaé ou de qualquer outra cidade, escolha “Uma cidade” ou busque pelo nome.",
   modeNearby: "Perto de mim",
   modeCity: "Uma cidade",
   modeGlobal: "Nome do salão",
@@ -271,6 +294,8 @@ export const DISCOVERY_COPY = {
   queryLabel: "Nome do salão ou profissional",
   queryOptionalLabel: "Nome do salão (opcional)",
   submit: "Procurar estabelecimentos",
+  loadMore: "Ver mais estabelecimentos",
+  loadingMore: "Carregando mais...",
   missingCity: "Escreva a cidade onde você quer procurar. Pode ser qualquer uma.",
   missingQuery: "Digite o nome do salão ou da profissional (pelo menos 2 letras).",
   missingNearby: "Autorize a localização ou escolha uma cidade para continuar.",

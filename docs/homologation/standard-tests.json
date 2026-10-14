@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T03:30:29.136Z",
+  "checked_at": "2026-10-14T03:50:36.625Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 161,
+      "passed": 173,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 57,
+      "passed": 58,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 271,
+    "passed": 284,
     "failed": 0,
     "skipped": 0
   },
@@ -497,6 +497,12 @@
       "status": "passed"
     },
     {
+      "file": "src/components/booking/public-booking-flow.test.ts",
+      "name": "public booking locks navigation while a reservation is in flight",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/finance/finance-dashboard.test.ts",
       "name": "finance actions use everyday money words instead of accounting jargon",
       "category": "unit_or_static_contract",
@@ -534,6 +540,18 @@
     },
     {
       "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "opening a salon by link cannot be double-submitted",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "copying a public link does not fake success",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
       "name": "sensitive saves ask inside the page and keep the form",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -547,6 +565,12 @@
     {
       "file": "src/components/usability/homologation-copy.test.ts",
       "name": "cancel errors stay inside the open dialog and primary taps are large",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/pending-form.test.ts",
+      "name": "sensitive one-click actions lock while the request is in flight",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1073,6 +1097,12 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/discovery/actions.test.ts",
+      "name": "discovery actions forward pagination offset to the RPC",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "discovery never defaults to a residence city",
       "category": "unit_or_static_contract",
@@ -1111,6 +1141,18 @@
     {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "global name search clears stale city filters and passes bounded pagination without GPS",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "a Muriaé resident physically in Juiz de Fora can search either city",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "search RPC paginates with offset and never invents extra salons",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1433,6 +1475,18 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/usability/clipboard.test.ts",
+      "name": "copyTextToClipboard succeeds via the clipboard API and trims the value",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/clipboard.test.ts",
+      "name": "copyTextToClipboard does not claim success when the clipboard rejects",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/usability/copy.test.ts",
       "name": "status actions use verbs a person can tap without guessing",
       "category": "unit_or_static_contract",
@@ -1477,6 +1531,30 @@
     {
       "file": "src/lib/usability/flows.test.ts",
       "name": "every recorded flow names a goal and a difficulty note",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/homologation-matrix.test.ts",
+      "name": "homologation board never marks a missing backend as PASS",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/homologation-matrix.test.ts",
+      "name": "isolated browser e2e uses roles and does not invent salons",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/roving-radio.test.ts",
+      "name": "arrow keys move around a radiogroup and ignore unrelated keys",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/roving-radio.test.ts",
+      "name": "disabled radios are skipped, including a locked client intent",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

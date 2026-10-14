@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
@@ -479,6 +479,7 @@ function AppointmentDetailDialog({
   currentMemberId: string | null;
 }) {
   const [rescheduling, setRescheduling] = useState(false);
+  const [statusPending, startStatus] = useTransition();
   const actions = statusActions(appointment.status, role);
   const canEdit =
     canRescheduleStatus(appointment.status) &&
@@ -505,19 +506,24 @@ function AppointmentDetailDialog({
           </div>
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
-              <Button type="button" variant="outline" className="h-11" onClick={() => setRescheduling(true)}>
+              <Button type="button" variant="outline" className="h-11" onClick={() => setRescheduling(true)} disabled={statusPending}>
                 Trocar horário
               </Button>
             ) : null}
             {actions.map((status) => (
               <form
                 key={status}
-                action={(formData) => runFormAction(setAppointmentStatusAction, formData)}
+                action={(formData) => {
+                  if (statusPending) return;
+                  startStatus(() => {
+                    void runFormAction(setAppointmentStatusAction, formData);
+                  });
+                }}
               >
                 <input type="hidden" name="appointmentId" value={appointment.id} />
                 <input type="hidden" name="status" value={status} />
-                <Button type="submit" variant="outline" className="h-11">
-                  {STATUS_ACTION_LABEL[status]}
+                <Button type="submit" variant="outline" className="h-11" disabled={statusPending} aria-busy={statusPending}>
+                  {statusPending ? "Salvando..." : STATUS_ACTION_LABEL[status]}
                 </Button>
               </form>
             ))}

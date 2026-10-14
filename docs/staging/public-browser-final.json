@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-10-14T03:53:16.087Z",
+  "base": "http://127.0.0.1:3109",
+  "pass": 11,
+  "fail": 0,
+  "blocked": 0,
+  "results": [
+    {
+      "name": "landing",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/landing.png"
+    },
+    {
+      "name": "cadastro-keyboard",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/cadastro.png"
+    },
+    {
+      "name": "login",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/login.png"
+    },
+    {
+      "name": "discovery-empty-city",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-empty-city.png"
+    },
+    {
+      "name": "discovery-gps-jf",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-gps-jf.png"
+    },
+    {
+      "name": "discovery-city-muriae",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-city-muriae.png"
+    },
+    {
+      "name": "discovery-global-name",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-global-name.png"
+    },
+    {
+      "name": "public-not-found",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/public-not-found.png"
+    },
+    {
+      "name": "app-guard",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/app-guard.png"
+    },
+    {
+      "name": "discovery-gps-denied",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-gps-denied.png"
+    },
+    {
+      "name": "discovery-mobile",
+      "result": "PASS",
+      "evidence": ".test-postgres/public-e2e-final/discovery-mobile.png"
+    }
+  ]
+}

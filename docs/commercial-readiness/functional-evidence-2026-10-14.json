@@ -1,6 +1,6 @@
 {
   "checked_at": "2026-10-14T03:45:19.614Z",
-  "base_main": "64b37af2a228cb0c747d2e0c13631ffea08b39e7",
+  "base_main": "f10843851d7e58ca95ae7836814022952351052d",
   "node": "24.19.0",
   "next": "16.3.8",
   "decision": "NO-GO",
@@ -33,7 +33,7 @@
   "tests": {
     "npm_ci": true,
     "lint": true,
-    "standard": 271,
+    "standard": 284,
     "standard_failed": 0,
     "pg17": 48,
     "pg17_failed": 0,
@@ -41,6 +41,7 @@
     "build": true,
     "typecheck": true,
     "local_get_smoke": 34,
+    "isolated_public_browser_checks": 11,
     "runtime_vulnerabilities": 0,
     "dev_high_vulnerabilities": 5,
     "synthetic_restore_passed": true,
