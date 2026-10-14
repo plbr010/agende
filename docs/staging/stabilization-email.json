@@ -25,7 +25,32 @@
       "intent": "professional",
       "status": "BLOCKED",
       "detail": "Await actual delivered email link from authorized mailbox"
+    },
+    {
+      "name": "real unconfirmed account cannot log in",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "real invalid confirmation token cannot establish session",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "externally confirmed account can log in; original callback not verified",
+      "intent": "professional",
+      "status": "PASS"
+    },
+    {
+      "name": "real account logout clears SSR session cookies",
+      "intent": "professional",
+      "status": "PASS"
+    },
+    {
+      "name": "real invalid confirmation token cannot establish session",
+      "intent": "professional",
+      "status": "PASS"
     }
   ],
-  "checked_at": "2026-10-14T18:28:20.230Z"
+  "checked_at": "2026-10-14T18:40:10.036Z"
 }

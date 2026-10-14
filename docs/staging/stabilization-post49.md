@@ -10,6 +10,7 @@ Checkout original `agende-client-phase2`, branch `codex/client-phase2-2026-10-14
 - **Origem do servidor:** `SITE_URL` permite configurar callbacks/CSRF em runtime sem depender de `NEXT_PUBLIC_SITE_URL`, que é incorporado ao build. A validação de protocolo, credenciais na URL e origem continua ativa. O navegador usa apenas a configuração pública. Teste cobre ambas as prioridades.
 - **Runner:** quatro workers limitam o consumo simultâneo dos bancos WASM. A execução irrestrita no Node 24 falhou em seis arquivos SQL; os mesmos testes passaram isoladamente e na execução completa com limite. Nenhum caso foi removido, ignorado ou teve validações relaxadas.
 - Runner de foto aceita somente o hostname do Preview desta branch para homologação remota. Runner de e-mail guarda cookies PKCE/senhas/links apenas em arquivos `.env*` ignorados e não usa confirmação administrativa.
+- **CI:** o verificador de histórico ainda exigia 68 migrations e recusava as duas já revisadas no PR #49. Agora exige exatamente 70 e inclui somente esses dois nomes na allowlist; hashes históricos seguem intactos. `.gitattributes` preserva LF também nas migrations de 27/09, evitando diferença de hash causada pelo checkout Windows. Nenhum SQL foi modificado.
 
 Nenhum componente, página ou estilo sob responsabilidade do Cursor foi modificado.
 
@@ -30,8 +31,11 @@ Nenhum componente, página ou estilo sob responsabilidade do Cursor foi modifica
 | Navegador → staging, continuidade e horário ocupado | PASS — 3 casos | `client-phase2-booking-browser.json` |
 | Chave privilegiada nos assets do browser | PASS — zero ocorrências em 66 assets | `stabilization-browser-secrets.json` |
 | npm audit --omit=dev | PASS — zero vulnerabilidades | `../homologation/stabilization-runtime-audit.json` |
+| Verificador histórico, auditoria de fluxos e drift | PASS local | `../homologation/stabilization-recovery-verifier.log`, `stabilization-local-flows.log`, `stabilization-schema-drift.log` |
 | Cadastro SMTP de cliente/profissional | PASS apenas da solicitação GoTrue | `stabilization-email.json` |
 | Confirmação por e-mail recebido, reutilização, recuperação completa | BLOCKED — aguardando links recebidos | `stabilization-email.json` |
+
+Auth real também negou token de confirmação inválido nos dois perfis e login da cliente não confirmada. A conta profissional apareceu confirmada externamente antes do teste negativo: seu login/logout real passou, mas isso não valida o callback original do runner. O teste detectou essa mudança de estado e passou a registrar as duas condições separadamente. Nenhum link recebido foi fabricado ou obtido via admin.
 
 Os checks npm finais usam Node 24.19.0 invocando o `npm-cli.js` com esse runtime. O `npm.cmd` instalado força Node 20 mesmo quando PATH aponta para Node 24; a primeira instalação e execução não são a evidência final. O primeiro build falhou no subprocesso Turbopack; o build com runtime suportado passou. A primeira foto retornou 403 por origem incorporada ao build; a correção `SITE_URL` foi reexecutada contra Storage real com sucesso.
 

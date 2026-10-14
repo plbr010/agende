@@ -10,7 +10,7 @@ assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,project);
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));
 assert.equal(config.url,`https://${project}.supabase.co`);
 const [mode,intent]=process.argv.slice(2);
-assert.ok(['signup','confirm','recovery'].includes(mode));
+assert.ok(['signup','confirm','recovery','negative'].includes(mode));
 assert.ok(['client','professional'].includes(intent));
 const statePath=`.env.stabilization-email-${intent}.json`;
 const state=existsSync(statePath)?JSON.parse(readFileSync(statePath,'utf8')):
@@ -35,6 +35,21 @@ if(mode==='signup') {
  state.signupRequested=!error;save();
  record('signup SMTP request',error?'FAIL':'PASS',error?error.code??'auth_request_failed':'GoTrue accepted; inbox delivery and callback still BLOCKED');
  record('inbox delivery and signup callback','BLOCKED','Await actual delivered email link from authorized mailbox');
+} else if(mode==='negative') {
+ const login=await client.auth.signInWithPassword({email:state.email,password:state.password});
+ if(login.data.user?.email_confirmed_at) {
+  assert.equal(login.error,null);assert.ok(login.data.session);
+  record('externally confirmed account can log in; original callback not verified','PASS');
+  const logout=await client.auth.signOut({scope:'local'});assert.equal(logout.error,null);
+  assert.equal((await client.auth.getSession()).data.session,null);save();
+  record('real account logout clears SSR session cookies','PASS');
+ } else {
+  assert.equal(login.error?.code,'email_not_confirmed');assert.equal(login.data.session,null);
+  record('real unconfirmed account cannot log in','PASS');
+ }
+ const invalid=await client.auth.verifyOtp({type:'signup',token_hash:randomUUID()});
+ assert.ok(invalid.error);assert.equal(invalid.data.session,null);
+ record('real invalid confirmation token cannot establish session','PASS');
 } else if(mode==='recovery') {
  const {error}=await client.auth.resetPasswordForEmail(state.email,{redirectTo:origin+'/auth/recovery'});save();
  record('recovery SMTP request',error?'FAIL':'PASS',error?error.code??'auth_request_failed':'GoTrue accepted; delivered link and password change not yet verified');
@@ -42,9 +57,13 @@ if(mode==='signup') {
  const linkPath=`.env.stabilization-link-${intent}.txt`;
  assert.ok(existsSync(linkPath),'Actual received email link required');
  const link=new URL(readFileSync(linkPath,'utf8').trim());
- assert.equal(link.origin,config.url);assert.equal(link.pathname,'/auth/v1/verify');
- const target=await fetch(link,{redirect:'manual'});const location=target.headers.get('location');
- assert.ok(location);const callback=new URL(location);assert.equal(callback.origin,origin);
+ let callback;
+ if(link.origin===origin) {callback=link;} else {
+  assert.equal(link.origin,config.url);assert.equal(link.pathname,'/auth/v1/verify');
+  const target=await fetch(link,{redirect:'manual'});const location=target.headers.get('location');
+  assert.ok(location);callback=new URL(location);
+ }
+ assert.equal(callback.origin,origin);
  assert.equal(callback.pathname,'/auth/callback');
  const server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3000'],
   {windowsHide:true,stdio:'ignore',env:{...process.env,SITE_URL:origin,NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key}});
@@ -57,7 +76,7 @@ if(mode==='signup') {
   assert.ok(response.headers.getSetCookie().some(c=>c.startsWith(`sb-${project}-auth-token`)));
   record('actual delivered link establishes Next session and original destination','PASS');
   const reused=await fetch(link,{redirect:'manual'});const reuseTarget=new URL(reused.headers.get('location'));
-  assert.ok(reuseTarget.searchParams.has('error')||reuseTarget.hash.includes('error'));
-  record('actual signup link reuse denied','PASS');
+  assert.ok(link.origin===origin?reuseTarget.pathname==='/verificar-email':reuseTarget.searchParams.has('error')||reuseTarget.hash.includes('error'));
+  record(link.origin===origin?'actual PKCE callback code reuse denied':'actual signup link reuse denied','PASS');
  } finally {server.kill();}
 }
