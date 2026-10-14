@@ -1,0 +1,196 @@
+{
+  "checked_at": "2026-10-14T17:12:54.633Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "origin": "http://localhost:3000",
+  "mode": "real SSR forms; owner credentials; connected browser",
+  "checks": [
+    {
+      "name": "jwt_real_expiry",
+      "status": "PASS",
+      "mode": "operator-observed evidence"
+    },
+    {
+      "name": "session_refresh",
+      "status": "BLOQUEADO",
+      "mode": "operator-observed evidence"
+    },
+    {
+      "name": "finite_session_expiry",
+      "status": "BLOQUEADO",
+      "mode": "operator-observed evidence"
+    }
+  ],
+  "observations": [
+    {
+      "at": "2026-10-14T17:14:31.054Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:31.120Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:40.555Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:40.684Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/recuperar-senha",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:40.720Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/cadastro",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:40.722Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/recuperar-senha",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:40.748Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/cadastro",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:14:59.584Z",
+      "kind": "request",
+      "method": "POST",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:15:05.707Z",
+      "kind": "request",
+      "method": "POST",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:15:13.367Z",
+      "kind": "session_token",
+      "issued_at": 1791998110,
+      "expires_at": 1791998410,
+      "lifetime_seconds": 300,
+      "token_changed": false,
+      "previous_expired_by_real_clock": false
+    },
+    {
+      "at": "2026-10-14T17:15:13.994Z",
+      "kind": "request",
+      "method": "GET",
+      "path": "/onboarding",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": true,
+      "sets_session_cookie": false
+    },
+    {
+      "at": "2026-10-14T17:15:13.997Z",
+      "kind": "request",
+      "method": "POST",
+      "path": "/login",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": false,
+      "sets_session_cookie": true,
+      "destination": "/onboarding",
+      "same_origin_redirect": true
+    },
+    {
+      "at": "2026-10-14T17:15:24.080Z",
+      "kind": "request",
+      "method": "POST",
+      "path": "/onboarding",
+      "status": 200,
+      "has_pkce_code": false,
+      "has_token_hash": false,
+      "has_pkce_verifier_cookie": false,
+      "has_session_cookie": true,
+      "sets_session_cookie": false,
+      "destination": "/app",
+      "same_origin_redirect": true
+    },
+    {
+      "at": "2026-10-14T17:20:15.571Z",
+      "kind": "real_token_expiry",
+      "original_expires_at": 1791998410,
+      "status": 403,
+      "elapsed_after_exp_seconds": 5,
+      "expired_jwt_error": true,
+      "clock_modified": false,
+      "token_modified": false
+    }
+  ],
+  "production_connections": 0,
+  "secrets_in_report": false,
+  "status": "STOPPED",
+  "commercial_acceptance": false
+}
