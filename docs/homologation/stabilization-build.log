@@ -1,0 +1,77 @@
+
+> agende@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.ts took 185ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 25.3s
+  Running TypeScript ...
+  Finished TypeScript in 14.4s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/47) ...
+  Generating static pages using 11 workers (11/47) 
+  Generating static pages using 11 workers (23/47) 
+  Generating static pages using 11 workers (35/47) 
+✓ Generating static pages using 11 workers (47/47) in 2.7s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/account/avatar
+├ ƒ /api/workspaces/[id]
+├ ƒ /app
+├ ƒ /app/agenda
+├ ƒ /app/avaliacoes
+├ ƒ /app/clientes
+├ ƒ /app/configuracoes
+├ ƒ /app/configuracoes/assinatura
+├ ƒ /app/configuracoes/equipe
+├ ƒ /app/configuracoes/geral
+├ ƒ /app/configuracoes/perfil
+├ ƒ /app/equipe
+├ ƒ /app/equipe/[memberId]/disponibilidade
+├ ƒ /app/estoque
+├ ƒ /app/financeiro
+├ ƒ /app/pacotes
+├ ƒ /app/relatorios
+├ ƒ /app/servicos
+├ ○ /apple-icon.png
+├ ƒ /auth/callback
+├ ƒ /auth/confirm
+├ ƒ /auth/recovery
+├ ƒ /cadastro
+├ ƒ /cliente
+├ ƒ /cliente/agendamentos
+├ ƒ /cliente/avaliacoes
+├ ƒ /cliente/descobrir
+├ ƒ /cliente/favoritos
+├ ƒ /cliente/perfil
+├ ○ /comecar
+├ ƒ /convite/[token]
+├ ○ /descobrir
+├ ○ /icon.png
+├ ○ /identidade
+├ ○ /identidade/cliente
+├ ○ /identidade/cliente/favoritos
+├ ○ /identidade/cliente/perfil
+├ ƒ /login
+├ ○ /manifest.webmanifest
+├ ƒ /onboarding
+├ ƒ /p/[slug]
+├ ƒ /p/[slug]/agendar
+├ ○ /privacidade
+├ ○ /profissionais
+├ ƒ /recuperar-senha
+├ ƒ /redefinir-senha
+├ ○ /termos
+└ ƒ /verificar-email
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

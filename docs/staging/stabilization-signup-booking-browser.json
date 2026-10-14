@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-14T18:54:29.217Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real browser + SSR actions + delivered email links + staging GoTrue/PostgREST",
+  "production_touched": false,
+  "checks": [
+    {
+      "name": "salon service professional date and slot selected before signup; draft is HttpOnly",
+      "status": "PASS"
+    },
+    {
+      "name": "client actual signup form accepted; SMTP confirmation requested",
+      "status": "PASS"
+    },
+    {
+      "name": "professional actual signup form accepted; SMTP confirmation requested",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered client email callback preserves exact original booking selection in same browser",
+      "status": "PASS"
+    },
+    {
+      "name": "reservation confirmed by UI after email callback; draft cleared",
+      "status": "PASS"
+    },
+    {
+      "name": "one persistent appointment visible to customer and salon; duplicate denied",
+      "status": "PASS"
+    },
+    {
+      "name": "professional delivered email callback lands on onboarding; customer reservation isolated",
+      "status": "PASS"
+    },
+    {
+      "name": "synthetic reservation cancelled through authorized RPC; history retained",
+      "status": "PASS"
+    }
+  ]
+}

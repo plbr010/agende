@@ -65,7 +65,8 @@ function actions(error: { code?: string; message: string; status?: number } | nu
   }>("./actions.ts", {
     "@/lib/billing/plans": plans,
     "next/headers": { cookies: async () => ({ get: (name: string) => ({ value: cookies.get(name) }),
-      set: (name: string, value: string) => cookies.set(name, value) }) },
+      set: (name: string, value: string) => cookies.set(name, value),
+      delete: (name: string) => cookies.delete(name) }) },
     "next/navigation": { redirect: (path: string) => { calls.push({ name: "redirect", value: path }); throw new Error(`redirect:${path}`); } },
     "@/lib/auth/redirects": redirects,
     "@/lib/auth/session": { loadAppSession: async () => ({ context: {
@@ -89,6 +90,19 @@ function signupForm(intendedUse: string) {
     phone: "55999999999", password: "Password123", confirmPassword: "Password123", termsAccepted: "on", plan: "equipe", next: "https://evil.invalid" })) form.set(key, value);
   return form;
 }
+
+test("new signup clears stale pending destination; unconfirmed login keeps booking destination", async () => {
+  const signup = actions();
+  signup.cookies.set("agende_pending_next", "/convite/old");
+  await assert.rejects(signup.signUpAction({}, signupForm("client")), /redirect:/);
+  assert.equal(signup.cookies.has("agende_pending_next"), false);
+  const login = actions({ message: "Email not confirmed" });
+  const form = new FormData();
+  form.set("email", "test@example.invalid"); form.set("password", "Password123");
+  form.set("next", "/p/studio/agendar");
+  await assert.rejects(login.signInAction({}, form), /redirect:/);
+  assert.equal(login.cookies.get("agende_pending_next"), "/p/studio/agendar");
+});
 
 test("client and professional signup preserve intent and selected plan without provisioning a trial", async () => {
   for (const intent of ["client", "professional"]) {

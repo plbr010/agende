@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T17:56:12.210Z",
+  "checked_at": "2026-10-14T18:31:22.153Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 59,
+      "passed": 62,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 318,
+    "passed": 321,
     "failed": 0,
     "skipped": 0
   },
@@ -774,6 +774,12 @@
     },
     {
       "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "new signup clears stale pending destination; unconfirmed login keeps booking destination",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
       "name": "client and professional signup preserve intent and selected plan without provisioning a trial",
       "category": "platform_mocks",
       "status": "passed"
@@ -1229,6 +1235,12 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/client/avatar-commit.test.ts",
+      "name": "avatar keeps uploaded bytes when swap acknowledgement is lost after commit",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/client/avatar-image.test.ts",
       "name": "avatars decode JPEG PNG WebP and normalize into bounded metadata-free WebP",
       "category": "unit_or_static_contract",
@@ -1609,6 +1621,12 @@
     {
       "file": "src/lib/supabase/env-isolation.test.ts",
       "name": "isolated HTTPS and local Supabase work while malformed origins fail closed",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/supabase/env-isolation.test.ts",
+      "name": "server site origin uses runtime configuration while browser keeps baked public origin",
       "category": "platform_mocks",
       "status": "passed"
     },

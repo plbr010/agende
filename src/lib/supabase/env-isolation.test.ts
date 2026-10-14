@@ -39,3 +39,14 @@ test("isolated HTTPS and local Supabase work while malformed origins fail closed
   }
   assert.throws(() => backend({ NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321", NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV: "production" }), /Invalid/);
 });
+
+test("server site origin uses runtime configuration while browser keeps baked public origin", () => {
+  const source = readFileSync(new URL("./env.ts", import.meta.url), "utf8");
+  for (const browser of [false, true]) {
+    const exports = {} as { getSiteUrl: () => string };
+    runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText,
+      { exports, URL, process: { env: { SITE_URL: "http://127.0.0.1:3456", NEXT_PUBLIC_SITE_URL: "http://localhost:3000" } },
+        ...(browser ? { window: {} } : {}) });
+    assert.equal(exports.getSiteUrl(), browser ? "http://localhost:3000" : "http://127.0.0.1:3456");
+  }
+});
