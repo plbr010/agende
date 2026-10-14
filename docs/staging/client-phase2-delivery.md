@@ -1,6 +1,6 @@
 # Entrega da Fase 2 — 14/10/2026
 
-Branch: `codex/client-phase2-2026-10-14`. Base: main `537fc99`. Produção não alterada; PR separado, sem merge automático.
+Branch: `codex/client-phase2-2026-10-14`. Base: main `537fc99`. [PR #49](https://github.com/plbr010/agende/pull/49), draft para revisão, sem merge automático. Produção não alterada.
 
 Backend implementado: favoritos PostgreSQL por cliente, cidade residencial opcional, referência de foto privada em profiles, upload/consulta/substituição/remoção de fotos com Storage privado e validação de imagem, limpeza transacional/leases, rascunho HttpOnly de reserva com retorno após login e revalidação, correção do vínculo de identidade por telefone. Histórico e avaliações existentes reutilizados e homologados entre dois salões.
 
