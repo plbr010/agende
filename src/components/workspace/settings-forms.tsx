@@ -291,7 +291,7 @@ export function PublicProfileSettingsForm({
               </Button>
             ) : null}
             <Link
-              href={`/p/${settings.slug}`}
+              href={`/p/${slugifyPreview(slug) || settings.slug}`}
               className="inline-flex h-12 items-center rounded-lg px-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
             >
               Ver como clientes te veem

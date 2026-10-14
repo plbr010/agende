@@ -47,6 +47,14 @@ test("auth, onboarding and billing keep the next step obvious", () => {
   assert.doesNotMatch(source("src/components/billing/billing-controls.tsx"), /Assinatura ativada/);
 });
 
+test("authenticated search fields use a client Input so name and events reach the form", () => {
+  const input = source("src/components/ui/input.tsx");
+  assert.match(input, /["']use client["']/);
+  assert.match(input, /applyPortugueseValidity/);
+  assert.match(source("src/app/app/clientes/page.tsx"), /name="q"/);
+  assert.match(source("src/app/app/servicos/page.tsx"), /name="q"/);
+});
+
 test("catalog and money modules explain the empty next step", () => {
   assert.match(source("src/components/catalog/directories.tsx"), /EmptyState/);
   assert.match(source("src/components/catalog/directories.tsx"), /Cadastrar o primeiro serviço/);
@@ -70,7 +78,8 @@ test("discovery is honest and not limited to the city of residence", () => {
   assert.match(ui, /loadMore/);
   assert.match(ui, /scenarioHint/);
   assert.match(ui, /nextRadioIndex/);
-  assert.match(ui, /\.catch\(\(\) => setSuggestions\(\[\]\)\)/);
+  assert.match(ui, /\.catch\(/);
+  assert.match(ui, /if \(!cancelled\) setSuggestions/);
   assert.match(source("src/lib/discovery/contract.ts"), /Perto de mim/);
   assert.match(source("src/lib/discovery/contract.ts"), /Nome do salão/);
   assert.match(source("src/app/descobrir/page.tsx"), /LocationDiscovery/);

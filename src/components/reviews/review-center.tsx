@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { CalendarCheck2, LockKeyhole, MessageCircleHeart, Star } from "lucide-react";
 import { submitReview } from "@/lib/reviews/actions";
 import type { AppointmentReview } from "@/lib/reviews/queries";
@@ -21,7 +21,26 @@ export function ReviewCenter({ appointments, initialReviews }: { appointments: M
   const [comment, setComment] = useState("");
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
-  function send() { if (!selected) return; start(async () => { try { const result = await submitReview({ appointmentId: selected.id, rating, comment }); if (result.error) setMessage(result.error); else if (result.reviews) { setReviews(result.reviews); setSelected(null); setMessage("Avaliação enviada com sucesso."); } } catch { setMessage("Não foi possível confirmar o envio. Atualize a página antes de tentar novamente."); } }); }
+  const sending = useRef(false);
+  function send() {
+    if (!selected || pending || sending.current || rating < 1) return;
+    sending.current = true;
+    start(async () => {
+      try {
+        const result = await submitReview({ appointmentId: selected.id, rating, comment });
+        if (result.error) setMessage(result.error);
+        else if (result.reviews) {
+          setReviews(result.reviews);
+          setSelected(null);
+          setMessage("Avaliação enviada com sucesso.");
+        }
+      } catch {
+        setMessage("Não foi possível confirmar o envio. Atualize a página antes de tentar novamente.");
+      } finally {
+        sending.current = false;
+      }
+    });
+  }
   const [selected, setSelected] = useState<MyAppointment | null>(null);
   const [rating, setRating] = useState(0);
 
