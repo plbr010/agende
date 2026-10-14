@@ -1,0 +1,326 @@
+
+> agende@0.1.0 test
+> node scripts/run-tests.mjs
+
+PASS [pglite_integration_with_mock_auth] workspace create action starts one trial and respects Cursor setup redirect
+PASS [pglite_integration_with_mock_auth] profile, service and availability actions persist a bookable catalog
+PASS [pglite_integration_with_mock_auth] public actions book an actual slot and reject overlapping requests
+PASS [pglite_integration_with_mock_auth] client rescheduling preserves appointment ID and denies another client
+PASS [pglite_integration_with_mock_auth] reschedule remains committed when its follow-up read fails, without returning an empty success
+PASS [pglite_integration_with_mock_auth] completed appointment receives exactly one immutable client review
+PASS [pglite_integration_with_mock_auth] client cancellation action frees a second booked slot
+PASS [pglite_integration_with_mock_auth] finance actions register a local payment and finance RPC reflects it
+PASS [pglite_integration_with_mock_auth] expired identity and foreign user cannot mutate bookings or read finance
+PASS [pglite_integration_with_mock_auth] stock and package actions persist their business operations
+PASS [pglite_integration_with_mock_auth] server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews
+PASS [pglite_sql] prepared one-migration transaction preserves existing catalog and other history
+PASS [pglite_sql] missing production service contract is restored by the exact additive migration
+PASS [pglite_sql] atomic catalog SQL protects tenant boundaries, roles and existing overrides
+PASS [pglite_sql] an error after service insertion rolls back the entire atomic RPC
+PASS [pglite_sql] phase2 SQL favorites identity publication idempotency profile and avatar isolation
+PASS [unit_or_static_contract] annual Solo cash is 799 once, while revenue recognition is 799/12
+PASS [unit_or_static_contract] monthly Solo uses the published 89.90 and twelve monthly cash charges
+PASS [unit_or_static_contract] illustrative fiscal bands change at RBT12 and do not assume eligibility
+PASS [unit_or_static_contract] net target respects all operating expenses and returns the first viable integer
+PASS [pglite_sql] selected plans, invalid plan, confirmed email and anonymous access
+PASS [pglite_sql] second workspace never earns another trial
+PASS [pglite_sql] trial plan change preserves all dates and rejects invalid/expired trials
+PASS [pglite_sql] downgrade rejects excess professionals and admin can change eligible plan
+PASS [pglite_sql] professionals, receptionists and other tenants cannot change plans or access management reads
+PASS [pglite_sql] Stripe leases serialize attempts, protect tokens and reject user access
+PASS [pglite_sql] Stripe binding and subscription lifecycle preserve trial and require service role
+PASS [pglite_sql] inventory create, entry, exit, adjustment, edit, archive, reactivate and insufficient stock
+PASS [pglite_sql] packages create and sell use real services, clients, sessions and cancellation rules
+PASS [pglite_sql] finance income/expense, idempotency, payment, refund limits, cancel and reopen
+PASS [pglite_sql] real SQL migrations: trial, tenant authorization and management operations
+PASS [pglite_sql] reviewed discovery rollout preserves rows and history, defaults to private and rejects replay
+PASS [pglite_sql] public discovery: consent, any city, global name, pagination, privacy and tenant permissions
+PASS [unit_or_static_contract] production hosts used by the live site are always refused
+PASS [unit_or_static_contract] staging origins accept loopback and staging hostnames only
+PASS [unit_or_static_contract] staging config is BLOQUEADO without opt-in and FAIL on production
+PASS [unit_or_static_contract] evidence directories stay under the workspace or an explicit override
+PASS [unit_or_static_contract] exit codes distinguish test failure, missing browser and missing backend
+PASS [pglite_sql] pending migrations dry-run on the observed remote membership state preserves data and definitions
+PASS [pglite_sql] owner reconciliation refuses unknown functions and rolls back all changes
+PASS [pglite_sql] last-owner trigger protects direct privileged writes and RPCs retain tenant and role checks
+PASS [pglite_sql] expiry and payment failure block operational access even before the maintenance job runs
+PASS [pglite_sql] paid downgrade with excess seats never retains active access and never blocks cancellation or failed payment
+PASS [pglite_sql] client read model exposes stable IDs and slots preserve appointment duration
+PASS [pglite_sql] client reschedule rejects unavailable slots and IDOR, then updates same instant safely
+PASS [pglite_sql] timezone changes display and slots without changing stored appointment instant
+PASS [pglite_sql] review rejects incomplete and foreign appointments
+PASS [pglite_sql] review validates rating/comment, persists once and rejects duplicates
+PASS [pglite_sql] review RLS isolates tenants and prohibits all direct writes, edits and deletes
+PASS [pglite_sql] appointment_reviews uses FORCE RLS and SECURITY DEFINER functions pin empty search_path
+PASS [pglite_sql] launch readiness SQL: reviews, rescheduling, roles and timezone
+PASS [unit_or_static_contract] local observer emits only safe PKCE metadata and canonical redirects, never credentials
+PASS [unit_or_static_contract] observer refuses production and requires explicit staging opt-in
+PASS [stripe_mocks] Edge rejects LIVE keys in staging and TEST keys in production before constructing Stripe
+PASS [stripe_mocks] staging billing cannot default redirects to the production origin
+PASS [stripe_mocks] production checkout returns to the commercial domain when no override exists
+PASS [stripe_mocks] Webhook rejects a signed event from the wrong environment before billing writes
+PASS [stripe_mocks] Webhook subscription retrieval rejects a LIVE key on the test backend
+PASS [stripe_mocks] Edge failures do not expose raw provider secrets in logs or HTTP responses
+PASS [stripe_mocks] restricted-key failures expose only the operation and safe reason, never provider credentials
+PASS [stripe_mocks] billing SDK application identification uses ASCII to avoid provider HTTP 400
+PASS [stripe_mocks] Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers
+PASS [stripe_mocks] Webhook maps all six sandbox lookup keys and renewal periods instead of stale metadata
+PASS [stripe_mocks] Webhook replay skips rebinding and retries a failed sync after the event was recorded
+PASS [stripe_mocks] asynchronous payment failure never activates access and pause/resume uses the current subscription
+PASS [stripe_mocks] Edge preserves original trial end and never resets or charges the last minutes
+PASS [stripe_mocks] Edge prevents known duplicates, reuses open checkout and requires customer for portal
+PASS [stripe_mocks] Webhook validates signatures and reconciles current state, not stale event or invoice status
+PASS [stripe_mocks] Webhook binds checkout then reconciles; unknown prices and missing bindings retry
+PASS [unit_or_static_contract] native SQL harness ignores remote connection variables and requires an owned test directory
+PASS [unit_or_static_contract] isolation policy rejects the shared production database observed on Vercel
+PASS [unit_or_static_contract] valid separate configuration never claims external Auth or payments were tested
+PASS [unit_or_static_contract] the visual reference palette is the semantic source of the product
+PASS [unit_or_static_contract] shared panel class keeps cream cards consistent across launch screens
+PASS [unit_or_static_contract] small text does not use the pale reference rose as the primary button
+PASS [unit_or_static_contract] agenda dialogs tell the professional what to do next in plain language
+PASS [unit_or_static_contract] working hours editor collapses empty days and can copy a day to the rest of the week
+PASS [unit_or_static_contract] approved dashboard identity stays on the launch screens
+PASS [unit_or_static_contract] auth, onboarding and billing keep the next step obvious
+PASS [unit_or_static_contract] authenticated search fields use a client Input so name and events reach the form
+PASS [unit_or_static_contract] catalog and money modules explain the empty next step
+PASS [unit_or_static_contract] discovery is honest and not limited to the city of residence
+PASS [unit_or_static_contract] signup explains the two paths with everyday words and a visible password hint
+PASS [unit_or_static_contract] invite signup locks the professional intent
+PASS [unit_or_static_contract] login keeps the main action large and the password recovery visible
+PASS [unit_or_static_contract] salon setup asks for a familiar name and a 7-day trial without a card
+PASS [unit_or_static_contract] billing component renders exact monthly and annual prices
+PASS [unit_or_static_contract] portal is only rendered for a manager with a Stripe customer
+PASS [unit_or_static_contract] incompatible plans are disabled and return states never claim database activation
+PASS [unit_or_static_contract] public booking reduces steps and keeps undo actions visible
+PASS [unit_or_static_contract] public booking locks navigation while a reservation is in flight
+PASS [unit_or_static_contract] returning to the slot step clears stale times before refetch
+PASS [unit_or_static_contract] approved mark, favicon and PWA icons exist without a padded white canvas
+PASS [unit_or_static_contract] wordmark uses the cropped mark and Playfair stays the heading face
+PASS [unit_or_static_contract] homepage splits client and professional and never lists SaaS prices
+PASS [unit_or_static_contract] client chrome does not advertise Solo, Equipe or checkout SaaS
+PASS [unit_or_static_contract] audience split uses the approved client and professional copy
+PASS [unit_or_static_contract] client chrome has a personal nav and no SaaS prices
+PASS [unit_or_static_contract] client home greets by first name and never advertises professional plans
+PASS [unit_or_static_contract] favorites stay honest and never persist in the browser
+PASS [unit_or_static_contract] profile edits only name and phone already granted on profiles
+PASS [unit_or_static_contract] identidade cliente preview is noindex and uses empty real states
+PASS [unit_or_static_contract] publication form keeps a native checkbox, announces errors and resets after save
+PASS [unit_or_static_contract] perfil explains when discovery publication RPC is missing instead of hiding the block
+PASS [unit_or_static_contract] publication action never leaks raw RPC text and handles a missing contract
+PASS [unit_or_static_contract] finance actions use everyday money words instead of accounting jargon
+PASS [unit_or_static_contract] pricing cards keep monthly prices, annual prices and plan-specific signup links
+PASS [unit_or_static_contract] opening and closing a confirmation ignores clicks while it is saving
+PASS [unit_or_static_contract] a failed confirmation stays open with a plain message
+PASS [unit_or_static_contract] a completed confirmation closes and clears the error
+PASS [unit_or_static_contract] confirmation opens from a dialog trigger button, not a clickable span
+PASS [unit_or_static_contract] opening a salon by link cannot be double-submitted
+PASS [unit_or_static_contract] copying a public link does not fake success
+PASS [unit_or_static_contract] sensitive saves ask inside the page and keep the form
+PASS [unit_or_static_contract] stock, packages and reschedule speak in everyday words
+PASS [unit_or_static_contract] cancel errors stay inside the open dialog and primary taps are large
+PASS [unit_or_static_contract] profile preview opens the slug being edited and finder unlocks after a failed open
+PASS [unit_or_static_contract] sensitive one-click actions lock while the request is in flight
+PASS [unit_or_static_contract] start must come before end and touching ranges are allowed
+PASS [unit_or_static_contract] overlapping hours are rejected, including when editing another row
+PASS [unit_or_static_contract] a day off needs a date and only clashes with folgas on that date
+PASS [unit_or_static_contract] copy fills only empty days and keeps every period
+PASS [platform_mocks] session data outages never masquerade as onboarding, missing client profile or missing subscription
+PASS [platform_mocks] new signup clears stale pending destination; unconfirmed login keeps booking destination
+PASS [platform_mocks] client and professional signup preserve intent and selected plan without provisioning a trial
+PASS [platform_mocks] resend confirmation preserves a safe invite destination
+PASS [platform_mocks] signup only reports duplicate accounts for the actual duplicate-account error
+PASS [platform_mocks] login denies bad credentials, directs unconfirmed users and sanitizes return destinations
+PASS [platform_mocks] logout errors do not falsely claim success or redirect an authenticated session
+PASS [platform_mocks] confirmation routes exchange valid tokens, preserve safe destinations and reject expired tokens
+PASS [platform_mocks] confirmation forwards recovery tokens to the recovery handler without accepting arbitrary OTP types
+PASS [platform_mocks] owner: menu and nested routes use the same permissions
+PASS [platform_mocks] owner: direct access to /app/estoque is checked before the backend
+PASS [platform_mocks] owner: direct access to /app/pacotes is checked before the backend
+PASS [platform_mocks] owner: direct access to /app/financeiro is checked before the backend
+PASS [platform_mocks] owner: direct access to /app/relatorios is checked before the backend
+PASS [platform_mocks] admin: menu and nested routes use the same permissions
+PASS [platform_mocks] admin: direct access to /app/estoque is checked before the backend
+PASS [platform_mocks] admin: direct access to /app/pacotes is checked before the backend
+PASS [platform_mocks] admin: direct access to /app/financeiro is checked before the backend
+PASS [platform_mocks] admin: direct access to /app/relatorios is checked before the backend
+PASS [platform_mocks] professional: menu and nested routes use the same permissions
+PASS [platform_mocks] professional: direct access to /app/estoque is checked before the backend
+PASS [platform_mocks] professional: direct access to /app/pacotes is checked before the backend
+PASS [platform_mocks] professional: direct access to /app/financeiro is checked before the backend
+PASS [platform_mocks] professional: direct access to /app/relatorios is checked before the backend
+PASS [platform_mocks] receptionist: menu and nested routes use the same permissions
+PASS [platform_mocks] receptionist: direct access to /app/estoque is checked before the backend
+PASS [platform_mocks] receptionist: direct access to /app/pacotes is checked before the backend
+PASS [platform_mocks] receptionist: direct access to /app/financeiro is checked before the backend
+PASS [platform_mocks] receptionist: direct access to /app/relatorios is checked before the backend
+PASS [platform_mocks] missing role denies protected paths without hiding unrelated routes
+PASS [platform_mocks] a manager membership in another workspace cannot authorize the active workspace
+PASS [platform_mocks] server guard preserves login, confirmation and onboarding redirects
+PASS [platform_mocks] recovery sends normalized email with a fixed recovery path and no account disclosure
+PASS [platform_mocks] recovery validates PKCE or recovery OTP and rejects expired, missing and wrong-type tokens
+PASS [platform_mocks] password update requires a verified user, validates password and signs out for normal login
+PASS [platform_mocks] redirects reject encoded separators, controls, traversal to auth and untrusted host headers
+PASS [platform_mocks] PKCE recovery in another browser is rejected with browser guidance, without an OTP fallback
+PASS [unit_or_static_contract] unconfirmed users always go to email verification
+PASS [unit_or_static_contract] client without workspace lands on /cliente
+PASS [unit_or_static_contract] professional without workspace lands on onboarding
+PASS [unit_or_static_contract] professional with workspace lands on /app
+PASS [unit_or_static_contract] sanitizeNextPath keeps invite return URLs and rejects open redirects
+PASS [unit_or_static_contract] all six checkout selections reach stripe-billing with authenticated workspace and no redirect input
+PASS [unit_or_static_contract] unauthorized roles, absent workspace and invalid selections never invoke Stripe
+PASS [unit_or_static_contract] portal adapter, Edge errors, malformed responses and network failures are safe
+PASS [unit_or_static_contract] redirect allowlist rejects credentials, lookalike hosts, ports and protocols
+PASS [unit_or_static_contract] checkout and portal redirects work without the optional URL.parse browser API
+PASS [unit_or_static_contract] seat limits fail closed and existing subscriptions use portal
+PASS [unit_or_static_contract] checkout retries reuse a key; A to B to A starts a fresh attempt
+PASS [unit_or_static_contract] parsePlanId accepts only Solo, Equipe and Salão
+PASS [unit_or_static_contract] planSignupHref carries the chosen plan into cadastro
+PASS [unit_or_static_contract] stripe boundary validates checkout before calling a future adapter
+PASS [unit_or_static_contract] stripe boundary only returns validated https redirects
+PASS [unit_or_static_contract] cancelMyAppointmentAction revalidates client and agenda paths
+PASS [unit_or_static_contract] workspace_unavailable maps to a temporary agenda message
+PASS [unit_or_static_contract] agendar page distinguishes unavailable from not found
+PASS [unit_or_static_contract] draft preserves selection and rejects wrong salon expiry malformed IDs and personal data
+PASS [platform_mocks] a committed reschedule followed by a failed reload never replaces the list with empty success
+PASS [platform_mocks] malformed appointment read models produce an error instead of silently losing rows
+PASS [platform_mocks] valid empty and populated lists remain successful after strict read validation
+PASS [unit_or_static_contract] booking details normalize email, phone and optional note
+PASS [unit_or_static_contract] omitted booking fields are rejected
+PASS [unit_or_static_contract] rejects invalid email and too-long customer note
+PASS [unit_or_static_contract] keeps DDD 55 on booking phone
+PASS [unit_or_static_contract] step helpers move forward and back without wrapping past service
+PASS [unit_or_static_contract] client cancel helpers respect terminal status and 2h lead
+PASS [unit_or_static_contract] uniqueClientWorkspaces keeps first name per slug
+PASS [unit_or_static_contract] sanitize booking errors never leak internals
+PASS [unit_or_static_contract] catalog parser drops private fields
+PASS [unit_or_static_contract] my appointments parser keeps only safe fields
+PASS [unit_or_static_contract] whatsapp and ics helpers stay local
+PASS [unit_or_static_contract] central booking rules stay at product constants
+PASS [unit_or_static_contract] groupClientAppointments separates history from cancelled
+PASS [unit_or_static_contract] partition splits upcoming and past without mixing terminal statuses
+PASS [unit_or_static_contract] confirmation parser keeps receipt fields only
+PASS [platform_mocks] failed professional linkage cannot leave a partially created service
+PASS [platform_mocks] service action derives the tenant from session and calls one atomic RPC
+PASS [platform_mocks] missing atomic service RPC and unprivileged roles never fall back to partial writes
+PASS [platform_mocks] avatar keeps uploaded bytes when swap acknowledgement is lost after commit
+PASS [unit_or_static_contract] avatars decode JPEG PNG WebP and normalize into bounded metadata-free WebP
+PASS [unit_or_static_contract] avatars reject SVG executables corruption size and invalid dimensions
+PASS [unit_or_static_contract] day totals ignore cancelled visits and leave no-shows out of the money
+PASS [unit_or_static_contract] percent change stays empty when yesterday has nothing to compare
+PASS [unit_or_static_contract] rating average uses real notes only
+PASS [unit_or_static_contract] upcoming list keeps the next open visits after today
+PASS [unit_or_static_contract] month grid starts on Sunday and marks today
+PASS [unit_or_static_contract] month navigation rejects invalid cursors
+PASS [unit_or_static_contract] owner menu follows the reference and still reaches avaliações
+PASS [platform_mocks] discovery actions never invent salons when the RPC is absent
+PASS [platform_mocks] discovery actions map verified RPC rows and skip GPS in the v1 body
+PASS [platform_mocks] discovery actions forward pagination offset to the RPC
+PASS [unit_or_static_contract] discovery never defaults to a residence city
+PASS [unit_or_static_contract] a person can search any registered locality, not only where they live
+PASS [unit_or_static_contract] global search does not require a city and nearby does not use residence
+PASS [unit_or_static_contract] parser maps the Codex wire DTO and never invents a salon
+PASS [unit_or_static_contract] adapter probes the real RPC names and stays empty when the backend is missing
+PASS [unit_or_static_contract] reverse geocode maps a Brazilian city without using residence
+PASS [unit_or_static_contract] global name search clears stale city filters and keeps bounded pagination
+PASS [unit_or_static_contract] a Muriaé resident physically in Juiz de Fora can search either city
+PASS [unit_or_static_contract] search RPC paginates with offset and never invents extra salons
+PASS [unit_or_static_contract] finance query adapts the exact get_finance_ui response for a required period
+PASS [unit_or_static_contract] financial writes validate the real create and refund contracts
+PASS [unit_or_static_contract] payment, cancellation, reopening and refund are distinct finance actions
+PASS [platform_mocks] Vercel production without explicit site URL never sends Auth links to localhost
+PASS [platform_mocks] preview uses its own deployment host and explicit configuration still wins
+PASS [platform_mocks] deployed origins reject missing configuration and malformed values
+PASS [unit_or_static_contract] inventory query adapts the exact get_inventory_ui response
+PASS [unit_or_static_contract] inventory query rejects incomplete remote payloads
+PASS [unit_or_static_contract] plans use the exact public prices and seats
+PASS [unit_or_static_contract] every plan is presented with a free trial and no card in the primary CTA
+PASS [unit_or_static_contract] plans differentiate benefits and show annual prices
+PASS [unit_or_static_contract] header and footer expose the required public links
+PASS [unit_or_static_contract] landing covers the product vision without fake WhatsApp automation
+PASS [platform_mocks] server actions refuse professional/receptionist even if the outer guard is bypassed
+PASS [platform_mocks] server actions derive tenant from session and call the real RPC contract
+PASS [platform_mocks] invalid form input never reaches the database
+PASS [unit_or_static_contract] periods are inclusive, handle leap years and previous-year transitions
+PASS [unit_or_static_contract] periods use the business timezone near midnight
+PASS [unit_or_static_contract] plan selection is limited to the catalog and remaining days never go negative
+PASS [unit_or_static_contract] stock requires meaningful quantities, but adjustment may set zero
+PASS [unit_or_static_contract] package form maps only selected services and refuses an empty package
+PASS [unit_or_static_contract] refund requires explicit confirmation, valid amount and a reason
+PASS [unit_or_static_contract] operational loaders expose an honest unavailable state without adapters
+PASS [unit_or_static_contract] operational loaders delegate to a configured normalized adapter
+PASS [unit_or_static_contract] createWorkspaceAction sends new salons into setup mode
+PASS [unit_or_static_contract] signup only persists plan when professional intent is selected
+PASS [unit_or_static_contract] public booking clears stale slots before fetching
+PASS [unit_or_static_contract] packages query adapts catalog and sales from the exact get_packages_ui response
+PASS [unit_or_static_contract] package mutations validate inputs before reaching the backend
+PASS [unit_or_static_contract] package cancellation and redemption reversal call distinct contracts
+PASS [unit_or_static_contract] advanced reports adapt the exact get_workspace_advanced_report response
+PASS [unit_or_static_contract] advanced report rejects invalid periods before the adapter
+PASS [platform_mocks] missing reviews schema has an unavailable state distinct from empty reviews
+PASS [platform_mocks] reviews stay scoped to the active tenant or verified client
+PASS [platform_mocks] review action handles an undeployed RPC without claiming submission success
+PASS [platform_mocks] both review pages render an unavailable notice without mounting submission UI
+PASS [unit_or_static_contract] missing reviews table is treated as a deploy gap, not a crash
+PASS [unit_or_static_contract] review draft accepts 1-5 stars and normalizes an empty comment
+PASS [unit_or_static_contract] only completed appointments are eligible and newest comes first
+PASS [platform_mocks] preview and local production-mode builds cannot initialize the production backend
+PASS [platform_mocks] production access requires the build class and rejects a preview runtime
+PASS [platform_mocks] browser preview guard also rejects the DNS trailing-dot form of production
+PASS [platform_mocks] isolated HTTPS and local Supabase work while malformed origins fail closed
+PASS [platform_mocks] server site origin uses runtime configuration while browser keeps baked public origin
+PASS [unit_or_static_contract] Sao Paulo wall midnight is 03:00 UTC
+PASS [unit_or_static_contract] end of Sao Paulo day stays on the same local date
+PASS [unit_or_static_contract] weekday matches JS/Postgres DOW with Sunday = 0
+PASS [unit_or_static_contract] local day bounds do not leak into the previous or next date
+PASS [unit_or_static_contract] Manaus wall midnight is 04:00 UTC
+PASS [unit_or_static_contract] lead buffer and horizon use workspace timezone
+PASS [unit_or_static_contract] date arithmetic helpers stay calendar-safe
+PASS [unit_or_static_contract] same appointment instant renders and round-trips correctly in two workspace zones
+PASS [unit_or_static_contract] workspace day filters and today respect different midnight boundaries
+PASS [unit_or_static_contract] timezoneDisplayName uses the workspace label instead of a hardcoded São Paulo string
+PASS [unit_or_static_contract] copyTextToClipboard succeeds via the clipboard API and trims the value
+PASS [unit_or_static_contract] copyTextToClipboard does not claim success when the clipboard rejects
+PASS [unit_or_static_contract] status actions use verbs a person can tap without guessing
+PASS [unit_or_static_contract] booking captions name the current step in plain language
+PASS [unit_or_static_contract] a single professional is skipped so the client does not choose from one option
+PASS [unit_or_static_contract] priority screens do not show jargon that blocks first use
+PASS [unit_or_static_contract] empty required fields explain the next step in Portuguese
+PASS [unit_or_static_contract] invalid emails tell the person what a valid address looks like
+PASS [unit_or_static_contract] reference tasks stay short enough for unaided first use
+PASS [unit_or_static_contract] every recorded flow names a goal and a difficulty note
+PASS [unit_or_static_contract] homologation board never marks a missing backend as PASS E2E or bare PASS
+PASS [unit_or_static_contract] isolated browser e2e uses roles, refuses production and does not invent salons
+PASS [unit_or_static_contract] staging suite stays blocked without opt-in and never targets production
+PASS [unit_or_static_contract] arrow keys move around a radiogroup and ignore unrelated keys
+PASS [unit_or_static_contract] disabled radios are skipped, including a locked client intent
+PASS [unit_or_static_contract] override wins over catalog price and duration
+PASS [unit_or_static_contract] endsAt is start plus snapshot duration
+PASS [unit_or_static_contract] status transitions keep snapshots untouched and block terminal edits
+PASS [unit_or_static_contract] appointment form does not accept a browser-supplied price
+PASS [unit_or_static_contract] working period requires start before end and weekday 0-6
+PASS [unit_or_static_contract] parses Brazilian reais into integer cents
+PASS [unit_or_static_contract] formats cents as BRL
+PASS [unit_or_static_contract] rejects negative service price and invalid duration
+PASS [unit_or_static_contract] service requires at least one professional
+PASS [unit_or_static_contract] client phone keeps DDD 55 and rejects short numbers
+PASS [unit_or_static_contract] client email is lowercased and empty phone stays null
+PASS [unit_or_static_contract] profile form only reads booking when manageBooking is present
+PASS [unit_or_static_contract] normalizes Brazilian mobile with various DDD
+PASS [unit_or_static_contract] keeps DDD 55 instead of treating it as country code
+PASS [unit_or_static_contract] normalizes landline 10-digit national numbers including DDD 55
+PASS [unit_or_static_contract] rejects short, ambiguous, or non-BR numbers
+PASS [unit_or_static_contract] formats Brazilian phone for display without stripping DDD 55
+PASS [unit_or_static_contract] workspace API ids must be canonical UUIDs
+PASS [unit_or_static_contract] workspace lookup requires an active membership even if RLS is bypassed
+PASS [unit_or_static_contract] slugifyPreview lowercases, strips accents and spaces
+PASS [unit_or_static_contract] reserved slugs stay blocked including public routes
+PASS [unit_or_static_contract] slugError enforces length, charset and reserved words
+PASS [unit_or_static_contract] extractPublicWorkspaceSlug accepts slugs and public profile URLs only
+PASS [unit_or_static_contract] preview uses the current host without a hardcoded domain
+PASS [unit_or_static_contract] settings form normalizes slug, phone, instagram and CEP
+PASS [unit_or_static_contract] omitted optional settings fields become null
+PASS [unit_or_static_contract] reserved slug is rejected in the form
+PASS [unit_or_static_contract] invite without email is a secret link; owner role is rejected
+PASS [unit_or_static_contract] public profile parser keeps only public fields
+PASS [unit_or_static_contract] bookablePublicServices hides services without a published professional
+{"totals":{"passed":321,"failed":0,"skipped":0},"groups":{"pglite_integration_with_mock_auth":{"passed":11,"failed":0,"skipped":0},"pglite_sql":{"passed":31,"failed":0,"skipped":0},"unit_or_static_contract":{"passed":201,"failed":0,"skipped":0},"stripe_mocks":{"passed":16,"failed":0,"skipped":0},"platform_mocks":{"passed":62,"failed":0,"skipped":0}}}

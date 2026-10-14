@@ -1,0 +1,31 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real GoTrue SMTP request + SSR PKCE cookies + local Next callback; no UI acceptance claim",
+  "checks": [
+    {
+      "name": "signup SMTP request",
+      "intent": "client",
+      "status": "PASS",
+      "detail": "GoTrue accepted; inbox delivery and callback still BLOCKED"
+    },
+    {
+      "name": "inbox delivery and signup callback",
+      "intent": "client",
+      "status": "BLOCKED",
+      "detail": "Await actual delivered email link from authorized mailbox"
+    },
+    {
+      "name": "signup SMTP request",
+      "intent": "professional",
+      "status": "PASS",
+      "detail": "GoTrue accepted; inbox delivery and callback still BLOCKED"
+    },
+    {
+      "name": "inbox delivery and signup callback",
+      "intent": "professional",
+      "status": "BLOCKED",
+      "detail": "Await actual delivered email link from authorized mailbox"
+    }
+  ],
+  "checked_at": "2026-10-14T18:28:20.230Z"
+}

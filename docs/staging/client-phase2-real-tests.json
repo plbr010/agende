@@ -1,7 +1,11 @@
 {
-  "checked_at": "2026-10-14T17:34:16.794Z",
+  "checked_at": "2026-10-14T18:16:05.873Z",
   "project": "fkpdudnnperufnmdwdlv",
   "production_touched": false,
+  "out_of_scope": [
+    "avatar HTTP acceptance: separate staging-avatar-http runner",
+    "browser draft acceptance: separate staging-booking-draft-browser runner"
+  ],
   "checks": [
     {
       "name": "confirmed independent sessions",
@@ -38,9 +42,5 @@
       "status": "PASS",
       "mode": "real GoTrue/PostgREST"
     }
-  ],
-  "out_of_scope": [
-    "avatar HTTP acceptance: see client-phase2-avatar-http.json",
-    "browser draft acceptance: see client-phase2-booking-browser.json"
   ]
 }
