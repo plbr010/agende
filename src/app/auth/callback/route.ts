@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error?.code === "pkce_code_verifier_not_found") {
+      return NextResponse.redirect(`${origin}/verificar-email?status=browser_mismatch`);
+    }
     if (!error) {
       const session = await loadAppSession();
       const destination = session

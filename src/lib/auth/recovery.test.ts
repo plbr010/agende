@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { sendRecovery, exchangeRecovery, changeRecoveredPassword } from "./recovery";
+import { sendRecovery, exchangeRecovery, exchangeRecoveryStatus, changeRecoveredPassword } from "./recovery";
 import { sanitizeNextPath } from "./redirects";
 import { safeRequestOrigin } from "../http/safe-origin";
 
@@ -55,4 +55,12 @@ test("redirects reject encoded separators, controls, traversal to auth and untru
   assert.equal(sanitizeNextPath("/p/studio/agendar?service=123"), "/p/studio/agendar?service=123");
   assert.equal(safeRequestOrigin("https://evil.com", "https://agende.example"), "https://agende.example");
   assert.equal(safeRequestOrigin("https://preview.vercel.app", "https://agende.example", ["preview.vercel.app"]), "https://preview.vercel.app");
+});
+
+test("PKCE recovery in another browser is rejected with browser guidance, without an OTP fallback", async () => {
+  const missing = mockAuth({ code: "pkce_code_verifier_not_found" });
+  assert.equal(await exchangeRecoveryStatus(missing.auth, new URLSearchParams("code=valid&token_hash=other&type=recovery")), "browser_mismatch");
+  assert.deepEqual(missing.calls, [["exchangeCodeForSession", "valid"]]);
+  assert.equal(await exchangeRecovery(missing.auth, new URLSearchParams("code=valid")), false);
+  assert.equal(await exchangeRecoveryStatus(mockAuth({ code: "otp_expired" }).auth, new URLSearchParams("code=used")), "expired");
 });

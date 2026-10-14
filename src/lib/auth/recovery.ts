@@ -10,15 +10,20 @@ export async function sendRecovery(auth: Pick<Auth, "resetPasswordForEmail">, em
   if (!parsed.success) return { error: "Informe um e-mail válido." };
   const { error } = await auth.resetPasswordForEmail(normalizeEmail(parsed.data), { redirectTo: new URL("/auth/recovery", origin).href });
   if (error) return { error: "Não foi possível enviar agora. Aguarde um minuto e tente novamente." };
-  return { success: "Se existir conta com esse e-mail, mandamos um link. Abra o link e volte aqui para criar a senha." };
+  return { success: "Se existir conta com esse e-mail, mandamos um link. Abra o link neste mesmo navegador e dispositivo para criar a senha." };
 }
 
-export async function exchangeRecovery(auth: Pick<Auth, "exchangeCodeForSession" | "verifyOtp">, params: URLSearchParams): Promise<boolean> {
-  if (params.has("error") || params.has("error_code")) return false;
+export async function exchangeRecoveryStatus(auth: Pick<Auth, "exchangeCodeForSession" | "verifyOtp">, params: URLSearchParams): Promise<"success" | "browser_mismatch" | "expired"> {
+  if (params.has("error") || params.has("error_code")) return "expired";
   const code = params.get("code"), token = params.get("token_hash");
   const result = code ? await auth.exchangeCodeForSession(code)
     : token && params.get("type") === "recovery" ? await auth.verifyOtp({ token_hash: token, type: "recovery" }) : null;
-  return Boolean(result && !result.error && result.data.user);
+  if (code && result?.error?.code === "pkce_code_verifier_not_found") return "browser_mismatch";
+  return result && !result.error && result.data.user ? "success" : "expired";
+}
+
+export async function exchangeRecovery(auth: Pick<Auth, "exchangeCodeForSession" | "verifyOtp">, params: URLSearchParams): Promise<boolean> {
+  return (await exchangeRecoveryStatus(auth, params)) === "success";
 }
 
 export async function changeRecoveredPassword(auth: Pick<Auth, "getUser" | "updateUser" | "signOut">, input: unknown) {
