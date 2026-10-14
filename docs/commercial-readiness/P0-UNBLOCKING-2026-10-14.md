@@ -6,9 +6,13 @@ Recomendação atual: **NO-GO comercial**. Há implementação e homologação n
 
 Main e produção: `ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043`, após merge humano do PR #41. Vercel `dpl_3GaQJAjW8Z3jfng9KXaQRdCmN4LE` READY. PRs #31–42 integrados; trabalho do Cursor preservado. Nova branch `codex/p0-launch-unblocking-2026-10-14`, baseada nessa main, sem merge automático.
 
+Entrega: [PR #44](https://github.com/plbr010/agende/pull/44). Preview isolado READY: `dpl_87m2oanQBCCy6Lcn9paxBeAChXef`, commit `cbce09bf20bcedacf5c627aa241eeec27de13560`; isso comprova deploy, não aceite comercial. Overrides registrados em `docs/staging/p0-preview-bindings.json`.
+
 Produção `wohimauqgywshbbejjcl`, PostgreSQL 17.6, 63 migrations no histórico: RPC de serviços e descoberta continuam ausentes. Staging `fkpdudnnperufnmdwdlv`, PostgreSQL 17.11: ambas existem. O staging foi parcialmente provisionado por SQL exato e possui timestamps diferentes no histórico; comparar apenas a contagem de migrations seria incorreto. Não executar `db push` ou reparar história em massa.
 
 As 31 tabelas públicas produtivas e as 32 de staging têm RLS + FORCE RLS. Guards produtivos de email confirmado, manager e entitlement foram lidos; o lock de membership é compatível. Os definers inspecionados usam search_path vazio e os guards internos não têm EXECUTE público. Isso não constitui certificação de todos os endpoints ou capacidade em nuvem.
+
+Advisors dos dois ambientes continuam sinalizando RLS sem policy na tabela interna, EXECUTE de definers por anon/authenticated e proteção contra senhas vazadas desativada. São quatro categorias agrupadas, não quatro funções: revisar os objetos listados, mantendo os wrappers públicos necessários e seus guards. Referências: [RLS/policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy), [definers anon](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable), [definers authenticated](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable), [password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). Não removemos APIs nem contratamos recursos para ocultar avisos.
 
 Snapshot sem dados de clientes/segredos: [p0-current-state-2026-10-14.json](p0-current-state-2026-10-14.json). As diferenças de hashes de definição entre ambientes exigem revisão semântica; não afirmar identidade binária de todos os guards.
 
