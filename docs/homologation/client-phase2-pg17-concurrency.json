@@ -1,0 +1,79 @@
+{
+  "checked_at": "2026-10-14T17:54:46.231Z",
+  "engine": "native PostgreSQL 17",
+  "authentication": "SQL identity fixture, not Auth service",
+  "cases": [
+    {
+      "name": "same slot",
+      "pid_a": 25428,
+      "pid_b": 11384,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23P01"
+    },
+    {
+      "name": "booking rollback",
+      "pid_a": 4572,
+      "pid_b": 24472,
+      "verified_wait": "Lock",
+      "release_a": "rollback",
+      "b_success": true,
+      "b_sqlstate": null
+    },
+    {
+      "name": "reschedule collision",
+      "pid_a": 26380,
+      "pid_b": 6248,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23P01"
+    },
+    {
+      "name": "review uniqueness",
+      "pid_a": 23408,
+      "pid_b": 23824,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23505"
+    },
+    {
+      "name": "last owner",
+      "pid_a": 24752,
+      "pid_b": 11004,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "P0001"
+    },
+    {
+      "name": "seat limit",
+      "pid_a": 25800,
+      "pid_b": 6760,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "P0001"
+    },
+    {
+      "name": "billing replay",
+      "pid_a": 27168,
+      "pid_b": 27148,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": true,
+      "b_sqlstate": null
+    },
+    {
+      "name": "checkout lease",
+      "pid_a": 14616,
+      "pid_b": 24528,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": true,
+      "b_sqlstate": null
+    }
+  ]
+}

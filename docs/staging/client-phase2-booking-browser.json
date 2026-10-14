@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-14T17:59:38.892Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_touched": false,
+  "checks": [
+    {
+      "name": "anonymous selection redirects to login carrying only HttpOnly short-lived draft",
+      "status": "PASS",
+      "mode": "real browser + local Next + staging GoTrue/PostgREST"
+    },
+    {
+      "name": "actual login returns to selected salon service professional date and slot",
+      "status": "PASS",
+      "mode": "real browser + local Next + staging GoTrue/PostgREST"
+    },
+    {
+      "name": "slot occupied during login preserves service professional and day and requires another slot",
+      "status": "PASS",
+      "mode": "real browser + local Next + staging GoTrue/PostgREST"
+    }
+  ]
+}

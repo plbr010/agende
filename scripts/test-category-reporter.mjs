@@ -2,7 +2,7 @@ import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
 // Execution evidence, not external acceptance. SQL identity still is a fixture.
-const sqlFiles=['database.test.mjs','launch-readiness.test.mjs','final-hardening.test.mjs','atomic-service-sql.test.mjs','discovery-sql.test.mjs'];
+const sqlFiles=['database.test.mjs','launch-readiness.test.mjs','final-hardening.test.mjs','atomic-service-sql.test.mjs','discovery-sql.test.mjs','client-phase2-sql.test.mjs'];
 const sourceCache=new Map();
 function category(file){
   if(file.endsWith('pg17-concurrency.test.mjs'))return 'native_pg17_concurrency';

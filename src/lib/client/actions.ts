@@ -14,6 +14,7 @@ export async function updateClientProfileAction(
   const parsed = parseClientProfileUpdate({
     fullName: String(formData.get("fullName") ?? ""),
     phone: String(formData.get("phone") ?? ""),
+    residenceCity: String(formData.get("residenceCity") ?? ""),
   });
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -36,7 +37,8 @@ export async function updateClientProfileAction(
 
   const { error } = await supabase
     .from("profiles")
-    .update({ full_name: parsed.data.fullName, phone: parsed.data.phone })
+    .update({ full_name: parsed.data.fullName, phone: parsed.data.phone,
+      ...(formData.has("residenceCity") ? { residence_city: parsed.data.residenceCity } : {}) })
     .eq("user_id", user.id);
 
   if (error) {

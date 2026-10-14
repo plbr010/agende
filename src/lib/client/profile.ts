@@ -13,14 +13,17 @@ export const clientProfileUpdateSchema = z.object({
     .min(1, "Informe um celular com DDD.")
     .refine(isValidPhone, "Informe um telefone brasileiro válido, com DDD.")
     .transform((value) => normalizePhone(value) ?? value),
+  residenceCity: z.string().trim().max(80).refine(value => !value || (value.length >= 2 && !/[\u0000-\u001f\u007f]/.test(value)), "Informe uma cidade válida.")
+    .transform(value => value || null),
 });
 
 export type ClientProfileUpdate = z.infer<typeof clientProfileUpdateSchema>;
 
-export function parseClientProfileUpdate(form: { fullName?: string | null; phone?: string | null }) {
+export function parseClientProfileUpdate(form: { fullName?: string | null; phone?: string | null; residenceCity?: string | null }) {
   return clientProfileUpdateSchema.safeParse({
     fullName: form.fullName ?? "",
     phone: form.phone ?? "",
+    residenceCity: form.residenceCity ?? "",
   });
 }
 

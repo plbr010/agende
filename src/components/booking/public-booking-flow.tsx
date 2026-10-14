@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createPublicAppointmentAction, fetchPublicSlotsAction } from "@/lib/booking/actions";
+import { continueBookingAfterLogin } from "@/lib/booking/draft-actions";
+import type { BookingDraft } from "@/lib/booking/draft";
 import {
   ANY_PROFESSIONAL,
   BOOKING_STEPS,
@@ -69,30 +71,36 @@ export function PublicBookingFlow({
   today,
   initialServiceId = null,
   hasClientProfile = false,
+  authenticated = false,
+  initialDraft = null,
+  initialDraftSlotUnavailable = false,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
   today: string;
   initialServiceId?: string | null;
   hasClientProfile?: boolean;
+  authenticated?: boolean;
+  initialDraft?: BookingDraft | null;
+  initialDraftSlotUnavailable?: boolean;
 }) {
   const initialService =
     initialServiceId && catalog.services.some((item) => item.id === initialServiceId)
       ? initialServiceId
       : null;
-  const [step, setStep] = useState<BookingStep>(initialService ? "professional" : "service");
-  const [serviceId, setServiceId] = useState<string | null>(initialService);
-  const [professionalId, setProfessionalId] = useState<string | null | typeof ANY_PROFESSIONAL>(null);
-  const [localDate, setLocalDate] = useState<string | null>(null);
-  const [startsAt, setStartsAt] = useState<string | null>(null);
+  const [step, setStep] = useState<BookingStep>(initialDraft ? (initialDraftSlotUnavailable ? "slot" : parsePublicBookingDetails({ ...prefill, customerNote: "" }).success ? "confirm" : "details") : initialService ? "professional" : "service");
+  const [serviceId, setServiceId] = useState<string | null>(initialDraft?.serviceId ?? initialService);
+  const [professionalId, setProfessionalId] = useState<string | null | typeof ANY_PROFESSIONAL>(initialDraft ? initialDraft.professionalMemberId ?? ANY_PROFESSIONAL : null);
+  const [localDate, setLocalDate] = useState<string | null>(initialDraft?.localDate ?? null);
+  const [startsAt, setStartsAt] = useState<string | null>(initialDraftSlotUnavailable ? null : initialDraft?.startsAt ?? null);
   const [fullName, setFullName] = useState(prefill.fullName);
   const [phone, setPhone] = useState(prefill.phone);
   const [email, setEmail] = useState(prefill.email);
   const [customerNote, setCustomerNote] = useState("");
   const [slots, setSlots] = useState<string[]>([]);
   const [slotsError, setSlotsError] = useState<string | null>(null);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [slotsLoading, setSlotsLoading] = useState(initialDraftSlotUnavailable);
+  const [formError, setFormError] = useState<string | null>(initialDraftSlotUnavailable ? "Seu horário ficou indisponível enquanto você entrava. Escolha outro horário." : null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmation, setConfirmation] = useState<PublicBookingConfirmation | null>(null);
   const [pending, startTransition] = useTransition();
@@ -251,6 +259,14 @@ export function PublicBookingFlow({
 
   function proceedAfterSlot(slot: string) {
     if (pending || reserving.current) return;
+    if (!authenticated && serviceId && professionalId !== null && localDate) {
+      startTransition(async () => {
+        const result = await continueBookingAfterLogin({ slug: catalog.slug, serviceId,
+          professionalMemberId: professionalId === ANY_PROFESSIONAL ? null : professionalId, localDate, startsAt: slot });
+        if (result?.error) setFormError(result.error);
+      });
+      return;
+    }
     setStartsAt(slot);
     const parsed = parsePublicBookingDetails({ fullName, phone, email, customerNote });
     if (parsed.success) {
