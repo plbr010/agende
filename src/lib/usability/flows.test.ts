@@ -4,6 +4,7 @@ import { USABILITY_FLOWS, usabilityStepCount } from "./flows";
 
 test("reference tasks stay short enough for unaided first use", () => {
   assert.ok(usabilityStepCount("client-book") <= 7);
+  assert.ok(usabilityStepCount("client-discover") <= 6);
   assert.ok(usabilityStepCount("pro-service") <= 5);
   assert.ok(usabilityStepCount("pro-next") <= 2);
   assert.ok(usabilityStepCount("finance-entry") <= 4);

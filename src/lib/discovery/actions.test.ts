@@ -62,3 +62,26 @@ test("discovery actions map verified RPC rows and skip GPS in the v1 body", asyn
   assert.equal(result.status, "ready");
   assert.equal((result.items[0] as { slug: string }).slug, "atelier-luz");
 });
+
+test("discovery actions forward pagination offset to the RPC", async () => {
+  const actions = isolatedSearch(async (name, args) => {
+    assert.equal(name, "search_public_workspaces");
+    assert.equal(args.p_offset, 20);
+    assert.equal(args.p_city, "Muriaé");
+    return {
+      data: {
+        items: [{ name: "Ateliê Vale", slug: "atelier-vale", city: "Muriaé", state: "MG", booking_open: true }],
+        total: 21,
+      },
+      error: null,
+    };
+  });
+  const result = await actions.searchPublicWorkspacesAction({
+    mode: "city",
+    city: "Muriaé",
+    state: "MG",
+    offset: 20,
+  });
+  assert.equal(result.status, "ready");
+  assert.equal((result as { total?: number }).total, 21);
+});

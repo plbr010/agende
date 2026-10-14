@@ -3,14 +3,19 @@ import test from "node:test";
 import {
   DISCOVERY_BACKEND_READY,
   DISCOVERY_COPY,
+  DISCOVERY_PAGE_SIZE,
   DISCOVERY_RPCS,
+  discoveryHasMorePage,
   discoveryRpcArgs,
   discoverySearchBlockedReason,
   discoverySearchNeedsLocality,
+  formatDiscoveryShowingCount,
   isMissingDiscoveryContract,
+  mergeDiscoveryPages,
   normalizeDiscoverySearch,
   parseDiscoverySearchPayload,
   parseDiscoveryWorkspaceCard,
+  sanitizeDiscoveryOffset,
   searchPublicWorkspaces,
   searchPublicWorkspacesWithRpc,
 } from "./contract";
@@ -133,4 +138,86 @@ test("reverse geocode maps a Brazilian city without using residence", () => {
   });
   assert.deepEqual(parsed, { city: "Belo Horizonte", state: "MG" });
   assert.equal(parseReverseGeocodePayload({ locality: "x" }), null);
+});
+
+test("a Muriaé resident physically in Juiz de Fora can search either city", () => {
+  const gpsHere = normalizeDiscoverySearch({
+    mode: "nearby",
+    city: "Juiz de Fora",
+    state: "MG",
+    coordinates: { latitude: -21.76444, longitude: -43.34999 },
+  });
+  assert.equal(gpsHere.city, "Juiz de Fora");
+  assert.equal(gpsHere.mode, "nearby");
+  assert.equal(gpsHere.coordinates?.latitude, -21.764);
+
+  const homeCity = normalizeDiscoverySearch({
+    mode: "city",
+    city: "Muriaé",
+    state: "MG",
+  });
+  assert.equal(homeCity.city, "Muriaé");
+  assert.equal(homeCity.coordinates, undefined);
+
+  const nearbyArgs = discoveryRpcArgs({
+    mode: "nearby",
+    city: "Juiz de Fora",
+    state: "MG",
+    coordinates: { latitude: -21.764, longitude: -43.35 },
+  });
+  const cityArgs = discoveryRpcArgs({ mode: "city", city: "Muriaé", state: "MG" });
+  assert.equal(nearbyArgs.p_city, "Juiz de Fora");
+  assert.equal(cityArgs.p_city, "Muriaé");
+  assert.equal("p_latitude" in nearbyArgs, false);
+  assert.notEqual(nearbyArgs.p_city, cityArgs.p_city);
+  assert.match(DISCOVERY_COPY.scenarioHint, /Muriaé/);
+  assert.match(DISCOVERY_COPY.scenarioHint, /Juiz de Fora/);
+  assert.match(DISCOVERY_COPY.nearbyGranted, /residência/i);
+
+  const geocodedHere = parseReverseGeocodePayload({
+    city: "Juiz de Fora",
+    principalSubdivisionCode: "BR-MG",
+    countryCode: "BR",
+  });
+  assert.equal(geocodedHere?.city, "Juiz de Fora");
+  assert.notEqual(geocodedHere?.city, "Muriaé");
+});
+
+test("search RPC paginates with offset and never invents extra salons", async () => {
+  assert.equal(sanitizeDiscoveryOffset(-4), 0);
+  assert.equal(sanitizeDiscoveryOffset(20.9), 20);
+  assert.equal(discoveryRpcArgs({ city: "Muriaé", state: "MG" }).p_offset, 0);
+  assert.equal(discoveryRpcArgs({ city: "Muriaé", state: "MG", offset: 20 }).p_offset, 20);
+  assert.equal(discoveryRpcArgs({ city: "Muriaé", state: "MG" }).p_limit, DISCOVERY_PAGE_SIZE);
+
+  const page = await searchPublicWorkspacesWithRpc(async (_name, payload) => {
+    assert.equal(payload.p_offset, 20);
+    assert.equal(payload.p_city, "Muriaé");
+    return {
+      data: {
+        items: [{ name: "Studio B", slug: "studio-b", city: "Muriaé", state: "MG", booking_open: true }],
+        total: 21,
+      },
+      error: null,
+    };
+  }, { city: "Muriaé", state: "MG", offset: 20 });
+  assert.equal(page.status, "ready");
+  if (page.status !== "ready") return;
+
+  const first = {
+    name: "Studio A",
+    slug: "studio-a",
+    description: null,
+    city: "Muriaé",
+    state: "MG",
+    logoPath: null,
+    bookingOpen: true,
+  };
+  const merged = mergeDiscoveryPages([first], [...page.items, first]);
+  assert.equal(merged.length, 2);
+  assert.equal(merged[1]?.slug, "studio-b");
+  assert.equal(discoveryHasMorePage(20, 21), true);
+  assert.equal(discoveryHasMorePage(21, 21), false);
+  assert.equal(discoveryHasMorePage(0, 21), false);
+  assert.equal(formatDiscoveryShowingCount(20, 21), "Mostrando 20 de 21");
 });

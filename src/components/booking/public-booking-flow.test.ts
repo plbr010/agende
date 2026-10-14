@@ -16,3 +16,10 @@ test("public booking reduces steps and keeps undo actions visible", () => {
   assert.doesNotMatch(source, /no fuso do estabelecimento/);
   assert.doesNotMatch(source, /ative a área de cliente no painel/);
 });
+
+test("public booking locks navigation while a reservation is in flight", () => {
+  assert.match(source, /reserving\.current/);
+  assert.match(source, /if \(pending \|\| reserving\.current\) return/);
+  assert.match(source, /disabled=\{pending\}/);
+  assert.match(source, /aria-disabled=\{pending\}/);
+});
