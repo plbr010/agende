@@ -186,7 +186,7 @@ export function SignupForm({
           {state.fieldErrors?.termsAccepted ? (
             <p className="text-sm text-destructive">{state.fieldErrors.termsAccepted}</p>
           ) : null}
-          {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+          {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
           {!canSubmit && !pending ? (
             <p className="text-sm text-muted-foreground">
               Toque em uma das opções acima e marque que aceita os termos.
