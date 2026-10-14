@@ -2,8 +2,8 @@
  * Public discovery of establishments.
  *
  * The UI never invents salons and never injects a city of residence.
- * Coordinates stay on-device until Codex persists coarse points; v1 RPCs
- * receive only city/state/query. Nearby search reverse-geocodes to a city.
+ * The browser sends rounded coordinates to the disclosed geocoder; v1 RPCs
+ * receive only city/state/query. No GPS is persisted by Agendê.
  * DISCOVERY_BACKEND_READY stays false until Codex ships the RPCs — the
  * adapter still probes them at runtime and degrades to unavailable.
  */
@@ -30,6 +30,7 @@ export type DiscoverySearchInput = {
   state?: string;
   query?: string;
   coordinates?: DiscoveryCoordinates;
+  offset?: number;
 };
 
 export type DiscoveryWorkspaceCard = {
@@ -84,8 +85,9 @@ export function normalizeDiscoverySearch(input: DiscoverySearchInput): Discovery
 
   return {
     mode,
-    city: city.length >= 2 ? city : undefined,
-    state: /^[A-Z]{2}$/.test(state) ? state : undefined,
+    offset: Number.isInteger(input.offset) && input.offset! >= 0 && input.offset! <= 10000 ? input.offset : 0,
+    city: mode !== "global" && city.length >= 2 ? city : undefined,
+    state: mode !== "global" && /^[A-Z]{2}$/.test(state) ? state : undefined,
     query: query.length >= 2 ? query : undefined,
     coordinates: mode === "nearby" ? coordinates : undefined,
   };
@@ -191,7 +193,7 @@ export function discoveryRpcArgs(input: DiscoverySearchInput): Record<string, un
     p_query: normalized.query ?? null,
     p_postal_code: null,
     p_limit: DISCOVERY_PAGE_SIZE,
-    p_offset: 0,
+    p_offset: normalized.offset ?? 0,
   };
 }
 
@@ -199,6 +201,13 @@ export async function searchPublicWorkspacesWithRpc(
   rpc: DiscoveryRpc,
   input: DiscoverySearchInput,
 ): Promise<DiscoverySearchResult> {
+  if (!input || typeof input !== "object" ||
+      (input.city !== undefined && (typeof input.city !== "string" || input.city.length > 80)) ||
+      (input.query !== undefined && (typeof input.query !== "string" || input.query.length > 100)) ||
+      (input.state !== undefined && typeof input.state !== "string") ||
+      (input.mode !== undefined && !["city", "nearby", "global"].includes(input.mode))) {
+    return { status: "error", message: DISCOVERY_COPY.searchError, items: [] };
+  }
   const blocked = discoverySearchBlockedReason(input);
   if (blocked) {
     return { status: "error", message: blocked, items: [] };
@@ -224,7 +233,7 @@ export async function listPublicLocalitiesWithRpc(
   state?: string,
 ): Promise<DiscoveryLocality[]> {
   const normalizedQuery = query.trim();
-  if (normalizedQuery.length < 2) return [];
+  if (normalizedQuery.length < 2 || normalizedQuery.length > 80) return [];
   const { data, error } = await rpc(DISCOVERY_RPCS.listLocalities, {
     p_state: state && /^[A-Z]{2}$/.test(state) ? state : null,
     p_query: normalizedQuery,
@@ -252,7 +261,7 @@ export const DISCOVERY_COPY = {
   modeGlobal: "Nome do salão",
   nearbyAsk: "Usar minha localização",
   nearbyGranted:
-    "Usamos só a cidade em que você está agora, neste aparelho. Não usamos a cidade de residência da conta.",
+    "Buscamos na cidade em que você está agora. Não usamos a cidade de residência da conta.",
   nearbyDenied: "Tudo bem. Você pode procurar por cidade ou pelo nome do salão, sem usar a localização.",
   nearbyUnsupported: "Este aparelho não informa a posição. Escolha a cidade ou busque pelo nome.",
   nearbyLocating: "Descobrindo a cidade em que você está…",

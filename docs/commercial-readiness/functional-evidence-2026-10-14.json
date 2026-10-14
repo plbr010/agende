@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-14T03:45:19.614Z",
+  "base_main": "64b37af2a228cb0c747d2e0c13631ffea08b39e7",
+  "node": "24.19.0",
+  "next": "16.3.8",
+  "decision": "NO-GO",
+  "production": {
+    "ddl_or_dml_writes": 0,
+    "customer_data_exports": 0,
+    "history_count": 63,
+    "service_rpc_present": false,
+    "service_migration_present": false,
+    "discovery_present": false,
+    "backup_export_authorized": true,
+    "backup_authentication_code": "28P01",
+    "existing_database_password_available": false,
+    "restore_verified": false,
+    "edge_versions": {
+      "stripe-billing": 2,
+      "stripe-webhook": 2
+    }
+  },
+  "staging": {
+    "project": "fkpdudnnperufnmdwdlv",
+    "new_migration": "public_workspace_discovery",
+    "discovery_api_checks": 7,
+    "browser_journeys": 7,
+    "operational_modules_api_groups": 5,
+    "existing_api_groups": 10,
+    "stripe_runtime_key_present": false,
+    "signup_smtp_recovery_verified": false
+  },
+  "tests": {
+    "npm_ci": true,
+    "lint": true,
+    "standard": 271,
+    "standard_failed": 0,
+    "pg17": 48,
+    "pg17_failed": 0,
+    "pg17_sql_suites": 5,
+    "build": true,
+    "typecheck": true,
+    "local_get_smoke": 34,
+    "runtime_vulnerabilities": 0,
+    "dev_high_vulnerabilities": 5,
+    "synthetic_restore_passed": true,
+    "real_stripe_integrated_checkout_verified": false
+  },
+  "stripe_test_prices_cents": {
+    "solo": [
+      8990,
+      79900
+    ],
+    "equipe": [
+      16990,
+      149900
+    ],
+    "salao": [
+      29990,
+      279900
+    ]
+  },
+  "paid_services_purchased": 0,
+  "real_card_charges": 0,
+  "readiness": {
+    "passed_gates": 4,
+    "total_gates": 12,
+    "percentage": 33.3,
+    "metric": "commercial acceptance checklist; not code completion"
+  },
+  "secrets_in_report": false
+}

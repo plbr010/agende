@@ -1340,6 +1340,8 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
+      get_workspace_discovery: { Args: { p_workspace_id: string }; Returns: boolean };
+      set_workspace_discovery: { Args: { p_workspace_id: string; p_enabled: boolean }; Returns: boolean };
       accept_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       acquire_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: boolean };
       apply_inventory_movement: { Args: { p_workspace_id: string | null; p_product_id: string | null; p_type: Database["public"]["Enums"]["inventory_movement_type"] | null; p_quantity?: number | null; p_new_quantity?: number | null; p_reason?: string | null }; Returns: Json };

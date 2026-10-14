@@ -20,7 +20,7 @@ function firstCity(...values: unknown[]): string | null {
 function stateFromPayload(payload: Record<string, unknown>): string {
   const code = payload.principalSubdivisionCode;
   if (typeof code === "string") {
-    const match = code.toUpperCase().match(/^[A-Z]{2}-([A-Z]{2})$/);
+    const match = code.toUpperCase().match(/^BR-([A-Z]{2})$/);
     if (match && BR_STATE_VALUES.has(match[1] as (typeof BR_STATES)[number]["value"])) {
       return match[1];
     }
@@ -38,6 +38,7 @@ function stateFromPayload(payload: Record<string, unknown>): string {
 export function parseReverseGeocodePayload(raw: unknown): ReverseGeocodedLocality | null {
   if (!raw || typeof raw !== "object") return null;
   const payload = raw as Record<string, unknown>;
+  if (typeof payload.countryCode === "string" && payload.countryCode.toUpperCase() !== "BR") return null;
   const city = firstCity(payload.city, payload.locality, payload.localityName);
   if (!city) return null;
   return { city, state: stateFromPayload(payload) };
@@ -58,7 +59,7 @@ export async function reverseGeocodeLocality(
   url.searchParams.set("longitude", String(rounded.longitude));
   url.searchParams.set("localityLanguage", "pt");
   try {
-    const response = await fetchImpl(url, { method: "GET", headers: { Accept: "application/json" } });
+    const response = await fetchImpl(url, { method: "GET", headers: { Accept: "application/json" }, signal: AbortSignal.timeout(8000) });
     if (!response.ok) return null;
     return parseReverseGeocodePayload(await response.json());
   } catch {

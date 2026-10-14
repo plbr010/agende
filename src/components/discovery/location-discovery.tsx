@@ -15,6 +15,7 @@ import {
   type DiscoveryLocality,
   type DiscoveryMode,
   type DiscoverySearchResult,
+  type DiscoverySearchInput,
 } from "@/lib/discovery/contract";
 import { reverseGeocodeLocality } from "@/lib/discovery/geocode";
 import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
@@ -44,15 +45,19 @@ export function LocationDiscovery({
   const [result, setResult] = useState<DiscoverySearchResult | null>(null);
   const [pending, setPending] = useState(false);
   const [suggestions, setSuggestions] = useState<DiscoveryLocality[]>([]);
+  const [searchedInput, setSearchedInput] = useState<DiscoverySearchInput | null>(null);
 
   useEffect(() => {
     if (mode !== "city" || city.trim().length < 2) {
       return;
     }
+    let cancelled = false;
     const handle = window.setTimeout(() => {
-      void listPublicLocalitiesAction(city, state || undefined).then(setSuggestions);
+      void listPublicLocalitiesAction(city, state || undefined).then((items) => {
+        if (!cancelled) setSuggestions(items);
+      }).catch(() => { if (!cancelled) setSuggestions([]); });
     }, 300);
-    return () => window.clearTimeout(handle);
+    return () => { cancelled = true; window.clearTimeout(handle); };
   }, [city, state, mode]);
 
   function applyMode(next: DiscoveryMode) {
@@ -110,6 +115,7 @@ export function LocationDiscovery({
       return;
     }
     setFormError(null);
+    setSearchedInput(input);
     setPending(true);
     try {
       setResult(await searchPublicWorkspacesAction(input));
@@ -118,6 +124,19 @@ export function LocationDiscovery({
     } finally {
       setPending(false);
     }
+  }
+
+  async function loadMore() {
+    if (!searchedInput || result?.status !== "ready" || pending) return;
+    setPending(true);
+    try {
+      const next = await searchPublicWorkspacesAction({ ...searchedInput, offset: result.items.length });
+      if (next.status === "ready") {
+        const cards = new Map([...result.items, ...next.items].map((item) => [item.slug, item]));
+        setResult({ ...next, items: [...cards.values()] });
+      } else setFormError(DISCOVERY_COPY.searchError);
+    } catch { setFormError(DISCOVERY_COPY.searchError); }
+    finally { setPending(false); }
   }
 
   return (
@@ -153,6 +172,7 @@ export function LocationDiscovery({
 
         {mode === "nearby" ? (
           <div className="grid gap-3">
+            <p className="text-sm text-muted-foreground">Ao usar a localização, o serviço BigDataCloud recebe sua posição aproximada e IP para identificar a cidade. O Agendê recebe somente a cidade e o estado. Você também pode digitá-los abaixo.</p>
             <Button
               type="button"
               variant="outline"
@@ -284,7 +304,7 @@ export function LocationDiscovery({
         ) : null}
 
         {result?.status === "ready" && result.items.length > 0 ? (
-          <ul className="grid gap-3">
+          <><ul className="grid gap-3">
             {result.items.map((item) => (
               <li key={item.slug}>
                 <a
@@ -302,6 +322,7 @@ export function LocationDiscovery({
               </li>
             ))}
           </ul>
+          {result.items.length < result.total && result.items.length < 10000 ? <Button type="button" onClick={loadMore} disabled={pending} className="mt-3">{pending ? "Carregando..." : "Mostrar mais salões"}</Button> : null}</>
         ) : null}
       </div>
 

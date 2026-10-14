@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-14T03:40:10.616Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "inventory entry, exit and adjustment persist and negative stock is refused",
+    "another establishment cannot mutate inventory or read package administration",
+    "package catalog and sale produce actual remaining sessions for the linked client"
+  ],
+  "passed": false,
+  "synthetic_objects_archived_or_cancelled": false,
+  "production_connections": 0,
+  "external_payments": 0,
+  "error": "appointment_must_be_completed_for_redemption\n+ actual - expected\n\n+ {\n+   code: '22023',\n+   details: null,\n+   hint: null,\n+   message: 'appointment_must_be_completed_for_redemption'\n+ }\n- null\n",
+  "secrets_in_report": false
+}

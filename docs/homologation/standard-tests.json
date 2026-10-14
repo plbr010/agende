@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T02:57:45.290Z",
+  "checked_at": "2026-10-14T03:30:29.136Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,12 +7,12 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 28,
+      "passed": 29,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 160,
+      "passed": 161,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 269,
+    "passed": 271,
     "failed": 0,
     "skipped": 0
   },
@@ -211,6 +211,12 @@
     {
       "file": "scripts/database.test.mjs",
       "name": "real SQL migrations: trial, tenant authorization and management operations",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "pglite_sql",
       "status": "passed"
     },
@@ -1099,6 +1105,12 @@
     {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "reverse geocode maps a Brazilian city without using residence",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "global name search clears stale city filters and passes bounded pagination without GPS",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

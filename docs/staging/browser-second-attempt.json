@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-14T03:23:46.954Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "browser login creates a real staging session and opens manager settings",
+    "manager publishes through the actual form and persistence survives reload"
+  ],
+  "passed": false,
+  "fixtures_restored": true,
+  "synthetic_service_archived": false,
+  "production_connections": 0,
+  "error": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('Nome', { exact: true })\u001b[22m\n",
+  "secrets_in_report": false
+}

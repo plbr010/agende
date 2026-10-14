@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T19:48:10.969Z",
+  "checked_at": "2026-10-14T03:14:24.129Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "native_pg17_sql": {
-      "passed": 28,
+      "passed": 29,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +18,7 @@
     }
   },
   "totals": {
-    "passed": 47,
+    "passed": 48,
     "failed": 0,
     "skipped": 0
   },
@@ -177,6 +177,12 @@
     {
       "file": "scripts/database.test.mjs",
       "name": "real SQL migrations: trial, tenant authorization and management operations",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "native_pg17_sql",
       "status": "passed"
     },

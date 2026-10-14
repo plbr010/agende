@@ -17,6 +17,7 @@ const version=await command(binary('postgres'),['--version']);if(!/PostgreSQL\) 
 mkdirSync('.test-postgres',{recursive:true});const run=mkdtempSync(resolve('.test-postgres/run-')),data=join(run,'data'),port=await freePort();
 const suites=process.argv.slice(2).length?process.argv.slice(2):['scripts/database.test.mjs','scripts/launch-readiness.test.mjs','scripts/final-hardening.test.mjs','scripts/atomic-service-sql.test.mjs','scripts/action-sql-integration.test.mjs','scripts/pg17-concurrency.test.mjs'];
 let started=false,stopped=false,failure;
+if (!suites.includes('scripts/discovery-sql.test.mjs')) suites.push('scripts/discovery-sql.test.mjs');
 try{
   await command(binary('initdb'),['-D',data,'-U','postgres','--auth=trust','--encoding=UTF8','--locale=C']);
   await command(binary('pg_ctl'),['-D',data,'-l',join(run,'postgres.log'),'-o',`-h 127.0.0.1 -p ${port} -c cluster_name=agende_isolated_tests`,'-w','start']);started=true;

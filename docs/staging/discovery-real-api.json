@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-14T03:19:26.273Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "unpublished fixtures absent",
+    "real public contract exposes only approved fields",
+    "accent-insensitive city and distinct pages",
+    "any city without residence restriction or invented results",
+    "locality suggestions count only eligible published establishments",
+    "cross-tenant publication denied and private table hidden",
+    "withdrawal immediately removes public listing"
+  ],
+  "passed": true,
+  "fixtures_restored": true,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

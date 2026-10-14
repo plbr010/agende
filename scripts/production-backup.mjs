@@ -236,6 +236,12 @@ try{
   }else throw new Error('mode_required');
 }catch(error){
   if(mode==='prepare'||mode==='selftest')console.error(error);
-  else console.error('BACKUP_RECOVERY_STOPPED: prerequisite, export or verification failed; no raw provider/row errors emitted.');
+  else {
+    const allowedMessages=new Set(['backup_passphrase_too_short','production_endpoint_not_allowed','trusted_ca_required','tls_required','private_path_required']);
+    const code=allowedMessages.has(error.message)?error.message:
+      typeof error.code==='string'&&/^[A-Z0-9_]{1,64}$/.test(error.code)?error.code:'PREREQUISITE_OR_VERIFICATION_FAILED';
+    if(mode==='export'||mode==='restore') writeFileSync('docs/production-readiness/authorized-backup-error.json',JSON.stringify({checked_at:new Date().toISOString(),mode,code,secrets_in_report:false,raw_provider_errors_withheld:true},null,2)+'\n');
+    console.error('BACKUP_RECOVERY_STOPPED: '+code+'; no raw provider/row errors emitted.');
+  }
   process.exitCode=1;
 }
