@@ -175,7 +175,7 @@ export function GeneralSettingsForm({
               ))}
             </select>
           </div>
-          {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+          {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
           {canEdit ? (
             <Button type="submit" className="h-12" disabled={pending}>
               {pending ? "Salvando..." : "Salvar dados"}
@@ -283,7 +283,7 @@ export function PublicProfileSettingsForm({
               </label>
             ) : null}
           </div>
-          {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+          {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="submit" className="h-12" disabled={pending}>
