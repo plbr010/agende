@@ -162,6 +162,14 @@ export async function loadAppSession(): Promise<AppSession | null> {
 
 export const requireConfirmedSession = createConfirmedSessionGuard(loadAppSession, redirect);
 
+export function requireActiveWorkspace(session: AppSession): WorkspaceSummary {
+  const workspace = session.workspaces[0];
+  if (!workspace) {
+    redirect("/onboarding");
+  }
+  return workspace;
+}
+
 export async function requireAnonymous(next?: string | null): Promise<void> {
   const session = await loadAppSession();
   const safeNext = sanitizeNextPath(next);

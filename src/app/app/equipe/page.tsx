@@ -1,5 +1,5 @@
 import { CalendarClock, Sparkles, UserRoundCheck, UsersRound } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { TeamDirectory } from "@/components/catalog/directories";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
@@ -17,10 +17,7 @@ import {
 
 export default async function TeamPage() {
   const session = await requireConfirmedSession("/app/equipe");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
   const canManage = canManageAllProfiles(workspace.role);
   const [team, seats, invites, settings] = await Promise.all([
     loadTeam(workspace.id),

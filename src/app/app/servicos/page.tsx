@@ -1,5 +1,5 @@
 import { Clock3, Search, Sparkles, WalletCards, WandSparkles } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { ServiceCatalog } from "@/components/catalog/directories";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
@@ -14,10 +14,7 @@ export default async function ServicesPage({
   searchParams: Promise<{ q?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/servicos");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
   const { q, novo } = await searchParams;
   const [services, team] = await Promise.all([
     loadServices(workspace.id, q),

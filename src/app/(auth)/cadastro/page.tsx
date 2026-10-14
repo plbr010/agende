@@ -14,8 +14,13 @@ export default async function CadastroPage({
   const safeNext = sanitizeNextPath(next);
   const plan = parsePlanId(planParam);
   const selectedPlan = plan ? PLANS.find((item) => item.id === plan) : null;
+  const inviteSignup = Boolean(safeNext?.startsWith("/convite/"));
   const intentFromQuery =
-    intentParam === "client" || intentParam === "professional" ? intentParam : "";
+    intentParam === "client" || intentParam === "professional"
+      ? intentParam
+      : inviteSignup
+        ? "professional"
+        : "";
   await requireAnonymous(safeNext);
 
   return (
@@ -37,6 +42,7 @@ export default async function CadastroPage({
         next={safeNext}
         plan={plan}
         initialIntent={plan ? "professional" : intentFromQuery}
+        lockIntent={inviteSignup}
       />
       <p className="text-sm text-muted-foreground">
         Já tem conta?{" "}

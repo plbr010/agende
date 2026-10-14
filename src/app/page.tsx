@@ -6,6 +6,7 @@ import { MarketingHero } from "@/components/marketing/hero";
 import { MarketingHowItWorks } from "@/components/marketing/how-it-works";
 import { MarketingPricing } from "@/components/marketing/pricing";
 import { MarketingProblems } from "@/components/marketing/problems";
+import { MarketingHashOnLoad } from "@/components/marketing/hash-on-load";
 import { MarketingShell } from "@/components/marketing/shell";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <MarketingShell>
+      <MarketingHashOnLoad />
       <main id="conteudo" className="min-w-0 flex-1">
         <MarketingHero />
         <MarketingProblems />

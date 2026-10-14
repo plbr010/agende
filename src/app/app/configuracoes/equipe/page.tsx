@@ -1,4 +1,4 @@
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { canManageAllProfiles, loadTeam } from "@/lib/catalog/queries";
 import {
   MemberManagementList,
@@ -15,10 +15,7 @@ import {
 
 export default async function TeamSettingsPage() {
   const session = await requireConfirmedSession("/app/configuracoes/equipe");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
   const canManage = canManageAllProfiles(workspace.role);
   const [team, seats, invites, settings] = await Promise.all([
     loadTeam(workspace.id),

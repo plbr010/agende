@@ -1,5 +1,5 @@
 import { ContactRound, NotebookPen, Search, UsersRound } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { ClientDirectory } from "@/components/catalog/directories";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
@@ -13,10 +13,7 @@ export default async function ClientsPage({
   searchParams: Promise<{ q?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/clientes");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
   const { q, novo } = await searchParams;
   const clients = await loadClients(workspace.id, q);
   const withContact = clients.filter((client) => client.phone || client.email).length;

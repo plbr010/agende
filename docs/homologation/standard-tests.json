@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-13T19:55:47.751Z",
+  "checked_at": "2026-10-14T02:57:45.290Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 156,
+      "passed": 160,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 54,
+      "passed": 57,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 262,
+    "passed": 269,
     "failed": 0,
     "skipped": 0
   },
@@ -450,6 +450,12 @@
     },
     {
       "file": "src/components/auth/signup-form.test.ts",
+      "name": "invite signup locks the professional intent",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
       "name": "login keeps the main action large and the password recovery visible",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -571,6 +577,12 @@
     {
       "file": "src/lib/auth/launch-auth.test.ts",
       "name": "client and professional signup preserve intent and selected plan without provisioning a trial",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "resend confirmation preserves a safe invite destination",
       "category": "platform_mocks",
       "status": "passed"
     },
@@ -1043,6 +1055,18 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/discovery/actions.test.ts",
+      "name": "discovery actions never invent salons when the RPC is absent",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/actions.test.ts",
+      "name": "discovery actions map verified RPC rows and skip GPS in the v1 body",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "discovery never defaults to a residence city",
       "category": "unit_or_static_contract",
@@ -1056,7 +1080,25 @@
     },
     {
       "file": "src/lib/discovery/contract.test.ts",
-      "name": "search does not invent establishments while the backend is missing",
+      "name": "global search does not require a city and nearby does not use residence",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "parser maps the Codex wire DTO and never invents a salon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "adapter probes the real RPC names and stays empty when the backend is missing",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "reverse geocode maps a Brazilian city without using residence",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

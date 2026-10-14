@@ -35,6 +35,12 @@ test("signup explains the two paths with everyday words and a visible password h
   assert.doesNotMatch(html, /workspace/i);
 });
 
+test("invite signup locks the professional intent", () => {
+  const html = render(createElement(SignupForm, { next: "/convite/abc", initialIntent: "professional", lockIntent: true }));
+  assert.match(html, /Este convite é para entrar na equipe/);
+  assert.match(html, /disabled/);
+});
+
 test("login keeps the main action large and the password recovery visible", () => {
   const html = render(createElement(LoginForm));
   assert.match(html, />Entrar</);

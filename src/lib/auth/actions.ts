@@ -12,6 +12,7 @@ import { normalizeEmail } from "@/lib/validation/email";
 import { loginSchema, parseSignupForm } from "@/lib/validation/signup";
 
 const PENDING_EMAIL_COOKIE = "agende_pending_email";
+const PENDING_NEXT_COOKIE = "agende_pending_next";
 const RESEND_AT_COOKIE = "agende_resend_at";
 const SELECTED_PLAN_COOKIE = "agende_selected_plan";
 const RESEND_COOLDOWN_MS = 60_000;
@@ -20,7 +21,7 @@ async function resolveOrigin(): Promise<string> {
   return getRequestOrigin();
 }
 
-async function setPendingEmail(email: string) {
+async function setPendingEmail(email: string, next?: string | null) {
   const store = await cookies();
   store.set(PENDING_EMAIL_COOKIE, email, {
     httpOnly: true,
@@ -29,6 +30,16 @@ async function setPendingEmail(email: string) {
     path: "/",
     maxAge: 60 * 60 * 24,
   });
+  const safeNext = sanitizeNextPath(next);
+  if (safeNext) {
+    store.set(PENDING_NEXT_COOKIE, safeNext, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+  }
 }
 
 export async function getPendingEmail(): Promise<string | null> {
@@ -104,7 +115,7 @@ export async function signUpAction(
     return { error: "Não foi possível criar sua conta. Tente novamente." };
   }
 
-  await setPendingEmail(input.email);
+  await setPendingEmail(input.email, next);
   const selectedPlan = parsePlanId(formData.get("plan"));
   if (selectedPlan && input.intendedUse === "professional") {
     await setSelectedPlanCookie(selectedPlan);
@@ -175,10 +186,14 @@ export async function resendConfirmationAction(): Promise<ActionState> {
 
   const supabase = await createClient();
   const origin = await resolveOrigin();
+  const pendingNext = sanitizeNextPath(store.get(PENDING_NEXT_COOKIE)?.value);
+  const emailRedirectTo = pendingNext
+    ? `${origin}/auth/callback?next=${encodeURIComponent(pendingNext)}`
+    : `${origin}/auth/callback`;
   const { error } = await supabase.auth.resend({
     type: "signup",
     email,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
+    options: { emailRedirectTo },
   });
 
   if (error) {

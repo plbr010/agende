@@ -1380,6 +1380,8 @@ export type Database = {
       list_my_reschedule_slots: { Args: { p_appointment_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_public_available_slots: { Args: { p_slug: string | null; p_service_id: string | null; p_professional_member_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_public_booking_catalog: { Args: { p_slug: string | null }; Returns: Json };
+      list_public_localities: { Args: { p_state?: string | null; p_query?: string | null; p_limit?: number | null }; Returns: Json };
+      search_public_workspaces: { Args: { p_city?: string | null; p_state?: string | null; p_query?: string | null; p_postal_code?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       mark_financial_entry_paid: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_paid_at?: string | null }; Returns: string };
       peek_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       reactivate_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };

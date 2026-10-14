@@ -164,7 +164,7 @@ export function PublicWorkspacePage({
                   {person.services.length > 0 ? (
                     <p className="mt-3 text-sm">{person.services.join(" · ")}</p>
                   ) : (
-                    <p className="mt-3 text-sm text-muted-foreground">Serviços em breve</p>
+                    <p className="mt-3 text-sm text-muted-foreground">Nenhum serviço vinculado a esta profissional no perfil público.</p>
                   )}
                 </article>
               ))}

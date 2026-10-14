@@ -69,7 +69,7 @@ export function WorkspaceFinder({
           </p>
         ) : (
           <p className="text-xs text-muted-foreground">
-            Use o link que o salão te mandou. Procurar por cidade em qualquer lugar do Brasil ainda está a caminho — o link já funciona agora.
+            Use o link que o salão te mandou. Se não tiver o link, procure por cidade ou pelo nome acima.
           </p>
         )}
         <Button type="submit" className="h-11 rounded-full">

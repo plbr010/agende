@@ -20,10 +20,12 @@ export function SignupForm({
   next,
   plan,
   initialIntent = "",
+  lockIntent = false,
 }: {
   next?: string | null;
   plan?: PlanId | null;
   initialIntent?: "client" | "professional" | "";
+  lockIntent?: boolean;
 }) {
   const [state, action, pending] = useActionState(signUpAction, initial);
   const [intent, setIntent] = useState<"client" | "professional" | "">(
@@ -56,10 +58,14 @@ export function SignupForm({
             type="button"
             role="radio"
             aria-checked={intent === "client"}
-            onClick={() => setIntent("client")}
+            onClick={() => {
+              if (!lockIntent) setIntent("client");
+            }}
+            disabled={lockIntent}
             className={cn(
               "min-h-16 agende-panel rounded-[1.25rem] p-4 text-left ring-1 ring-[#f0e4de] transition",
               intent === "client" && "ring-2 ring-primary bg-metric-blush",
+              lockIntent && "cursor-not-allowed opacity-50",
             )}
           >
             <p className="text-xs font-medium tracking-[0.16em] text-primary uppercase">Quero marcar horários</p>
@@ -79,6 +85,11 @@ export function SignupForm({
             <p className="mt-1 font-medium">Organizar agenda, clientes e horários do meu trabalho.</p>
           </button>
         </div>
+        {lockIntent ? (
+          <p className="rounded-2xl bg-metric-blush px-4 py-3 text-sm">
+            Este convite é para entrar na equipe do salão. Sua conta será profissional.
+          </p>
+        ) : null}
         {state.fieldErrors?.intendedUse ? (
           <p className="text-sm text-destructive">{state.fieldErrors.intendedUse}</p>
         ) : null}

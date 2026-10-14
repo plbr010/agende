@@ -1,5 +1,5 @@
 import { CircleDollarSign } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { FinanceDashboard } from "@/components/finance/finance-dashboard";
 import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
@@ -9,8 +9,7 @@ import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 
 export default async function FinancePage({ searchParams }: { searchParams: Promise<{ period?: string | string[] }> }) {
   const session = await requireConfirmedSession("/app/financeiro");
-  const workspace = session.workspaces[0];
-  if (!workspace) return null;
+  const workspace = requireActiveWorkspace(session);
   const settings = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
   const period = resolvePeriod((await searchParams).period, todayInTimezone(settings.timezone));
   const snapshot = await operationalModuleLoaders.finance({

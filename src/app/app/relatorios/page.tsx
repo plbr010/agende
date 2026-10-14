@@ -1,5 +1,5 @@
 import { ChartNoAxesCombined } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { AdvancedReportDashboard } from "@/components/reports/advanced-report-dashboard";
 import { operationalModuleLoaders } from "@/lib/modules/operational-loaders.server";
@@ -9,8 +9,7 @@ import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 
 export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ period?: string | string[] }> }) {
   const session = await requireConfirmedSession("/app/relatorios");
-  const workspace = session.workspaces[0];
-  if (!workspace) return null;
+  const workspace = requireActiveWorkspace(session);
   const settings = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);
   const period = resolvePeriod((await searchParams).period, todayInTimezone(settings.timezone));
   const report = await operationalModuleLoaders.reports({ workspaceId: workspace.id, from: period.startDate, to: period.endDate });

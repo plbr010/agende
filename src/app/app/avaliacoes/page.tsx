@@ -1,5 +1,5 @@
 import { MessageCircleHeart, Star } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
 import { BackendContractNotice } from "@/components/modules/backend-contract-notice";
@@ -10,8 +10,7 @@ import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
 
 export default async function ReviewsPage() {
   const session = await requireConfirmedSession("/app/avaliacoes");
-  const workspace = session.workspaces[0];
-  if (!workspace) return null;
+  const workspace = requireActiveWorkspace(session);
 
   const [{ reviews, schemaReady }, settings] = await Promise.all([
     loadReviewsResult(workspace.id),

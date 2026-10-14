@@ -1,6 +1,6 @@
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { CalendarCheck2, CalendarDays, CircleDollarSign, Clock3 } from "lucide-react";
-import { requireConfirmedSession } from "@/lib/auth/session";
+import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/session";
 import { AgendaBoard } from "@/components/agenda/agenda-board";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
@@ -20,10 +20,7 @@ export default async function AgendaPage({
   searchParams: Promise<{ date?: string; view?: string; professional?: string; novo?: string }>;
 }) {
   const session = await requireConfirmedSession("/app/agenda");
-  const workspace = session.workspaces[0];
-  if (!workspace) {
-    return null;
-  }
+  const workspace = requireActiveWorkspace(session);
 
   const params = await searchParams;
   const { timezone } = await loadWorkspaceSettings(workspace.id, workspace.name, workspace.slug);

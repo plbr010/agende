@@ -43,7 +43,10 @@ function loadServerPage(
   runInNewContext(outputText, {
     exports,
     require(name: string) {
-      if (name === "@/lib/auth/session") return { requireConfirmedSession: requireSession };
+      if (name === "@/lib/auth/session") return {
+        requireConfirmedSession: requireSession,
+        requireActiveWorkspace: (session: { workspaces: unknown[] }) => session.workspaces[0],
+      };
       if (name === "@/lib/modules/operational-loaders.server") return { operationalModuleLoaders: loaders };
       if (name === "@/lib/time/timezone") return { todayInProductTz: () => "2026-09-23" };
       if (name === "@/lib/modules/periods") return { resolvePeriod, todayInTimezone };

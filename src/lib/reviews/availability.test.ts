@@ -76,7 +76,10 @@ test("both review pages render an unavailable notice without mounting submission
     const page = moduleFrom<{ default: () => Promise<unknown> }>(`../../app/${route}/avaliacoes/page.tsx`, {
       "react/jsx-runtime": { jsx: (type: unknown, props: unknown) => ({ type, props }), jsxs: (type: unknown, props: unknown) => ({ type, props }), Fragment: "fragment" },
       "lucide-react": { Star: "star" },
-      "@/lib/auth/session": { requireConfirmedSession: async () => ({ workspaces: [{ id: "workspace", name: "Studio", slug: "studio" }] }) },
+      "@/lib/auth/session": {
+        requireConfirmedSession: async () => ({ workspaces: [{ id: "workspace", name: "Studio", slug: "studio" }] }),
+        requireActiveWorkspace: (session: { workspaces: unknown[] }) => session.workspaces[0],
+      },
       "@/lib/booking/queries": { loadMyAppointments: async () => [] },
       "@/lib/reviews/queries": { loadReviewsResult: async () => ({ reviews: [], schemaReady: false }) },
       "@/lib/reviews/validation": validation,
