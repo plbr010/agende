@@ -20,6 +20,10 @@ test("audience split uses the approved client and professional copy", () => {
   assert.match(split, /Conhecer o Agendê/);
   assert.match(split, /Seu próximo momento de beleza está a poucos cliques\./);
   assert.match(split, /Encontrar um salão/);
+  assert.match(split, /relative isolate overflow-hidden/);
+  assert.match(split, /relative z-10 mx-auto grid/);
+  assert.match(split, /FloralCorner className="[^"]*-left-12/);
+  assert.doesNotMatch(split, /absolute left-0 top-4 h-32 w-40 opacity-80/);
   assert.doesNotMatch(split, /nunca o plano/);
   assert.doesNotMatch(split, /preços da assinatura/);
   assert.doesNotMatch(source("src/app/page.tsx"), /Sou profissional ou sou cliente\?/);
