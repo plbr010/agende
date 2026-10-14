@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-14T14:35:49.867Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [],
+  "blockers": [],
+  "status": "FAIL",
+  "error": "prerequisite_probe_failed",
+  "commercial_acceptance": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

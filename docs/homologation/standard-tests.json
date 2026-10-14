@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T14:24:31.403Z",
+  "checked_at": "2026-10-14T15:01:38.720Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 29,
+      "passed": 30,
       "failed": 0,
       "skipped": 0
     },
@@ -17,7 +17,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 13,
+      "passed": 14,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 296,
+    "passed": 298,
     "failed": 0,
     "skipped": 0
   },
@@ -216,6 +216,12 @@
     },
     {
       "file": "scripts/discovery-sql.test.mjs",
+      "name": "reviewed discovery rollout preserves rows and history, defaults to private and rejects replay",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
       "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "pglite_sql",
       "status": "passed"
@@ -337,6 +343,12 @@
     {
       "file": "scripts/stripe-edge.test.mjs",
       "name": "staging billing cannot default redirects to the production origin",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "production checkout returns to the commercial domain when no override exists",
       "category": "stripe_mocks",
       "status": "passed"
     },

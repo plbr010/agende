@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-14",
+  "branch": "codex/p0-launch-unblocking-2026-10-14",
+  "staging": "fkpdudnnperufnmdwdlv",
+  "production_changes": 0,
+  "envs": [
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "created": true,
+      "id": "cYv5la8DuurrBcOU",
+      "branch": "codex/p0-launch-unblocking-2026-10-14",
+      "target": "preview"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "created": true,
+      "id": "NXzmyEkn4joDCPl8",
+      "branch": "codex/p0-launch-unblocking-2026-10-14",
+      "target": "preview"
+    }
+  ],
+  "preview": {
+    "id": "dpl_87m2oanQBCCy6Lcn9paxBeAChXef",
+    "url": "https://agende-ayisag9c9-pedros-projects-cfddfd39.vercel.app",
+    "state": "READY",
+    "head": "cbce09bf20bcedacf5c627aa241eeec27de13560"
+  },
+  "secrets_in_report": false
+}

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T04:44:49.631Z",
+  "checked_at": "2026-10-14T15:04:57.972Z",
   "project": "fkpdudnnperufnmdwdlv",
   "checks": [
     "browser login creates a real staging session and opens manager settings",
@@ -11,8 +11,11 @@
     "browser logout clears the session and a protected route returns to login"
   ],
   "passed": true,
+  "booking_skipped": true,
+  "booking_skip_reason": "Explicit bounded rerun; real booking fixture quota already reached",
   "fixtures_restored": true,
   "synthetic_service_archived": true,
+  "synthetic_booking_cancelled": false,
   "production_connections": 0,
   "secrets_in_report": false
 }
