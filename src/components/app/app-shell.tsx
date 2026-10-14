@@ -169,7 +169,7 @@ export function AppShell({
     <div className="agende-app min-h-screen overflow-x-clip lg:grid lg:grid-cols-[15.25rem_minmax(0,1fr)]">
       <aside className="hidden h-screen bg-sidebar px-3 py-5 text-sidebar-foreground lg:sticky lg:top-0 lg:flex lg:flex-col">
         <div className="px-2 pb-5">
-          <BrandLogo size="md" tone="light" href="/app" />
+          <BrandLogo size="sm" tone="light" href="/app" />
           <p className="mt-2 truncate px-0.5 text-sm text-white/70">{workspaceName}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">

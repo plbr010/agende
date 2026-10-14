@@ -178,7 +178,7 @@ try {
 
       try {
         await page.goto(`${base}/`, { waitUntil: "domcontentloaded", timeout: 20000 });
-        await page.getByRole("link", { name: /Começar 7 dias grátis/i }).first().waitFor();
+        await page.getByRole("link", { name: /Sou profissional/i }).first().waitFor();
         record({ name: "landing", result: "PASS", evidence: await shot(page, "landing") });
       } catch (error) {
         record({ name: "landing", result: "FAIL", error: error.message });

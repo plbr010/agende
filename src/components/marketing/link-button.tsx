@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { scrollToHash } from "@/components/marketing/hash-link";
 import { cn } from "@/lib/utils";
 
-type Variant = "default" | "outline" | "secondary" | "ghost";
+type Variant = "default" | "outline" | "secondary" | "ghost" | "rose";
 
 export function MarketingLinkButton({
   href,

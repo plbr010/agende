@@ -1,20 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const manrope = localFont({
-  src: "./fonts/manrope-latin.woff2",
-  weight: "200 800",
+const inter = localFont({
+  src: "./fonts/Inter.ttf",
+  weight: "100 900",
   variable: "--font-sans",
   display: "swap",
 });
 
-const cormorant = localFont({
-  src: "./fonts/cormorant-garamond-latin.woff2",
+const playfair = localFont({
+  src: [
+    { path: "./fonts/PlayfairDisplay.ttf", weight: "400 900", style: "normal" },
+    { path: "./fonts/PlayfairDisplay-Italic.ttf", weight: "400 900", style: "italic" },
+  ],
   variable: "--font-serif",
-  weight: "500 700",
   display: "swap",
 });
 
@@ -25,13 +27,35 @@ export const metadata: Metadata = {
   },
   description:
     "O Agendê organiza horários para profissionais da beleza e para quem quer agendar com mais calma.",
+  applicationName: "Agendê",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Agendê",
+    statusBarStyle: "default",
+  },
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#fbf4ee",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${manrope.variable} ${cormorant.variable} h-full`}
+      className={`${inter.variable} ${playfair.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <TooltipProvider>

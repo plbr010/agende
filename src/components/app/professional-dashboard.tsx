@@ -3,13 +3,14 @@ import {
   ArrowRight,
   CalendarDays,
   CircleDollarSign,
+  Sparkles,
   Star,
   UsersRound,
 } from "lucide-react";
+import { FloralBranch, FloralCorner } from "@/components/brand/floral";
 import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { CopyLinkButton } from "@/components/usability/copy-link-button";
 import { EmptyState } from "@/components/app/empty-state";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { enableClientProfileAction } from "@/lib/auth/actions";
 import type { CalendarDay } from "@/lib/dashboard/summary";
@@ -69,20 +70,6 @@ function initials(value: string): string {
 function avatarClass(name: string): string {
   const code = [...name].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   return AVATAR_CLASS[code % AVATAR_CLASS.length];
-}
-
-function LeafMark({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="none">
-      <path
-        d="M5 19c6-1 10-5 12-12-7 1-12 6-12 12Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-      />
-      <path d="M8 16c2-2 4-4 7-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
 }
 
 function DeltaLine({ delta }: { delta: number }) {
@@ -239,17 +226,22 @@ export function ProfessionalDashboard({
         </section>
       ) : null}
 
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <header className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <FloralCorner className="pointer-events-none absolute -right-2 -top-6 hidden h-24 w-32 opacity-80 lg:block" />
         <div className="min-w-0">
           <h1 className="font-serif text-[1.85rem] leading-none tracking-tight text-wine-deep sm:text-5xl">
             Olá, {firstName}!
-            <LeafMark className="ml-2 inline size-5 -translate-y-1 text-[var(--rose)] sm:size-7" />
+            <Sparkles className="ml-2 inline size-5 -translate-y-1 text-[var(--rose)] sm:size-7" aria-hidden="true" />
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-base">
-            {todayLabel} · {salonName}
+            {salonName} · seu negócio está indo bem hoje
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/80 px-3 text-sm text-muted-foreground ring-1 ring-[#f0e4de]">
+            <CalendarDays className="size-4" aria-hidden="true" />
+            {todayLabel}
+          </p>
           <Button className="h-11 rounded-full px-5" render={<Link href={primaryAction.href} />}>
             {primaryAction.label}
           </Button>
@@ -425,39 +417,51 @@ export function ProfessionalDashboard({
         </div>
       </section>
 
-      <section className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      {plan.publicPath ? (
+        <section className="agende-panel flex flex-col gap-3 rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de] sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Plano do salão</p>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <p className="font-serif text-3xl text-wine-deep">{plan.planLabel}</p>
-              <Badge variant="secondary">{plan.statusLabel}</Badge>
-            </div>
-            {plan.trialDaysRemaining > 0 ? (
-              <p className="mt-2 font-medium text-wine-deep">
-                {plan.trialDaysRemaining === 1 ? "1 dia restante de teste grátis" : `${plan.trialDaysRemaining} dias restantes de teste grátis`}
-              </p>
-            ) : null}
+            <p className="font-medium text-wine-deep">Seu link de agendamento está ativo</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Compartilhe com suas clientes e receba reservas.
+            </p>
+          </div>
+          <CopyLinkButton path={plan.publicPath} label="Copiar link" className="h-11" />
+        </section>
+      ) : null}
+
+      <section className="relative overflow-hidden rounded-[1.6rem] bg-gradient-to-r from-[#f8e4df] to-[#fbf4ee] p-5 ring-1 ring-[#f0e4de] sm:p-7">
+        <FloralBranch className="pointer-events-none absolute -left-6 -top-8 h-40 w-32 opacity-80" />
+        <FloralBranch className="pointer-events-none absolute -right-4 -bottom-10 h-40 w-32 rotate-12 opacity-70" />
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0 max-w-xl">
+            <h2 className="font-serif text-3xl leading-tight text-wine-deep sm:text-4xl">
+              Mais do que um sistema, é o seu aliado no crescimento.
+            </h2>
             <p className="mt-2 text-sm text-muted-foreground">
+              Plano {plan.planLabel} · {plan.statusLabel}
+              {plan.trialDaysRemaining > 0
+                ? ` · ${plan.trialDaysRemaining === 1 ? "1 dia restante de teste grátis" : `${plan.trialDaysRemaining} dias restantes de teste grátis`}`
+                : ""}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
               Teste grátis: {plan.trialStarted} até {plan.trialEnds}. Sua função: {plan.roleLabel}.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            {plan.publicPath ? <CopyLinkButton path={plan.publicPath} label="Copiar link do salão" className="h-11" /> : null}
-            <Button variant="outline" className="h-11 rounded-full" render={<Link href="/app/configuracoes/assinatura" />}>
-              Gerenciar plano
+            <Button className="h-11 rounded-full" render={<Link href="/app/configuracoes/assinatura" />}>
+              Ver planos
             </Button>
-            <Button variant="outline" className="h-11 rounded-full" render={<Link href="/app/agenda" />}>
+            <Button variant="outline" className="h-11 rounded-full bg-white/80" render={<Link href="/app/agenda" />}>
               Abrir agenda
             </Button>
             {!plan.hasClientProfile ? (
               <form action={enableClientProfileAction}>
-                <Button variant="outline" type="submit" className="h-11 rounded-full">
+                <Button variant="outline" type="submit" className="h-11 rounded-full bg-white/80">
                   Quero marcar horários em outros salões também
                 </Button>
               </form>
             ) : (
-              <Button variant="outline" className="h-11 rounded-full" render={<Link href="/cliente" />}>
+              <Button variant="outline" className="h-11 rounded-full bg-white/80" render={<Link href="/cliente" />}>
                 Ir para minha área de cliente
               </Button>
             )}

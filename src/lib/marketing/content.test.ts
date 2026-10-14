@@ -5,6 +5,7 @@ import {
   BOOKING_STEPS,
   FEATURES,
   FOOTER_LINKS,
+  HOME_BENEFITS,
   HOW_IT_WORKS,
   MARKETING_CTAS,
   MARKETING_NAV,
@@ -48,9 +49,11 @@ test("plans use the exact public prices and seats", () => {
 });
 
 test("every plan is presented with a free trial and no card in the primary CTA", () => {
-  assert.equal(MARKETING_CTAS.primary.label, "Começar 7 dias grátis");
-  assert.equal(MARKETING_CTAS.primary.href, "/cadastro");
-  assert.equal(MARKETING_CTAS.secondary.label, "Ver como funciona");
+  assert.equal(MARKETING_CTAS.primary.label, "Sou profissional");
+  assert.equal(MARKETING_CTAS.primary.href, "/profissionais");
+  assert.equal(MARKETING_CTAS.secondary.label, "Sou cliente");
+  assert.equal(MARKETING_CTAS.professionalSignup.label, "Começar 7 dias grátis");
+  assert.equal(MARKETING_CTAS.professionalSignup.href, "/cadastro?intent=professional");
 });
 
 test("plans differentiate benefits and show annual prices", () => {
@@ -65,11 +68,12 @@ test("plans differentiate benefits and show annual prices", () => {
 test("header and footer expose the required public links", () => {
   assert.deepEqual(
     MARKETING_NAV.map((item) => item.label),
-    ["Funcionalidades", "Como funciona", "Planos", "Encontrar salão"],
+    ["Para profissionais", "Para clientes"],
   );
+  assert.equal(MARKETING_NAV.some((item) => item.label === "Planos"), false);
   assert.deepEqual(
     FOOTER_LINKS.map((item) => item.label),
-    ["Produto", "Encontrar salão", "Termos", "Privacidade", "Entrar", "Cadastro"],
+    ["Para profissionais", "Para clientes", "Termos", "Privacidade", "Entrar", "Cadastro"],
   );
   assert.equal(FOOTER_LINKS.some((item) => /instagram|facebook|tiktok/i.test(item.href)), false);
 });
@@ -90,4 +94,5 @@ test("landing covers the product vision without fake WhatsApp automation", () =>
   assert.ok(FEATURES.some((feature) => feature.title === "Histórico de atendimentos"));
   assert.equal(HOW_IT_WORKS.length, 5);
   assert.equal(BOOKING_STEPS.length, 5);
+  assert.equal(HOME_BENEFITS.length, 4);
 });
