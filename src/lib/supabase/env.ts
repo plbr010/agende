@@ -34,7 +34,9 @@ export function getSupabasePublishableKey(): string {
 
 export function getSiteUrl(): string {
   const deployed = process.env.VERCEL === "1" || ["production", "preview"].includes(process.env.VERCEL_ENV ?? "");
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  // Public values are baked at build time; server callbacks need runtime origins too.
+  const configured = (typeof window === "undefined" ? process.env.SITE_URL : undefined)?.trim()
+    || process.env.NEXT_PUBLIC_SITE_URL?.trim();
   const platformHost = process.env.VERCEL_ENV === "preview"
     ? process.env.VERCEL_URL
     : process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;

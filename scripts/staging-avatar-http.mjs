@@ -13,8 +13,10 @@ assert.equal(config.url,'https://fkpdudnnperufnmdwdlv.supabase.co');
 const serverKey=existingStagingServerKey();
 const admin=createClient(config.url,serverKey,{auth:{persistSession:false,autoRefreshToken:false}});
 const socket=createServer();await new Promise(r=>socket.listen(0,'127.0.0.1',r));const port=socket.address().port;await new Promise(r=>socket.close(r));
-const origin=`http://127.0.0.1:${port}`,checks=[];
-const server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port',String(port)],{windowsHide:true,stdio:'ignore',env:{...process.env,SUPABASE_SERVICE_ROLE_KEY:serverKey,NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key,NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV:'staging',NEXT_PUBLIC_SITE_URL:origin}});
+const preview=process.env.AGENDE_AVATAR_PREVIEW_ORIGIN;
+if(preview)assert.equal(preview,'https://agende-git-codex-stabilization-38c7eb-pedros-projects-cfddfd39.vercel.app','Only the dedicated stabilization Preview is allowed');
+const origin=preview??`http://127.0.0.1:${port}`,checks=[];
+const server=preview?null:spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port',String(port)],{windowsHide:true,stdio:'ignore',env:{...process.env,SUPABASE_SERVICE_ROLE_KEY:serverKey,SITE_URL:origin,NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key,NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV:'staging',NEXT_PUBLIC_SITE_URL:origin}});
 const login=async(email)=>{
  const jar=new Map();const client=createServerClient(config.url,config.publishable_key,{cookies:{getAll:()=>[...jar].map(([name,value])=>({name,value})),setAll:values=>values.forEach(c=>jar.set(c.name,c.value))}});
  const {data,error}=await client.auth.signInWithPassword({email:email+'@agende-staging.invalid',password:config.fixture_password});assert.equal(error,null);
@@ -22,7 +24,7 @@ const login=async(email)=>{
 };
 let account,professionalAccount,changed=false,professionalChanged=false;
 const request=(session,method='GET',body,extra={})=>fetch(origin+'/api/account/avatar',{method,body,headers:{...(session?{cookie:session.header()}:{}),...(method==='GET'?{}:{origin}),...extra}});
-const check=async(name,fn)=>{await fn();checks.push({name,status:'PASS',mode:'real local Next HTTP + staging Auth/Storage/PostgREST'});console.log('PASS '+name);};
+const check=async(name,fn)=>{await fn();checks.push({name,status:'PASS',mode:preview?'real Vercel Preview HTTP + staging Auth/Storage/PostgREST':'real local Next HTTP + staging Auth/Storage/PostgREST'});console.log('PASS '+name);};
 try{
  for(let n=0;n<40;n++){try{if((await fetch(origin+'/api/account/avatar')).status===401)break;}catch{}await new Promise(r=>setTimeout(r,250));}
  account=await login('client');const other=await login('owner-b');professionalAccount=other;
@@ -73,6 +75,6 @@ try{
 finally {
  if(changed&&account)await request(account,'DELETE');
  if(professionalChanged&&professionalAccount)await request(professionalAccount,'DELETE');
- server.kill();
- writeFileSync('docs/staging/client-phase2-avatar-http.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',production_touched:false,secrets_modified:false,checks},null,2)+'\n');
+ server?.kill();
+ writeFileSync(preview?'docs/staging/stabilization-preview-avatar-http.json':'docs/staging/client-phase2-avatar-http.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',origin,production_touched:false,secrets_modified:false,checks},null,2)+'\n');
 }
