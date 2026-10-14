@@ -39,6 +39,8 @@ async function setPendingEmail(email: string, next?: string | null) {
       path: "/",
       maxAge: 60 * 60 * 24,
     });
+  } else {
+    store.delete(PENDING_NEXT_COOKIE);
   }
 }
 
@@ -145,7 +147,7 @@ export async function signInAction(
   if (error) {
     const message = error.message.toLowerCase();
     if (message.includes("email not confirmed")) {
-      await setPendingEmail(email);
+      await setPendingEmail(email, String(formData.get("next") ?? ""));
       redirect("/verificar-email?status=unconfirmed");
     }
     return { error: "E-mail ou senha incorretos." };

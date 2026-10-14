@@ -81,7 +81,9 @@ async function mutate(request: Request, remove: boolean) {
       p_user_id: current.user.id, p_expected_path: current.path, p_new_path: next,
     });
     if (swapError || !swapped) {
-      if (next) {
+      // A transport error can arrive after the database committed. Keep the lease:
+      // cleanup excludes referenced paths and safely reaps uncommitted uploads.
+      if (next && !swapError) {
         const { error: removalError } = await admin.storage.from(BUCKET).remove([next]);
         if (!removalError) await admin.rpc("finish_avatar_cleanup", { p_path: next });
       }
