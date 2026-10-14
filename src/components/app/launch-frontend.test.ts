@@ -13,7 +13,7 @@ function source(relative: string) {
 test("approved dashboard identity stays on the launch screens", () => {
   const tokens = source("src/app/globals.css");
   assert.match(tokens, /--wine-deep:\s*#5c1a2e/);
-  assert.match(tokens, /--metric-blush:\s*#fff0ee/);
+  assert.match(tokens, /--metric-blush:\s*#fdecea/);
   assert.match(tokens, /\.agende-app/);
   assert.match(tokens, /\.agende-panel/);
 
@@ -28,7 +28,7 @@ test("approved dashboard identity stays on the launch screens", () => {
   assert.match(dashboard, /Agenda de hoje/);
   assert.match(dashboard, /dias restantes de teste/);
   assert.match(dashboard, /Teste grátis/);
-  assert.match(dashboard, /Gerenciar plano/);
+  assert.match(dashboard, /Ver planos/);
   assert.match(dashboard, /\/app\/configuracoes\/assinatura/);
   assert.doesNotMatch(dashboard, /4,9/);
 });

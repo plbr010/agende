@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T16:31:55.375Z",
+  "checked_at": "2026-10-14T16:51:44.294Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 185,
+      "passed": 189,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 300,
+    "passed": 304,
     "failed": 0,
     "skipped": 0
   },
@@ -565,6 +565,30 @@
     {
       "file": "src/components/booking/public-booking-flow.test.ts",
       "name": "returning to the slot step clears stale times before refetch",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/brand/identity.test.ts",
+      "name": "approved mark, favicon and PWA icons exist without a padded white canvas",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/brand/identity.test.ts",
+      "name": "wordmark uses the cropped mark and Playfair stays the heading face",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/brand/identity.test.ts",
+      "name": "homepage splits client and professional and never lists SaaS prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/brand/identity.test.ts",
+      "name": "client chrome does not advertise Solo, Equipe or checkout SaaS",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
