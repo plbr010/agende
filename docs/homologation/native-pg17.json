@@ -1,11 +1,14 @@
 {
-  "checked_at": "2026-10-14T17:55:05.521Z",
+  "checked_at": "2026-10-14T14:37:05.840Z",
   "version": "postgres (PostgreSQL) 17.6",
   "host": "127.0.0.1",
-  "port": 56657,
+  "port": 51266,
   "suites": [
-    "scripts/client-phase2-sql.test.mjs",
+    "scripts/database.test.mjs",
     "scripts/launch-readiness.test.mjs",
+    "scripts/final-hardening.test.mjs",
+    "scripts/atomic-service-sql.test.mjs",
+    "scripts/action-sql-integration.test.mjs",
     "scripts/pg17-concurrency.test.mjs",
     "scripts/discovery-sql.test.mjs"
   ],

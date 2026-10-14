@@ -14,7 +14,7 @@ Contrato completo, parâmetros, autorização, erros e tarefas do Cursor: [clien
 | npm run typecheck | PASS | [log](../homologation/client-phase2-typecheck.log) |
 | npm test: 318 testes | PASS | [resultado categorizado](../homologation/standard-tests.json), [log](../homologation/client-phase2-tests.log) |
 | npm run build | PASS | [log](../homologation/client-phase2-build.log) |
-| PostgreSQL 17: 19 testes SQL/concorrência + cinco suítes SQL completas | PASS | [resultado](../homologation/native-tests.json), [log](../homologation/client-phase2-pg17.log) |
+| PostgreSQL 17: 19 testes SQL/concorrência + cinco suítes SQL completas | PASS | [resultado](../homologation/client-phase2-native-tests.json), [log](../homologation/client-phase2-pg17.log) |
 | Staging Auth/PostgREST: favoritos, duplicação, remoção, persistência, isolamento, perfil e Storage | PASS | [7 casos reais](client-phase2-real-tests.json) |
 | Staging: reserva concorrente, histórico em dois salões, snapshots e avaliações | PASS | [4 casos reais](client-phase2-booking-history-reviews.json) |
 | HTTP local → staging: foto cliente/profissional, arquivos inválidos, tamanho, troca, exclusão, persistência, leitura privada e CSRF | PASS | [6 casos reais](client-phase2-avatar-http.json) |
