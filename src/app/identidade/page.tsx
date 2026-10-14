@@ -26,7 +26,10 @@ export default function IdentidadePreviewPage() {
   return (
     <div className="grid gap-10 bg-[var(--cream)] pb-16">
       <p className="bg-wine-deep px-4 py-3 text-center text-sm text-white">
-        Prévia visual para aprovação — dados ilustrativos, não é um salão real e não entra no índice de busca.
+        Prévia visual para aprovação — dados ilustrativos, não é um salão real e não entra no índice de busca.{" "}
+        <a href="/identidade/cliente" className="underline underline-offset-4">
+          Ver a área da cliente
+        </a>
       </p>
 
       <AppShell workspaceName="Studio Beleza" workspaceSlug="studio-beleza" userName="Ana Carolina" roleLabel="Proprietária" role="owner">

@@ -19,6 +19,7 @@ export async function submitReview(input: { appointmentId: string; rating: numbe
     if (error.message.includes("not_found")) return { error: "Atendimento não encontrado na sua conta." };
     return { error: "Não foi possível enviar sua avaliação. Tente novamente." };
   }
+  revalidatePath("/cliente");
   revalidatePath("/cliente/avaliacoes");
   revalidatePath("/app/avaliacoes");
   const { reviews, schemaReady } = await loadReviewsResult();

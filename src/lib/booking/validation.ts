@@ -154,6 +154,32 @@ export function partitionClientAppointments<T extends { startsAt: string; status
   return { upcoming, past };
 }
 
+export function groupClientAppointments<T extends { startsAt: string; status: string }>(
+  items: T[],
+  now: Date = new Date(),
+): { upcoming: T[]; completed: T[]; cancelled: T[]; other: T[] } {
+  const { upcoming, past } = partitionClientAppointments(items, now);
+  const completed: T[] = [];
+  const cancelled: T[] = [];
+  const other: T[] = [];
+  for (const item of past) {
+    if (item.status === "completed") {
+      completed.push(item);
+    } else if (item.status === "cancelled" || item.status === "no_show") {
+      cancelled.push(item);
+    } else {
+      other.push(item);
+    }
+  }
+  return { upcoming, completed, cancelled, other };
+}
+
+export function bookAgainPath(item: { slug: string; serviceId?: string }): string {
+  return item.serviceId
+    ? `/p/${item.slug}/agendar?servico=${encodeURIComponent(item.serviceId)}`
+    : `/p/${item.slug}/agendar`;
+}
+
 export function sanitizeBookingError(message: string | null | undefined): string {
   const value = (message ?? "").toLowerCase();
   if (value.includes("reschedule_too_late")) return "Faltam menos de 2 horas. Não é mais possível reagendar por aqui.";

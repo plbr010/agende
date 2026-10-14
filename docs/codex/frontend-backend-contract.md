@@ -71,6 +71,10 @@ O frontend só aceita hosts `checkout.stripe.com` e `billing.stripe.com`, sem cr
 - Checkout/portal com validação de redirect e copy que não afirma ativação.
 - Runner isolado + suíte de staging opt-in + matriz PASS LOCAL / PASS E2E / BLOQUEADO.
 
+## Área da cliente (Fase 1 frontend)
+
+Detalhe: [client-experience-fase1.md](./client-experience-fase1.md). Favoritos, foto, cidade, preferências de notificação e rascunho de reserva pós-login **não** devem ser improvisados no browser.
+
 ## Como desbloquear PASS E2E
 
 1. Preview/local apontando só para o projeto staging, nunca para produção.

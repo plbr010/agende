@@ -4,8 +4,8 @@ import { FloralBranch, FloralCorner } from "@/components/brand/floral";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 
 export function AudienceSplit({
-  eyebrow = "Como você quer usar o Agendê?",
-  title = "Escolha o seu caminho",
+  eyebrow = "Dois caminhos",
+  title = "O Agendê é para você.",
 }: {
   eyebrow?: string;
   title?: string;
@@ -18,7 +18,7 @@ export function AudienceSplit({
           <p className="text-[0.7rem] font-medium tracking-[0.2em] text-[var(--rose-ink)] uppercase">{eyebrow}</p>
           <h1 className="font-serif text-4xl leading-tight text-wine-deep sm:text-5xl">{title}</h1>
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Profissionais organizam o salão. Clientes marcam horário. Os preços da assinatura do Agendê aparecem só para quem tem um negócio.
+            Seja para cuidar do seu negócio ou reservar um momento para você, comece por aqui.
           </p>
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
@@ -29,10 +29,10 @@ export function AudienceSplit({
             </span>
             <h2 className="mt-5 font-serif text-3xl text-wine-deep">Sou profissional</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Agenda, equipe, clientes, financeiro e o link para as pessoas marcarem sozinhas. 7 dias grátis, sem cartão.
+              Mais organização, menos trabalho. Cuide do seu negócio enquanto o Agendê cuida da sua agenda.
             </p>
             <MarketingLinkButton href="/profissionais" className="mt-6 h-12 rounded-full px-6">
-              Ver benefícios e planos
+              Conhecer o Agendê
             </MarketingLinkButton>
           </article>
           <article className="relative overflow-hidden rounded-[1.8rem] bg-metric-blush/80 p-6 ring-1 ring-[#f0e4de] sm:p-8">
@@ -41,7 +41,7 @@ export function AudienceSplit({
             </span>
             <h2 className="mt-5 font-serif text-3xl text-wine-deep">Sou cliente</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Encontre um salão, escolha o serviço e marque o horário. Você vê o preço do atendimento — nunca o plano que o salão paga ao Agendê.
+              Seu próximo momento de beleza está a poucos cliques. Encontre, escolha e agende.
             </p>
             <MarketingLinkButton href={MARKETING_CTAS.clientDiscover.href} variant="rose" className="mt-6 h-12 rounded-full px-6">
               Encontrar um salão
