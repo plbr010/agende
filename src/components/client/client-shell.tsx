@@ -2,22 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, House, LogOut, MapPin, Sparkles, Star } from "lucide-react";
+import { CalendarDays, Compass, Heart, House, Sparkles, UserRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { signOutAction } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
 
-const navigation = [
+export const CLIENT_NAVIGATION = [
   { href: "/cliente", label: "Início", icon: House },
-  { href: "/cliente/descobrir", label: "Encontrar", icon: MapPin },
+  { href: "/cliente/descobrir", label: "Explorar", icon: Compass },
   { href: "/cliente/agendamentos", label: "Agendamentos", icon: CalendarDays },
-  { href: "/cliente/avaliacoes", label: "Avaliações", icon: Star },
-];
+  { href: "/cliente/favoritos", label: "Favoritos", icon: Heart },
+  { href: "/cliente/perfil", label: "Perfil", icon: UserRound },
+] as const;
 
 function initials(value: string): string {
   return value.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
+}
+
+function previewAsClientPath(pathname: string): string {
+  if (pathname === "/identidade/cliente" || pathname.startsWith("/identidade/cliente/")) {
+    return pathname.replace("/identidade/cliente", "/cliente") || "/cliente";
+  }
+  return pathname;
+}
+
+function isCurrentPath(pathname: string, href: string): boolean {
+  const current = previewAsClientPath(pathname);
+  return href === "/cliente" ? current === href : current.startsWith(href);
 }
 
 export function ClientShell({
@@ -33,22 +45,30 @@ export function ClientShell({
 
   return (
     <div className="agende-bloom min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-[#f0e4de]/80 bg-[color-mix(in_srgb,var(--cream)_88%,white)]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-4">
-            <BrandLogo size="sm" />
+            <BrandLogo size="sm" href="/cliente" />
             <span className="hidden h-5 w-px bg-border sm:block" />
             <span className="hidden items-center gap-1.5 text-xs font-medium text-muted-foreground sm:flex">
-              <Sparkles className="size-3 text-primary" /> Meu espaço
+              <Sparkles className="size-3 text-[var(--rose-ink)]" aria-hidden="true" /> Seu espaço
             </span>
           </div>
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Área da cliente">
-            {navigation.map((item) => {
-              const current = item.href === "/cliente" ? pathname === item.href : pathname.startsWith(item.href);
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Área da cliente">
+            {CLIENT_NAVIGATION.map((item) => {
+              const current = isCurrentPath(pathname, item.href);
               const Icon = item.icon;
               return (
-                <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
-                  <Icon className="size-3.5" /> {item.label}
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={current ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
+                    current ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                  )}
+                >
+                  <Icon className="size-3.5" aria-hidden="true" /> {item.label}
                 </Link>
               );
             })}
@@ -69,29 +89,40 @@ export function ClientShell({
                 </Button>
               </>
             ) : null}
-            <Avatar>
-              <AvatarFallback className="bg-secondary text-xs">{initials(userName)}</AvatarFallback>
-            </Avatar>
-            <form action={signOutAction}>
-              <Button variant="ghost" className="h-11 px-3" type="submit" aria-label="Sair">
-                <LogOut className="size-4" /> Sair
-              </Button>
-            </form>
+            <Link href="/cliente/perfil" aria-label="Abrir perfil" className="rounded-full focus-visible:ring-3 focus-visible:ring-ring/50">
+              <Avatar>
+                <AvatarFallback className="bg-metric-blush text-xs text-wine-deep">{initials(userName)}</AvatarFallback>
+              </Avatar>
+            </Link>
           </div>
         </div>
-        <nav className="mx-auto flex w-full max-w-6xl gap-1 overflow-x-auto px-4 pb-3 md:hidden" aria-label="Área da cliente">
-          {navigation.map((item) => {
-            const current = item.href === "/cliente" ? pathname === item.href : pathname.startsWith(item.href);
+      </header>
+      <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 pb-28 sm:px-6 sm:py-9 lg:pb-9">{children}</main>
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f0e4de] bg-[color-mix(in_srgb,var(--cream)_92%,white)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+        aria-label="Área da cliente"
+      >
+        <div className="mx-auto grid max-w-6xl grid-cols-5 gap-1 px-2 py-2">
+          {CLIENT_NAVIGATION.map((item) => {
+            const current = isCurrentPath(pathname, item.href);
             const Icon = item.icon;
             return (
-              <Link key={item.href} href={item.href} aria-current={current ? "page" : undefined} className={cn("flex min-h-11 min-w-fit flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors", current ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground ring-1 ring-border")}>
-                <Icon className="size-3.5" /> {item.label}
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={current ? "page" : undefined}
+                className={cn(
+                  "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 text-[0.65rem] font-medium transition-colors",
+                  current ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                )}
+              >
+                <Icon className="size-4" aria-hidden="true" />
+                {item.label}
               </Link>
             );
           })}
-        </nav>
-      </header>
-      <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 sm:px-6 sm:py-9">{children}</main>
+        </div>
+      </nav>
     </div>
   );
 }

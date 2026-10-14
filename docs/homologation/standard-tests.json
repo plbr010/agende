@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T16:51:44.294Z",
+  "checked_at": "2026-10-14T17:04:34.659Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 189,
+      "passed": 196,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 304,
+    "passed": 311,
     "failed": 0,
     "skipped": 0
   },
@@ -593,6 +593,42 @@
       "status": "passed"
     },
     {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "audience split uses the approved client and professional copy",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "client chrome has a personal nav and no SaaS prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "client home greets by first name and never advertises professional plans",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "favorites stay honest and never persist in the browser",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "profile edits only name and phone already granted on profiles",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "identidade cliente preview is noindex and uses empty real states",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/discovery/publication-form.test.ts",
       "name": "publication form keeps a native checkbox, announces errors and resets after save",
       "category": "unit_or_static_contract",
@@ -1123,6 +1159,12 @@
     {
       "file": "src/lib/booking/validation.test.ts",
       "name": "central booking rules stay at product constants",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "groupClientAppointments separates history from cancelled",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

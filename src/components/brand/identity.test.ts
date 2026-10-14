@@ -66,4 +66,7 @@ test("client chrome does not advertise Solo, Equipe or checkout SaaS", () => {
   assert.doesNotMatch(shell, /assinatura/);
   assert.doesNotMatch(shell, /\/app\/configuracoes\/assinatura/);
   assert.match(shell, /\/cliente\/descobrir/);
+  assert.match(shell, /\/cliente\/favoritos/);
+  assert.match(shell, /\/cliente\/perfil/);
+  assert.match(shell, /Explorar/);
 });

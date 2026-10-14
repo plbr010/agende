@@ -20,7 +20,7 @@ export default async function ClientReviewsPage() {
       <PageHeader
         eyebrow="Sua experiência"
         title="Avaliações"
-        description="Relembre atendimentos concluídos e envie um feedback para quem cuidou de você."
+        description="Só atendimentos concluídos da sua conta. Sem notas inventadas e sem avaliar o de outra pessoa."
         icon={Star}
       />
       {!schemaReady ? (

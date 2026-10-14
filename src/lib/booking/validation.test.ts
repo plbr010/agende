@@ -15,6 +15,8 @@ import {
   previousBookingStep,
   sanitizeBookingError,
   uniqueClientWorkspaces,
+  bookAgainPath,
+  groupClientAppointments,
 } from "./validation";
 import { bookingWhatsAppText, buildIcs, buildWhatsAppLink } from "./calendar";
 import { parsePublicBookingCatalog, parseMyAppointments, parsePublicBookingConfirmation } from "./queries";
@@ -167,6 +169,25 @@ test("central booking rules stay at product constants", () => {
   assert.equal(BOOKING_MIN_LEAD_MINUTES, 30);
   assert.equal(BOOKING_HORIZON_DAYS, 90);
   assert.equal(CLIENT_CANCEL_LEAD_MINUTES, 120);
+});
+
+test("groupClientAppointments separates history from cancelled", () => {
+  const now = new Date("2026-09-18T15:00:00.000Z");
+  const grouped = groupClientAppointments(
+    [
+      { startsAt: "2026-09-18T18:00:00.000Z", status: "scheduled" },
+      { startsAt: "2026-09-18T18:00:00.000Z", status: "confirmed" },
+      { startsAt: "2026-09-18T12:00:00.000Z", status: "completed" },
+      { startsAt: "2026-09-18T18:00:00.000Z", status: "cancelled" },
+      { startsAt: "2026-09-18T11:00:00.000Z", status: "no_show" },
+    ],
+    now,
+  );
+  assert.equal(grouped.upcoming.length, 2);
+  assert.equal(grouped.completed.length, 1);
+  assert.equal(grouped.cancelled.length, 2);
+  assert.equal(bookAgainPath({ slug: "luna", serviceId: "s1" }), "/p/luna/agendar?servico=s1");
+  assert.equal(bookAgainPath({ slug: "luna" }), "/p/luna/agendar");
 });
 
 test("partition splits upcoming and past without mixing terminal statuses", () => {

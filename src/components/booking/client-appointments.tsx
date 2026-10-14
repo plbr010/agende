@@ -4,7 +4,7 @@ import { RescheduleDialog } from "@/components/booking/reschedule-dialog";
 import { WorkspaceFinder } from "@/components/client/workspace-finder";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { CalendarCheck2, CalendarDays, Clock3, ExternalLink, Star } from "lucide-react";
+import { Ban, CalendarCheck2, CalendarDays, Clock3, ExternalLink, RefreshCcw, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -19,9 +19,10 @@ import { cancelMyAppointmentAction } from "@/lib/booking/actions";
 import { CLIENT_CANCEL_LEAD_MINUTES } from "@/lib/booking/config";
 import type { MyAppointment } from "@/lib/booking/queries";
 import {
+  bookAgainPath,
   canClientCancel,
   clientAppointmentChangeMessage,
-  partitionClientAppointments,
+  groupClientAppointments,
   uniqueClientWorkspaces,
 } from "@/lib/booking/validation";
 import { STATUS_LABEL, type AppointmentStatus, isAppointmentStatus } from "@/lib/agenda/status";
@@ -43,7 +44,8 @@ export function ClientAppointments({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const cancelErrorRef = useRef<HTMLParagraphElement>(null);
-  const { upcoming, past } = partitionClientAppointments(items);
+  const { upcoming, completed, cancelled, other } = groupClientAppointments(items);
+  const history = [...completed, ...other];
   const cancelError = cancelling && messageTone === "error" ? message : null;
 
   useEffect(() => {
@@ -167,16 +169,31 @@ export function ClientAppointments({
       <section className="grid gap-3">
         <div className="flex items-center gap-2">
           <Clock3 className="size-4 text-primary" />
-          <h2 className="font-serif text-2xl">Já aconteceram</h2>
+          <h2 className="font-serif text-2xl">Histórico de atendimentos</h2>
         </div>
-        {past.length === 0 ? (
+        {history.length === 0 ? (
           <EmptyAppointments
             icon={Clock3}
             title="Seu histórico está vazio"
-            description="Atendimentos concluídos e cancelados ficam organizados aqui."
+            description="Atendimentos concluídos ficam organizados aqui, mesmo quando você frequenta salões diferentes."
           />
         ) : (
-          past.map((item) => <AppointmentCard key={item.id} item={item} pending={false} />)
+          history.map((item) => <AppointmentCard key={item.id} item={item} pending={false} allowBookAgain />)
+        )}
+      </section>
+      <section className="grid gap-3">
+        <div className="flex items-center gap-2">
+          <Ban className="size-4 text-primary" />
+          <h2 className="font-serif text-2xl">Cancelados</h2>
+        </div>
+        {cancelled.length === 0 ? (
+          <EmptyAppointments
+            icon={Ban}
+            title="Nenhum cancelamento"
+            description="Se um horário for desmarcado, o registro permanece aqui."
+          />
+        ) : (
+          cancelled.map((item) => <AppointmentCard key={item.id} item={item} pending={false} allowBookAgain />)
         )}
       </section>
     </div>
@@ -188,11 +205,13 @@ function AppointmentCard({
   pending,
   onCancel,
   onReschedule,
+  allowBookAgain = false,
 }: {
   item: MyAppointment;
   pending: boolean;
   onCancel?: () => void;
   onReschedule?: () => void;
+  allowBookAgain?: boolean;
 }) {
   const status = (isAppointmentStatus(item.status) ? item.status : "scheduled") as AppointmentStatus;
   const cancellable = onCancel
@@ -235,6 +254,11 @@ function AppointmentCard({
           <p className="w-full text-xs text-muted-foreground sm:w-auto">
             Não é possível reagendar este horário por aqui. Fale com o salão.
           </p>
+        ) : null}
+        {allowBookAgain ? (
+          <Button variant="outline" className="h-11 rounded-full" render={<Link href={bookAgainPath(item)} />}>
+            <RefreshCcw className="size-4" /> Agendar novamente
+          </Button>
         ) : null}
         {status === "completed" ? (
           <Button variant="outline" className="h-11 rounded-full" render={<Link href="/cliente/avaliacoes" />}>
