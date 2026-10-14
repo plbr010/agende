@@ -5,7 +5,12 @@ export default async function ClienteLayout({ children }: { children: React.Reac
   const session = await requireConfirmedSession("/cliente");
 
   return (
-    <ClientShell userName={session.profile.fullName} hasWorkspace={session.context.hasWorkspace}>
+    <ClientShell
+      userName={session.profile.fullName}
+      hasWorkspace={session.context.hasWorkspace}
+      hasAvatar={session.profile.hasAvatar}
+      avatarVersion={session.profile.avatarVersion}
+    >
       {children}
     </ClientShell>
   );

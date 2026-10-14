@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bell, Camera, LogOut, Shield, Star, UserRound } from "lucide-react";
+import { Bell, LogOut, Shield, Star, UserRound } from "lucide-react";
+import { AccountPhotoEditor } from "@/components/account/account-photo-editor";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
 import { ClientProfileForm } from "@/components/client/client-profile-form";
@@ -19,35 +20,49 @@ export default async function ClientePerfilPage() {
       <PageHeader
         eyebrow="Sua conta"
         title="Perfil"
-        description="Só o que a sua conta já guarda: nome, telefone e e-mail. Nada daqui aparece em páginas públicas."
+        description="Nome, celular, cidade e foto. Nada disso aparece na página pública de um salão."
         icon={UserRound}
       />
 
       <section className="relative overflow-hidden rounded-[1.8rem] bg-white p-6 ring-1 ring-[#f0e4de] sm:p-8">
+        <h2 className="font-serif text-2xl text-wine-deep">Sua foto</h2>
+        <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
+          Escolha uma imagem da galeria ou tire uma foto. Você pode ajustar, trocar ou remover. Sem foto, mostramos as suas iniciais.
+        </p>
+        <div className="mt-6">
+          <AccountPhotoEditor
+            name={session.profile.fullName}
+            hasAvatar={session.profile.hasAvatar}
+            version={session.profile.avatarVersion}
+          />
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden rounded-[1.8rem] bg-white p-6 ring-1 ring-[#f0e4de] sm:p-8">
         <h2 className="font-serif text-2xl text-wine-deep">Seus dados</h2>
         <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
-          Estes campos vêm da sua conta autenticada. Alterações de nome e telefone usam a permissão já existente do perfil.
+          O nome e o celular podem ser alterados. A cidade é opcional e não muda a busca de salões.
         </p>
         <div className="mt-6">
           <ClientProfileForm
             fullName={session.profile.fullName}
             phone={session.profile.phone}
             email={session.profile.email}
+            residenceCity={session.profile.residenceCity}
           />
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2">
-        <PendingPreference
-          icon={Camera}
-          title="Foto de perfil"
-          description="O envio de foto precisa de armazenamento e regras de acesso. Ainda não está liberado — não há upload improvisado aqui."
-        />
-        <PendingPreference
-          icon={Bell}
-          title="Notificações"
-          description="Confirmações, lembretes e pedidos de avaliação reutilizam a infraestrutura existente. Preferências nesta tela ainda não existem."
-        />
+      <section>
+        <article className="rounded-[1.6rem] bg-metric-ivory/80 p-5 ring-1 ring-[#f0e4de]">
+          <span className="grid size-10 place-items-center rounded-2xl bg-white text-wine-deep">
+            <Bell className="size-4" aria-hidden="true" />
+          </span>
+          <h2 className="mt-4 font-serif text-xl text-wine-deep">Avisos</h2>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Ainda não dá para escolher avisos por aqui. Confirmações continuam acontecendo do jeito que o salão já usa.
+          </p>
+        </article>
       </section>
 
       <section className="grid gap-4 rounded-[1.8rem] bg-white p-6 ring-1 ring-[#f0e4de] sm:p-8">
@@ -85,23 +100,3 @@ export default async function ClientePerfilPage() {
   );
 }
 
-function PendingPreference({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: typeof Camera;
-  title: string;
-  description: string;
-}) {
-  return (
-    <article className="rounded-[1.6rem] bg-metric-ivory/80 p-5 ring-1 ring-[#f0e4de]">
-      <span className="grid size-10 place-items-center rounded-2xl bg-white text-wine-deep">
-        <Icon className="size-4" aria-hidden="true" />
-      </span>
-      <h2 className="mt-4 font-serif text-xl text-wine-deep">{title}</h2>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
-      <p className="mt-3 text-xs font-medium tracking-[0.14em] text-[var(--rose-ink)] uppercase">Aguardando o servidor</p>
-    </article>
-  );
-}

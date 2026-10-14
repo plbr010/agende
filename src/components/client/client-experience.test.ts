@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CLIENT_FAVORITES_STATUS } from "@/lib/client/favorites";
+import { readPublicWorkspaceId } from "@/lib/client/favorites";
 import { firstNameFrom, parseClientProfileUpdate } from "@/lib/client/profile";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -56,33 +56,42 @@ test("client home greets by first name and never advertises professional plans",
   assert.doesNotMatch(source("src/app/cliente/page.tsx"), /loadReviewsResult/);
 });
 
-test("favorites stay honest and never persist in the browser", () => {
-  assert.equal(CLIENT_FAVORITES_STATUS.available, false);
+test("favorites use the account API and never persist in the browser", () => {
   const favoritos = source("src/app/cliente/favoritos/page.tsx");
   const panel = source("src/components/client/favorites-panel.tsx");
   const home = source("src/components/client/client-home.tsx");
-  for (const file of [favoritos, panel, home]) {
+  const actions = source("src/lib/client/favorite-actions.ts");
+  for (const file of [favoritos, panel, home, actions]) {
     assert.doesNotMatch(file, /localStorage/);
     assert.doesNotMatch(file, /sessionStorage/);
   }
-  assert.match(favoritos, /FavoritesPanel/);
-  assert.match(panel, /CLIENT_FAVORITES_STATUS/);
+  assert.match(favoritos, /loadWorkspaceFavorites/);
+  assert.match(actions, /add_my_workspace_favorite/);
+  assert.match(actions, /remove_my_workspace_favorite/);
+  assert.match(actions, /get_public_workspace_profile/);
+  assert.equal(readPublicWorkspaceId({ slug: "luna", name: "Luna" }), null);
 });
 
-test("profile edits only name and phone already granted on profiles", () => {
+test("profile edits name, phone and optional city, and reuses the private avatar route", () => {
   const action = source("src/lib/client/actions.ts");
   assert.match(action, /full_name: parsed\.data\.fullName/);
   assert.match(action, /phone: parsed\.data\.phone/);
+  assert.match(action, /residence_city: parsed\.data\.residenceCity/);
   assert.match(action, /\.from\("profiles"\)/);
   assert.doesNotMatch(action, /service_role/);
   assert.doesNotMatch(action, /intended_use/);
   assert.doesNotMatch(action, /email:/);
-  const parsed = parseClientProfileUpdate({ fullName: "  Ana Souza ", phone: "(32) 99999-9999" });
+  assert.match(source("src/components/account/account-photo-editor.tsx"), /\/api\/account\/avatar/);
+  assert.doesNotMatch(source("src/components/account/account-photo-editor.tsx"), /localStorage/);
+  assert.match(source("src/app/cliente/perfil/page.tsx"), /residenceCity/);
+  const parsed = parseClientProfileUpdate({ fullName: "  Ana Souza ", phone: "(32) 99999-9999", residenceCity: " Juiz de Fora " });
   assert.equal(parsed.success, true);
   if (parsed.success) {
     assert.equal(parsed.data.fullName, "Ana Souza");
     assert.equal(parsed.data.phone, "+5532999999999");
+    assert.equal(parsed.data.residenceCity, "Juiz de Fora");
   }
+  assert.equal(parseClientProfileUpdate({ fullName: "Ana Souza", phone: "(32) 99999-9999", residenceCity: "" }).success, true);
   assert.equal(parseClientProfileUpdate({ fullName: "A", phone: "32999999999" }).success, false);
   assert.equal(firstNameFrom("Ana Carolina Souza"), "Ana");
   assert.equal(firstNameFrom("  "), "");

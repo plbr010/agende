@@ -13,6 +13,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       userName={session.profile.fullName}
       roleLabel={workspace ? MEMBER_ROLE_LABEL[workspace.role] : "Profissional"}
       role={workspace?.role}
+      hasAvatar={session.profile.hasAvatar}
+      avatarVersion={session.profile.avatarVersion}
     >
       {children}
     </AppShell>

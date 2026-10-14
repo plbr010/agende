@@ -1,3 +1,4 @@
+import { readPublicWorkspaceId } from "@/lib/client/favorites";
 import { getSupabaseUrl } from "@/lib/supabase/env";
 
 export type PublicService = {
@@ -18,6 +19,7 @@ export type PublicProfessional = {
 };
 
 export type PublicWorkspaceProfile = {
+  workspaceId: string | null;
   name: string;
   slug: string;
   description: string | null;
@@ -109,6 +111,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
 
   const logoPath = asString(data.logo_path);
   return {
+    workspaceId: readPublicWorkspaceId(data),
     name,
     slug,
     description: asString(data.description),

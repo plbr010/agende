@@ -18,7 +18,7 @@ export default function IdentidadeClientePreviewPage() {
         <a href="/identidade/cliente/perfil" className="underline underline-offset-4">Perfil</a>
       </p>
       <ClientShell userName="Ana Souza" hasWorkspace={false}>
-        <ClientHome firstName="Ana" next={null} loadError={null} recentWorkspaces={[]} completed={[]} />
+        <ClientHome firstName="Ana" next={null} loadError={null} recentWorkspaces={[]} completed={[]} favorites={{ status: "ready", items: [] }} />
       </ClientShell>
     </div>
   );

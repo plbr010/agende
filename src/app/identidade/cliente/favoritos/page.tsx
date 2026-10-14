@@ -13,7 +13,7 @@ export default function IdentidadeClienteFavoritosPreviewPage() {
   return (
     <div className="bg-[var(--cream)]">
       <p className="bg-wine-deep px-4 py-3 text-center text-sm text-white">
-        Prévia visual — favoritos sem persistência no servidor. Nada foi salvo neste navegador.
+        Prévia visual — lista vazia, como uma conta nova. Nada foi salvo neste navegador.
         {" "}
         <a href="/identidade/cliente" className="underline underline-offset-4">Voltar ao início</a>
       </p>
@@ -21,10 +21,10 @@ export default function IdentidadeClienteFavoritosPreviewPage() {
         <PageHeader
           eyebrow="Os seus"
           title="Favoritos"
-          description="Guarde os salões que você quer revisitar. A lista só aparece quando o servidor puder salvá-la na sua conta."
+          description="Salões que você guardou na sua conta. Abra o perfil ou agende de novo quando quiser."
           icon={Heart}
         />
-        <FavoritesPanel />
+        <FavoritesPanel favorites={{ status: "ready", items: [] }} />
       </ClientShell>
     </div>
   );

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { avatarCacheVersion } from "@/lib/account/avatar-ui";
 import { createClient } from "@/lib/supabase/server";
 import {
   getDefaultDestination,
@@ -36,6 +37,9 @@ export type AppSession = {
     fullName: string;
     email: string;
     phone: string | null;
+    residenceCity: string | null;
+    hasAvatar: boolean;
+    avatarVersion: string | null;
     intendedUse: "client" | "professional";
   };
   context: AuthContext;
@@ -61,6 +65,9 @@ export async function loadAppSession(): Promise<AppSession | null> {
         fullName: "",
         email: user.email,
         phone: null,
+        residenceCity: null,
+        hasAvatar: false,
+        avatarVersion: null,
         intendedUse: "client",
       },
       context: {
@@ -81,7 +88,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, email, phone, intended_use")
+      .select("full_name, email, phone, intended_use, residence_city, avatar_path")
       .eq("user_id", user.id)
       .maybeSingle(),
     supabase
@@ -152,6 +159,9 @@ export async function loadAppSession(): Promise<AppSession | null> {
       fullName: profile?.full_name ?? "Usuário",
       email: profile?.email ?? user.email,
       phone: profile?.phone ?? null,
+      residenceCity: profile?.residence_city ?? null,
+      hasAvatar: Boolean(profile?.avatar_path),
+      avatarVersion: avatarCacheVersion(profile?.avatar_path),
       intendedUse,
     },
     context,

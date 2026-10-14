@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CalendarDays, CalendarPlus, ExternalLink, House, LogOut, Menu, UsersRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AccountAvatar } from "@/components/account/account-avatar";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -19,15 +19,6 @@ import { getAppNavigation, isNavigationItemCurrent, settingsNavigationItem } fro
 import type { WorkspaceRole } from "@/lib/auth/permissions";
 import { signOutAction } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
-
-function initials(value: string): string {
-  return value
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 function Navigation({
   pathname,
@@ -75,11 +66,15 @@ function SidebarFooter({
   workspaceSlug,
   userName,
   roleLabel,
+  hasAvatar,
+  avatarVersion,
 }: {
   workspaceName: string;
   workspaceSlug: string;
   userName: string;
   roleLabel: string;
+  hasAvatar: boolean;
+  avatarVersion: string | null;
 }) {
   return (
     <div className="mt-4 grid gap-2 border-t border-white/15 pt-4">
@@ -93,9 +88,7 @@ function SidebarFooter({
         </Button>
       ) : null}
       <div className="flex items-center gap-3 px-2">
-        <Avatar>
-          <AvatarFallback className="bg-[var(--blush)] text-wine-deep">{initials(userName)}</AvatarFallback>
-        </Avatar>
+        <AccountAvatar name={userName} hasAvatar={hasAvatar} version={avatarVersion} alt="" className="bg-[var(--blush)]" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-white">{userName}</p>
           <p className="truncate text-xs text-white/65">{roleLabel} · {workspaceName}</p>
@@ -116,6 +109,8 @@ export function AppShell({
   userName,
   roleLabel,
   role,
+  hasAvatar = false,
+  avatarVersion = null,
   children,
 }: {
   workspaceName: string;
@@ -123,6 +118,8 @@ export function AppShell({
   userName: string;
   roleLabel: string;
   role: WorkspaceRole | undefined;
+  hasAvatar?: boolean;
+  avatarVersion?: string | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -159,6 +156,8 @@ export function AppShell({
             workspaceSlug={workspaceSlug}
             userName={userName}
             roleLabel={roleLabel}
+            hasAvatar={hasAvatar}
+            avatarVersion={avatarVersion}
           />
         </div>
       </SheetContent>
@@ -180,6 +179,8 @@ export function AppShell({
           workspaceSlug={workspaceSlug}
           userName={userName}
           roleLabel={roleLabel}
+          hasAvatar={hasAvatar}
+          avatarVersion={avatarVersion}
         />
       </aside>
 

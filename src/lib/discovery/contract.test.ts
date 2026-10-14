@@ -75,6 +75,7 @@ test("parser maps the Codex wire DTO and never invents a salon", () => {
     booking_open: true,
   });
   assert.deepEqual(card, {
+    workspaceId: null,
     name: "Studio Aurora",
     slug: "studio-aurora",
     description: null,
@@ -215,6 +216,7 @@ test("search RPC paginates with offset and never invents extra salons", async ()
   if (page.status !== "ready") return;
 
   const first = {
+    workspaceId: null,
     name: "Studio A",
     slug: "studio-a",
     description: null,

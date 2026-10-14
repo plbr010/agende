@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand/logo";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { bookablePublicServices, type PublicWorkspaceProfile } from "@/lib/workspace/public";
+import { FavoriteButton } from "@/components/client/favorite-button";
 import { Button } from "@/components/ui/button";
 
 function servicePriceLabel(min: number, max: number) {
@@ -21,9 +22,11 @@ function serviceBookingHref(slug: string, serviceId: string | null) {
 export function PublicWorkspacePage({
   profile,
   bookingOpen = true,
+  favorite = null,
 }: {
   profile: PublicWorkspaceProfile;
   bookingOpen?: boolean;
+  favorite?: { workspaceId: string | null; saved: boolean } | null;
 }) {
   const location = [profile.address, profile.city, profile.state].filter(Boolean).join(" · ");
   const initial = profile.name.slice(0, 1).toUpperCase();
@@ -69,6 +72,14 @@ export function PublicWorkspacePage({
             ) : (
               <p className="text-muted-foreground">Um espaço de beleza no Agendê.</p>
             )}
+            {favorite ? (
+              <FavoriteButton
+                slug={profile.slug}
+                workspaceId={favorite.workspaceId}
+                initialSaved={favorite.saved}
+                name={profile.name}
+              />
+            ) : null}
             {profile.instagram ? (
               <a
                 href={`https://instagram.com/${profile.instagram}`}
