@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-14T14:33:53.579Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "browser login creates a real staging session and opens manager settings",
+    "manager publishes through the actual form and persistence survives reload",
+    "authenticated operational pages render without a server component boundary crash",
+    "browser creates service and professional link through the atomic RPC",
+    "mobile city search renders real salon and global search ignores the previous city"
+  ],
+  "passed": false,
+  "fixtures_restored": true,
+  "synthetic_service_archived": true,
+  "synthetic_booking_cancelled": true,
+  "production_connections": 0,
+  "error": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Browser synthetic 1791988385258', { exact: true }).first() to be visible\u001b[22m\n",
+  "secrets_in_report": false
+}

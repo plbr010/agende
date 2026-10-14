@@ -11,7 +11,7 @@ const make=()=>createClient(config.url,config.publishable_key,{auth:{persistSess
 const owner=make(),other=make(),customer=make(),guest=make();
 const roleClients=['admin','professional','receptionist'].map(role=>({role,client:make()}));
 const checks=[];
-const check=async(name,fn)=>{try{await fn();checks.push({name,status:'PASS',mode:'real staging API'});console.log('PASS '+name);}catch(error){checks.push({name,status:'FAIL',error:error.message});throw error;}};
+const check=async(name,fn)=>{try{await fn();checks.push({name,status:'PASS',mode:'real staging API'});console.log('PASS '+name);}catch(error){checks.push({name,status:error.code==='STAGING_RATE_LIMITED'?'BLOCKED':'FAIL',error:error.message});throw error;}};
 const ok=async(request)=>{const r=await request;assert.equal(r.error,null,r.error?.message);return r.data;};
 let workspace,foreignWorkspace,member,service,appointment,day,slots;
 try{
@@ -68,7 +68,12 @@ try{
   slots=(await ok(guest.rpc('list_public_available_slots',{p_slug:workspace.slug,p_service_id:service,p_professional_member_id:member,p_local_date:day}))).map(x=>x.starts_at);assert.ok(slots.length>3);
   const request={p_slug:workspace.slug,p_service_id:service,p_professional_member_id:member,p_starts_at:slots[0],p_full_name:'Cliente Sintetico',p_phone:'+5532999999999',p_email:'client@agende-staging.invalid',p_customer_note:null,p_ip_hash:'staging-only'};
   const results=await Promise.all([guest.rpc('create_public_appointment',request),make().rpc('create_public_appointment',request)]);
-  assert.equal(results.filter(x=>!x.error).length,1);assert.equal(results.filter(x=>x.error).length,1);
+  const safeCodes=results.map(x=>x.error ? {code:x.error.code,message:/^[a-z_]+$/.test(x.error.message)?x.error.message:'withheld'} : {success:true});
+  if(results.every(x=>x.error?.message==='booking_rate_limited')){
+    const error=new Error('Synthetic fixture reached the real booking rate limit; concurrency and dependent cases not executed. Keep the guard enabled and retry after the quota window.');
+    error.code='STAGING_RATE_LIMITED';throw error;
+  }
+  assert.equal(results.filter(x=>!x.error).length,1,JSON.stringify(safeCodes));assert.equal(results.filter(x=>x.error).length,1);
   const rows=await ok(customer.rpc('list_my_appointments'));appointment=rows.find(x=>x.status==='scheduled'&&new Date(x.starts_at).getTime()===new Date(slots[0]).getTime())?.id;assert.ok(appointment);
  });
  await check('client IDOR denied; reschedule keeps ID and cancellation persists',async()=>{
@@ -105,6 +110,9 @@ try{
   await ok(customer.auth.signOut());assert.equal((await ok(customer.auth.getSession())).session,null);
   assert.ok((await make().auth.refreshSession({refresh_token:session.refresh_token})).error);
  });
+}catch(error){
+ if(error.code!=='STAGING_RATE_LIMITED')throw error;
+ console.log('BLOCKED '+error.message);process.exitCode=2;
 }finally{
  mkdirSync('docs/staging',{recursive:true});writeFileSync('docs/staging/real-api-results.json',JSON.stringify({checked_at:new Date().toISOString(),project:config.project,auth_accounts:'confirmed SQL fixtures; no signup/email-delivery acceptance',checks,passed:checks.every(x=>x.status==='PASS'),workspace_ids:[workspace?.id,foreignWorkspace?.id],secrets_in_report:false},null,2)+'\n');
  for(const client of [owner,other,customer,...roleClients.map(x=>x.client)])await client.auth.signOut();

@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-14T14:35:58.700Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "auth_accounts": "confirmed SQL fixtures; no signup/email-delivery acceptance",
+  "checks": [
+    {
+      "name": "GoTrue login and verified user for three synthetic fixtures",
+      "status": "PASS",
+      "mode": "real staging API"
+    },
+    {
+      "name": "workspace creation and seven-day persisted trial",
+      "status": "PASS",
+      "mode": "real staging API"
+    },
+    {
+      "name": "catalog and working hours persist through PostgREST",
+      "status": "PASS",
+      "mode": "real staging API"
+    },
+    {
+      "name": "real invitations enforce owner, admin, professional and receptionist scopes",
+      "status": "PASS",
+      "mode": "real staging API"
+    },
+    {
+      "name": "foreign salon cannot read services, finance or edit catalog",
+      "status": "PASS",
+      "mode": "real staging API"
+    },
+    {
+      "name": "public catalog and actual simultaneous booking: one winner",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    }
+  ],
+  "passed": false,
+  "workspace_ids": [
+    "694a8a50-22f8-48d4-aac0-7b6985b397dd",
+    "86687658-1029-427a-a94b-9d1adaa598af"
+  ],
+  "secrets_in_report": false
+}

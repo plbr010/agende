@@ -3,6 +3,27 @@ import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {createLocalDatabase} from './local-database.mjs';
 
+test('reviewed discovery rollout preserves rows and history, defaults to private and rejects replay',async t=>{
+  const db=await createLocalDatabase({throughVersion:'20261010232248'});t.after(()=>db.close());
+  await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
+  const uid=(await db.query("select test_helpers.create_auth_user('rollout@discovery.invalid','professional',true) id")).rows[0].id;
+  await db.transaction(async tx=>{
+    await tx.query("select set_config('request.jwt.claim.sub',$1,true)",[uid]);
+    await tx.exec("set local role authenticated; select public.create_workspace('Private Rollout',null,'equipe')");
+  });
+  const before=(await db.query('select * from public.workspace_settings order by workspace_id')).rows;
+  await db.exec("create schema if not exists supabase_migrations; create table if not exists supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); insert into supabase_migrations.schema_migrations(version,name) values('synthetic_prior','preserve')");
+  const payload=readFileSync('docs/production-readiness/apply-discovery-only.sql','utf8');
+  const source=readFileSync('supabase/migrations/20261014030220_public_workspace_discovery.sql','utf8');
+  assert.ok(payload.includes(source));
+  await db.transaction(async tx=>tx.exec(payload));
+  const after=(await db.query('select * from public.workspace_settings order by workspace_id')).rows;
+  assert.ok(after.every(row=>row.discovery_enabled===false));
+  assert.deepEqual(after.map(row=>{const existing={...row};delete existing.discovery_enabled;return existing;}),before);
+  assert.deepEqual((await db.query('select version from supabase_migrations.schema_migrations order by version')).rows,[{version:'20261014030220'},{version:'synthetic_prior'}]);
+  await assert.rejects(db.transaction(async tx=>tx.exec(payload)),/discovery_already_present_or_drift/);
+});
+
 test('public discovery: consent, any city, global name, pagination, privacy and tenant permissions',async t=>{
   const db=await createLocalDatabase();t.after(()=>db.close());
   await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));

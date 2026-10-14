@@ -31,6 +31,13 @@ test('staging billing cannot default redirects to the production origin', () => 
   }
   assert.doesNotThrow(() => harness('stripe-billing', { supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co', siteUrl: null }));
 });
+test('production checkout returns to the commercial domain when no override exists', async () => {
+  const h = harness('stripe-billing', { supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co', siteUrl: null, apiKey: 'rk_live_synthetic' });
+  assert.equal((await h.billing()).status, 200);
+  const checkout = h.state.calls.find(call => call.name === 'checkout');
+  assert.equal(new URL(checkout.args.success_url).origin, 'https://agendeapp.online');
+  assert.equal(new URL(checkout.args.cancel_url).origin, 'https://agendeapp.online');
+});
 test('Webhook rejects a signed event from the wrong environment before billing writes', async () => {
   for (const [overrides, livemode] of [[{}, true], [{ supabaseUrl: 'https://wohimauqgywshbbejjcl.supabase.co' }, false]]) {
     const h = harness('stripe-webhook', overrides);

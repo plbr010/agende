@@ -15,7 +15,7 @@ const client=createClient(config.url,config.publishable_key,{auth:{persistSessio
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error?.message);return r.data;};
 const socket=createServer();await new Promise(resolve=>socket.listen(0,'127.0.0.1',resolve));const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
 const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-2026-10-14';mkdirSync(evidence,{recursive:true});
-let browser,server,w,s,enabled,serviceId,lastPage,restored=true,failure;
+let browser,server,w,s,enabled,serviceId,lastPage,appointmentId,workingHoursId,restored=true,failure;
 let serverDiagnostics='';
 const check=async(name,fn)=>{await fn();checks.push(name);console.log('PASS '+name);};
 try{
@@ -68,6 +68,35 @@ try{
     await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
     assert.ok(await search.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   });
+  await check('mobile discovery to real booking persists on the professional agenda',async()=>{
+    lastPage=search;
+    const member=(await ok(client.from('professional_services').select('professional_member_id').eq('service_id',serviceId).eq('active',true)))[0].professional_member_id;
+    const day=new Date(Date.now()+3*86400000).toISOString().slice(0,10);
+    const weekday=new Date(day+'T12:00:00Z').getUTCDay();
+    const hours=await ok(client.from('professional_working_hours').select('id').eq('professional_member_id',member).eq('weekday',weekday));
+    if(!hours.length)workingHoursId=(await ok(client.from('professional_working_hours').insert({workspace_id:w.id,professional_member_id:member,weekday,start_time:'08:00',end_time:'18:00'}).select('id').single())).id;
+    await search.getByRole('link',{name:new RegExp(w.name)}).click();
+    await search.getByRole('button',{name:'Agendar horário',exact:true}).click();
+    await search.getByRole('button',{name:new RegExp(serviceName)}).click();
+    const dateLabel=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',weekday:'long',day:'numeric',month:'long'}).format(new Date(day+'T15:00:00Z'));
+    await search.getByRole('button',{name:dateLabel,exact:true}).click();
+    await search.getByRole('region',{name:'Escolher horário'}).getByRole('button',{name:/^\d\d:\d\d$/}).first().click();
+    await search.getByLabel('Nome completo',{exact:true}).fill('Browser Cliente Sintetico');
+    await search.getByLabel('Celular',{exact:true}).fill('32999999999');
+    await search.getByLabel('E-mail',{exact:true}).fill('client@agende-staging.invalid');
+    await search.getByRole('button',{name:'Continuar',exact:true}).click();
+    await search.getByRole('button',{name:'Reservar este horário',exact:true}).click();
+    await search.getByRole('heading',{name:'Seu horário está reservado',exact:true}).waitFor();
+    const appointment=(await ok(client.from('appointments').select('id,status').eq('workspace_id',w.id).eq('service_id',serviceId)))[0];
+    appointmentId=appointment?.id;assert.ok(appointmentId);assert.equal(appointment.status,'scheduled');
+    lastPage=page;await page.goto(base+'/app/agenda?view=day&date='+day);
+    await page.getByText(new RegExp(serviceName)).first().waitFor();
+    await search.screenshot({path:evidence+'/booking-confirmed-mobile.png',fullPage:true});
+    await search.goto(base+'/descobrir');await search.getByRole('radio',{name:'Nome do salão'}).click();
+    await search.getByLabel('Nome do salão ou profissional',{exact:true}).fill(w.name);
+    await search.getByRole('button',{name:'Procurar estabelecimentos'}).click();
+    await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
+  });
   await check('withdrawal through manager UI removes the salon from the next real browser search',async()=>{
     await page.goto(base+'/app/configuracoes/perfil');await page.getByLabel('Quero aparecer na busca pública').uncheck();await page.getByRole('button',{name:'Salvar publicação',exact:true}).click();
     await page.getByText('Publicação atualizada.',{exact:true}).waitFor();await search.getByRole('button',{name:'Procurar estabelecimentos'}).click();await search.getByText('Nenhum salão nesta busca',{exact:true}).waitFor();
@@ -78,12 +107,15 @@ try{
 }catch(error){failure=error;failure.message=redact(error.message);failure.stack=redact(error.stack);if(lastPage)await lastPage.screenshot({path:evidence+'/browser-failure.png',fullPage:true}).catch(()=>{});}finally{
   await browser?.close();if(server){server.kill();}
   if(w&&s){try{
+    if(!appointmentId&&serviceId)appointmentId=(await ok(client.from('appointments').select('id').eq('workspace_id',w.id).eq('service_id',serviceId)))[0]?.id;
+    if(appointmentId)await ok(client.rpc('set_appointment_status',{p_appointment_id:appointmentId,p_status:'cancelled'}));
+    if(workingHoursId)await ok(client.from('professional_working_hours').delete().eq('id',workingHoursId));
     await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:false}));
     await ok(client.rpc('update_workspace_settings',{p_workspace_id:w.id,p_name:w.name,p_slug:w.slug,p_city:s.city,p_state:s.state}));
     if(enabled)await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:true}));
     if(serviceId)await ok(client.from('services').update({archived_at:new Date().toISOString(),active:false}).eq('id',serviceId));
   }catch{restored=false;}}
-  await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');
+  await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,synthetic_booking_cancelled:Boolean(appointmentId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');
   if(failure) console.error(redact(serverDiagnostics));
 }
 if(failure)throw failure;assert.equal(restored,true);

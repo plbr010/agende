@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-14T14:41:40.585Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    {
+      "name": "GoTrue settings require email confirmation",
+      "status": "PASS",
+      "mode": "real HTTP"
+    },
+    {
+      "name": "billing rejects anonymous and invalid sessions",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
+      "name": "webhook rejects unsigned input",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
+      "name": "real confirmed fixture login",
+      "status": "PASS",
+      "mode": "GoTrue; not signup/email delivery"
+    }
+  ],
+  "blockers": [
+    "stripe_api_key_missing"
+  ],
+  "status": "BLOCKED",
+  "commercial_acceptance": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

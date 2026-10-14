@@ -28,7 +28,7 @@ const PRICE_CATALOG: Record<Plan, Record<BillingInterval, {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const PRODUCTION_BACKEND = SUPABASE_URL && new URL(SUPABASE_URL).hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";
-const configuredSite = Deno.env.get("AGENDE_SITE_URL") ?? (PRODUCTION_BACKEND ? "https://agende-lac.vercel.app" : null);
+const configuredSite = Deno.env.get("AGENDE_SITE_URL") ?? (PRODUCTION_BACKEND ? "https://agendeapp.online" : null);
 if (!configuredSite) throw new Error("billing_site_origin_missing");
 const siteOrigin = new URL(configuredSite);
 const localSite = ["localhost", "127.0.0.1", "[::1]"].includes(siteOrigin.hostname);

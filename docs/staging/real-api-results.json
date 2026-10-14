@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T03:17:55.809Z",
+  "checked_at": "2026-10-14T14:55:23.439Z",
   "project": "fkpdudnnperufnmdwdlv",
   "auth_accounts": "confirmed SQL fixtures; no signup/email-delivery acceptance",
   "checks": [
@@ -30,31 +30,11 @@
     },
     {
       "name": "public catalog and actual simultaneous booking: one winner",
-      "status": "PASS",
-      "mode": "real staging API"
-    },
-    {
-      "name": "client IDOR denied; reschedule keeps ID and cancellation persists",
-      "status": "PASS",
-      "mode": "real staging API"
-    },
-    {
-      "name": "completed appointment accepts one review under simultaneous submissions",
-      "status": "PASS",
-      "mode": "real staging API"
-    },
-    {
-      "name": "local fictitious revenue, duplicate request and reports use real API",
-      "status": "PASS",
-      "mode": "real staging API"
-    },
-    {
-      "name": "refresh and logout revoke refresh session without logging tokens",
-      "status": "PASS",
-      "mode": "real staging API"
+      "status": "BLOCKED",
+      "error": "Synthetic fixture reached the real booking rate limit; concurrency and dependent cases not executed. Keep the guard enabled and retry after the quota window."
     }
   ],
-  "passed": true,
+  "passed": false,
   "workspace_ids": [
     "694a8a50-22f8-48d4-aac0-7b6985b397dd",
     "86687658-1029-427a-a94b-9d1adaa598af"

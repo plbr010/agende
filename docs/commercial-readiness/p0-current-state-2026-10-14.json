@@ -1,0 +1,600 @@
+{
+  "checked_at": "2026-10-14T14:46:08Z",
+  "base_commit": "ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043",
+  "production_deployment": {
+    "id": "dpl_3GaQJAjW8Z3jfng9KXaQRdCmN4LE",
+    "state": "READY",
+    "commit": "ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043"
+  },
+  "security": {
+    "wohimauqgywshbbejjcl": {
+      "vault": {
+        "stripe_api_key_exists": false,
+        "stripe_webhook_secret_exists": true
+      },
+      "tables": [
+        {
+          "rls": true,
+          "table": "service_packages",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "service_package_items",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_packages",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_package_items",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "audit_events",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_trial_claims",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_invites",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspaces",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_members",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "plans",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "subscriptions",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "services",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_services",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_clients",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_settings",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_working_hours",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_breaks",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_refunds",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_time_blocks",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "appointments",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "public_booking_rate_events",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "inventory_products",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "inventory_movements",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_entries",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "package_redemptions",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_categories",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "privacy_requests",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "billing_events",
+          "force_rls": true
+        }
+      ],
+      "functions": [
+        {
+          "args": "p_workspace_id uuid",
+          "name": "lock_workspace_membership",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "8e5e535c1315e269314f5bd61ab3c8cb",
+          "security_definer": true
+        },
+        {
+          "args": "",
+          "name": "require_confirmed_email",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "2d182ab86953caededd31e92aaf9ebcc",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid",
+          "name": "require_workspace_manager",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "3073a7ef6e3270d4f27668a34c1fad6c",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid",
+          "name": "workspace_has_entitlement",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": true,
+          "definition_md5": "2f5a77fdcd425b352f0d8e73015117c3",
+          "security_definer": true
+        }
+      ],
+      "checked_at": "2026-10-14T14:46:06.955636+00:00"
+    },
+    "fkpdudnnperufnmdwdlv": {
+      "vault": {
+        "stripe_api_key_exists": false,
+        "stripe_webhook_secret_exists": true
+      },
+      "tables": [
+        {
+          "rls": true,
+          "table": "profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_members",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_trial_claims",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_invites",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspaces",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "plans",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_profiles",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "services",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "subscriptions",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_settings",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_services",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "workspace_clients",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_working_hours",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_breaks",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "professional_time_blocks",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "appointments",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "public_booking_rate_events",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "inventory_products",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "inventory_movements",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "service_packages",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "service_package_items",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_packages",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "client_package_items",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "package_redemptions",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_entries",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "audit_events",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_categories",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "financial_refunds",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "privacy_requests",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "billing_events",
+          "force_rls": true
+        },
+        {
+          "rls": true,
+          "table": "appointment_reviews",
+          "force_rls": true
+        }
+      ],
+      "functions": [
+        {
+          "args": "p_workspace_id uuid",
+          "name": "lock_workspace_membership",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "8e5e535c1315e269314f5bd61ab3c8cb",
+          "security_definer": true
+        },
+        {
+          "args": "",
+          "name": "require_confirmed_email",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "b8c45938d45795f6cf6415f5e52c7f41",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid",
+          "name": "require_workspace_manager",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "aabb1968efcd4f7ebda9a1851866b704",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid, p_service_id uuid, p_name text, p_description text, p_duration_minutes integer, p_price_cents integer, p_active boolean, p_professional_member_ids uuid[]",
+          "name": "save_service_with_professionals",
+          "schema": "public",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": true,
+          "definition_md5": "53fe0a6c4dbe844d1f983fb13db0887d",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid, p_service_id uuid, p_name text, p_description text, p_duration_minutes integer, p_price_cents integer, p_active boolean, p_professional_member_ids uuid[]",
+          "name": "save_service_with_professionals",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": false,
+          "definition_md5": "9ac3cd6f8393fc2a5a96be4d9c4d7b2b",
+          "security_definer": true
+        },
+        {
+          "args": "p_city text, p_state text, p_query text, p_postal_code text, p_limit integer, p_offset integer",
+          "name": "search_public_workspaces",
+          "schema": "public",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": true,
+          "auth_execute": true,
+          "definition_md5": "7db59b408f4b7df51856ea98868adcb7",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid, p_enabled boolean",
+          "name": "set_workspace_discovery",
+          "schema": "public",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": true,
+          "definition_md5": "dbadd01f2d34f336f88a5e42daee754a",
+          "security_definer": true
+        },
+        {
+          "args": "p_workspace_id uuid",
+          "name": "workspace_has_entitlement",
+          "schema": "app",
+          "settings": [
+            "search_path=\"\""
+          ],
+          "anon_execute": false,
+          "auth_execute": true,
+          "definition_md5": "64ca8e0cb24803dee3b1ce8d3803c1f9",
+          "security_definer": true
+        }
+      ],
+      "checked_at": "2026-10-14T14:46:08.744366+00:00"
+    }
+  },
+  "organization_plan": "free",
+  "dashboard_backup": "Free Plan does not include project backups",
+  "auth": {
+    "production": {
+      "site_url": "http://localhost:3000",
+      "redirect_urls": [],
+      "custom_smtp": false,
+      "email_confirmation_required": true
+    },
+    "staging": {
+      "site_url": "http://localhost:3000",
+      "redirect_urls": [
+        "http://localhost:3000/auth/callback",
+        "http://localhost:3000/auth/recovery",
+        "http://127.0.0.1:3000/auth/callback",
+        "http://127.0.0.1:3000/auth/recovery"
+      ],
+      "custom_smtp": false,
+      "source": "signed-in Dashboard inspection; owner setup pending"
+    }
+  },
+  "prices": [
+    {
+      "id": "price_1UPNLkQQUyqAaZvSV3GACF7D",
+      "lookup_key": "agende_salao_annual",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 279900,
+      "currency": "brl",
+      "interval": "year"
+    },
+    {
+      "id": "price_1UPNLfQQUyqAaZvSt5F9bxBV",
+      "lookup_key": "agende_salao_monthly",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 29990,
+      "currency": "brl",
+      "interval": "month"
+    },
+    {
+      "id": "price_1UPNLcQQUyqAaZvSZSNdOnwu",
+      "lookup_key": "agende_equipe_annual",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 149900,
+      "currency": "brl",
+      "interval": "year"
+    },
+    {
+      "id": "price_1UPNLYQQUyqAaZvSzHa3n654",
+      "lookup_key": "agende_equipe_monthly",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 16990,
+      "currency": "brl",
+      "interval": "month"
+    },
+    {
+      "id": "price_1UPNLUQQUyqAaZvSk2JbwcPG",
+      "lookup_key": "agende_solo_annual",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 79900,
+      "currency": "brl",
+      "interval": "year"
+    },
+    {
+      "id": "price_1UPNLQQQUyqAaZvS12LNMgbZ",
+      "lookup_key": "agende_solo_monthly",
+      "active": true,
+      "livemode": false,
+      "amount_cents": 8990,
+      "currency": "brl",
+      "interval": "month"
+    }
+  ],
+  "staging_edge_updates": [
+    {
+      "id": "b5c8553a-6960-4a4e-ad7b-c2bdd48ada8b",
+      "slug": "stripe-billing",
+      "name": "stripe-billing",
+      "status": "ACTIVE",
+      "version": 2,
+      "created_at": 1791731420223,
+      "updated_at": 1791988826371,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_fkpdudnnperufnmdwdlv_b5c8553a-6960-4a4e-ad7b-c2bdd48ada8b_2/source/index.ts",
+      "ezbr_sha256": "d047cd5070455226b0c272fe36f122a24fd957615b9e82f27ec2e5f4e5aef93d"
+    },
+    {
+      "id": "1bc094b9-925e-460e-942c-b592cef4dce0",
+      "slug": "stripe-webhook",
+      "name": "stripe-webhook",
+      "status": "ACTIVE",
+      "version": 3,
+      "created_at": 1791730126844,
+      "updated_at": 1791988832762,
+      "verify_jwt": false,
+      "import_map": false,
+      "entrypoint_path": "file:///tmp/user_fn_fkpdudnnperufnmdwdlv_1bc094b9-925e-460e-942c-b592cef4dce0_3/source/index.ts",
+      "ezbr_sha256": "5af454fcde463e4ca28ad554e804379c6ee28844f65b9c8bbfdce404f2315be7"
+    }
+  ],
+  "production_mutations": 0,
+  "production_customer_rows_read": 0,
+  "secrets_in_report": false
+}
