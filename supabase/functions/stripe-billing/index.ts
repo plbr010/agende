@@ -58,6 +58,34 @@ const admin = createClient(SUPABASE_URL, ADMIN_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
+type StripeOperation = "customers_read" | "customers_write" | "prices_read" | "subscriptions_read" | "checkout_sessions_read" | "checkout_sessions_write" | "customer_portal_write";
+class StripeOperationError extends Error {
+  constructor(public operation: StripeOperation, public reason: string, public parameter?: string, public providerType?: string, public providerStatus?: number, public hint?: string) { super("stripe_operation_failed"); }
+}
+async function stripeRequest<T>(operation: StripeOperation, run: () => Promise<T>): Promise<T> {
+  try { return await run(); } catch (error) {
+    const e = error as { type?: string; statusCode?: number; code?: string; param?: string; message?: string };
+    const reason = e.statusCode === 403 ? "permission_missing" : e.statusCode === 401 ? "credentials_rejected"
+      : ["parameter_unknown", "parameter_missing", "parameter_invalid_empty", "email_invalid", "resource_missing", "invalid_api_version", "account_invalid", "url_invalid", "api_key_expired", "livemode_mismatch"].includes(e.code ?? "") ? e.code! : "provider_request_failed";
+    const parameter = ["email", "name", "metadata", "metadata[app]", "metadata[workspace_id]", "integration_identifier", "origin_context", "customer", "line_items", "success_url", "cancel_url", "return_url", "payment_method_collection", "subscription_data[billing_mode][type]"].includes(e.param ?? "") ? e.param : undefined;
+    const providerType = ["StripeInvalidRequestError", "StripeAPIError", "StripeAuthenticationError", "StripePermissionError", "StripeRateLimitError", "StripeConnectionError", "StripeIdempotencyError", "StripeUnknownError"].includes(e.type ?? "") ? e.type : undefined;
+    const providerStatus = Number.isInteger(e.statusCode) && e.statusCode! >= 400 && e.statusCode! <= 599 ? e.statusCode : undefined;
+    const classifications: [string, RegExp][] = [
+      ["api_version_rejected", /invalid.*api.*version|unsupported.*api.*version/i],
+      ["key_scope_rejected", /restricted.*key|permissions?/i],
+      ["idempotency_mismatch", /idempotent.*parameters|idempotency.*same/i],
+      ["account_not_ready", /account.*claimed|account.*activat|account.*verif/i],
+      ["email_rejected", /email.*invalid|invalid.*email/i],
+      ["request_encoding_rejected", /form.*encod|encod.*body/i],
+    ];
+    const hint = classifications.find(([,pattern]) => pattern.test(e.message ?? ""))?.[0];
+    throw new StripeOperationError(operation, reason, parameter, providerType, providerStatus, hint);
+  }
+}
+async function stripeItems<T>(operation: StripeOperation, items: AsyncIterable<T>): Promise<T[]> {
+  return stripeRequest(operation, async () => { const rows: T[] = []; for await (const row of items) rows.push(row); return rows; });
+}
+
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
     status,
@@ -89,6 +117,7 @@ async function getStripeApiKey(): Promise<string> {
 }
 
 function assertStripeKeyMode(key: string): string {
+  key = key.trim();
   const mode = /^(sk|rk)_live_/.test(key) ? "live" : /^(sk|rk)_test_/.test(key) ? "test" : null;
   if (mode !== (PRODUCTION_BACKEND ? "live" : "test")) throw new Error("stripe_environment_mode_mismatch");
   return key;
@@ -152,19 +181,19 @@ async function ensureCustomer(
   externalCustomerId: string | null,
 ): Promise<string> {
   if (externalCustomerId) {
-    const existing = await stripe.customers.retrieve(externalCustomerId);
+    const existing = await stripeRequest("customers_read", () => stripe.customers.retrieve(externalCustomerId));
     if ("deleted" in existing && existing.deleted) throw new Error("billing_customer_deleted");
     return existing.id;
   }
 
-  const customer = await stripe.customers.create(
+  const customer = await stripeRequest("customers_write", () => stripe.customers.create(
     {
       email,
       name: workspaceName,
       metadata: { app: "agende", workspace_id: workspaceId },
     },
     { idempotencyKey: `agende_customer_${workspaceId}` },
-  );
+  ));
 
   const { error } = await admin.rpc("bind_billing_customer", {
     p_workspace_id: workspaceId,
@@ -178,11 +207,11 @@ async function ensureCustomer(
 
 async function resolvePrice(stripe: Stripe, plan: Plan, interval: BillingInterval) {
   const expected = PRICE_CATALOG[plan][interval];
-  const prices = await stripe.prices.list({
+  const prices = await stripeRequest("prices_read", () => stripe.prices.list({
     active: true,
     lookup_keys: [expected.lookupKey],
     limit: 1,
-  });
+  }));
   const price = prices.data[0];
 
   if (
@@ -206,7 +235,7 @@ function getStripe(options: { apiKey: string }) {
     maxNetworkRetries: 1,
     httpClient: Stripe.createFetchHttpClient(),
     appInfo: {
-      name: "Agendê",
+      name: "Agende",
       version: "0.1.0",
       url: SITE_URL,
     },
@@ -247,17 +276,17 @@ async function createCheckout(args: {
 
   // The webhook may not have arrived yet. The Stripe customer is authoritative
   // for duplicate protection, including paused/incomplete subscriptions.
-  for await (const existing of args.stripe.subscriptions.list({ customer: customerId, status: "all", limit: 100 })) {
+  for (const existing of await stripeItems("subscriptions_read", args.stripe.subscriptions.list({ customer: customerId, status: "all", limit: 100 }))) {
     if (existing.status !== "canceled" && existing.status !== "incomplete_expired") {
       throw new Error("subscription_already_exists");
     }
   }
-  for await (const existing of args.stripe.checkout.sessions.list({ customer: customerId, status: "open", limit: 100 })) {
+  for (const existing of await stripeItems("checkout_sessions_read", args.stripe.checkout.sessions.list({ customer: customerId, status: "open", limit: 100 }))) {
     if (existing.mode !== "subscription" || existing.metadata?.app !== "agende") continue;
     if (existing.metadata.plan_code !== args.plan || existing.metadata.billing_interval !== args.interval) {
       // Invalidate the old payment link before offering a different selection.
       // If it was completed concurrently, Stripe rejects expiration and we stop.
-      await args.stripe.checkout.sessions.expire(existing.id);
+      await stripeRequest("checkout_sessions_write", () => args.stripe.checkout.sessions.expire(existing.id));
       continue;
     }
     if (existing.url) return existing.url;
@@ -292,7 +321,7 @@ async function createCheckout(args: {
     }
   }
 
-  const session = await args.stripe.checkout.sessions.create(
+  const session = await stripeRequest("checkout_sessions_write", () => args.stripe.checkout.sessions.create(
     {
       mode: "subscription",
       customer: customerId,
@@ -319,7 +348,7 @@ async function createCheckout(args: {
           ? `agende_${args.workspaceId}_${args.plan}_${args.interval}_${args.idempotencyKey}`
           : `agende_checkout_${args.workspaceId}_${args.plan}_${args.interval}_${crypto.randomUUID()}`,
     },
-  );
+  ));
 
   if (!session.url) throw new Error("checkout_url_missing");
   return session.url;
@@ -330,10 +359,10 @@ async function createPortal(stripe: Stripe, externalCustomerId: string | null) {
   const customer = await stripe.customers.retrieve(externalCustomerId);
   if ("deleted" in customer && customer.deleted) throw new Error("billing_customer_deleted");
 
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await stripeRequest("customer_portal_write", () => stripe.billingPortal.sessions.create({
     customer: externalCustomerId,
     return_url: `${SITE_URL}/app/configuracoes/assinatura`,
-  });
+  }));
 
   return session.url;
 }
@@ -361,7 +390,6 @@ Deno.serve(async (req: Request) => {
 
     await requireManager(user.id, workspaceId);
     const { workspace, subscription } = await loadWorkspace(workspaceId);
-
     const stripe = getStripe({ apiKey: await getStripeApiKey() });
 
     if (body.action === "checkout") {
@@ -399,6 +427,15 @@ Deno.serve(async (req: Request) => {
 
     return json(400, { error: "billing_action_invalid" });
   } catch (error) {
+    if (error instanceof StripeOperationError) {
+      return json(error.reason === "permission_missing" ? 403 : 502, {
+        error: "stripe_operation_failed", operation: error.operation, reason: error.reason,
+        ...(error.parameter ? { parameter: error.parameter } : {}),
+        ...(error.providerType ? { provider_type: error.providerType } : {}),
+        ...(error.providerStatus ? { provider_status: error.providerStatus } : {}),
+        ...(error.hint ? { hint: error.hint } : {}),
+      });
+    }
     const message = error instanceof Error ? error.message : "billing_error";
     const known = [
       "auth_required",

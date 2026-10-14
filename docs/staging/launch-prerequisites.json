@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T14:41:40.585Z",
+  "checked_at": "2026-10-14T15:27:31.948Z",
   "project": "fkpdudnnperufnmdwdlv",
   "checks": [
     {
@@ -18,15 +18,18 @@
       "mode": "real deployed Edge"
     },
     {
+      "name": "billing key prerequisite accepted; no Stripe API operation performed",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
       "name": "real confirmed fixture login",
       "status": "PASS",
       "mode": "GoTrue; not signup/email delivery"
     }
   ],
-  "blockers": [
-    "stripe_api_key_missing"
-  ],
-  "status": "BLOCKED",
+  "blockers": [],
+  "status": "PREREQUISITES_PASS",
   "commercial_acceptance": false,
   "production_connections": 0,
   "secrets_in_report": false
