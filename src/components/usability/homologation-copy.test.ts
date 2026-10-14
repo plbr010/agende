@@ -8,6 +8,12 @@ function source(path: string) {
   return readFileSync(join(dirname(fileURLToPath(import.meta.url)), path), "utf8");
 }
 
+test("opening a salon by link cannot be double-submitted", () => {
+  const finder = source("../client/workspace-finder.tsx");
+  assert.match(finder, /disabled=\{opening\}/);
+  assert.match(finder, /Abrindo\.\.\./);
+});
+
 test("copying a public link does not fake success", () => {
   const button = source("../usability/copy-link-button.tsx");
   assert.match(button, /copyTextToClipboard/);

@@ -69,6 +69,8 @@ test("discovery is honest and not limited to the city of residence", () => {
   assert.match(ui, /modeGlobal/);
   assert.match(ui, /loadMore/);
   assert.match(ui, /scenarioHint/);
+  assert.match(ui, /nextRadioIndex/);
+  assert.match(ui, /\.catch\(\(\) => setSuggestions\(\[\]\)\)/);
   assert.match(source("src/lib/discovery/contract.ts"), /Perto de mim/);
   assert.match(source("src/lib/discovery/contract.ts"), /Nome do salão/);
   assert.match(source("src/app/descobrir/page.tsx"), /LocationDiscovery/);
