@@ -124,7 +124,7 @@ export function loadPlaywright() {
 export async function launchBrowser(chromium) {
   const common = { headless: true };
   try {
-    return await chromium.launch({ ...common, channel: "chrome" });
+    return await chromium.launch({ ...common, channel: process.env.AGENDE_BROWSER_CHANNEL ?? "chrome" });
   } catch {
     return chromium.launch(common);
   }

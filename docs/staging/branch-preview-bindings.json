@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-14T04:03:09.717Z",
+  "project": "agende",
+  "branch": "codex/functional-completion-2026-10-13",
+  "target": "preview",
+  "staging_project": "fkpdudnnperufnmdwdlv",
+  "branch_overrides": [
+    {
+      "id": "CONSv60hPnqGF95r",
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/functional-completion-2026-10-13"
+    },
+    {
+      "id": "H7MhUazxsAqES15X",
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/functional-completion-2026-10-13"
+    }
+  ],
+  "production_bindings_preserved": [
+    {
+      "id": "RuvwGfnt0EFpfiAK",
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ],
+      "gitBranch": null
+    },
+    {
+      "id": "2lOPO87XhW8JH001",
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ],
+      "gitBranch": null
+    }
+  ],
+  "secret_values_in_report": false,
+  "site_origin": "platform VERCEL_URL fallback; SMTP not accepted",
+  "initial_preview": {
+    "id": "dpl_JJSFve8aMySwqozLpcN2njy7MAYN",
+    "login_status": 500,
+    "requires_rebuild_after_env_change": true
+  },
+  "production_changes_requested": 0
+}

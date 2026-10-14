@@ -234,6 +234,7 @@ export function LocationDiscovery({
 
         {mode === "nearby" ? (
           <div className="grid gap-3">
+            <p className="text-sm text-muted-foreground">Ao usar a localização, o serviço BigDataCloud recebe sua posição aproximada e IP para identificar a cidade. O Agendê recebe somente a cidade e o estado. Você também pode digitá-los abaixo.</p>
             <Button
               type="button"
               variant="outline"
@@ -387,7 +388,7 @@ export function LocationDiscovery({
                 </li>
               ))}
             </ul>
-            {discoveryHasMorePage(result.items.length, result.total) ? (
+            {discoveryHasMorePage(result.items.length, result.total) && result.items.length <= 10000 ? (
               <Button
                 type="button"
                 variant="outline"

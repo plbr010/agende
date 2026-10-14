@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T04:04:39.496Z",
+  "checked_at": "2026-10-14T04:25:43.432Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 28,
+      "passed": 29,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 292,
+    "passed": 293,
     "failed": 0,
     "skipped": 0
   },
@@ -211,6 +211,12 @@
     {
       "file": "scripts/database.test.mjs",
       "name": "real SQL migrations: trial, tenant authorization and management operations",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "pglite_sql",
       "status": "passed"
     },

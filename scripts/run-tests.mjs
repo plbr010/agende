@@ -15,6 +15,7 @@ function findTests(directory) {
 }
 
 const testFiles = findTests("src");
+testFiles.push("scripts/discovery-sql.test.mjs");
 
 if (testFiles.length === 0) {
   console.error("Nenhum arquivo de teste foi encontrado em src.");

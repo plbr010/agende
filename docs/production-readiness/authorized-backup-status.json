@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-14T03:33:20.9443287Z",
+  "authorized": true,
+  "stage": "export_failed",
+  "production_writes": 0,
+  "secrets_in_report": false,
+  "passed": false
+}
