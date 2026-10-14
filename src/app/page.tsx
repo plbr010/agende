@@ -20,7 +20,7 @@ export default function HomePage() {
       <main id="conteudo" className="min-w-0 flex-1">
         <MarketingHero />
         <MarketingBenefits />
-        <AudienceSplit eyebrow="Dois caminhos" title="Sou profissional ou sou cliente?" />
+        <AudienceSplit />
         <MarketingFeatures />
         <MarketingHowItWorks />
       </main>

@@ -14,7 +14,7 @@ export default async function ClienteDescobrirPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Qualquer cidade"
+        eyebrow="Explorar"
         title={DISCOVERY_COPY.title}
         description={DISCOVERY_COPY.description}
         icon={MapPin}
