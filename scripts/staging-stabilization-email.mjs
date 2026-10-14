@@ -10,7 +10,7 @@ assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,project);
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));
 assert.equal(config.url,`https://${project}.supabase.co`);
 const [mode,intent]=process.argv.slice(2);
-assert.ok(['signup','confirm','recovery','negative'].includes(mode));
+assert.ok(['signup','resend','confirm','recovery','recovery-confirm','expiry-confirm','negative'].includes(mode));
 assert.ok(['client','professional'].includes(intent));
 const statePath=`.env.stabilization-email-${intent}.json`;
 const state=existsSync(statePath)?JSON.parse(readFileSync(statePath,'utf8')):
@@ -35,6 +35,12 @@ if(mode==='signup') {
  state.signupRequested=!error;save();
  record('signup SMTP request',error?'FAIL':'PASS',error?error.code??'auth_request_failed':'GoTrue accepted; inbox delivery and callback still BLOCKED');
  record('inbox delivery and signup callback','BLOCKED','Await actual delivered email link from authorized mailbox');
+} else if(mode==='resend') {
+ assert.ok(state.signupRequested,'Existing authorized test signup required');
+ const {error}=await client.auth.resend({type:'signup',email:state.email,options:{
+  emailRedirectTo:`${origin}/auth/callback?next=${encodeURIComponent(intent==='client'?'/p/staging-studio-a/agendar':'/onboarding')}`,
+ }});save();
+ record('resend real signup confirmation',error?'FAIL':'PASS',error?error.code??'auth_request_failed':'GoTrue accepted; delivered link still required');
 } else if(mode==='negative') {
  const login=await client.auth.signInWithPassword({email:state.email,password:state.password});
  if(login.data.user?.email_confirmed_at) {
@@ -54,7 +60,8 @@ if(mode==='signup') {
  const {error}=await client.auth.resetPasswordForEmail(state.email,{redirectTo:origin+'/auth/recovery'});save();
  record('recovery SMTP request',error?'FAIL':'PASS',error?error.code??'auth_request_failed':'GoTrue accepted; delivered link and password change not yet verified');
 } else {
- const linkPath=`.env.stabilization-link-${intent}.txt`;
+ const expiring=mode==='expiry-confirm',recovering=mode==='recovery-confirm'||expiring;
+ const linkPath=`.env.stabilization-${recovering?'recovery-link':'link'}-${intent}.txt`;
  assert.ok(existsSync(linkPath),'Actual received email link required');
  const link=new URL(readFileSync(linkPath,'utf8').trim());
  let callback;
@@ -64,7 +71,14 @@ if(mode==='signup') {
   assert.ok(location);callback=new URL(location);
  }
  assert.equal(callback.origin,origin);
- assert.equal(callback.pathname,'/auth/callback');
+ assert.equal(callback.pathname,recovering?'/auth/recovery':'/auth/callback');
+ let elapsedSeconds;
+ if(expiring) {
+  assert.ok(callback.searchParams.get('code'),'A fresh actual PKCE code is required');
+  const started=Date.now();console.log('WAITING 330 seconds for real PKCE code expiry; no clocks or auth settings changed');
+  for(let n=0;n<11;n++)await new Promise(r=>setTimeout(r,30000));
+  elapsedSeconds=Math.floor((Date.now()-started)/1000);
+ }
  const server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3000'],
   {windowsHide:true,stdio:'ignore',env:{...process.env,SITE_URL:origin,NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key}});
  try {
@@ -72,11 +86,35 @@ if(mode==='signup') {
   const response=await fetch(callback,{redirect:'manual',headers:{cookie:[...jar].map(([n,v])=>`${n}=${v}`).join('; ')}});
   assert.equal(response.status,307);
   const destination=new URL(response.headers.get('location'));assert.equal(destination.origin,origin);
-  assert.equal(destination.pathname,intent==='client'?'/p/staging-studio-a/agendar':'/onboarding');
+  if(expiring) {
+   assert.ok(elapsedSeconds>=330);assert.equal(destination.pathname,'/recuperar-senha');
+   assert.equal(destination.searchParams.get('status'),'expired');
+   assert.ok(!response.headers.getSetCookie().some(c=>c.includes('auth-token=base64-')));
+   record('actual unused PKCE recovery code expires by real elapsed time; callback rejects session','PASS',
+    `elapsed_seconds=${elapsedSeconds}; clocks, timestamps and Auth settings unchanged`);
+  } else {
+  assert.equal(destination.pathname,recovering?'/redefinir-senha':intent==='client'?'/p/staging-studio-a/agendar':'/onboarding');
   assert.ok(response.headers.getSetCookie().some(c=>c.startsWith(`sb-${project}-auth-token`)));
-  record('actual delivered link establishes Next session and original destination','PASS');
+  for(const cookie of response.headers.getSetCookie()) {
+   const pair=cookie.split(';')[0],at=pair.indexOf('='),name=pair.slice(0,at),value=decodeURIComponent(pair.slice(at+1));
+   if(value)jar.set(name,value);else jar.delete(name);
+  }
+  save();
+  record(recovering?'actual delivered recovery link establishes Next reset session':'actual delivered link establishes Next session and original destination','PASS');
+  if(recovering) {
+   const recovery=createServerClient(config.url,config.publishable_key,{cookies:{getAll:()=>[...jar].map(([name,value])=>({name,value})),setAll:values=>values.forEach(c=>jar.set(c.name,c.value))}});
+   const user=await recovery.auth.getUser();assert.equal(user.error,null);assert.equal(user.data.user.email,state.email);
+   const previous=state.password,next=randomUUID()+'bB2!';
+   const changed=await recovery.auth.updateUser({password:next});assert.equal(changed.error,null);state.password=next;
+   assert.equal((await recovery.auth.signOut({scope:'local'})).error,null);
+   assert.equal((await recovery.auth.signInWithPassword({email:state.email,password:previous})).error?.code,'invalid_credentials');
+   assert.equal((await recovery.auth.signInWithPassword({email:state.email,password:next})).error,null);
+   assert.equal((await recovery.auth.signOut({scope:'local'})).error,null);save();
+   record('real staging fixture password recovery: new password works; old password denied; logout','PASS');
+  }
   const reused=await fetch(link,{redirect:'manual'});const reuseTarget=new URL(reused.headers.get('location'));
-  assert.ok(link.origin===origin?reuseTarget.pathname==='/verificar-email':reuseTarget.searchParams.has('error')||reuseTarget.hash.includes('error'));
-  record(link.origin===origin?'actual PKCE callback code reuse denied':'actual signup link reuse denied','PASS');
+  assert.ok(link.origin===origin?reuseTarget.pathname===(recovering?'/recuperar-senha':'/verificar-email'):reuseTarget.searchParams.has('error')||reuseTarget.hash.includes('error'));
+  record(recovering?'actual recovery link reuse denied':link.origin===origin?'actual PKCE callback code reuse denied':'actual signup link reuse denied','PASS');
+  }
  } finally {server.kill();}
 }

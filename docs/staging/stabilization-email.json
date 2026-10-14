@@ -50,7 +50,50 @@
       "name": "real invalid confirmation token cannot establish session",
       "intent": "professional",
       "status": "PASS"
+    },
+    {
+      "name": "resend real signup confirmation",
+      "intent": "client",
+      "status": "PASS",
+      "detail": "GoTrue accepted; delivered link still required"
+    },
+    {
+      "name": "actual delivered link establishes Next session and original destination",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "actual signup link reuse denied",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "recovery SMTP request",
+      "intent": "client",
+      "status": "PASS",
+      "detail": "GoTrue accepted; delivered link and password change not yet verified"
+    },
+    {
+      "name": "actual delivered recovery link establishes Next reset session",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "real staging fixture password recovery: new password works; old password denied; logout",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "actual recovery link reuse denied",
+      "intent": "client",
+      "status": "PASS"
+    },
+    {
+      "name": "recovery SMTP request",
+      "intent": "professional",
+      "status": "PASS",
+      "detail": "GoTrue accepted; delivered link and password change not yet verified"
     }
   ],
-  "checked_at": "2026-10-14T18:40:10.036Z"
+  "checked_at": "2026-10-14T18:55:38.667Z"
 }

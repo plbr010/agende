@@ -32,14 +32,21 @@ Nenhum componente, página ou estilo sob responsabilidade do Cursor foi modifica
 | Chave privilegiada nos assets do browser | PASS — zero ocorrências em 66 assets | `stabilization-browser-secrets.json` |
 | npm audit --omit=dev | PASS — zero vulnerabilidades | `../homologation/stabilization-runtime-audit.json` |
 | Verificador histórico, auditoria de fluxos e drift | PASS local | `../homologation/stabilization-recovery-verifier.log`, `stabilization-local-flows.log`, `stabilization-schema-drift.log` |
-| Cadastro SMTP de cliente/profissional | PASS apenas da solicitação GoTrue | `stabilization-email.json` |
-| Confirmação por e-mail recebido, reutilização, recuperação completa | BLOCKED — aguardando links recebidos | `stabilization-email.json` |
+| Cadastro cliente/profissional e confirmação SMTP no navegador | PASS real | `stabilization-signup-booking-browser.json` |
+| Nova conta: seleção → cadastro → e-mail → retomada → reserva única | PASS real — 8 checks da jornada integrada | `stabilization-signup-booking-browser.json` |
+| Recuperação completa e reutilização de links recebidos | PASS real | `stabilization-email.json` |
+| Expiração natural de código PKCE não utilizado | BLOCKED temporário — teste aguardando 330 segundos reais | `stabilization-email.json` |
+| CI remoto, incluindo E2E isolado | PASS no commit registrado | `../homologation/stabilization-ci-remote.json` |
 
 Auth real também negou token de confirmação inválido nos dois perfis e login da cliente não confirmada. A conta profissional apareceu confirmada externamente antes do teste negativo: seu login/logout real passou, mas isso não valida o callback original do runner. O teste detectou essa mudança de estado e passou a registrar as duas condições separadamente. Nenhum link recebido foi fabricado ou obtido via admin.
 
+Depois, uma nova conta profissional foi cadastrada pelo formulário real e confirmou no mesmo navegador de teste, retornando a `/onboarding`. A nova cliente iniciou pelo salão/serviço/profissional/data/horário, manteve o rascunho HttpOnly durante cadastro e confirmação SMTP, retomou a seleção idêntica e confirmou pela UI. A mesma reserva foi persistida uma vez, visível à cliente e ao salão; repetição da RPC foi recusada. O rascunho foi removido após sucesso. A reserva sintética foi cancelada por RPC própria, com histórico preservado. Recuperação da primeira fixture cliente usou link recebido de verdade, callback de redefinição, senha nova aceita e antiga recusada, seguido de logout.
+
 Os checks npm finais usam Node 24.19.0 invocando o `npm-cli.js` com esse runtime. O `npm.cmd` instalado força Node 20 mesmo quando PATH aponta para Node 24; a primeira instalação e execução não são a evidência final. O primeiro build falhou no subprocesso Turbopack; o build com runtime suportado passou. A primeira foto retornou 403 por origem incorporada ao build; a correção `SITE_URL` foi reexecutada contra Storage real com sucesso.
 
-Testes SQL locais usam fixtures de Auth/Storage; os 26 casos de staging (incluindo Preview) usam serviços reais. Nenhum desses casos comprova a jornada SMTP completa. Os dois aliases Gmail foram autorizados pelo responsável; nenhuma senha da conta Gmail foi solicitada, e a conta existente foi preservada. Novas contas e registros sintéticos permanecem no staging. Fotos/favoritos criados pelos próprios testes foram removidos pelas APIs autorizadas; nenhuma foto preexistente foi substituída. Reservas temporárias são canceladas, não apagadas.
+Testes SQL locais usam fixtures de Auth/Storage. Os 26 casos iniciais de staging (incluindo Preview) usam serviços reais; o aceite SMTP foi executado posteriormente e tem evidências próprias. O responsável autorizou a caixa TEST e aliases Gmail, fornecendo os links recebidos; nenhuma senha da conta Gmail foi solicitada, e a conta preexistente foi preservada. Novas contas e registros sintéticos permanecem no staging. Fotos/favoritos criados pelos próprios testes foram removidos pelas APIs autorizadas; nenhuma foto preexistente foi substituída. Reservas temporárias são canceladas, não apagadas. Entradas BLOCKED no JSON de e-mail são eventos históricos anteriores ao recebimento dos links; os eventos posteriores registram o resultado efetivamente executado.
+
+O teste de expiração usa um código PKCE de recuperação entregue por SMTP, não utilizado antes do callback. Aguarda 330 segundos de relógio real, sem editar timestamps, relógios ou configuração de Auth. A validade documentada é de cinco minutos: [Supabase PKCE](https://supabase.com/docs/guides/auth/sessions/pkce-flow). Isso testa a expiração do código de callback; não equivale a esperar a TTL integral do OTP de e-mail.
 
 ## Infraestrutura e segurança
 
@@ -74,4 +81,4 @@ Reutilizar `docs/codex/client-experience-fase2.md`: favoritos via RPC/actions ex
 
 Callback e reenvio preservam `next`; abrir link no contexto PKCE original. Configurar `SITE_URL` exclusivo do servidor quando necessário e conferir allowlist Auth correspondente. Não inferir que um link recebido foi validado até o teste executar. Interfaces de favoritos/cidade/foto continuam sendo tarefa do Cursor conforme contrato já publicado.
 
-**Prontidão: lançamento comercial BLOCKED.** Backend e recursos reais listados passaram; ainda falta finalizar confirmação/recuperação via caixa recebida e a jornada completa cadastro → confirmação → reserva, validar integração visual, resolver Preview global que herda produção e realizar rollout produtivo revisado das migrations. Zero Stripe LIVE, cobranças, DNS, secrets produtivos, merge ou exclusão de dados existentes nesta rodada.
+**Prontidão: lançamento comercial BLOCKED.** Backend, cadastro/SMTP, recuperação e jornada completa de reserva listados passaram no staging. Faltam integração visual de favoritos/cidade/foto pelo Cursor, isolamento do Preview global e rollout produtivo revisado das migrations. O teste de expiração de código ainda está em andamento até seu resultado ser registrado. Zero Stripe LIVE, cobranças, DNS, secrets produtivos, merge ou exclusão de dados existentes nesta rodada.
