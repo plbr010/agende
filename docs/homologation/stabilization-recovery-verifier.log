@@ -1,0 +1,26 @@
+3122323936de97fa3d71df75c35de388dd69f78e07f0fd9387e24303edfdf984  supabase/migrations/20260926062411_stripe_billing_sync_foundation.sql
+9149a13a0f0d8b7ab83e3995cf02c8d259f5fafa570ffc04e316315e4ed7ab6e  supabase/migrations/20260926062835_stripe_webhook_hardening.sql
+0bb141301ad8d4ba6949f2b3b456b0ab87558d54f794d3f3bbbb1c57c06f9bac  supabase/migrations/20260926063106_stripe_billing_resubscribe_hardening.sql
+5d286e451826e3ddc53fdce9ea27abfa6ec7287ab7ff4e2d29060578b92e5d96  supabase/migrations/20260926063212_stripe_billing_sync_reconcile.sql
+3d3f6f46f5a5bcbbe1e77a49561c38055114d75946d5d6172a10c96933b8f68a  supabase/migrations/20260926063514_stripe_checkout_resubscribe_hardening.sql
+d695c7f4d3b5623dfa07183378943758c16bdfc0acdbd0e4bac75e370a000f85  supabase/migrations/20260926063534_stripe_api_key_vault_access.sql
+3fb3c3cf7322e96ca9cef8c7de83d63dc0485cd237b228e5eef8e49b685268d4  supabase/migrations/20260926194038_trial_selected_plan.sql
+9b35bc4047883abd6a82f7884b191493454b7410d7584a1976a51c601b8a115a  supabase/migrations/20260927005815_stripe_checkout_guards.sql
+fc04a6e62e98854a2f20d8503f299ad28bfec1a0653945ca048a23d40339afdf  supabase/functions/stripe-billing/index.ts @ 392622bbea28c4c060d36b929fb71dbb9c07d4e7
+ca53fbafcf58ea9df39d6c19387313b18949e89c4469d202d780da34c3282fc8  supabase/functions/stripe-webhook/index.ts @ 392622bbea28c4c060d36b929fb71dbb9c07d4e7
+{
+  local: 70,
+  remote: 63,
+  missing: [ '20260919201138_hardening_snapshot_owner_timezone.sql' ],
+  extra: [
+    '20260927014947_launch_readiness_reviews.sql',
+    '20261008131859_launch_hardening_reviews_force_rls.sql',
+    '20261009172028_launch_observed_owner_guard.sql',
+    '20261009173042_billing_reconcile_excess_seats.sql',
+    '20261010232248_atomic_service_professional_links.sql',
+    '20261014030220_public_workspace_discovery.sql',
+    '20261014172158_client_phase2_profiles_favorites.sql',
+    '20261014173903_client_phase2_avatar_upload_cleanup.sql'
+  ]
+}
+Verified against the read-only remote snapshot captured on 2026-09-27 UTC.

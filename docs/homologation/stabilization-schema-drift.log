@@ -1,0 +1,112 @@
+baseline {
+  tables: { remoteOnly: [], localOnly: [], changed: [] },
+  columns: { remoteOnly: [], localOnly: [], changed: [] },
+  constraints: {
+    remoteOnly: [ 'public.workspace_members.workspace_members_keep_owner' ],
+    localOnly: [],
+    changed: []
+  },
+  indexes: { remoteOnly: [], localOnly: [], changed: [] },
+  policies: { remoteOnly: [], localOnly: [], changed: [] },
+  triggers: {
+    remoteOnly: [ 'workspace_members.workspace_members_keep_owner' ],
+    localOnly: [],
+    changed: []
+  },
+  functions: {
+    remoteOnly: [
+      'app.enforce_active_owner()',
+      'app.lock_workspace_membership(p_workspace_id uuid)'
+    ],
+    localOnly: [],
+    changed: [
+      'app.assert_member_change_allowed(p_workspace_id uuid, p_member workspace_members, p_next_role member_role, p_next_status member_status)',
+      'app.deactivate_workspace_member(p_workspace_id uuid, p_member_id uuid)',
+      'app.reactivate_workspace_member(p_workspace_id uuid, p_member_id uuid)',
+      'app.remove_workspace_member(p_workspace_id uuid, p_member_id uuid)',
+      'app.update_workspace_member_role(p_workspace_id uuid, p_member_id uuid, p_role member_role)'
+    ]
+  },
+  serviceFunctionGrants: {
+    remoteOnly: [
+      'app.enforce_active_owner()',
+      'app.lock_workspace_membership(p_workspace_id uuid)'
+    ],
+    localOnly: [],
+    changed: { count: 32, sample: [Array] }
+  },
+  grants: {
+    remoteOnly: { count: 215, sample: [Array] },
+    localOnly: [],
+    changed: []
+  }
+}
+target {
+  tables: {
+    remoteOnly: [],
+    localOnly: [
+      'app.avatar_cleanup_queue',
+      'public.appointment_reviews',
+      'public.client_workspace_favorites'
+    ],
+    changed: []
+  },
+  columns: {
+    remoteOnly: [],
+    localOnly: { count: 13, sample: [Array] },
+    changed: []
+  },
+  constraints: {
+    remoteOnly: [],
+    localOnly: { count: 14, sample: [Array] },
+    changed: []
+  },
+  indexes: {
+    remoteOnly: [],
+    localOnly: [
+      'app.avatar_cleanup_queue.avatar_cleanup_queue_pkey',
+      'public.appointment_reviews.appointment_reviews_appointment_id_key',
+      'public.appointment_reviews.appointment_reviews_client_idx',
+      'public.appointment_reviews.appointment_reviews_pkey',
+      'public.appointment_reviews.appointment_reviews_workspace_idx',
+      'public.client_workspace_favorites.client_workspace_favorites_pkey',
+      'public.client_workspace_favorites.client_workspace_favorites_workspace_idx',
+      'public.workspace_settings.workspace_settings_discovery_city'
+    ],
+    changed: []
+  },
+  policies: {
+    remoteOnly: [],
+    localOnly: [
+      'public.appointment_reviews.appointment_reviews_read',
+      'public.client_workspace_favorites.client_workspace_favorites_own_read',
+      'storage.objects.account_avatars_server_only'
+    ],
+    changed: []
+  },
+  triggers: {
+    remoteOnly: [],
+    localOnly: [ 'profiles.profiles_avatar_commit_cleanup' ],
+    changed: []
+  },
+  functions: {
+    remoteOnly: [],
+    localOnly: { count: 21, sample: [Array] },
+    changed: [
+      'app.find_or_create_public_client(p_workspace_id uuid, p_full_name text, p_email text, p_phone text, p_user_id uuid)',
+      'app.is_valid_br_national(p_national text)',
+      'app.list_my_appointments()',
+      'app.sync_billing_subscription(p_workspace_id uuid, p_provider text, p_external_customer_id text, p_external_subscription_id text, p_plan subscription_plan, p_billing_interval billing_interval, p_status subscription_status, p_current_period_start timestamp with time zone, p_current_period_end timestamp with time zone, p_canceled_at timestamp with time zone)'
+    ]
+  },
+  serviceFunctionGrants: {
+    remoteOnly: [],
+    localOnly: { count: 21, sample: [Array] },
+    changed: { count: 32, sample: [Array] }
+  },
+  grants: {
+    remoteOnly: { count: 215, sample: [Array] },
+    localOnly: { count: 23, sample: [Array] },
+    changed: []
+  }
+}
