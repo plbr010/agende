@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BrandLogo } from "@/components/brand/logo";
+import { FloralBranch, FloralCorner } from "@/components/brand/floral";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -607,28 +608,37 @@ function ProfessionalStep({
           Escolhemos quem estiver livre naquele horário.
         </p>
       </button>
-      {people.map((person) => (
-        <button
-          key={person.id}
-          type="button"
-          onClick={() => onSelect(person.id)}
-          className={PICKER_BUTTON}
-        >
-          <h2 className="font-serif text-2xl">{person.displayName}</h2>
-          {person.bio ? <p className="mt-1 text-sm text-muted-foreground">{person.bio}</p> : null}
-          {service ? (
-            <p className="mt-3 text-sm">
-              {formatCentsToReais(
-                person.offerings.find((item) => item.serviceId === service.id)?.priceCents ?? service.priceCents,
-              )}
-              {" · "}
-              {person.offerings.find((item) => item.serviceId === service.id)?.durationMinutes ??
-                service.durationMinutes}{" "}
-              min
-            </p>
-          ) : null}
-        </button>
-      ))}
+      {people.map((person) => {
+        const offering = service
+          ? person.offerings.find((item) => item.serviceId === service.id)
+          : undefined;
+        const initials = person.displayName
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase() ?? "")
+          .join("");
+        return (
+          <button key={person.id} type="button" onClick={() => onSelect(person.id)} className={PICKER_BUTTON}>
+            <span className="flex items-center gap-4">
+              <span className="grid size-14 shrink-0 place-items-center rounded-full bg-metric-blush font-serif text-lg text-wine-deep" aria-hidden="true">
+                {initials || "•"}
+              </span>
+              <span className="min-w-0 text-left">
+                <h2 className="font-serif text-2xl">{person.displayName}</h2>
+                {person.bio ? <p className="mt-1 truncate text-sm text-muted-foreground">{person.bio}</p> : null}
+                {service ? (
+                  <p className="mt-2 text-sm">
+                    {formatCentsToReais(offering?.priceCents ?? service.priceCents)}
+                    {" · "}
+                    {offering?.durationMinutes ?? service.durationMinutes} min
+                  </p>
+                ) : null}
+              </span>
+            </span>
+          </button>
+        );
+      })}
     </section>
   );
 }
@@ -758,17 +768,23 @@ function BookingSuccess({
   );
 
   return (
-    <div className="agende-bloom min-h-full">
+    <div className="agende-bloom relative min-h-full overflow-hidden">
+      <FloralCorner className="pointer-events-none absolute right-0 top-4 h-32 w-40 opacity-80" />
+      <FloralBranch className="pointer-events-none absolute -left-8 bottom-10 h-48 w-36 opacity-70" />
       <header className="border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-lg items-center px-4">
           <BrandLogo size="sm" />
         </div>
       </header>
-      <main className="mx-auto grid w-full max-w-lg gap-6 px-4 py-10">
+      <main className="relative mx-auto grid w-full max-w-lg gap-6 px-4 py-10">
         <section className="rounded-[2rem] bg-card p-6 text-center ring-1 ring-border">
-          <p className="text-xs tracking-[0.18em] text-primary uppercase">Pronto</p>
-          <h1 className="mt-2 font-serif text-4xl">Seu horário está reservado</h1>
-          <p className="mt-3 text-muted-foreground">{confirmation.workspaceName}</p>
+          <span className="mx-auto grid size-16 place-items-center rounded-full bg-metric-blush text-[var(--rose-ink)]" aria-hidden="true">
+            ✓
+          </span>
+          <h1 className="mt-4 font-serif text-4xl text-wine-deep">Agendamento confirmado!</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Seu horário no {confirmation.workspaceName} está reservado. Confira os detalhes abaixo.
+          </p>
         </section>
         <article className="rounded-[2rem] bg-card p-5 ring-1 ring-border">
           <SummaryRow label="Serviço" value={confirmation.serviceName} />
@@ -780,6 +796,15 @@ function BookingSuccess({
           <SummaryRow label="Valor" value={formatCentsToReais(confirmation.priceCents)} />
         </article>
         <div className="grid gap-3">
+          {hasClientProfile ? (
+            <Button variant="rose" className="h-12 rounded-full" render={<Link href="/cliente/agendamentos" />}>
+              Ver meus agendamentos
+            </Button>
+          ) : guestHint ? (
+            <Button variant="rose" className="h-12 rounded-full" render={<Link href="/cadastro?intent=client&next=/cliente/agendamentos" />}>
+              Ver meus agendamentos
+            </Button>
+          ) : null}
           <Button className="h-12 rounded-full" render={<a href={icsDataUrl(ics)} download="agende.ics" />}>
             Adicionar ao calendário
           </Button>
@@ -806,10 +831,13 @@ function BookingSuccess({
               Falar com o salão
             </Button>
           ) : null}
+          <Button variant="ghost" className="h-12 rounded-full" render={<Link href="/" />}>
+            Voltar para o início
+          </Button>
         </div>
         {guestHint ? (
           <p className="text-center text-sm text-muted-foreground">
-            Quer ver todos os seus horários aqui? Crie uma conta grátis.{" "}
+            Quer guardar todos os horários na sua conta?{" "}
             <Link
               href="/cadastro?intent=client&next=/cliente/agendamentos"
               className="underline underline-offset-4"
@@ -817,13 +845,7 @@ function BookingSuccess({
               Criar conta
             </Link>
           </p>
-        ) : hasClientProfile ? (
-          <p className="text-center text-sm">
-            <Link href="/cliente/agendamentos" className="underline underline-offset-4">
-              Ver meus agendamentos
-            </Link>
-          </p>
-        ) : (
+        ) : hasClientProfile ? null : (
           <p className="text-center text-sm text-muted-foreground">
             Seus horários ficam neste e-mail. Guarde a confirmação.
           </p>

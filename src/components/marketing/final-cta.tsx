@@ -15,10 +15,10 @@ export function MarketingFinalCta() {
           </p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <MarketingLinkButton
-              href={MARKETING_CTAS.primary.href}
+              href={MARKETING_CTAS.professionalSignup.href}
               className="h-12 min-h-12 w-full rounded-full px-6 text-base sm:w-auto"
             >
-              {MARKETING_CTAS.primary.label}
+              {MARKETING_CTAS.professionalSignup.label}
             </MarketingLinkButton>
             <MarketingLinkButton
               href={MARKETING_CTAS.secondary.href}

@@ -1,15 +1,15 @@
 export const MARKETING_NAV = [
-  { href: "/#funcionalidades", label: "Funcionalidades" },
-  { href: "/#como-funciona", label: "Como funciona" },
-  { href: "/#planos", label: "Planos" },
-  { href: "/descobrir", label: "Encontrar salão" },
+  { href: "/profissionais", label: "Para profissionais" },
+  { href: "/descobrir", label: "Para clientes" },
 ] as const;
 
 export const MARKETING_CTAS = {
-  primary: { href: "/cadastro", label: "Começar 7 dias grátis" },
-  secondary: { href: "/#como-funciona", label: "Ver como funciona" },
-  headerPrimary: { href: "/cadastro", label: "Começar grátis" },
+  primary: { href: "/profissionais", label: "Sou profissional" },
+  secondary: { href: "/descobrir", label: "Sou cliente" },
+  headerPrimary: { href: "/comecar", label: "Comece agora" },
   login: { href: "/login", label: "Entrar" },
+  professionalSignup: { href: "/cadastro?intent=professional", label: "Começar 7 dias grátis" },
+  clientDiscover: { href: "/descobrir", label: "Encontrar um salão" },
 } as const;
 
 export const PLANS = [
@@ -54,6 +54,29 @@ export const PLANS = [
       "Financeiro, estoque e relatórios no produto",
       "Até 15 profissionais no mesmo salão",
     ],
+  },
+] as const;
+
+export const HOME_BENEFITS = [
+  {
+    id: "agenda",
+    title: "Agenda inteligente",
+    text: "Evite conflitos e organize seu dia com praticidade.",
+  },
+  {
+    id: "clientes",
+    title: "Gestão de clientes",
+    text: "Acompanhe histórico, preferências e muito mais.",
+  },
+  {
+    id: "financeiro",
+    title: "Financeiro completo",
+    text: "Controle seus ganhos, assinaturas e repasses.",
+  },
+  {
+    id: "relatorios",
+    title: "Relatórios e insights",
+    text: "Tome decisões com base em dados reais.",
   },
 ] as const;
 
@@ -167,8 +190,8 @@ export const HOW_IT_WORKS = [
 ] as const;
 
 export const FOOTER_LINKS = [
-  { href: "/#funcionalidades", label: "Produto" },
-  { href: "/descobrir", label: "Encontrar salão" },
+  { href: "/profissionais", label: "Para profissionais" },
+  { href: "/descobrir", label: "Para clientes" },
   { href: "/termos", label: "Termos" },
   { href: "/privacidade", label: "Privacidade" },
   { href: "/login", label: "Entrar" },

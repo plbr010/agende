@@ -1,9 +1,13 @@
+Playfair Display: Copyright 2017 The Playfair Display Project Authors (https://github.com/clauseggers/Playfair-Display)
+Inter: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
 Manrope: Copyright 2018 The Manrope Project Authors (https://github.com/googlefonts/manrope)
 Cormorant Garamond: Copyright 2015 the Cormorant Project Authors (github.com/CatharsisFonts/Cormorant)
 
-These Latin WOFF2 files are the original Google Fonts assets previously downloaded
-by next/font/google for this application, now served locally without modification.
-Sources: https://github.com/google/fonts/tree/main/ofl/manrope
+Playfair Display and Inter are the approved identity fonts, served locally.
+Manrope and Cormorant remain available as licensed fallbacks.
+Sources: https://github.com/google/fonts/tree/main/ofl/playfairdisplay
+         https://github.com/google/fonts/tree/main/ofl/inter
+         https://github.com/google/fonts/tree/main/ofl/manrope
          https://github.com/google/fonts/tree/main/ofl/cormorantgaramond
 
 SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007

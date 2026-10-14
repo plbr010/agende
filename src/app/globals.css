@@ -26,6 +26,8 @@
   --color-sidebar: var(--sidebar);
   --color-app-canvas: var(--app-canvas);
   --color-wine-deep: var(--wine-deep);
+  --color-rose-button: var(--rose-button);
+  --color-rose-ink: var(--rose-ink);
   --color-nav-pill: var(--sidebar-active);
   --color-metric-blush: var(--metric-blush);
   --color-metric-sand: var(--metric-sand);
@@ -62,24 +64,24 @@
 }
 
 :root {
-  /* Referência visual: creme, rosa, pêssego e vinho.
-     O rosa #B95B76 fica para ilustração. Texto e botões usam vinho,
-     porque o rosa claro não sustenta contraste em texto pequeno.
-     O menu usa o vinho mais fundo amostrado no painel da referência. */
-  --cream: #fcf5f0;
-  --blush: #f3c8c7;
-  --peach: #e6a78f;
-  --rose: #b95b76;
-  --rose-ink: #8e3a55;
-  --wine: #631d38;
+  /* Identidade definitiva amostrada na referência aprovada:
+     creme, rosa, pêssego e vinho. O rosa dos botões mobile (#c45d7c)
+     não substitui o vinho em texto pequeno — contraste WCAG. */
+  --cream: #fbf4ee;
+  --blush: #f3c4c2;
+  --peach: #e8b4a0;
+  --rose: #c45d7c;
+  --rose-ink: #9a3d58;
+  --rose-button: #c45d7c;
+  --wine: #6b2d42;
   --wine-deep: #5c1a2e;
   --sidebar-active: #8d3b51;
   --paper: #ffffff;
-  --app-canvas: #fcf6f2;
-  --metric-blush: #fff0ee;
-  --metric-sand: #fff4e8;
-  --metric-ivory: #fff6dc;
-  --metric-lilac: #f7eef5;
+  --app-canvas: #faf3ee;
+  --metric-blush: #fdecea;
+  --metric-sand: #f8ebdd;
+  --metric-ivory: #f7f1dc;
+  --metric-lilac: #f4eef3;
   --status-confirmed-bg: #e5f5ec;
   --status-confirmed-fg: #14663c;
   --status-scheduled-bg: #f8e4ea;
@@ -184,9 +186,9 @@
 
 .agende-bloom {
   background:
-    radial-gradient(1100px 520px at 0% -10%, rgb(243 200 199 / 0.85), transparent 58%),
-    radial-gradient(860px 420px at 100% 0%, rgb(230 167 143 / 0.55), transparent 52%),
-    radial-gradient(720px 380px at 50% 120%, rgb(252 245 240 / 0.9), transparent 46%),
+    radial-gradient(1100px 520px at 0% -10%, rgb(243 196 194 / 0.88), transparent 58%),
+    radial-gradient(860px 420px at 100% 0%, rgb(232 180 160 / 0.58), transparent 52%),
+    radial-gradient(720px 380px at 50% 120%, rgb(251 244 238 / 0.92), transparent 46%),
     var(--background);
 }
 

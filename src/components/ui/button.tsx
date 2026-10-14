@@ -8,6 +8,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground shadow-[0_10px_24px_-16px_var(--wine)] hover:bg-[var(--rose-ink)]",
+        rose: "bg-rose-button text-white shadow-[0_10px_24px_-16px_var(--rose)] hover:bg-[var(--rose-ink)]",
         outline:
           "border-border bg-card hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
