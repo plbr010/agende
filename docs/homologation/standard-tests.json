@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T03:50:36.625Z",
+  "checked_at": "2026-10-14T04:08:09.631Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 173,
+      "passed": 179,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 284,
+    "passed": 290,
     "failed": 0,
     "skipped": 0
   },
@@ -218,6 +218,36 @@
       "file": "scripts/discovery-sql.test.mjs",
       "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "production hosts used by the live site are always refused",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "staging origins accept loopback and staging hostnames only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "staging config is BLOQUEADO without opt-in and FAIL on production",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "evidence directories stay under the workspace or an explicit override",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "exit codes distinguish test failure, missing browser and missing backend",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -1536,13 +1566,19 @@
     },
     {
       "file": "src/lib/usability/homologation-matrix.test.ts",
-      "name": "homologation board never marks a missing backend as PASS",
+      "name": "homologation board never marks a missing backend as PASS E2E or bare PASS",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
       "file": "src/lib/usability/homologation-matrix.test.ts",
-      "name": "isolated browser e2e uses roles and does not invent salons",
+      "name": "isolated browser e2e uses roles, refuses production and does not invent salons",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/homologation-matrix.test.ts",
+      "name": "staging suite stays blocked without opt-in and never targets production",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

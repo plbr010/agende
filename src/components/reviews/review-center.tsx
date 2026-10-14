@@ -11,7 +11,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTimeInTimeZone } from "@/lib/time/timezone";
+import { nextRadioIndex } from "@/lib/usability/roving-radio";
 import { cn } from "@/lib/utils";
+
+const REVIEW_RATINGS = [1, 2, 3, 4, 5] as const;
 
 export function ReviewCenter({ appointments, initialReviews }: { appointments: MyAppointment[]; initialReviews: AppointmentReview[] }) {
   const [reviews, setReviews] = useState(initialReviews);
@@ -86,8 +89,34 @@ export function ReviewCenter({ appointments, initialReviews }: { appointments: M
             <fieldset className="grid gap-2">
               <legend className="text-sm font-medium">Sua nota</legend>
               <div className="flex gap-1" role="radiogroup" aria-label="Nota da avaliação">
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <button key={value} type="button" role="radio" aria-checked={rating === value} onClick={() => setRating(value)} className="flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-secondary" aria-label={`${value} estrela${value > 1 ? "s" : ""}`}>
+                {REVIEW_RATINGS.map((value) => (
+                  <button
+                    key={value}
+                    id={`review-rating-${value}`}
+                    type="button"
+                    role="radio"
+                    aria-checked={rating === value}
+                    tabIndex={rating === 0 ? (value === 1 ? 0 : -1) : rating === value ? 0 : -1}
+                    disabled={pending}
+                    onClick={() => setRating(value)}
+                    onKeyDown={(event) => {
+                      const current: (typeof REVIEW_RATINGS)[number] =
+                        rating === 1 || rating === 2 || rating === 3 || rating === 4 || rating === 5
+                          ? rating
+                          : value;
+                      const next = nextRadioIndex(REVIEW_RATINGS.indexOf(current), REVIEW_RATINGS.length, event.key);
+                      if (next === null) return;
+                      event.preventDefault();
+                      const nextValue = REVIEW_RATINGS[next];
+                      if (!nextValue) return;
+                      setRating(nextValue);
+                      window.requestAnimationFrame(() => {
+                        document.getElementById(`review-rating-${nextValue}`)?.focus();
+                      });
+                    }}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-secondary"
+                    aria-label={`${value} estrela${value > 1 ? "s" : ""}`}
+                  >
                     <Star className={cn("size-7", value <= rating ? "fill-primary text-primary" : "text-border")} />
                   </button>
                 ))}

@@ -87,7 +87,13 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+npm run test:e2e
+npm run test:e2e:staging
 ```
+
+`test:e2e` sobe o build local com backend sintético (PASS LOCAL). Requer `npm run build` e Chromium do Playwright (`npx playwright install chromium`). Porta e evidências: `AGENDE_E2E_PORT`, `AGENDE_E2E_EVIDENCE`. Nunca aponta para produção.
+
+`test:e2e:staging` só navega com `AGENDE_STAGING_ACCEPTANCE` + `AGENDE_STAGING_ORIGIN` autorizados. Sem isso, marca BLOQUEADO e sai 0. Detalhes: [docs/homologation/e2e.md](docs/homologation/e2e.md).
 
 ## Banco
 

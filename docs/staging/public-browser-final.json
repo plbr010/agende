@@ -1,64 +1,67 @@
 {
-  "generatedAt": "2026-10-14T03:53:16.087Z",
-  "base": "http://127.0.0.1:3109",
+  "generatedAt": "2026-10-14T04:11:48.245Z",
+  "kind": "isolated-e2e",
+  "base": "http://127.0.0.1:49338",
+  "evidenceDir": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446",
   "pass": 11,
   "fail": 0,
   "blocked": 0,
+  "classification": "PASS LOCAL — servidor sintético, sem backend real",
   "results": [
     {
       "name": "landing",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/landing.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/landing.png"
     },
     {
       "name": "cadastro-keyboard",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/cadastro.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/cadastro.png"
     },
     {
       "name": "login",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/login.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/login.png"
     },
     {
       "name": "discovery-empty-city",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-empty-city.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-empty-city.png"
     },
     {
       "name": "discovery-gps-jf",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-gps-jf.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-gps-jf.png"
     },
     {
       "name": "discovery-city-muriae",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-city-muriae.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-city-muriae.png"
     },
     {
       "name": "discovery-global-name",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-global-name.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-global-name.png"
     },
     {
       "name": "public-not-found",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/public-not-found.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/public-not-found.png"
     },
     {
       "name": "app-guard",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/app-guard.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/app-guard.png"
     },
     {
       "name": "discovery-gps-denied",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-gps-denied.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-gps-denied.png"
     },
     {
       "name": "discovery-mobile",
       "result": "PASS",
-      "evidence": ".test-postgres/public-e2e-final/discovery-mobile.png"
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\2026-09-26\\continue-o-projeto-agend-no-reposit\\.test-postgres\\public-e2e-pr40\\isolated-21588-1791951101446/discovery-mobile.png"
     }
   ]
 }

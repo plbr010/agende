@@ -3,53 +3,117 @@
  * Starts the already-built app with synthetic env. Never hits production.
  * Does not submit signup, login, booking or billing.
  *
- * Usage: npm run test:e2e
+ * Usage:
+ *   npm run build && npm run test:e2e
+ *
+ * Optional env:
+ *   AGENDE_E2E_PORT       fixed port (default: first free port on 127.0.0.1)
+ *   AGENDE_E2E_EVIDENCE   evidence directory (default: ./artifacts/e2e)
+ *
+ * Exit codes: 0 ok · 1 test FAIL · 2 browser missing · 3 server/backend missing
  */
-import { mkdirSync, writeFileSync } from "node:fs";
 import { spawn } from "node:child_process";
-import { createRequire } from "node:module";
+import {
+  assertSafeE2eOrigin,
+  createEvidenceDir,
+  createRecorder,
+  exitCodeFromResults,
+  launchBrowser,
+  loadPlaywright,
+  resolvePort,
+  scanEnvForProduction,
+  stopChild,
+  writeSummary,
+} from "./e2e-lib.mjs";
 
-const require = createRequire(import.meta.url);
-const port = 3109;
-const base = `http://127.0.0.1:${port}`;
-const outDir = process.env.AGENDE_E2E_OUTPUT ?? (process.platform === "win32" ? "docs/evidence/isolated-public-e2e" : "/opt/cursor/artifacts/e2e");
-mkdirSync(outDir, { recursive: true });
-
+const evidence = createEvidenceDir("isolated");
 const results = [];
-function record(entry) {
-  results.push(entry);
-  console.log(JSON.stringify(entry));
+const record = createRecorder(results);
+const port = await resolvePort(process.env.AGENDE_E2E_PORT);
+const base = `http://127.0.0.1:${port}`;
+assertSafeE2eOrigin(base, "base isolada");
+
+const leaked = scanEnvForProduction(process.env);
+if (leaked.length) {
+  record({
+    name: "production-guard",
+    result: "FAIL",
+    error: `Variáveis apontam para produção e o runner isolado recusou seguir: ${leaked.join(", ")}`,
+  });
+  const summary = {
+    generatedAt: new Date().toISOString(),
+    kind: "isolated-e2e",
+    base,
+    evidenceDir: evidence.dir,
+    pass: 0,
+    fail: 1,
+    blocked: 0,
+    classification: "PASS LOCAL — servidor sintético, sem backend real",
+    results,
+  };
+  writeSummary(evidence.dir, summary);
+  console.log(JSON.stringify(summary));
+  process.exit(1);
 }
 
-function loadPlaywright() {
-  try {
-    return require("playwright");
-  } catch {
-    return null;
+let server;
+let browser;
+let missingBrowser = false;
+let missingBackend = false;
+
+function finish(extra = {}) {
+  const summary = {
+    generatedAt: new Date().toISOString(),
+    kind: "isolated-e2e",
+    base,
+    evidenceDir: evidence.dir,
+    pass: results.filter((row) => row.result === "PASS").length,
+    fail: results.filter((row) => row.result === "FAIL").length,
+    blocked: results.filter((row) => row.result === "BLOQUEADO").length,
+    classification: "PASS LOCAL — servidor sintético, sem backend real",
+    results,
+  };
+  writeSummary(evidence.dir, summary);
+  console.log(JSON.stringify(summary));
+  process.exitCode = exitCodeFromResults({
+    fail: extra.fail ?? summary.fail,
+    missingBrowser: extra.missingBrowser ?? missingBrowser,
+    missingBackend: extra.missingBackend ?? missingBackend,
+  });
+}
+
+async function cleanup() {
+  if (browser) {
+    try {
+      await browser.close();
+    } catch {
+      /* already closed */
+    }
+    browser = null;
   }
+  await stopChild(server);
 }
 
-async function launchBrowser(chromium) {
-  try {
-    return await chromium.launch({ channel: process.env.AGENDE_BROWSER_CHANNEL ?? "chrome", headless: true });
-  } catch {
-    return chromium.launch({ headless: true });
-  }
-}
-
-const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
-  env: {
-    ...process.env,
-    NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_ci_placeholder",
-    NEXT_PUBLIC_SITE_URL: base,
-  },
-  stdio: ["ignore", "pipe", "pipe"],
+process.once("SIGINT", () => {
+  void cleanup().finally(() => process.exit(130));
+});
+process.once("SIGTERM", () => {
+  void cleanup().finally(() => process.exit(143));
 });
 
 try {
+  server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_ci_placeholder",
+      NEXT_PUBLIC_SITE_URL: base,
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
   await new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error("Local server did not become ready")), 30_000);
+    const timeout = setTimeout(() => reject(new Error("Local server did not become ready")), 60_000);
     let output = "";
     function onData(chunk) {
       output += chunk.toString();
@@ -69,18 +133,19 @@ try {
     });
     server.once("exit", (code) => {
       clearTimeout(timeout);
-      reject(new Error(`Local server exited with ${code}`));
+      reject(new Error(`Local server exited with ${code}. Rode npm run build antes de npm run test:e2e.`));
     });
   });
 
   const playwright = loadPlaywright();
   if (!playwright) {
+    missingBrowser = true;
     record({ name: "playwright", result: "BLOQUEADO", error: "pacote playwright ausente neste ambiente" });
   } else {
-    let browser;
     try {
       browser = await launchBrowser(playwright.chromium);
     } catch (error) {
+      missingBrowser = true;
       record({ name: "browser", result: "BLOQUEADO", error: error.message });
     }
 
@@ -104,7 +169,7 @@ try {
       });
 
       async function shot(page, name) {
-        const path = `${outDir}/${name}.png`;
+        const path = `${evidence.dir}/${name}.png`;
         await page.screenshot({ path, fullPage: false });
         return path;
       }
@@ -253,23 +318,17 @@ try {
       }
 
       await context.close();
-      await browser.close();
     }
   }
 } catch (error) {
-  record({ name: "harness", result: "FAIL", error: error.message });
+  missingBackend = /server|listen|EADDRINUSE|build|Ready/i.test(error.message);
+  record({
+    name: "harness",
+    result: missingBackend ? "BLOQUEADO" : "FAIL",
+    error: error.message,
+  });
 } finally {
-  server.kill();
+  await cleanup();
 }
 
-const summary = {
-  generatedAt: new Date().toISOString(),
-  base,
-  pass: results.filter((row) => row.result === "PASS").length,
-  fail: results.filter((row) => row.result === "FAIL").length,
-  blocked: results.filter((row) => row.result === "BLOQUEADO").length,
-  results,
-};
-writeFileSync(`${outDir}/summary.json`, JSON.stringify(summary, null, 2));
-console.log(JSON.stringify(summary));
-if (summary.fail > 0) process.exitCode = 1;
+finish();

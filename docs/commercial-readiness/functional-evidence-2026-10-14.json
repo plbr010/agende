@@ -1,6 +1,6 @@
 {
   "checked_at": "2026-10-14T03:45:19.614Z",
-  "base_main": "f10843851d7e58ca95ae7836814022952351052d",
+  "base_main": "f755b96ab66a6ae0dcffe9bd438e1203ed690a15",
   "node": "24.19.0",
   "next": "16.3.8",
   "decision": "NO-GO",
@@ -33,7 +33,7 @@
   "tests": {
     "npm_ci": true,
     "lint": true,
-    "standard": 284,
+    "standard": 290,
     "standard_failed": 0,
     "pg17": 48,
     "pg17_failed": 0,

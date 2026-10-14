@@ -82,7 +82,7 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
       </fieldset>
       <p className="rounded-2xl bg-metric-ivory px-4 py-3 text-sm text-muted-foreground">{TRIAL_PLAIN}</p>
       {state.error ? (
-        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {state.error}
         </p>
       ) : null}
