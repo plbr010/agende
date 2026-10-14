@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-13T19:57:42.948Z",
+  "groups": {
+    "unit_or_static_contract": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/capacity-load.test.mjs",
+      "name": "isolated PostgreSQL burst matrix with bounded connections and real catalog/booking RPCs",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    }
+  ]
+}
