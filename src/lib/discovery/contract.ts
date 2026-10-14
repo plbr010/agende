@@ -106,8 +106,8 @@ export function normalizeDiscoverySearch(input: DiscoverySearchInput): Discovery
 
   return {
     mode,
-    city: city.length >= 2 ? city : undefined,
-    state: /^[A-Z]{2}$/.test(state) ? state : undefined,
+    city: mode !== "global" && city.length >= 2 ? city : undefined,
+    state: mode !== "global" && /^[A-Z]{2}$/.test(state) ? state : undefined,
     query: query.length >= 2 ? query : undefined,
     coordinates: mode === "nearby" ? coordinates : undefined,
   };

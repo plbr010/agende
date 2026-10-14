@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,12 @@ export function WorkspaceFinder({
     setOpening(true);
     router.push(publicProfilePath(slug));
   }
+
+  useEffect(() => {
+    if (!opening) return;
+    const timer = window.setTimeout(() => setOpening(false), 8000);
+    return () => window.clearTimeout(timer);
+  }, [opening]);
 
   return (
     <div className="grid gap-4">

@@ -138,6 +138,16 @@ test("reverse geocode maps a Brazilian city without using residence", () => {
   });
   assert.deepEqual(parsed, { city: "Belo Horizonte", state: "MG" });
   assert.equal(parseReverseGeocodePayload({ locality: "x" }), null);
+  assert.equal(parseReverseGeocodePayload({ city: "Boston", countryCode: "US", principalSubdivisionCode: "US-MA" }), null);
+});
+
+test("global name search clears stale city filters and keeps bounded pagination", () => {
+  const args = discoveryRpcArgs({ mode: "global", city: "Salvador", state: "BA", query: "Aurora", offset: 20 });
+  assert.equal(args.p_city, null);
+  assert.equal(args.p_state, null);
+  assert.equal(args.p_query, "Aurora");
+  assert.equal(args.p_offset, 20);
+  assert.equal(discoveryRpcArgs({ city: "Recife", offset: -1 }).p_offset, 0);
 });
 
 test("a Muriaé resident physically in Juiz de Fora can search either city", () => {

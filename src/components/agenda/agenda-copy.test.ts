@@ -13,6 +13,8 @@ test("agenda dialogs tell the professional what to do next in plain language", (
   assert.match(source, /Os horários livres aparecem aqui/);
   assert.doesNotMatch(source, /calculados no servidor/);
   assert.doesNotMatch(source, /encaixar uma cliente/);
+  assert.match(source, /loadedQueryKey !== slotQueryKey/);
+  assert.match(source, /disabled=\{pending \|\| slotPending \|\| slots\.length === 0\}/);
 });
 
 test("working hours editor collapses empty days and can copy a day to the rest of the week", () => {

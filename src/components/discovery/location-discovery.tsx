@@ -57,12 +57,20 @@ export function LocationDiscovery({
     if (mode !== "city" || city.trim().length < 2) {
       return;
     }
+    let cancelled = false;
     const handle = window.setTimeout(() => {
       void listPublicLocalitiesAction(city, state || undefined)
-        .then(setSuggestions)
-        .catch(() => setSuggestions([]));
+        .then((items) => {
+          if (!cancelled) setSuggestions(items);
+        })
+        .catch(() => {
+          if (!cancelled) setSuggestions([]);
+        });
     }, 300);
-    return () => window.clearTimeout(handle);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
   }, [city, state, mode]);
 
   function applyMode(next: DiscoveryMode) {

@@ -303,7 +303,9 @@ function AppointmentFormDialog({
   );
   const [serviceId, setServiceId] = useState(appointment?.serviceId ?? "");
   const [localDate, setLocalDate] = useState(appointment?.localDate ?? defaultDate);
-  const slots = slotState.slots ?? [];
+  const slotQueryKey = `${professionalMemberId}|${serviceId}|${localDate}`;
+  const loadedQueryKey = `${slotState.professionalMemberId ?? ""}|${slotState.serviceId ?? ""}|${slotState.localDate ?? ""}`;
+  const slots = slotPending || loadedQueryKey !== slotQueryKey ? [] : (slotState.slots ?? []);
 
   useEffect(() => {
     if (!open || !professionalMemberId || !serviceId || !localDate) {
@@ -426,7 +428,7 @@ function AppointmentFormDialog({
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                   {slots.map((slot) => (
                     <label key={slot} className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl bg-secondary/60 px-2 py-2 text-sm ring-1 ring-border has-[:checked]:ring-2 has-[:checked]:ring-primary">
-                      <input type="radio" name="startsAt" value={slot} required className="size-5" />
+                      <input type="radio" name="startsAt" value={slot} required className="size-5" disabled={slotPending} />
                       {formatTimeInTimeZone(slot, timezone)}
                     </label>
                   ))}
@@ -446,7 +448,7 @@ function AppointmentFormDialog({
             <Button formAction={slotAction} type="submit" variant="outline" disabled={slotPending} className="h-11 w-full">
               {slotPending ? "Buscando..." : "Atualizar horários livres"}
             </Button>
-            <Button type="submit" disabled={pending || slots.length === 0} className="h-11 w-full">
+            <Button type="submit" disabled={pending || slotPending || slots.length === 0} className="h-11 w-full">
               {pending ? "Salvando..." : appointment ? "Confirmar novo horário" : "Agendar"}
             </Button>
             <Button type="button" variant="ghost" className="h-11 w-full" onClick={() => onOpenChange(false)}>

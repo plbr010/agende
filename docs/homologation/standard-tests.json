@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T03:54:38.121Z",
+  "checked_at": "2026-10-14T04:04:39.496Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 178,
+      "passed": 182,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 288,
+    "passed": 292,
     "failed": 0,
     "skipped": 0
   },
@@ -462,6 +462,12 @@
     },
     {
       "file": "src/components/app/launch-frontend.test.ts",
+      "name": "authenticated search fields use a client Input so name and events reach the form",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/app/launch-frontend.test.ts",
       "name": "catalog and money modules explain the empty next step",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -523,6 +529,12 @@
     {
       "file": "src/components/booking/public-booking-flow.test.ts",
       "name": "public booking locks navigation while a reservation is in flight",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/booking/public-booking-flow.test.ts",
+      "name": "returning to the slot step clears stale times before refetch",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -589,6 +601,12 @@
     {
       "file": "src/components/usability/homologation-copy.test.ts",
       "name": "cancel errors stay inside the open dialog and primary taps are large",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "profile preview opens the slug being edited and finder unlocks after a failed open",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1159,6 +1177,12 @@
     {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "reverse geocode maps a Brazilian city without using residence",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/contract.test.ts",
+      "name": "global name search clears stale city filters and keeps bounded pagination",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
