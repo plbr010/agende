@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T14:51:20.380Z",
+  "checked_at": "2026-10-14T15:01:38.720Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 182,
+      "passed": 185,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 295,
+    "passed": 298,
     "failed": 0,
     "skipped": 0
   },
@@ -553,6 +553,24 @@
     {
       "file": "src/components/booking/public-booking-flow.test.ts",
       "name": "returning to the slot step clears stale times before refetch",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/discovery/publication-form.test.ts",
+      "name": "publication form keeps a native checkbox, announces errors and resets after save",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/discovery/publication-form.test.ts",
+      "name": "perfil explains when discovery publication RPC is missing instead of hiding the block",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/discovery/publication-form.test.ts",
+      "name": "publication action never leaks raw RPC text and handles a missing contract",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

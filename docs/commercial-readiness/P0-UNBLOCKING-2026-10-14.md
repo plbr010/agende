@@ -4,7 +4,7 @@ Recomendação atual: **NO-GO comercial**. Há implementação e homologação n
 
 ## Estado revalidado
 
-Main e produção: `ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043`, após merge humano do PR #41. Vercel `dpl_3GaQJAjW8Z3jfng9KXaQRdCmN4LE` READY. PRs #31–42 integrados; trabalho do Cursor preservado. Nova branch `codex/p0-launch-unblocking-2026-10-14`, baseada nessa main, sem merge automático.
+Main e produção revalidadas ao finalizar: `550a59a430817fef5f53cbe94d9a4ac33f9b856d`, após merge humano do PR #43. Vercel `dpl_CikKVhZW6waPDgFccNNtNQ2sMBoP` READY. PRs #31–43 integrados; trabalho do Cursor preservado. A branch `codex/p0-launch-unblocking-2026-10-14` começou em `ad24a7f` e incorporou o PR #43. O único conflito foi o receipt gerado de testes, regenerado com todos os casos. Sem merge automático do nosso PR.
 
 Entrega: [PR #44](https://github.com/plbr010/agende/pull/44). Preview isolado READY: `dpl_87m2oanQBCCy6Lcn9paxBeAChXef`, commit `cbce09bf20bcedacf5c627aa241eeec27de13560`; isso comprova deploy, não aceite comercial. Overrides registrados em `docs/staging/p0-preview-bindings.json`.
 
@@ -30,10 +30,10 @@ Snapshot sem dados de clientes/segredos: [p0-current-state-2026-10-14.json](p0-c
 
 | Verificação | Resultado e limite |
 | --- | --- |
-| Aplicação | 295 PASS, 0 FAIL, 0 SKIP no Node 24; inclui 30 testes PGlite, 11 integrações com Auth mock e 14 mocks Stripe. Não é SMTP/Stripe E2E. |
+| Aplicação | 298 PASS, 0 FAIL, 0 SKIP no Node 24 após integrar PR #43; inclui 30 testes PGlite, 11 integrações com Auth mock e 14 mocks Stripe. Não é SMTP/Stripe E2E. |
 | PostgreSQL 17.6 nativo | 49 PASS + cinco suítes SQL; 8 de concorrência, 30 SQL e 11 integrações com Auth fixture. Não somar como casos únicos aos 295. |
 | Lint e build | PASS; Next 16.3.8, tipos compilados. Uma primeira execução concorrente de testes falhou no worker signup; teste isolado e suíte completa seguintes passaram. Falha preservada. |
-| Navegador staging real | 8 jornadas PASS, incluindo login, 8 páginas operacionais, criação atômica de serviço, publicação/retirada, descoberta e reserva na agenda. Contas anteriores confirmadas por fixture; isso não prova signup/SMTP. |
+| Navegador staging real | 8 jornadas PASS antes do PR #43, incluindo reserva na agenda; receipt `p0-browser-full-before-pr43.json`. Após #43, 7 jornadas PASS de login, 8 páginas operacionais, serviço, publicação/retirada, descoberta e logout; a reserva foi explicitamente omitida devido à quota atual. Contas confirmadas por fixture: não prova signup/SMTP. |
 | Descoberta API real | 7 checks PASS; consentimento, cidade, nomes globais, páginas distintas, privacidade e autorização. |
 | API operacional reexecutada | 5 grupos PASS; concorrência de reserva BLOCKED por `booking_rate_limited` do cliente sintético. Casos dependentes não reexecutados. Proteção mantida, não apagamos eventos nem aumentamos quota. |
 | Auth/Edge HTTP | Confirmação obrigatória, sessão real de fixture, billing anônimo/token inválido recusados e webhook sem assinatura recusado. Chave billing ausente: BLOCKED. |

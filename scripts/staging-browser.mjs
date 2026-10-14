@@ -68,7 +68,7 @@ try{
     await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
     assert.ok(await search.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   });
-  await check('mobile discovery to real booking persists on the professional agenda',async()=>{
+  if(process.env.AGENDE_STAGING_SKIP_BOOKING!=='1')await check('mobile discovery to real booking persists on the professional agenda',async()=>{
     lastPage=search;
     const member=(await ok(client.from('professional_services').select('professional_member_id').eq('service_id',serviceId).eq('active',true)))[0].professional_member_id;
     const day=new Date(Date.now()+3*86400000).toISOString().slice(0,10);
@@ -115,7 +115,7 @@ try{
     if(enabled)await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:true}));
     if(serviceId)await ok(client.from('services').update({archived_at:new Date().toISOString(),active:false}).eq('id',serviceId));
   }catch{restored=false;}}
-  await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,synthetic_booking_cancelled:Boolean(appointmentId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');
+  await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,booking_skipped:process.env.AGENDE_STAGING_SKIP_BOOKING==='1',booking_skip_reason:process.env.AGENDE_STAGING_SKIP_BOOKING==='1'?'Explicit bounded rerun; real booking fixture quota already reached':undefined,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,synthetic_booking_cancelled:Boolean(appointmentId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');
   if(failure) console.error(redact(serverDiagnostics));
 }
 if(failure)throw failure;assert.equal(restored,true);

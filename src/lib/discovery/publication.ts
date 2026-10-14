@@ -15,9 +15,16 @@ export async function setDiscoveryPublicationAction(_previous: ActionState, form
     p_workspace_id: workspace.id,
     p_enabled: form.get("enabled") === "on",
   });
-  if (error) return { error: error.message.includes("discovery_locality_required")
-    ? "Preencha cidade e estado nas configurações gerais antes de publicar."
-    : "Não foi possível atualizar a publicação. Verifique sua assinatura e tente novamente." };
+  if (error) {
+    const message = error.message ?? "";
+    if (error.code === "PGRST202" || error.code === "42883" || message.includes("could not find the function")) {
+      return { error: "A publicação na busca ainda não está disponível neste ambiente." };
+    }
+    if (message.includes("discovery_locality_required")) {
+      return { error: "Preencha cidade e estado nas configurações gerais antes de publicar." };
+    }
+    return { error: "Não foi possível atualizar a publicação. Verifique sua assinatura e tente novamente." };
+  }
   revalidatePath("/app/configuracoes/perfil");
   return { success: "Publicação atualizada." };
 }

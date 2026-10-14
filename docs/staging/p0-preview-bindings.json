@@ -7,14 +7,14 @@
     {
       "key": "NEXT_PUBLIC_SUPABASE_URL",
       "created": true,
-      "id": null,
+      "id": "cYv5la8DuurrBcOU",
       "branch": "codex/p0-launch-unblocking-2026-10-14",
       "target": "preview"
     },
     {
       "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
       "created": true,
-      "id": null,
+      "id": "NXzmyEkn4joDCPl8",
       "branch": "codex/p0-launch-unblocking-2026-10-14",
       "target": "preview"
     }

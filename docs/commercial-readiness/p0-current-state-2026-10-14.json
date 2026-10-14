@@ -1,10 +1,10 @@
 {
   "checked_at": "2026-10-14T14:46:08Z",
-  "base_commit": "ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043",
+  "base_commit": "550a59a430817fef5f53cbe94d9a4ac33f9b856d",
   "production_deployment": {
-    "id": "dpl_3GaQJAjW8Z3jfng9KXaQRdCmN4LE",
+    "id": "dpl_CikKVhZW6waPDgFccNNtNQ2sMBoP",
     "state": "READY",
-    "commit": "ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043"
+    "commit": "550a59a430817fef5f53cbe94d9a4ac33f9b856d"
   },
   "security": {
     "wohimauqgywshbbejjcl": {
@@ -596,5 +596,7 @@
   ],
   "production_mutations": 0,
   "production_customer_rows_read": 0,
-  "secrets_in_report": false
+  "secrets_in_report": false,
+  "initial_base_commit": "ad24a7f9ac7b09fedb1ee0a6cfdecacfe170b043",
+  "integrated_cursor_pr": 43
 }
