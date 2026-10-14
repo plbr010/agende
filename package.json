@@ -15,7 +15,8 @@
     "test:smoke": "node scripts/audit-built-site.mjs",
     "test:postgres": "node scripts/run-pg17-tests.mjs",
     "test:commercial": "node --test scripts/commercial-model.test.mjs",
-    "test:load:local": "node scripts/run-pg17-tests.mjs scripts/capacity-load.test.mjs"
+    "test:load:local": "node scripts/run-pg17-tests.mjs scripts/capacity-load.test.mjs",
+    "test:e2e": "node scripts/isolated-e2e.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -41,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "pg": "8.23.1",
+    "playwright": "^1.64.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"

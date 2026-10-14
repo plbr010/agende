@@ -12,7 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordField } from "@/components/usability/password-field";
 import { PortugueseForm } from "@/components/usability/portuguese-form";
+import { nextEnabledRadioIndex } from "@/lib/usability/roving-radio";
 import { cn } from "@/lib/utils";
+
+const SIGNUP_INTENTS = ["client", "professional"] as const;
 
 const initial: ActionState = {};
 
@@ -36,6 +39,19 @@ export function SignupForm({
 
   const canSubmit = !pending && (intent === "client" || intent === "professional") && terms;
 
+  function onIntentKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, current: (typeof SIGNUP_INTENTS)[number]) {
+    const disabled = SIGNUP_INTENTS.map((value) => value === "client" && lockIntent);
+    const next = nextEnabledRadioIndex(SIGNUP_INTENTS.indexOf(current), disabled, event.key);
+    if (next === null) return;
+    event.preventDefault();
+    const value = SIGNUP_INTENTS[next];
+    if (!value) return;
+    setIntent(value);
+    window.requestAnimationFrame(() => {
+      document.getElementById(`signup-intent-${value}`)?.focus();
+    });
+  }
+
   return (
     <PortugueseForm action={action} className="space-y-6">
       {next ? <input type="hidden" name="next" value={next} /> : null}
@@ -55,12 +71,15 @@ export function SignupForm({
         ) : null}
         <div role="radiogroup" aria-label="O que você quer fazer no Agendê?" className="grid gap-3">
           <button
+            id="signup-intent-client"
             type="button"
             role="radio"
             aria-checked={intent === "client"}
+            tabIndex={intent === "client" || intent === "" ? 0 : -1}
             onClick={() => {
               if (!lockIntent) setIntent("client");
             }}
+            onKeyDown={(event) => onIntentKeyDown(event, "client")}
             disabled={lockIntent}
             className={cn(
               "min-h-16 agende-panel rounded-[1.25rem] p-4 text-left ring-1 ring-[#f0e4de] transition",
@@ -72,10 +91,13 @@ export function SignupForm({
             <p className="mt-1 font-medium">Agendar manicure, cabelo e outros serviços.</p>
           </button>
           <button
+            id="signup-intent-professional"
             type="button"
             role="radio"
             aria-checked={intent === "professional"}
+            tabIndex={intent === "professional" || (intent === "" && lockIntent) ? 0 : -1}
             onClick={() => setIntent("professional")}
+            onKeyDown={(event) => onIntentKeyDown(event, "professional")}
             className={cn(
               "min-h-16 agende-panel rounded-[1.25rem] p-4 text-left ring-1 ring-[#f0e4de] transition",
               intent === "professional" && "ring-2 ring-primary bg-metric-blush",

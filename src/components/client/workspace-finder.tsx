@@ -15,15 +15,18 @@ export function WorkspaceFinder({
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [opening, setOpening] = useState(false);
 
   function openWorkspace(event: React.FormEvent) {
     event.preventDefault();
+    if (opening) return;
     const slug = extractPublicWorkspaceSlug(value);
     if (!slug) {
       setError("Cole o link que o salão te mandou, pelo WhatsApp ou Instagram.");
       return;
     }
     setError(null);
+    setOpening(true);
     router.push(publicProfilePath(slug));
   }
 
@@ -72,8 +75,8 @@ export function WorkspaceFinder({
             Use o link que o salão te mandou. Se não tiver o link, procure por cidade ou pelo nome acima.
           </p>
         )}
-        <Button type="submit" className="h-11 rounded-full">
-          Ir para agendar
+        <Button type="submit" className="h-11 rounded-full" disabled={opening} aria-busy={opening}>
+          {opening ? "Abrindo..." : "Ir para agendar"}
         </Button>
       </form>
     </div>

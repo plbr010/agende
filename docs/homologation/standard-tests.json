@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T03:12:27.028Z",
+  "checked_at": "2026-10-14T03:36:22.289Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 167,
+      "passed": 172,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 277,
+    "passed": 282,
     "failed": 0,
     "skipped": 0
   },
@@ -529,6 +529,12 @@
     {
       "file": "src/components/usability/confirm-action.test.ts",
       "name": "confirmation opens from a dialog trigger button, not a clickable span",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "opening a salon by link cannot be double-submitted",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1513,6 +1519,30 @@
     {
       "file": "src/lib/usability/flows.test.ts",
       "name": "every recorded flow names a goal and a difficulty note",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/homologation-matrix.test.ts",
+      "name": "homologation board never marks a missing backend as PASS",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/homologation-matrix.test.ts",
+      "name": "isolated browser e2e uses roles and does not invent salons",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/roving-radio.test.ts",
+      "name": "arrow keys move around a radiogroup and ignore unrelated keys",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/usability/roving-radio.test.ts",
+      "name": "disabled radios are skipped, including a locked client intent",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

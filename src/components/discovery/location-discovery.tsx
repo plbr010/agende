@@ -21,6 +21,7 @@ import {
   type DiscoverySearchResult,
 } from "@/lib/discovery/contract";
 import { reverseGeocodeLocality } from "@/lib/discovery/geocode";
+import { nextRadioIndex } from "@/lib/usability/roving-radio";
 import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +58,9 @@ export function LocationDiscovery({
       return;
     }
     const handle = window.setTimeout(() => {
-      void listPublicLocalitiesAction(city, state || undefined).then(setSuggestions);
+      void listPublicLocalitiesAction(city, state || undefined)
+        .then(setSuggestions)
+        .catch(() => setSuggestions([]));
     }, 300);
     return () => window.clearTimeout(handle);
   }, [city, state, mode]);
@@ -70,6 +73,19 @@ export function LocationDiscovery({
     if (next !== "nearby") {
       setCoordinates(undefined);
     }
+  }
+
+  function onModeKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, current: DiscoveryMode) {
+    const index = MODES.findIndex((item) => item.id === current);
+    const next = nextRadioIndex(index, MODES.length, event.key);
+    if (next === null) return;
+    event.preventDefault();
+    const id = MODES[next]?.id;
+    if (!id) return;
+    applyMode(id);
+    window.requestAnimationFrame(() => {
+      document.getElementById(`discovery-mode-${id}`)?.focus();
+    });
   }
 
   function currentSearchInput(offset = 0): DiscoverySearchInput {
@@ -191,10 +207,13 @@ export function LocationDiscovery({
           {MODES.map((item) => (
             <button
               key={item.id}
+              id={`discovery-mode-${item.id}`}
               type="button"
               role="radio"
               aria-checked={mode === item.id}
+              tabIndex={mode === item.id ? 0 : -1}
               onClick={() => applyMode(item.id)}
+              onKeyDown={(event) => onModeKeyDown(event, item.id)}
               className={cn(
                 "min-h-11 rounded-full px-4 text-sm font-medium ring-1 ring-[#f0e4de] transition",
                 mode === item.id ? "bg-primary text-primary-foreground ring-primary" : "bg-background text-foreground",
