@@ -33,6 +33,7 @@ import { bookingStepCaption, shouldSkipProfessionalStep } from "@/lib/usability/
 import { addDaysIso, formatDateTimeInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
 import { formatPhoneBr } from "@/lib/validation/phone";
 import { formatCentsToReais } from "@/lib/validation/money";
+import { cn } from "@/lib/utils";
 
 const STEP_LABEL: Record<BookingStep, string> = {
   service: "Serviço",
@@ -94,6 +95,7 @@ export function PublicBookingFlow({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmation, setConfirmation] = useState<PublicBookingConfirmation | null>(null);
   const [pending, startTransition] = useTransition();
+  const reserving = useRef(false);
   const slotsRequestId = useRef(0);
 
   const service = catalog.services.find((item) => item.id === serviceId) ?? null;
@@ -114,7 +116,6 @@ export function PublicBookingFlow({
     if (shouldSkipProfessionalStep(professionalsForService.length) && professionalsForService[0] && professionalId === null) {
       selectProfessional(professionalsForService[0].id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- local helper would retrigger every render
   }, [step, professionalsForService, professionalId]);
 
   useEffect(() => {
@@ -144,11 +145,13 @@ export function PublicBookingFlow({
   }, [step, serviceId, professionalId, localDate, catalog.slug]);
 
   function go(next: BookingStep) {
+    if (pending || reserving.current) return;
     setFormError(null);
     setStep(next);
   }
 
   function selectService(next: PublicBookingService) {
+    if (pending || reserving.current) return;
     setServiceId(next.id);
     setProfessionalId(null);
     setLocalDate(null);
@@ -165,16 +168,19 @@ export function PublicBookingFlow({
   }
 
   function selectProfessional(id: string | typeof ANY_PROFESSIONAL) {
+    if (reserving.current) return;
     setProfessionalId(id);
     setLocalDate(null);
     setStartsAt(null);
     setSlots([]);
     setSlotsError(null);
     setSlotsLoading(false);
-    go("date");
+    setFormError(null);
+    setStep("date");
   }
 
   function selectDate(date: string) {
+    if (pending || reserving.current) return;
     setLocalDate(date);
     setStartsAt(null);
     setSlots([]);
@@ -184,6 +190,7 @@ export function PublicBookingFlow({
   }
 
   function submitDetails() {
+    if (pending || reserving.current) return;
     const parsed = parsePublicBookingDetails({ fullName, phone, email, customerNote });
     if (!parsed.success) {
       const nextErrors: Record<string, string> = {};
@@ -204,32 +211,39 @@ export function PublicBookingFlow({
   }
 
   function confirm() {
+    if (pending || reserving.current) return;
     if (!serviceId || professionalId === null || !startsAt) {
       setFormError("Escolha serviço, profissional e horário.");
       return;
     }
+    reserving.current = true;
     startTransition(async () => {
-      const result = await createPublicAppointmentAction({
-        slug: catalog.slug,
-        serviceId,
-        professionalMemberId: professionalId === ANY_PROFESSIONAL ? null : professionalId,
-        startsAt,
-        fullName,
-        phone,
-        email,
-        customerNote: customerNote || null,
-      });
-      if (result.error) {
-        setFormError(result.error);
-        return;
-      }
-      if (result.confirmation) {
-        setConfirmation(result.confirmation);
+      try {
+        const result = await createPublicAppointmentAction({
+          slug: catalog.slug,
+          serviceId,
+          professionalMemberId: professionalId === ANY_PROFESSIONAL ? null : professionalId,
+          startsAt,
+          fullName,
+          phone,
+          email,
+          customerNote: customerNote || null,
+        });
+        if (result.error) {
+          setFormError(result.error);
+          return;
+        }
+        if (result.confirmation) {
+          setConfirmation(result.confirmation);
+        }
+      } finally {
+        reserving.current = false;
       }
     });
   }
 
   function proceedAfterSlot(slot: string) {
+    if (pending || reserving.current) return;
     setStartsAt(slot);
     const parsed = parsePublicBookingDetails({ fullName, phone, email, customerNote });
     if (parsed.success) {
@@ -265,7 +279,15 @@ export function PublicBookingFlow({
       <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-lg items-center justify-between px-4">
           <BrandLogo size="sm" />
-          <Link href={`/p/${catalog.slug}`} className="inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline">
+          <Link
+            href={`/p/${catalog.slug}`}
+            aria-disabled={pending}
+            tabIndex={pending ? -1 : undefined}
+            className={cn(
+              "inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline",
+              pending && "pointer-events-none opacity-60",
+            )}
+          >
             Voltar ao salão
           </Link>
         </div>
@@ -458,7 +480,7 @@ export function PublicBookingFlow({
                 className="min-h-24 rounded-2xl"
               />
             </div>
-            <Button type="button" className="h-12 w-full rounded-full" onClick={submitDetails}>
+            <Button type="button" className="h-12 w-full rounded-full" onClick={submitDetails} disabled={pending}>
               Continuar
             </Button>
           </section>
@@ -504,16 +526,16 @@ export function PublicBookingFlow({
               {pending ? "Reservando…" : "Reservar este horário"}
             </Button>
             <div className="grid grid-cols-2 gap-2">
-              <Button type="button" variant="outline" className="h-11" onClick={() => go("service")}>
+              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("service")}>
                 Mudar serviço
               </Button>
-              <Button type="button" variant="outline" className="h-11" onClick={() => go("date")}>
+              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("date")}>
                 Mudar dia
               </Button>
-              <Button type="button" variant="outline" className="h-11" onClick={() => go("slot")}>
+              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("slot")}>
                 Mudar horário
               </Button>
-              <Button type="button" variant="outline" className="h-11" onClick={() => go("details")}>
+              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("details")}>
                 Alterar meus dados
               </Button>
             </div>
@@ -534,6 +556,8 @@ export function PublicBookingFlow({
               type="button"
               variant="outline"
               className="h-12 w-full rounded-full"
+              disabled={pending}
+              aria-busy={pending}
               onClick={() => go(previousBookingStep(step))}
             >
               Voltar

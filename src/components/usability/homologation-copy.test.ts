@@ -8,6 +8,13 @@ function source(path: string) {
   return readFileSync(join(dirname(fileURLToPath(import.meta.url)), path), "utf8");
 }
 
+test("copying a public link does not fake success", () => {
+  const button = source("../usability/copy-link-button.tsx");
+  assert.match(button, /copyTextToClipboard/);
+  assert.match(button, /CLIPBOARD_COPY\.failure/);
+  assert.doesNotMatch(button, /navigator\.clipboard\.writeText/);
+});
+
 test("sensitive saves ask inside the page and keep the form", () => {
   const form = source("../modules/management-form.tsx");
   assert.doesNotMatch(form, /window\.confirm/);

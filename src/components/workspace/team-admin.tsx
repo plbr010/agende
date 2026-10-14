@@ -1,9 +1,11 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { toast } from "sonner";
 import type { TeamMember } from "@/lib/catalog/queries";
 import type { ActionState } from "@/lib/auth/actions";
+import { CLIPBOARD_COPY, copyTextToClipboard } from "@/lib/usability/clipboard";
+import { PendingForm } from "@/components/usability/pending-form";
 import {
   createTeamInviteAction,
   deactivateMemberAction,
@@ -57,12 +59,23 @@ export function SeatUsageCard({ seats }: { seats: SeatUsage }) {
 export function TeamInviteCard({ canManage }: { canManage: boolean }) {
   const [state, action, pending] = useActionState(createTeamInviteAction, {} as InviteActionState);
   const [copied, setCopied] = useState(false);
+  const [copying, setCopying] = useState(false);
 
   async function copyLink() {
-    if (!state.inviteLink) return;
-    await navigator.clipboard.writeText(state.inviteLink);
-    setCopied(true);
-    toast.success("Link copiado.");
+    if (!state.inviteLink || copying) return;
+    setCopying(true);
+    try {
+      const ok = await copyTextToClipboard(state.inviteLink);
+      if (!ok) {
+        toast.error(CLIPBOARD_COPY.failure);
+        return;
+      }
+      setCopied(true);
+      toast.success(CLIPBOARD_COPY.inviteSuccess);
+      window.setTimeout(() => setCopied(false), 2500);
+    } finally {
+      setCopying(false);
+    }
   }
 
   if (!canManage) {
@@ -108,7 +121,14 @@ export function TeamInviteCard({ canManage }: { canManage: boolean }) {
               {state.emailBound ? "Link vinculado ao e-mail informado" : "Link secreto. Copie agora."}
             </p>
             <p className="break-all text-sm text-muted-foreground">{state.inviteLink}</p>
-            <Button type="button" variant="outline" className="h-11" onClick={copyLink}>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11"
+              onClick={() => void copyLink()}
+              disabled={copying}
+              aria-busy={copying}
+            >
               {copied ? "Copiado" : "Copiar link de convite"}
             </Button>
           </div>
@@ -146,12 +166,16 @@ export function PendingInvitesList({
               </p>
               <p className="text-xs text-muted-foreground">Expira em {formatDate(invite.expiresAt, timezone)}</p>
             </div>
-            <form action={(formData) => runAction(revokeTeamInviteAction, formData)}>
-              <input type="hidden" name="inviteId" value={invite.id} />
-              <Button type="submit" variant="ghost" className="h-11">
-                Cancelar convite
-              </Button>
-            </form>
+            <PendingForm action={(formData) => runAction(revokeTeamInviteAction, formData)}>
+              {(busy) => (
+                <>
+                  <input type="hidden" name="inviteId" value={invite.id} />
+                  <Button type="submit" variant="ghost" className="h-11" disabled={busy} aria-busy={busy}>
+                    {busy ? "Cancelando..." : "Cancelar convite"}
+                  </Button>
+                </>
+              )}
+            </PendingForm>
           </div>
         ))}
       </CardContent>
@@ -176,89 +200,115 @@ export function MemberManagementList({
 
   return (
     <div className="grid gap-3">
-      {members.map((member) => {
-        const isOwner = member.role === "owner";
-        const isSelf = member.userId === currentUserId;
-        return (
-          <Card key={`manage-${member.memberId}`} className="border-none ring-1 ring-border">
-            <CardHeader>
-              <CardTitle className="truncate">{member.displayName ?? member.fullName}</CardTitle>
-              <CardDescription className="truncate">
-                Entrou em {formatDate(member.joinedAt, timezone)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">{MEMBER_ROLE_LABEL[member.role]}</Badge>
-                <Badge variant="outline">{MEMBER_STATUS_LABEL[member.status]}</Badge>
-                {member.hasProfessionalProfile ? (
-                  <Badge variant={member.bookingEnabled ? "default" : "outline"}>
-                    {member.bookingEnabled ? "Recebe reservas" : "Pausado para reservas"}
-                  </Badge>
-                ) : (
-                  <Badge variant="outline">Recepção</Badge>
-                )}
-                <Badge variant="ghost">{member.serviceCount} serviços</Badge>
-              </div>
-              {isOwner ? (
-                <p className="text-sm text-muted-foreground">
-                  O dono não pode ser removido nem rebaixado nesta etapa.
-                </p>
-              ) : (
-                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                  {member.status !== "removed" ? (
-                    <form
-                      action={(formData) => runAction(updateMemberRoleAction, formData)}
-                      className="flex min-w-0 flex-1 gap-2"
-                    >
-                      <input type="hidden" name="memberId" value={member.memberId} />
-                      <select
-                        name="role"
-                        defaultValue={member.role}
-                        className={selectClassName}
-                        aria-label="Função na equipe"
-                      >
-                        {INVITE_ROLES.map((role) => (
-                          <option key={role} value={role}>
-                            {MEMBER_ROLE_LABEL[role]}
-                          </option>
-                        ))}
-                      </select>
-                      <Button type="submit" variant="outline" className="h-11 shrink-0">
-                        Salvar função
-                      </Button>
-                    </form>
-                  ) : null}
-                  {member.status === "active" ? (
-                    <form action={(formData) => runAction(deactivateMemberAction, formData)}>
-                      <input type="hidden" name="memberId" value={member.memberId} />
-                      <Button type="submit" variant="outline" className="h-11">
-                        Desativar{isSelf ? " (você)" : ""}
-                      </Button>
-                    </form>
-                  ) : null}
-                  {member.status === "inactive" ? (
-                    <form action={(formData) => runAction(reactivateMemberAction, formData)}>
-                      <input type="hidden" name="memberId" value={member.memberId} />
-                      <Button type="submit" variant="outline" className="h-11">
-                        Reativar
-                      </Button>
-                    </form>
-                  ) : null}
-                  {member.status !== "removed" ? (
-                    <form action={(formData) => runAction(removeMemberAction, formData)}>
-                      <input type="hidden" name="memberId" value={member.memberId} />
-                      <Button type="submit" variant="ghost" className="h-11">
-                        Remover
-                      </Button>
-                    </form>
-                  ) : null}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
+      {members.map((member) => (
+        <MemberManageCard
+          key={`manage-${member.memberId}`}
+          member={member}
+          currentUserId={currentUserId}
+          timezone={timezone}
+        />
+      ))}
     </div>
+  );
+}
+
+function MemberManageCard({
+  member,
+  currentUserId,
+  timezone,
+}: {
+  member: TeamMember;
+  currentUserId: string;
+  timezone: string;
+}) {
+  const [pending, startTransition] = useTransition();
+  const isOwner = member.role === "owner";
+  const isSelf = member.userId === currentUserId;
+
+  function submit(action: (formData: FormData) => Promise<ActionState>, formData: FormData) {
+    if (pending) return;
+    startTransition(() => {
+      void runAction(action, formData);
+    });
+  }
+
+  return (
+    <Card className="border-none ring-1 ring-border">
+      <CardHeader>
+        <CardTitle className="truncate">{member.displayName ?? member.fullName}</CardTitle>
+        <CardDescription className="truncate">
+          Entrou em {formatDate(member.joinedAt, timezone)}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="secondary">{MEMBER_ROLE_LABEL[member.role]}</Badge>
+          <Badge variant="outline">{MEMBER_STATUS_LABEL[member.status]}</Badge>
+          {member.hasProfessionalProfile ? (
+            <Badge variant={member.bookingEnabled ? "default" : "outline"}>
+              {member.bookingEnabled ? "Recebe reservas" : "Pausado para reservas"}
+            </Badge>
+          ) : (
+            <Badge variant="outline">Recepção</Badge>
+          )}
+          <Badge variant="ghost">{member.serviceCount} serviços</Badge>
+        </div>
+        {isOwner ? (
+          <p className="text-sm text-muted-foreground">
+            O dono não pode ser removido nem rebaixado nesta etapa.
+          </p>
+        ) : (
+          <fieldset disabled={pending} className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            {member.status !== "removed" ? (
+              <form
+                action={(formData) => submit(updateMemberRoleAction, formData)}
+                className="flex min-w-0 flex-1 gap-2"
+              >
+                <input type="hidden" name="memberId" value={member.memberId} />
+                <select
+                  name="role"
+                  defaultValue={member.role}
+                  className={selectClassName}
+                  aria-label="Função na equipe"
+                >
+                  {INVITE_ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {MEMBER_ROLE_LABEL[role]}
+                    </option>
+                  ))}
+                </select>
+                <Button type="submit" variant="outline" className="h-11 shrink-0" aria-busy={pending}>
+                  {pending ? "Salvando..." : "Salvar função"}
+                </Button>
+              </form>
+            ) : null}
+            {member.status === "active" ? (
+              <form action={(formData) => submit(deactivateMemberAction, formData)}>
+                <input type="hidden" name="memberId" value={member.memberId} />
+                <Button type="submit" variant="outline" className="h-11">
+                  {pending ? "Salvando..." : `Desativar${isSelf ? " (você)" : ""}`}
+                </Button>
+              </form>
+            ) : null}
+            {member.status === "inactive" ? (
+              <form action={(formData) => submit(reactivateMemberAction, formData)}>
+                <input type="hidden" name="memberId" value={member.memberId} />
+                <Button type="submit" variant="outline" className="h-11">
+                  {pending ? "Salvando..." : "Reativar"}
+                </Button>
+              </form>
+            ) : null}
+            {member.status !== "removed" ? (
+              <form action={(formData) => submit(removeMemberAction, formData)}>
+                <input type="hidden" name="memberId" value={member.memberId} />
+                <Button type="submit" variant="ghost" className="h-11">
+                  {pending ? "Salvando..." : "Remover"}
+                </Button>
+              </form>
+            ) : null}
+          </fieldset>
+        )}
+      </CardContent>
+    </Card>
   );
 }
