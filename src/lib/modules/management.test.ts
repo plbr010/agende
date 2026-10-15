@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { resolvePeriod, todayInTimezone } from "./periods";
-import { mutationSchema, parseMutation } from "./mutations";
+import { mutationSchema, parseMutation, mutationError } from "./mutations";
 import { trialDaysRemaining, planSchema } from "@/lib/billing/plans";
 import { PLANS } from "@/lib/marketing/content";
 
@@ -35,6 +35,18 @@ test("plan selection is limited to the catalog and remaining days never go negat
   assert.equal(trialDaysRemaining("2026-09-08T00:00:00Z", Date.parse("2026-09-09T00:00:00Z")), 0);
 });
 const id = "10000000-0000-4000-8000-000000000001";
+test("inventory forms respect persisted limits on create and edit", () => {
+  const product = { name: "Produto", description: "", sku: "", unit: "unidade", minimum: "0", cost: "", quantity: "0", id, active: "true" };
+  for (const action of ["product-create", "product-update"]) {
+    assert.equal(mutationSchema.safeParse({ ...product, action }).success, true);
+    assert.equal(mutationSchema.safeParse({ ...product, action, name: "N".repeat(80), description: "D".repeat(500), sku: "S".repeat(40), cost: "100.000,00" }).success, true);
+    for (const invalid of [{ name: "N".repeat(81) }, { description: "D".repeat(501) }, { sku: "S".repeat(41) }, { sku: "código com espaço" }, { sku: "-SKU" }, { cost: "100.000,01" }]) {
+      assert.equal(mutationSchema.safeParse({ ...product, action, ...invalid }).success, false, JSON.stringify(invalid));
+    }
+  }
+  assert.match(mutationError("workspace_subscription_inactive"), /assinatura|teste/i);
+  assert.match(mutationError('duplicate key violates unique constraint "inventory_products_workspace_sku_lower_idx"'), /código já está em uso/);
+});
 test("stock requires meaningful quantities, but adjustment may set zero", () => {
   const base = {action: "movement", id, reason: "Contagem", quantity: "0"};
   assert.equal(mutationSchema.safeParse({...base, type: "exit"}).success, false);

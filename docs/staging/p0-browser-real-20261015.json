@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-15T17:37:44.202Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "browser login creates a real staging session and opens manager settings",
+    "manager publishes through the actual form and persistence survives reload",
+    "authenticated operational pages render without a server component boundary crash",
+    "browser creates service and professional link through the atomic RPC",
+    "mobile city search renders real salon and global search ignores the previous city",
+    "withdrawal through manager UI removes the salon from the next real browser search",
+    "browser logout clears the session and a protected route returns to login"
+  ],
+  "passed": true,
+  "booking_skipped": true,
+  "booking_skip_reason": "Explicit bounded rerun; real booking fixture quota already reached",
+  "fixtures_restored": true,
+  "synthetic_service_archived": true,
+  "synthetic_booking_cancelled": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

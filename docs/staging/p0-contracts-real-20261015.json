@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-15T17:41:19.470Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "cleanup": true,
+  "mode": "real staging Auth/PostgREST; temporary confirmed employee is an admin fixture, no SMTP proof",
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "reproduce production description constraint in staging without committing a product",
+      "status": "PASS"
+    },
+    {
+      "name": "corrected create and edit contracts persist at database boundaries",
+      "status": "PASS"
+    },
+    {
+      "name": "stock movements persist and foreign establishment is denied",
+      "status": "PASS"
+    },
+    {
+      "name": "service create edit professional links and deactivation persist",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid revoked expired email-mismatched and owner-role invitations rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "existing confirmed account accepts exact role once without an individual subscription",
+      "status": "PASS"
+    },
+    {
+      "name": "a second authorized invitation preserves the first membership and client area",
+      "status": "PASS"
+    }
+  ]
+}

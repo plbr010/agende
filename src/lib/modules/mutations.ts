@@ -2,10 +2,18 @@ import { z } from "zod";
 import { parseReaisToCents } from "@/lib/validation/money";
 import { planSchema } from "@/lib/billing/plans";
 import { paymentMethodSchema } from "@/lib/finance/queries";
+import { inactiveWorkspaceMessage } from "@/lib/workspace/settings-errors";
 const id = z.string().uuid();
 const amount = z.string().transform(parseReaisToCents).pipe(z.number().int().nonnegative());
 const quantity = z.string().trim().min(1).transform(Number).pipe(z.number().min(0).max(999999999.999));
-const product = { name: z.string().trim().min(2).max(120), description: z.string().max(2000), sku: z.string().max(80), unit: z.enum(["unidade", "ml", "g"]), minimum: quantity, cost: z.union([z.literal("").transform(() => null), amount]) };
+// Match inventory_products constraints: accepting wider input here only fails at commit.
+const product = {
+    name: z.string().trim().min(2, "Informe um nome com 2 a 80 caracteres.").max(80, "O nome pode ter até 80 caracteres."),
+    description: z.string().trim().max(500, "A descrição pode ter até 500 caracteres."),
+    sku: z.string().trim().max(40, "O código pode ter até 40 caracteres.").refine(value => value === "" || /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value), "Use letras, números, ponto, hífen ou sublinhado no código, começando por letra ou número."),
+    unit: z.enum(["unidade", "ml", "g"]), minimum: quantity,
+    cost: z.union([z.literal("").transform(() => null), amount.pipe(z.number().max(10000000, "O custo máximo por unidade é R$ 100.000,00."))]),
+};
 export const mutationSchema = z.discriminatedUnion("action", [
     z.object({ action: z.literal("trial"), plan: planSchema }),
     z.object({ action: z.literal("product-create"), ...product, quantity }),
@@ -40,6 +48,8 @@ export function mutationPath(action: Mutation["action"]) {
 }
 export function mutationError(message: string) {
     const errors: Record<string, string> = {
+        workspace_subscription_inactive: inactiveWorkspaceMessage,
+        inventory_products_workspace_sku_lower_idx: "Este código já está em uso no seu estabelecimento. Escolha outro.",
         plan_professional_limit_reached: "Sua equipe excede o limite deste plano. Reduza os profissionais ativos antes de trocar.",
         trial_not_active: "A troca de plano está disponível apenas durante o teste.",
         workspace_subscription_required: "Seu negócio precisa de uma assinatura válida para continuar.",

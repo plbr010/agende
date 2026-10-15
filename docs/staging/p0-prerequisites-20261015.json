@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-15T17:29:17.258Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    {
+      "name": "GoTrue settings require email confirmation",
+      "status": "PASS",
+      "mode": "real HTTP"
+    },
+    {
+      "name": "billing rejects anonymous and invalid sessions",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
+      "name": "webhook rejects unsigned input",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
+      "name": "billing key prerequisite accepted; no Stripe API operation performed",
+      "status": "PASS",
+      "mode": "real deployed Edge"
+    },
+    {
+      "name": "real confirmed fixture login",
+      "status": "PASS",
+      "mode": "GoTrue; not signup/email delivery"
+    }
+  ],
+  "blockers": [],
+  "status": "PREREQUISITES_PASS",
+  "commercial_acceptance": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

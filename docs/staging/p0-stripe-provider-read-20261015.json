@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-15T17:39:30.494Z",
+  "account": "acct_1UPNGJQQUyqAaZvS",
+  "livemode": false,
+  "has_more": false,
+  "subscriptions": [
+    {
+      "id": "sub_1UQfvXQQUyqAaZvSUhkXMDpO",
+      "workspace_id": "c0398946-f812-480a-87bc-718f44589c1f",
+      "status": "active",
+      "plan": "salao",
+      "billing_interval": "annual",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQfvNQQUyqAaZvSVlvI2NPB",
+      "workspace_id": "ec254bfb-9ec9-4474-8e42-5b84078e282d",
+      "status": "active",
+      "plan": "salao",
+      "billing_interval": "monthly",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQfvDQQUyqAaZvSq7eDxHlB",
+      "workspace_id": "15bf5c54-e22c-4074-87e2-38229210bcd7",
+      "status": "active",
+      "plan": "equipe",
+      "billing_interval": "annual",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQVD7QQUyqAaZvSewB4Y85c",
+      "workspace_id": "04c9fd27-f4b6-4a63-aad5-1c1d67bd215a",
+      "status": "active",
+      "plan": "solo",
+      "billing_interval": "monthly",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQUeRQQUyqAaZvSdLMnyzJT",
+      "workspace_id": "ad9278f6-874c-4923-b376-74d65d087921",
+      "status": "active",
+      "plan": "salao",
+      "billing_interval": "annual",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQUdEQQUyqAaZvSDw1l8OOA",
+      "workspace_id": "2293888c-83c7-4252-a5bb-ba2c4e381c66",
+      "status": "active",
+      "plan": "salao",
+      "billing_interval": "monthly",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQUbVQQUyqAaZvStWn7a5Zc",
+      "workspace_id": "20a23122-0164-489f-b6c2-c9ea78c774a1",
+      "status": "active",
+      "plan": "equipe",
+      "billing_interval": "annual",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UQUYMQQUyqAaZvS9tXDnrTj",
+      "workspace_id": "454f310e-9160-4075-ac70-a37750f6d136",
+      "status": "active",
+      "plan": "solo",
+      "billing_interval": "annual",
+      "livemode": false,
+      "test_clock": null
+    },
+    {
+      "id": "sub_1UPNvhQQUyqAaZvSSqOgtQai",
+      "status": "active",
+      "livemode": false,
+      "test_clock": null
+    }
+  ]
+}
