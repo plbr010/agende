@@ -1,6 +1,6 @@
 import { CalendarHeart, Sparkles } from "lucide-react";
 import { MARKETING_CTAS } from "@/lib/marketing/content";
-import { FloralBranch, FloralCorner } from "@/components/brand/floral";
+import { FloralBranch, FloralCorner, FloralSprig } from "@/components/brand/floral";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 
 export function AudienceSplit({
@@ -35,7 +35,8 @@ export function AudienceSplit({
               Conhecer o Agendê
             </MarketingLinkButton>
           </article>
-          <article className="relative overflow-hidden rounded-[1.8rem] bg-metric-blush/80 p-6 ring-1 ring-[#f0e4de] sm:p-8">
+          <article className="relative isolate overflow-hidden rounded-[1.8rem] bg-metric-blush/80 p-6 ring-1 ring-[#f0e4de] sm:p-8">
+            <FloralSprig className="pointer-events-none absolute -right-6 -bottom-10 -z-10 h-36 w-24 opacity-80" />
             <span className="grid size-12 place-items-center rounded-full bg-white text-[var(--rose-ink)]">
               <CalendarHeart className="size-5" aria-hidden="true" />
             </span>

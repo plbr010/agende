@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BrandLogo } from "@/components/brand/logo";
-import { FloralBranch, FloralCorner } from "@/components/brand/floral";
+import { FloralBranch, FloralCorner, FloralSprig } from "@/components/brand/floral";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -322,7 +322,8 @@ export function PublicBookingFlow({
   }
 
   return (
-    <div className="agende-bloom min-h-full">
+    <div className="agende-bloom relative min-h-full overflow-x-clip">
+      <FloralBranch className="pointer-events-none absolute -left-12 bottom-24 h-44 w-32 opacity-70" />
       <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-lg items-center justify-between px-4">
           <BrandLogo size="sm" />
@@ -339,10 +340,13 @@ export function PublicBookingFlow({
           </Link>
         </div>
       </header>
-      <main className="mx-auto grid w-full max-w-lg gap-6 px-4 py-6 pb-28">
-        <div>
-          <p className="text-xs tracking-[0.18em] text-primary uppercase">{catalog.name}</p>
-          <h1 className="font-serif text-3xl text-wine-deep">Agendar horário</h1>
+      <main className="relative z-10 mx-auto grid w-full max-w-lg gap-6 px-4 py-6 pb-28">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs tracking-[0.18em] text-primary uppercase">{catalog.name}</p>
+            <h1 className="font-serif text-3xl text-wine-deep">Agendar horário</h1>
+          </div>
+          <FloralSprig className="h-16 w-12 shrink-0" />
         </div>
 
         <ol className="grid grid-cols-3 gap-2 sm:grid-cols-6" aria-label="Etapas do agendamento">

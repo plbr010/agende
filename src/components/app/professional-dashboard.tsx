@@ -7,7 +7,7 @@ import {
   Star,
   UsersRound,
 } from "lucide-react";
-import { FloralBranch, FloralCorner } from "@/components/brand/floral";
+import { FloralBranch, FloralSprig } from "@/components/brand/floral";
 import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
 import { CopyLinkButton } from "@/components/usability/copy-link-button";
 import { EmptyState } from "@/components/app/empty-state";
@@ -226,16 +226,18 @@ export function ProfessionalDashboard({
         </section>
       ) : null}
 
-      <header className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <FloralCorner className="pointer-events-none absolute -right-2 -top-6 hidden h-24 w-32 opacity-80 lg:block" />
-        <div className="min-w-0">
-          <h1 className="font-serif text-[1.85rem] leading-none tracking-tight text-wine-deep sm:text-5xl">
-            Olá, {firstName}!
-            <Sparkles className="ml-2 inline size-5 -translate-y-1 text-[var(--rose)] sm:size-7" aria-hidden="true" />
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-base">
-            {salonName} · seu negócio está indo bem hoje
-          </p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex min-w-0 items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="font-serif text-[1.85rem] leading-none tracking-tight text-wine-deep sm:text-5xl">
+              Olá, {firstName}!
+              <Sparkles className="ml-2 inline size-5 -translate-y-1 text-[var(--rose)] sm:size-7" aria-hidden="true" />
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-base">
+              {salonName} · seu negócio está indo bem hoje
+            </p>
+          </div>
+          <FloralSprig className="h-16 w-12 shrink-0 sm:h-20 sm:w-14" />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <p className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/80 px-3 text-sm text-muted-foreground ring-1 ring-[#f0e4de]">
