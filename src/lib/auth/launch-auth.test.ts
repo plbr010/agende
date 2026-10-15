@@ -8,6 +8,7 @@ import * as plans from "../billing/plans";
 import * as redirects from "./redirects";
 import * as signup from "../validation/signup";
 import * as email from "../validation/email";
+import * as sessionProfile from "./session-profile";
 
 // Executes the real server modules with isolated platform adapters, never a network client.
 function sourceModule<T>(file: string, dependencies: Record<string, unknown>): T {
@@ -36,6 +37,7 @@ function sessionLoader(failingTable?: string) {
   return sourceModule<{ loadAppSession: () => Promise<{ workspaces: unknown[] }> }>("./session.ts", {
     "next/navigation": {}, "@/lib/account/avatar-ui": avatarUi, "@/lib/auth/redirects": redirects,
     "@/lib/auth/session-guard": { createConfirmedSessionGuard: () => null },
+    "@/lib/auth/session-profile": sessionProfile,
     "@/lib/supabase/server": { createClient: async () => ({
       auth: { getUser: async () => ({ data: { user } }) },
       from(table: string) {

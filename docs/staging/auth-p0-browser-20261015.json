@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-15T05:22:23.390Z",
+  "checks": [
+    {
+      "name": "https://agendeapp.online /login: incognito, reload and anonymous RSC",
+      "status": "PASS"
+    },
+    {
+      "name": "https://agendeapp.online /cadastro: incognito, reload and anonymous RSC",
+      "status": "PASS"
+    },
+    {
+      "name": "http://localhost:3000 /login: incognito, reload and anonymous RSC",
+      "status": "PASS"
+    },
+    {
+      "name": "http://localhost:3000 /cadastro: incognito, reload and anonymous RSC",
+      "status": "PASS"
+    },
+    {
+      "name": "staging stale expiration cookie with invalid refresh fails closed and public forms remain usable",
+      "status": "PASS",
+      "method": "fault injection, real SSR and real GoTrue; natural expiry not repeated"
+    }
+  ]
+}

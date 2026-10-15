@@ -7,6 +7,7 @@ import {
   type AuthContext,
 } from "@/lib/auth/redirects";
 import { createConfirmedSessionGuard } from "@/lib/auth/session-guard";
+import { loadSessionProfile } from "@/lib/auth/session-profile";
 import type { WorkspaceRole } from "@/lib/auth/permissions";
 
 export type CurrentUser = {
@@ -86,11 +87,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
     { data: clientProfile, error: clientError },
     { data: memberships, error: membershipError },
   ] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name, email, phone, intended_use, residence_city, avatar_path")
-      .eq("user_id", user.id)
-      .maybeSingle(),
+    loadSessionProfile(supabase, user.id),
     supabase
       .from("client_profiles")
       .select("user_id")
