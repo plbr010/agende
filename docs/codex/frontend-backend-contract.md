@@ -1,5 +1,7 @@
 # Contrato frontend → Codex (jornadas bloqueadas)
 
+Perfis/imagens atualizados em 15/10: [profiles-media-contract.md](profiles-media-contract.md), incluindo cidade compatível com schema anterior, limite de 4 MiB, logo/capa normalizadas no servidor e ciclo de remoção.
+
 Somente o que o frontend já chama ou precisa para desbloquear **PASS E2E**. Não altera migrations, Stripe LIVE, SMTP produtivo nem DNS. Staging isolado (`fkpdudnnperufnmdwdlv`) é o alvo; produção (`wohimauqgywshbbejjcl`) está fora.
 
 Permissões comuns: funções `SECURITY DEFINER` no schema `app`, expostas via wrappers `public`, `search_path` vazio, RLS + FORCE RLS. Anon só nas RPCs públicas de descoberta/reserva. Authenticated para o restante. Erros de contrato ausente: PostgREST `PGRST202` / Postgres `42883` — a UI já trata como “ainda não está no ar”, sem inventar dados.

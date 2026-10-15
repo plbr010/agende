@@ -1,0 +1,377 @@
+{
+  "checked_at": "2026-10-15T06:02:34.834Z",
+  "production_writes": 0,
+  "server_credential_check": "Vercel env names and targets only",
+  "projects": [
+    {
+      "project": "wohimauqgywshbbejjcl",
+      "buckets": [
+        {
+          "id": "workspace-logos",
+          "public": true
+        }
+      ],
+      "columns": null,
+      "migrations": [
+        {
+          "name": "foundation_types_and_tables",
+          "version": "20260918150334"
+        },
+        {
+          "name": "foundation_functions",
+          "version": "20260918150401"
+        },
+        {
+          "name": "foundation_guards",
+          "version": "20260918150422"
+        },
+        {
+          "name": "foundation_auth_sync",
+          "version": "20260918150434"
+        },
+        {
+          "name": "foundation_workspace_rpc",
+          "version": "20260918150443"
+        },
+        {
+          "name": "foundation_invites",
+          "version": "20260918150456"
+        },
+        {
+          "name": "foundation_rpc_wrappers_and_triggers",
+          "version": "20260918150505"
+        },
+        {
+          "name": "foundation_rls",
+          "version": "20260918150516"
+        },
+        {
+          "name": "foundation_fk_indexes",
+          "version": "20260918150607"
+        },
+        {
+          "name": "foundation_hardening",
+          "version": "20260918183729"
+        },
+        {
+          "name": "foundation_hardening_seats_invites",
+          "version": "20260918183827"
+        },
+        {
+          "name": "foundation_hardening_invites_grants",
+          "version": "20260918183848"
+        },
+        {
+          "name": "catalog_professionals_services_clients",
+          "version": "20260918191634"
+        },
+        {
+          "name": "catalog_professionals_services_clients_rls",
+          "version": "20260918191706"
+        },
+        {
+          "name": "catalog_indexes_and_policy_merge",
+          "version": "20260918192038"
+        },
+        {
+          "name": "workspace_settings_schema",
+          "version": "20260918194255"
+        },
+        {
+          "name": "agenda_types_and_tables",
+          "version": "20260918194304"
+        },
+        {
+          "name": "agenda_functions",
+          "version": "20260918194355"
+        },
+        {
+          "name": "workspace_settings_rpcs",
+          "version": "20260918194427"
+        },
+        {
+          "name": "agenda_availability_helpers",
+          "version": "20260918194437"
+        },
+        {
+          "name": "workspace_settings_rls_storage",
+          "version": "20260918194446"
+        },
+        {
+          "name": "agenda_list_available_slots",
+          "version": "20260918194454"
+        },
+        {
+          "name": "agenda_appointment_rpcs",
+          "version": "20260918194510"
+        },
+        {
+          "name": "agenda_triggers",
+          "version": "20260918194527"
+        },
+        {
+          "name": "agenda_rls",
+          "version": "20260918194551"
+        },
+        {
+          "name": "agenda_indexes_and_policy_split",
+          "version": "20260918194708"
+        },
+        {
+          "name": "agenda_write_policies",
+          "version": "20260918194722"
+        },
+        {
+          "name": "agenda_snapshot_professional_and_select",
+          "version": "20260918195354"
+        },
+        {
+          "name": "public_booking_schema",
+          "version": "20260918203839"
+        },
+        {
+          "name": "public_booking_functions",
+          "version": "20260918203840"
+        },
+        {
+          "name": "public_booking_rpcs_rls",
+          "version": "20260918203841"
+        },
+        {
+          "name": "hardening_snapshot_owner_timezone",
+          "version": "20260919201138"
+        },
+        {
+          "name": "inventory_schema",
+          "version": "20260919201409"
+        },
+        {
+          "name": "inventory_rpcs",
+          "version": "20260919201432"
+        },
+        {
+          "name": "inventory_rls",
+          "version": "20260919201509"
+        },
+        {
+          "name": "inventory_fk_indexes",
+          "version": "20260921165035"
+        },
+        {
+          "name": "packages_core",
+          "version": "20260921171533"
+        },
+        {
+          "name": "finance_core",
+          "version": "20260921171751"
+        },
+        {
+          "name": "reports_core",
+          "version": "20260921171949"
+        },
+        {
+          "name": "packages_finance_fk_indexes",
+          "version": "20260921172021"
+        },
+        {
+          "name": "secure_public_default_privileges",
+          "version": "20260921172331"
+        },
+        {
+          "name": "subscription_entitlement_enforcement",
+          "version": "20260921174123"
+        },
+        {
+          "name": "audit_events",
+          "version": "20260921174239"
+        },
+        {
+          "name": "finance_refunds_package_hardening",
+          "version": "20260921174332"
+        },
+        {
+          "name": "billing_intervals_annual_ready",
+          "version": "20260921174537"
+        },
+        {
+          "name": "database_maintenance_cron",
+          "version": "20260921174547"
+        },
+        {
+          "name": "package_lifecycle_hardening",
+          "version": "20260921175259"
+        },
+        {
+          "name": "finance_categories_idempotency",
+          "version": "20260921175525"
+        },
+        {
+          "name": "agenda_client_reschedule_deadlock_hardening",
+          "version": "20260921175704"
+        },
+        {
+          "name": "advanced_reports",
+          "version": "20260921175824"
+        },
+        {
+          "name": "privacy_requests_export_audit_expansion",
+          "version": "20260921175927"
+        },
+        {
+          "name": "public_booking_duplicate_concurrency_guard",
+          "version": "20260921180139"
+        },
+        {
+          "name": "client_packages_and_billing_foundation",
+          "version": "20260921180256"
+        },
+        {
+          "name": "frontend_read_models",
+          "version": "20260921181255"
+        },
+        {
+          "name": "frontend_read_models_inventory_fix",
+          "version": "20260921181317"
+        },
+        {
+          "name": "stripe_billing_sync_foundation",
+          "version": "20260926062411"
+        },
+        {
+          "name": "stripe_webhook_hardening",
+          "version": "20260926062835"
+        },
+        {
+          "name": "stripe_billing_resubscribe_hardening",
+          "version": "20260926063106"
+        },
+        {
+          "name": "stripe_billing_sync_reconcile",
+          "version": "20260926063212"
+        },
+        {
+          "name": "stripe_checkout_resubscribe_hardening",
+          "version": "20260926063514"
+        },
+        {
+          "name": "stripe_api_key_vault_access",
+          "version": "20260926063534"
+        },
+        {
+          "name": "trial_selected_plan",
+          "version": "20260926194038"
+        },
+        {
+          "name": "stripe_checkout_guards",
+          "version": "20260927005815"
+        }
+      ]
+    },
+    {
+      "project": "fkpdudnnperufnmdwdlv",
+      "buckets": [
+        {
+          "id": "workspace-logos",
+          "public": true
+        },
+        {
+          "id": "account-avatars",
+          "public": false
+        }
+      ],
+      "columns": [
+        {
+          "table": "profiles",
+          "column": "residence_city"
+        },
+        {
+          "table": "profiles",
+          "column": "avatar_path"
+        },
+        {
+          "table": "workspace_settings",
+          "column": "cover_path"
+        }
+      ],
+      "migrations": [
+        {
+          "name": "foundation_types_and_tables",
+          "version": "20261011135742"
+        },
+        {
+          "name": "foundation_functions",
+          "version": "20261011135748"
+        },
+        {
+          "name": "foundation_guards",
+          "version": "20261011135753"
+        },
+        {
+          "name": "foundation_auth_sync",
+          "version": "20261011135759"
+        },
+        {
+          "name": "foundation_workspace_rpc",
+          "version": "20261011135806"
+        },
+        {
+          "name": "foundation_invites",
+          "version": "20261011135811"
+        },
+        {
+          "name": "foundation_rpc_wrappers_and_triggers",
+          "version": "20261011135819"
+        },
+        {
+          "name": "foundation_rls",
+          "version": "20261011135826"
+        },
+        {
+          "name": "foundation_fk_indexes",
+          "version": "20261011135833"
+        },
+        {
+          "name": "foundation_hardening",
+          "version": "20261011135840"
+        },
+        {
+          "name": "foundation_hardening_seats_invites",
+          "version": "20261011135917"
+        },
+        {
+          "name": "foundation_hardening_invites_grants",
+          "version": "20261011135922"
+        },
+        {
+          "name": "catalog_professionals_services_clients",
+          "version": "20261011135929"
+        },
+        {
+          "name": "catalog_professionals_services_clients_rls",
+          "version": "20261011135935"
+        },
+        {
+          "name": "public_workspace_discovery",
+          "version": "20261014031601"
+        },
+        {
+          "name": "client_phase2_profiles_favorites",
+          "version": "20261014173144"
+        },
+        {
+          "name": "client_phase2_avatar_upload_cleanup",
+          "version": "20261014173933"
+        },
+        {
+          "name": "workspace_media_and_settings_contract",
+          "version": "20261015054655"
+        },
+        {
+          "name": "workspace_settings_validation",
+          "version": "20261015054832"
+        }
+      ]
+    }
+  ],
+  "production_server_credential_binding_found": false
+}

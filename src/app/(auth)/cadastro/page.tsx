@@ -37,7 +37,7 @@ export default async function CadastroPage({
           Serviço, profissional, dia e horário continuam escolhidos. Depois de criar a conta e confirmar o e-mail, você volta para concluir. Se o horário for ocupado nesse meio-tempo, avisamos para escolher outro.
         </p>
       ) : null}
-      {selectedPlan ? (
+      {selectedPlan && intentFromQuery !== "client" ? (
         <p className="rounded-[1.25rem] bg-metric-blush px-4 py-3 text-sm">
           Você escolheu o plano <strong>{selectedPlan.name}</strong> ({selectedPlan.seats}). Depois de confirmar o
           e-mail, começam <strong>7 dias grátis</strong> nesse plano — sem cartão.
@@ -46,7 +46,7 @@ export default async function CadastroPage({
       <SignupForm
         next={safeNext}
         plan={plan}
-        initialIntent={plan ? "professional" : intentFromQuery}
+        initialIntent={intentFromQuery || (plan ? "professional" : "")}
         lockIntent={inviteSignup}
       />
       <p className="text-sm text-muted-foreground">

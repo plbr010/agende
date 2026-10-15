@@ -9,6 +9,12 @@ export const runtime = "nodejs";
 const BUCKET = "account-avatars";
 const noStore = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" };
 const error = (code: string, status: number) => Response.json({ error: code }, { status, headers: noStore });
+function backendFailure(cause: unknown) {
+  const code = cause instanceof Error && ["profile_unavailable", "avatar_backend_unconfigured"].includes(cause.message)
+    ? cause.message : "backend_unavailable";
+  console.error("account_avatar_backend_failed", { code });
+  return error("avatar_backend_unavailable", 503);
+}
 
 async function account() {
   const client = await createClient();
@@ -16,7 +22,10 @@ async function account() {
   if (!user?.email_confirmed_at) return null;
   const { data: profile, error: profileError } = await client.from("profiles")
     .select("avatar_path").eq("user_id", user.id).single();
-  if (profileError || !profile) throw new Error("profile_unavailable");
+  if (profileError || !profile) {
+    console.error("account_avatar_profile_failed", { code: profileError?.code ?? "profile_missing" });
+    throw new Error("profile_unavailable");
+  }
   return { user, path: profile.avatar_path };
 }
 
@@ -43,7 +52,7 @@ export async function GET() {
     if (downloadError || !data) return error("avatar_unavailable", 503);
     // Authenticated proxy avoids transferable signed URLs, with authorization on every read.
     return new Response(data, { headers: { ...noStore, "Content-Type": "image/webp" } });
-  } catch { return error("avatar_backend_unavailable", 503); }
+  } catch (cause) { return backendFailure(cause); }
 }
 
 async function mutate(request: Request, remove: boolean) {
@@ -92,7 +101,7 @@ async function mutate(request: Request, remove: boolean) {
     const cleaned = await cleanup(admin);
     revalidatePath("/cliente", "layout"); revalidatePath("/app", "layout");
     return Response.json({ avatarUrl: next ? "/api/account/avatar" : null, cleanupPending: !cleaned }, { headers: noStore });
-  } catch { return error("avatar_backend_unavailable", 503); }
+  } catch (cause) { return backendFailure(cause); }
 }
 export async function PUT(request: Request) { return mutate(request, false); }
 export async function DELETE(request: Request) { return mutate(request, true); }

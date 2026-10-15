@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-15T06:14:30.164Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "fixture_restored": true,
+  "checks": [
+    {
+      "name": "omitted optional commercial fields really persist as null",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid UF/timezone/CEP/phone rejected without partial name update",
+      "status": "PASS"
+    }
+  ]
+}

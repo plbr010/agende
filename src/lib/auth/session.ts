@@ -39,6 +39,7 @@ export type AppSession = {
     email: string;
     phone: string | null;
     residenceCity: string | null;
+    residenceCityAvailable?: boolean;
     hasAvatar: boolean;
     avatarVersion: string | null;
     intendedUse: "client" | "professional";
@@ -83,7 +84,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
   }
 
   const [
-    { data: profile, error: profileError },
+    { data: profile, error: profileError, metadataAvailable },
     { data: clientProfile, error: clientError },
     { data: memberships, error: membershipError },
   ] = await Promise.all([
@@ -157,6 +158,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
       email: profile?.email ?? user.email,
       phone: profile?.phone ?? null,
       residenceCity: profile?.residence_city ?? null,
+      residenceCityAvailable: metadataAvailable,
       hasAvatar: Boolean(profile?.avatar_path),
       avatarVersion: avatarCacheVersion(profile?.avatar_path),
       intendedUse,

@@ -1,0 +1,183 @@
+{
+  "checked_at": "2026-10-15T06:10:06.082Z",
+  "groups": {
+    "pglite_integration_with_mock_auth": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pglite_sql": {
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 221,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "platform_mocks": {
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 352,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "owner queues; another user cannot mutate or prepare another tenant",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "missing bytes cannot be referenced and normalized server bytes can",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "replacement is atomic; stale writes lose and referenced bytes are not claimed",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "cover independent of logo; removal clears reference and queues cleanup",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "expired pending upload cannot become current while cleanup runs",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "migration reapplies without removing references or queued work",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "optional commercial fields save; invalid UF, timezone and CEP reject atomically",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "inactive subscription still blocks commercial writes and uploads without mutating profile or billing",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "workspace image lifecycle SQL: isolation, compare-and-swap, leases and idempotent DDL",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-profile-form.test.ts",
+      "name": "legacy schema form omits unsupported city while keeping core profile editable",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "current schema preserves optional metadata without retry",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "legacy schema retries missing residence_city with same authenticated user",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "legacy schema retries missing avatar_path with same authenticated user",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: 42501",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: 42703",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: network",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "fallback errors and missing profile are never converted to a profile",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "PostgreSQL legacy schema reproduces 42703 and fallback isolates the requested user",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/avatar-image.test.ts",
+      "name": "avatars decode JPEG PNG WebP and normalize into bounded metadata-free WebP",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/avatar-image.test.ts",
+      "name": "avatars reject SVG executables corruption size and invalid dimensions",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/avatar-image.test.ts",
+      "name": "public covers keep useful resolution and still remove metadata within server limits",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/images.test.ts",
+      "name": "public image action refuses foreign roles, absent consent and oversized input before privileged access",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/images.test.ts",
+      "name": "public image upload preserves new bytes on uncertain or stale swap acknowledgement",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/settings-errors.test.ts",
+      "name": "database validation produces field errors without leaking private details",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    }
+  ],
+  "case_selection": "all totals/categories retained; cases limited to new/related regressions, complete suite available in CI"
+}

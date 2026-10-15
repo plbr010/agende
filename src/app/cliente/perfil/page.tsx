@@ -49,6 +49,7 @@ export default async function ClientePerfilPage() {
             phone={session.profile.phone}
             email={session.profile.email}
             residenceCity={session.profile.residenceCity}
+            residenceCityAvailable={session.profile.residenceCityAvailable}
           />
         </div>
       </section>

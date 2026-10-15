@@ -556,11 +556,16 @@ BEGIN
     'cross-tenant cannot upload into another workspace logo folder'
   );
 
-  -- INSERT is allowed; DELETE on storage.objects is blocked by storage.protect_delete().
-  -- Keep the owner upload in a subtransaction and roll it back.
+  -- Upload bytes must pass through the normalizing server, even for owners.
+  PERFORM test_helpers.login_as(v_owner_a);
+  PERFORM test_helpers.assert_error(
+    format('INSERT INTO storage.objects (bucket_id, name) VALUES (%L, %L)',
+      'workspace-logos', v_ws_a::text || '/logo-owner.webp'),
+    '42501', 'owner cannot bypass server image normalization'
+  );
+  -- Seed a synthetic server object in an owned local DB subtransaction only.
   BEGIN
-    PERFORM test_helpers.login_as(v_owner_a);
-    EXECUTE 'SET ROLE authenticated';
+    EXECUTE 'RESET ROLE';
     INSERT INTO storage.objects (bucket_id, name)
     VALUES ('workspace-logos', v_ws_a::text || '/logo-owner.webp');
     EXECUTE 'RESET ROLE';
@@ -570,7 +575,7 @@ BEGIN
         WHERE o.bucket_id = 'workspace-logos'
           AND o.name = v_ws_a::text || '/logo-owner.webp'
       ),
-      'owner can upload workspace logo'
+      'server fixture can provision a workspace logo'
     );
 
     PERFORM test_helpers.login_as(v_pro);
@@ -582,6 +587,14 @@ BEGIN
     GET DIAGNOSTICS v_visible = ROW_COUNT;
     EXECUTE 'RESET ROLE';
     PERFORM test_helpers.assert_eq(v_visible, 0, 'professional cannot update workspace logo');
+
+    PERFORM test_helpers.login_as(v_owner_a);
+    EXECUTE 'SET ROLE authenticated';
+    UPDATE storage.objects SET metadata=jsonb_build_object('tamper',true)
+      WHERE bucket_id='workspace-logos' AND name=v_ws_a::text || '/logo-owner.webp';
+    GET DIAGNOSTICS v_visible=ROW_COUNT;
+    EXECUTE 'RESET ROLE';
+    PERFORM test_helpers.assert_eq(v_visible,0,'owner cannot overwrite normalized bytes directly');
 
     RAISE EXCEPTION 'rollback_owner_logo_insert';
   EXCEPTION

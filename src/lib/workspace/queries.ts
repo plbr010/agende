@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { MemberRole, MemberStatus } from "@/lib/catalog/queries";
 import type { Database } from "@/lib/supabase/database.types";
 import { DEFAULT_TIMEZONE, resolveWorkspaceTimezone } from "@/lib/workspace/timezone";
-import { parsePublicWorkspaceProfile, parseSeatUsage, type SeatUsage } from "@/lib/workspace/public";
+import { publicLogoUrl, parsePublicWorkspaceProfile, parseSeatUsage, type SeatUsage } from "@/lib/workspace/public";
 
 export type WorkspaceSettingsRecord = {
   workspaceId: string;
@@ -34,13 +34,15 @@ export async function loadWorkspaceSettings(
   slug: string,
 ): Promise<WorkspaceSettingsRecord> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("workspace_settings")
     .select(
       "workspace_id, business_phone, business_email, description, address, city, state, postal_code, instagram, logo_path, timezone",
     )
     .eq("workspace_id", workspaceId)
     .maybeSingle();
+
+  if (error || !data) throw new Error("Não foi possível carregar as configurações do estabelecimento. Atualize a página antes de editar.");
 
   return {
     workspaceId,
@@ -90,8 +92,13 @@ export async function loadPendingInvites(workspaceId: string): Promise<PendingIn
 
 export async function loadPublicWorkspaceProfile(slug: string) {
   const supabase = await createClient();
-  const { data } = await supabase.rpc("get_public_workspace_profile", { p_slug: slug });
-  return parsePublicWorkspaceProfile(data);
+  const [{ data }, cover] = await Promise.all([
+    supabase.rpc("get_public_workspace_profile", { p_slug: slug }),
+    supabase.rpc("get_public_workspace_cover", { p_slug: slug }),
+  ]);
+  const profile = parsePublicWorkspaceProfile(data);
+  if (!profile) return null;
+  return { ...profile, coverUrl: !cover.error ? publicLogoUrl(cover.data) : null };
 }
 
 export type SubscriptionDetail = {

@@ -11,11 +11,11 @@ export async function loadSessionProfile(client: SupabaseClient<Database>, userI
 
   // PostgreSQL undefined_column only: never hide RLS, network or other errors.
   if (result.error?.code !== "42703" ||
-      !/\b(residence_city|avatar_path)\b/.test(result.error.message)) return result;
+      !/\b(residence_city|avatar_path)\b/.test(result.error.message)) return { ...result, metadataAvailable: true };
 
   const legacy = await client.from("profiles").select(coreFields)
     .eq("user_id", userId).maybeSingle();
   return { ...legacy, data: legacy.data ? {
     ...legacy.data, residence_city: null, avatar_path: null,
-  } : null };
+  } : null, metadataAvailable: false };
 }

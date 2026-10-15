@@ -18,7 +18,7 @@ const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error
 const settingsPayload=(workspace,settings)=>({p_workspace_id:workspace.id,p_name:workspace.name,p_slug:workspace.slug,
  p_business_phone:settings.business_phone,p_business_email:settings.business_email,p_description:settings.description,
  p_address:settings.address,p_city:settings.city,p_state:settings.state,p_postal_code:settings.postal_code,
- p_instagram:settings.instagram,p_timezone:settings.timezone,p_logo_path:settings.logo_path,p_clear_logo:false});
+ p_instagram:settings.instagram,p_timezone:settings.timezone,p_logo_path:null,p_clear_logo:false});
 const socket=createServer();await new Promise(resolve=>socket.listen(0,'127.0.0.1',resolve));const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
 const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-'+new Date().toISOString().slice(0,10);mkdirSync(evidence,{recursive:true});
 let browser,server,w,s,enabled,serviceId,lastPage,appointmentId,workingHoursId,restored=true,failure;

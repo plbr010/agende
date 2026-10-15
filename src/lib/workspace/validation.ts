@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { isValidEmail, normalizeEmail } from "@/lib/validation/email";
 import { isValidPhone, normalizePhone } from "@/lib/validation/phone";
-import { INVITE_ROLES, type InviteRole } from "@/lib/workspace/labels";
+import { BR_STATES, INVITE_ROLES, type InviteRole } from "@/lib/workspace/labels";
 import { slugError, slugifyPreview } from "@/lib/workspace/slug";
 import { isWorkspaceTimezone, DEFAULT_TIMEZONE } from "@/lib/workspace/timezone";
 
@@ -15,6 +15,7 @@ const optionalText = (max: number) =>
       .string()
       .trim()
       .max(max, `Pode ter no máximo ${max} caracteres.`)
+      .refine(value => !/[\u0000-\u001f\u007f]/.test(value), "Remova caracteres de controle deste campo.")
       .optional()
       .transform((value) => (value ? value : null)),
   );
@@ -72,6 +73,7 @@ export const workspaceSettingsSchema = z.object({
       .string()
       .trim()
       .max(80, "Cidade muito longa.")
+      .refine(value => !/[\u0000-\u001f\u007f]/.test(value), "Informe uma cidade válida.")
       .optional()
       .transform((value) => (value ? value : null))
       .superRefine((value, ctx) => {
@@ -83,11 +85,14 @@ export const workspaceSettingsSchema = z.object({
   state: optionalTrimmed
     .transform((value) => (value ? value.toUpperCase() : null))
     .superRefine((value, ctx) => {
-      if (value && !/^[A-Z]{2}$/.test(value)) {
+      if (value && !BR_STATES.some(state => state.value === value)) {
         ctx.addIssue({ code: "custom", message: "Escolha um estado válido." });
       }
     }),
   postalCode: optionalTrimmed
+    .superRefine((value, ctx) => {
+      if (value && !/^[0-9\s.-]+$/.test(value)) ctx.addIssue({ code: "custom", message: "Informe um CEP com 8 dígitos." });
+    })
     .transform((value) => {
       if (!value) return null;
       const digits = value.replace(/\D/g, "");
@@ -115,7 +120,8 @@ export const workspaceSettingsSchema = z.object({
       .string()
       .trim()
       .optional()
-      .transform((value) => (value && isWorkspaceTimezone(value) ? value : DEFAULT_TIMEZONE)),
+      .refine(value => !value || isWorkspaceTimezone(value), "Escolha um fuso horário válido.")
+      .transform((value) => value || DEFAULT_TIMEZONE),
   ),
   clearLogo: z.boolean().optional(),
 });

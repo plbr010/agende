@@ -120,11 +120,13 @@ export function GeneralSettingsForm({
           <div className="grid gap-2">
             <Label htmlFor="address">Endereço</Label>
             <Input id="address" name="address" defaultValue={settings.address ?? ""} className="h-11" disabled={!canEdit} />
+            {state.fieldErrors?.address ? <p className="text-sm text-destructive">{state.fieldErrors.address}</p> : null}
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="grid gap-2 sm:col-span-1">
               <Label htmlFor="city">Cidade</Label>
               <Input id="city" name="city" defaultValue={settings.city ?? ""} className="h-11" disabled={!canEdit} />
+              {state.fieldErrors?.city ? <p className="text-sm text-destructive">{state.fieldErrors.city}</p> : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="state">Estado</Label>
@@ -142,6 +144,7 @@ export function GeneralSettingsForm({
                   </option>
                 ))}
               </select>
+              {state.fieldErrors?.state ? <p className="text-sm text-destructive">{state.fieldErrors.state}</p> : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="postalCode">CEP</Label>
@@ -174,8 +177,10 @@ export function GeneralSettingsForm({
                 </option>
               ))}
             </select>
+            {state.fieldErrors?.timezone ? <p className="text-sm text-destructive">{state.fieldErrors.timezone}</p> : null}
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
+          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
           {canEdit ? (
             <Button type="submit" className="h-12" disabled={pending}>
               {pending ? "Salvando..." : "Salvar dados"}
@@ -261,7 +266,7 @@ export function PublicProfileSettingsForm({
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="logo">Logo ou foto</Label>
+            <Label>Logo do estabelecimento</Label>
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -274,16 +279,10 @@ export function PublicProfileSettingsForm({
                 {settings.name.slice(0, 1)}
               </div>
             )}
-            <Input id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp" className="h-11" disabled={!canEdit} />
-            <p className="text-xs text-muted-foreground">Foto ou logo (JPG ou PNG, até 2 MB).</p>
-            {logoUrl ? (
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="clearLogo" value="true" className="size-4 rounded border-input" disabled={!canEdit} />
-                Remover imagem atual
-              </label>
-            ) : null}
+            <p className="text-xs text-muted-foreground">Envie, troque ou remova logo e capa na seção de imagens públicas abaixo.</p>
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
+          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="submit" className="h-12" disabled={pending}>
