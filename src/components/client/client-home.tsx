@@ -100,9 +100,14 @@ export function ClientHome({
                   Quando você confirmar um horário, ele aparece aqui. Até lá, explore salões no seu ritmo — sem criar conta só para olhar.
                 </p>
               </div>
-              <Button className="h-11 w-fit rounded-full" render={<Link href="/cliente/descobrir" />}>
-                Explorar estabelecimentos
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button className="h-11 w-fit rounded-full" render={<Link href="/cliente/descobrir" />}>
+                  Explorar estabelecimentos
+                </Button>
+                <Button variant="outline" className="h-11 w-fit rounded-full" render={<Link href="/cliente/perfil" />}>
+                  Completar meu perfil
+                </Button>
+              </div>
             </div>
           </div>
         )}

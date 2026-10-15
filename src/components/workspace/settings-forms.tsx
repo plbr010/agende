@@ -10,6 +10,7 @@ import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
 import { formatPublicProfilePreview, slugifyPreview } from "@/lib/workspace/slug";
 import { WORKSPACE_TIMEZONES } from "@/lib/workspace/timezone";
 import { publicLogoUrl } from "@/lib/workspace/public";
+import { LogoCropField } from "@/components/workspace/logo-crop-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -261,29 +262,11 @@ export function PublicProfileSettingsForm({
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="logo">Logo ou foto</Label>
-            {logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={logoUrl}
-                alt={`Logo de ${settings.name}`}
-                className="size-20 rounded-2xl object-cover ring-1 ring-border"
-              />
-            ) : (
-              <div className="flex size-20 items-center justify-center rounded-2xl bg-secondary font-serif text-2xl text-primary">
-                {settings.name.slice(0, 1)}
-              </div>
-            )}
-            <Input id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp" className="h-11" disabled={!canEdit} />
-            <p className="text-xs text-muted-foreground">Foto ou logo (JPG ou PNG, até 2 MB).</p>
-            {logoUrl ? (
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="clearLogo" value="true" className="size-4 rounded border-input" disabled={!canEdit} />
-                Remover imagem atual
-              </label>
-            ) : null}
+            <Label>Logo do estabelecimento</Label>
+            <LogoCropField currentUrl={logoUrl} salonName={settings.name} disabled={!canEdit} />
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
+          {state.success ? <p role="status" className="rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep">{state.success}</p> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="submit" className="h-12" disabled={pending}>

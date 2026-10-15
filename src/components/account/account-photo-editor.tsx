@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { avatarUploadMessage, clampOffset, coverScale } from "@/lib/account/avatar-ui";
 import { cn } from "@/lib/utils";
 
-const FRAME = 220;
+const FRAME = 176;
 const OUTPUT = 512;
 
 type Draft = {
@@ -162,51 +162,52 @@ export function AccountPhotoEditor({
     : 1;
 
   return (
-    <div className="grid gap-4">
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        {draft ? (
-          <div
-            className="relative touch-none overflow-hidden rounded-full bg-metric-blush ring-1 ring-[#f0e4de]"
-            style={{ width: FRAME, height: FRAME }}
-            role="application"
-            aria-label="Ajuste a foto arrastando"
-            onPointerDown={(event) => {
-              drag.current = { x: event.clientX, y: event.clientY, originX: draft.offsetX, originY: draft.offsetY };
-              event.currentTarget.setPointerCapture(event.pointerId);
+    <div className="mx-auto grid w-full max-w-sm justify-items-center gap-4 text-center">
+      {draft ? (
+        <div
+          className="relative touch-none overflow-hidden rounded-full bg-metric-blush ring-4 ring-white shadow-[0_16px_32px_-24px_rgb(92_26_46/0.55)]"
+          style={{ width: FRAME, height: FRAME }}
+          role="application"
+          aria-label="Ajuste a foto arrastando"
+          onPointerDown={(event) => {
+            drag.current = { x: event.clientX, y: event.clientY, originX: draft.offsetX, originY: draft.offsetY };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => moveDraft(event.clientX, event.clientY)}
+          onPointerUp={() => {
+            drag.current = null;
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={draft.url}
+            alt="Pré-visualização da foto"
+            draggable={false}
+            className="absolute max-w-none select-none"
+            style={{
+              width: draft.image.naturalWidth * previewScale,
+              height: draft.image.naturalHeight * previewScale,
+              left: (FRAME - draft.image.naturalWidth * previewScale) / 2 + draft.offsetX,
+              top: (FRAME - draft.image.naturalHeight * previewScale) / 2 + draft.offsetY,
             }}
-            onPointerMove={(event) => moveDraft(event.clientX, event.clientY)}
-            onPointerUp={() => {
-              drag.current = null;
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={draft.url}
-              alt="Pré-visualização da foto"
-              draggable={false}
-              className="absolute max-w-none select-none"
-              style={{
-                width: draft.image.naturalWidth * previewScale,
-                height: draft.image.naturalHeight * previewScale,
-                left: (FRAME - draft.image.naturalWidth * previewScale) / 2 + draft.offsetX,
-                top: (FRAME - draft.image.naturalHeight * previewScale) / 2 + draft.offsetY,
-              }}
-            />
-          </div>
-        ) : (
-          <AccountAvatar name={name} hasAvatar={photo} version={cacheVersion} size="lg" alt={photo ? `Foto de ${name}` : ""} className="size-24" />
-        )}
-        <div className="grid gap-1">
-          <p className="font-medium text-wine-deep">{photo || draft ? "Sua foto" : "Sem foto ainda"}</p>
-          <p className="text-sm leading-6 text-muted-foreground">
-            {draft ? "Arraste para centralizar e ajuste o zoom. A foto fica só na sua conta." : "Aparecem as suas iniciais até você escolher uma foto."}
-          </p>
+          />
         </div>
+      ) : (
+        <AccountAvatar name={name} hasAvatar={photo} version={cacheVersion} size="lg" alt={photo ? `Foto de ${name}` : ""} className="size-24 ring-4 ring-white" />
+      )}
+      <div className="grid gap-1">
+        <p className="font-medium text-wine-deep">{photo || draft ? "Sua foto" : "Sem foto ainda"}</p>
+        <p className="text-sm leading-6 text-muted-foreground">
+          {draft ? "Arraste para centralizar. O zoom fica logo abaixo." : "Aparecem as suas iniciais até você escolher uma foto."}
+        </p>
       </div>
 
       {draft ? (
-        <label className="grid gap-2 text-sm">
-          Zoom
+        <label className="grid w-36 gap-1 text-left text-xs text-muted-foreground">
+          <span className="flex items-center justify-between">
+            Zoom
+            <span>{Math.round(draft.zoom * 100)}%</span>
+          </span>
           <input
             type="range"
             min={1}
@@ -215,6 +216,7 @@ export function AccountPhotoEditor({
             value={draft.zoom}
             disabled={pending}
             aria-valuetext={`${Math.round(draft.zoom * 100)}%`}
+            className="accent-[var(--rose)]"
             onChange={(event) => {
               const zoom = Number(event.target.value);
               setDraft((current) => {
@@ -232,7 +234,13 @@ export function AccountPhotoEditor({
         </label>
       ) : null}
 
-      <div className="flex flex-wrap gap-2">
+      {pending ? (
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-metric-blush" role="progressbar" aria-valuetext="Enviando foto">
+          <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
+        </div>
+      ) : null}
+
+      <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
         <input
           id="avatar-gallery"
           type="file"
@@ -265,9 +273,9 @@ export function AccountPhotoEditor({
         {draft ? (
           <>
             <Button type="button" className="h-11 rounded-full" disabled={pending} aria-busy={pending} onClick={() => void saveDraft()}>
-              {pending ? "Salvando…" : "Usar esta foto"}
+              {pending ? "Salvando…" : "Salvar foto"}
             </Button>
-            <Button type="button" variant="ghost" className="h-11 rounded-full" disabled={pending} onClick={resetDraft}>
+            <Button type="button" variant="outline" className="h-11 rounded-full" disabled={pending} onClick={resetDraft}>
               Cancelar
             </Button>
           </>
@@ -279,7 +287,7 @@ export function AccountPhotoEditor({
         ) : null}
       </div>
       {message ? (
-        <p className={tone === "alert" ? "text-sm text-destructive" : "text-sm text-muted-foreground"} role={tone === "alert" ? "alert" : "status"}>
+        <p className={tone === "alert" ? "text-sm text-destructive" : "rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep"} role={tone === "alert" ? "alert" : "status"}>
           {message}
         </p>
       ) : null}

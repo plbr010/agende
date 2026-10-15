@@ -13,12 +13,30 @@ import { loginSchema, parseSignupForm } from "@/lib/validation/signup";
 
 const PENDING_EMAIL_COOKIE = "agende_pending_email";
 const PENDING_NEXT_COOKIE = "agende_pending_next";
+const PENDING_INTENT_COOKIE = "agende_pending_intent";
 const RESEND_AT_COOKIE = "agende_resend_at";
 const SELECTED_PLAN_COOKIE = "agende_selected_plan";
 const RESEND_COOLDOWN_MS = 60_000;
 
 async function resolveOrigin(): Promise<string> {
   return getRequestOrigin();
+}
+
+async function setPendingIntent(intent: "client" | "professional") {
+  const store = await cookies();
+  store.set(PENDING_INTENT_COOKIE, intent, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+  });
+}
+
+export async function getPendingIntent(): Promise<"client" | "professional" | null> {
+  const store = await cookies();
+  const value = store.get(PENDING_INTENT_COOKIE)?.value;
+  return value === "client" || value === "professional" ? value : null;
 }
 
 async function setPendingEmail(email: string, next?: string | null) {
@@ -118,6 +136,7 @@ export async function signUpAction(
   }
 
   await setPendingEmail(input.email, next);
+  await setPendingIntent(input.intendedUse);
   const selectedPlan = parsePlanId(formData.get("plan"));
   if (selectedPlan && input.intendedUse === "professional") {
     await setSelectedPlanCookie(selectedPlan);
