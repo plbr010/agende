@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-15T17:40:39.219Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "cleanup": true,
+  "production_writes": 0,
+  "checks": [
+    "501-character description rejected in actual Server Action with actionable error and zero committed rows",
+    "valid product persists through real form and reload"
+  ]
+}

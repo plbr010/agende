@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-10-15T17:41:07.390Z",
+  "livemode": false,
+  "account": "acct_1UPNGJQQUyqAaZvS",
+  "production_writes": 0,
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "customer": "cus_VRYxZlU6Tk8EQ5",
+        "subscriptions": [
+          {
+            "id": "sub_1UQfv2QQUyqAaZvSZIdBj2ce",
+            "status": "past_due",
+            "livemode": false,
+            "test_clock": "clock_1UQgExQQUyqAaZvSpbM7HX5N",
+            "workspace_id": "61223938-ba74-4f4f-a428-82c7c04d62a3"
+          }
+        ]
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "customer": "cus_VRYx1ozAbuNzKD",
+        "subscriptions": [
+          {
+            "id": "sub_1UQfueQQUyqAaZvSUZMiVOw8",
+            "status": "canceled",
+            "livemode": false,
+            "test_clock": "clock_1UQfxQQQUyqAaZvSym4jeM3w",
+            "workspace_id": "4317aabc-b976-4984-b528-6417270acded"
+          }
+        ]
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "customer": "cus_VRYxsfnnrYQXG7",
+        "subscriptions": [
+          {
+            "id": "sub_1UQfusQQUyqAaZvSLgwh8vnq",
+            "status": "canceled",
+            "livemode": false,
+            "test_clock": "clock_1UQgRpQQUyqAaZvSo1B0xlD4",
+            "workspace_id": "53aea8ca-80c2-4554-a7c5-b35680b76056"
+          }
+        ]
+      }
+    }
+  ]
+}

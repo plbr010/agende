@@ -1,0 +1,12 @@
+{
+  "runtime": "Node 24.19.0",
+  "lint": "PASS: full eslint, including the new staging runners",
+  "typecheck": "PASS: next typegen and tsc --noEmit; repeated tsc after final code edits",
+  "tests": {"passed":355,"failed":0,"skipped":0,"receipt":"p0-standard-tests-20261015.json"},
+  "build": "PASS: Next 16.3.8 optimized staging build after final application edit",
+  "diff_check": "PASS",
+  "production_writes":0,
+  "deployment_executed":false,
+  "dependency_changes":false,
+  "npm_ci_note":"Installed lockfile successfully; system npm ran under Node20 and emitted engine warnings. App, build, lint, typecheck and tests explicitly used bundled Node24."
+}

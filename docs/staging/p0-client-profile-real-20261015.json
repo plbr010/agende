@@ -1,0 +1,46 @@
+{
+  "checked_at": "2026-10-15T17:30:31.715Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_touched": false,
+  "out_of_scope": [
+    "avatar HTTP acceptance: separate staging-avatar-http runner",
+    "browser draft acceptance: separate staging-booking-draft-browser runner"
+  ],
+  "checks": [
+    {
+      "name": "confirmed independent sessions",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "publish only existing synthetic studios using authorized settings RPC",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "favorites add list duplicate remove persistence and cross-user denial",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "unpublished establishment cannot be favorited",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "profile residence city persists own row; cross-user and role changes denied",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "private Storage rejects direct uploads signing and privileged avatar RPC",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    },
+    {
+      "name": "history is authenticated and foreign appointment cancellation/review is denied",
+      "status": "PASS",
+      "mode": "real GoTrue/PostgREST"
+    }
+  ]
+}

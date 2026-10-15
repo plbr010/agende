@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-15T17:52:37.083Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "cleanup": {
+    "published": false,
+    "restored_plan": "solo",
+    "avatar_objects": 0,
+    "active_services": 0,
+    "workspace_media": 0,
+    "avatar_references": 0,
+    "employee_users_remaining": 0,
+    "noncancelled_appointments": 0
+  }
+}

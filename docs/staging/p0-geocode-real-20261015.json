@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-15T17:47:52.629Z",
+  "coordinates": "synthetic Juiz de Fora point; no user GPS",
+  "result": {
+    "city": "Juiz de Fora",
+    "state": "MG"
+  },
+  "passed": true,
+  "scope": "reverse geocoder HTTP, not real device GPS or distance sorting"
+}

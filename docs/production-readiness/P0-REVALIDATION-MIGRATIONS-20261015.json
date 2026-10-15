@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-15T17:46:51.658Z",
+  "production_writes": 0,
+  "approved": false,
+  "remote_count": 63,
+  "local_files": 72,
+  "pending": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20260927014947_launch_readiness_reviews.sql",
+      "sha256_lf": "952a8f9e2e93c74bab851f9c8fa7c0a3abeeb568beedbccb4545f9407e5b1253"
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20261008131859_launch_hardening_reviews_force_rls.sql",
+      "sha256_lf": "39b4f8617d80ff0aa10619c684d0565fe75e3f6ad7f431440d7aded474408848"
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20261009172028_launch_observed_owner_guard.sql",
+      "sha256_lf": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673"
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20261009173042_billing_reconcile_excess_seats.sql",
+      "sha256_lf": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab"
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20261010232248_atomic_service_professional_links.sql",
+      "sha256_lf": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37"
+    },
+    {
+      "order": 6,
+      "path": "supabase/migrations/20261014030220_public_workspace_discovery.sql",
+      "sha256_lf": "d86c2a9c666d34ec7fc66c1a60a30eb5dce20dfda197219f1f979dbd69d16224"
+    },
+    {
+      "order": 7,
+      "path": "supabase/migrations/20261014172158_client_phase2_profiles_favorites.sql",
+      "sha256_lf": "563c70bc3b3ad932410867670f3260454639c5d391769e65b15c8c9fadaa04f9"
+    },
+    {
+      "order": 8,
+      "path": "supabase/migrations/20261014173903_client_phase2_avatar_upload_cleanup.sql",
+      "sha256_lf": "6af57ba750910a4330723cf5e677bd76c6acd2bedd0b121dc268473998b788b3"
+    },
+    {
+      "order": 9,
+      "path": "supabase/migrations/20261015054116_workspace_media_and_settings_contract.sql",
+      "sha256_lf": "6bdb4cf6bdd771bc8d0a97b4610e54a921a9c763bc768805d9bd6931280cdd4f"
+    },
+    {
+      "order": 10,
+      "path": "supabase/migrations/20261015054818_workspace_settings_validation.sql",
+      "sha256_lf": "739aee0dbcf842095d820ede5c78ead377ea22570990739f0b1795caa3530e5a"
+    }
+  ],
+  "remote_only": [
+    {
+      "name": "hardening_snapshot_owner_timezone",
+      "version": "20260919201138"
+    }
+  ],
+  "instruction": "Review semantic drift, obtain recoverable production backup and isolated restore, then obtain specific approval for each payload. Never db push or migration repair automatically."
+}

@@ -6,8 +6,14 @@ import { parseMutation, mutationError, mutationPath } from "./mutations";
 import type { ActionState } from "@/lib/auth/actions";
 export async function managementAction(_previous: ActionState, form: FormData): Promise<ActionState> {
     const parsed = parseMutation(form);
-    if (!parsed.success)
-        return { error: "Revise os campos. Informe valores válidos e preencha os campos obrigatórios." };
+    if (!parsed.success) {
+        const issue = parsed.error.issues[0];
+        const productField = ["name", "description", "sku", "cost"].includes(String(issue?.path[0]));
+        const productAction = ["product-create", "product-update"].includes(String(form.get("action")));
+        return { error: productAction && productField && issue?.message
+            ? issue.message
+            : "Revise os campos. Informe valores válidos e preencha os campos obrigatórios." };
+    }
     const v = parsed.data;
     const path = mutationPath(v.action);
     const session = await requireConfirmedSession(path);
