@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createClient} from '@supabase/supabase-js';
+import {isExpiredAccessRejection} from './staging-auth-expiry-result.mjs';
 assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,'fkpdudnnperufnmdwdlv');
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));
 assert.equal(config.url,'https://fkpdudnnperufnmdwdlv.supabase.co');
@@ -24,7 +25,10 @@ try {
  console.log('WAITING natural JWT expiry; lifetime_seconds='+report.lifetime_seconds);
  while(Date.now()/1000<claims.exp+3)await new Promise(r=>setTimeout(r,Math.min(30000,Math.max(1,(claims.exp+3)*1000-Date.now()))));
  const expired=await fetch(config.url+'/auth/v1/user',{headers:{apikey:config.publishable_key,authorization:'Bearer '+original.access_token}});
- assert.equal(expired.status,401);pass('unchanged original JWT rejected after actual expiry');
+ const rejection=await expired.json();
+ assert.ok(isExpiredAccessRejection(expired.status,rejection));
+ report.expired_access_http_status=expired.status;report.expired_access_error_code=rejection.error_code??rejection.code;
+ pass('unchanged original JWT rejected after actual expiry');
  const refreshed=await client.auth.refreshSession({refresh_token:original.refresh_token});
  assert.equal(refreshed.error,null);assert.ok(refreshed.data.session);assert.notEqual(refreshed.data.session.access_token,original.access_token);
  assert.ok(refreshed.data.session.expires_at>Date.now()/1000);

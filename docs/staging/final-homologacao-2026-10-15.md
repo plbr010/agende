@@ -23,7 +23,7 @@ Não foi necessário modificar telas ou contratos de produto. As falhas reproduz
 | Recuperação, senha anterior/nova, sessão e logout | PASS | `final-auth-owned-20261015.json`: repetição completa em servidor próprio; primeira tentativa e limitação de IPv4 preservadas no relatório anterior |
 | Link aberto em outro navegador | PASS da proteção PKCE | Sem verificador: recusado e sem sessão; redefinição feita somente no perfil de origem |
 | Links reutilizados | PASS | Confirmação e recuperação reais recusam segundo uso |
-| Expiração natural JWT + refresh | EM EXECUÇÃO | `final-session-20261015.json`; espera real de 3.600 s; nenhum relógio, token ou configuração Auth alterado. Não contar RUNNING como PASS |
+| Expiração natural JWT + refresh | PASS | `final-session-20261015.json`; espera real de3.600s, rejeição403 `bad_jwt` com erro de expiração confirmada nos logs do provedor. Renovação complementar da sessão original preservou identidade; logout204 e refresh posterior400. Nenhum relógio, JWT ou configuração Auth alterado |
 | Serviços, equipe/permissões e disponibilidade | PASS | `real-api-results.json`; GoTrue/PostgREST e persistência, com negativas de outro salão |
 | Reserva pública, confirmação na agenda, busca cidade/nome e consentimento | PASS | `browser-functional.json`: oito etapas de navegador com backend real; `discovery-real-api.json`: sete grupos; fixture de publicação restaurada |
 | Estoque, pacotes e financeiro | PASS | `modules-real-api.json`: cinco grupos; resgate único, estorno e saldo. Financeiro/idempotência em `real-api-results.json` |
@@ -46,7 +46,7 @@ Node 24.19.0 e npm via `npm-cli.js`, evitando o wrapper local que usa Node20. Lo
 | `npm ci` | PASS — 406 pacotes instalados |
 | `npm run lint` | PASS após integração e na repetição final; lint específico dos últimos executores registrado separadamente |
 | `npm run typecheck` | PASS |
-| `npm test` | PASS — 327, zero falhas/skips após integrar PR #53; 326 na base inicial |
+| `npm test` | PASS — 329, zero falhas/skips; inclui duas regressões de expiração403/401. Foram327 após PR #53 e326 na base inicial. Evidência em `test-final-complete.log` e `standard-tests.json` |
 | `npm run build` | PASS — build staging integrado com cache novo; Preview Vercel READY |
 | `npm run test:postgres` | PASS — 49 casos PG17 e suítes SQL; cluster próprio parado |
 | `npm audit --omit=dev` | PASS — zero vulnerabilidades |
@@ -55,6 +55,8 @@ Node 24.19.0 e npm via `npm-cli.js`, evitando o wrapper local que usa Node20. Lo
 Não somar testes SQL repetidos em PGlite/PG17 como casos únicos. Mocks e fixtures SQL estão identificados no relatório padrão e não comprovam SMTP, Stripe ou Storage. O primeiro `npm test` teve uma falha EACCES no loopback do sandbox; a repetição com rede passou. O primeiro PG17 não tinha caminho do binário configurado; a repetição com PG17 explícito passou. O browser inicialmente procurou Chromium ausente; passou usando Edge instalado. As expectativas antigas de logout e texto de recusa foram corrigidas no executor, sem alterar o produto. O build integrado encontrou falha interna do worker CSS/Turbopack também fora do sandbox; um cache novo resolveu, preservando o cache anterior em pasta ignorada, sem trocar bundler ou dependências.
 
 A repetição da reserva na fixture compartilhada foi recusada corretamente pelo limite de5/hora; não alteramos limites ou eventos. `final-browser-main-rate-limit-20261015.json` preserva essa tentativa. O teste completo integrado passou em workspace isolado do profissional criado por SMTP nesta rodada, com a mesma autenticação/RLS e todas as validações. A UI gerencia o primeiro workspace do usuário; o executor recusa um ator com múltiplos workspaces no modo isolado. Selecionar outro workspace só pela API não muda o contexto da UI.
+
+O primeiro executor de expiração natural parou por esperar apenas401. Os logs GoTrue no intervalo04:56:25–04:56:40UTC confirmaram403, `bad_jwt` e erro de JWT expirado, após o vencimento real. A tentativa foi preservada em `final-session-first-attempt-20261015.json`. O executor agora aceita401/403 somente com mensagem de token/JWT expirado, com testes negativos para respostas200 e403 não relacionadas. Para concluir a mesma sessão após o encerramento do processo, seu refresh foi cifrado no banco com chave pública efêmera, transportado apenas como ciphertext e usado em memória no CLI para as chamadas reais GoTrue. Não houve criação de endpoint, policy ou extensão; chave privada efêmera e fixture cifrada consumida foram removidas. `final-session-refresh-completion-20261015.json` distingue essa conclusão complementar de uma execução contínua do SDK; confirma o mesmo session_id, identidade, token novo e revogação por logout.
 
 ## Infraestrutura e integração com Cursor
 
@@ -74,6 +76,6 @@ Dados sintéticos foram cancelados/arquivados pelas operações autorizadas; his
 2. Comprovar backup real cifrado, cópia independente e restauração isolada, incluindo cobertura separada de Storage/configuração externa; a credencial existente deve ser fornecida pelo mecanismo seguro local, nunca pelo chat. Sem reset de senha.
 3. Conferir configuração e jornada produtiva em janela autorizada. HTTP200 nas páginas públicas não comprova onboarding, serviços, favoritos ou busca com schema produtivo defasado.
 4. Revisar alertas de segurança e operação: [proteção contra senhas vazadas](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection) desativada (decisão de plano/configuração produtiva depende do proprietário); funções SECURITY DEFINER públicas são wrappers intencionais e exigem [revisão individual de EXECUTE](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable), sem revogar permissões indiscriminadamente. RLS sem política nas filas privadas é negação por padrão. Ver `final-security-20261015.json`.
-5. Encerrar a expiração natural e registrar resultado; conferir retries pendentes do provedor e, se necessário, reenvio oficial de eventos TEST. Não executar cobranças LIVE para homologar.
+5. Conferir retries pendentes do provedor e, se necessário, reenvio oficial de eventos TEST. A expiração natural e a renovação da sessão original foram concluídas e registradas. Não executar cobranças LIVE para homologar.
 
 Os bloqueios produtivos permanecem mesmo com todos os testes de staging aprovados.

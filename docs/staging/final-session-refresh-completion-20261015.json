@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-15T05:03:10.578Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "status": "PASS",
+  "original_issued_at": 1792036588,
+  "original_expires_at": 1792040188,
+  "method": "Original test-session refresh row encrypted with ephemeral public key in DB; decrypted only in local memory; real GoTrue refresh/getUser/logout endpoints; no Auth endpoint or policy added",
+  "original_session_id_preserved": true,
+  "identity_preserved": true,
+  "refresh_http": 200,
+  "new_access_verified_http": 200,
+  "logout_http": 204,
+  "refresh_after_logout_http": 400,
+  "plaintext_tokens_logged": false,
+  "production_writes": 0
+}
