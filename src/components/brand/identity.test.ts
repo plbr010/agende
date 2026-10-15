@@ -16,6 +16,8 @@ test("approved mark, favicon and PWA icons exist without a padded white canvas",
     "src/app/icon.png",
     "src/app/apple-icon.png",
     "public/brand/logo-mark.png",
+    "public/brand/logo-horizontal.png",
+    "public/brand/logo-horizontal-light.png",
     "public/icons/icon-16.png",
     "public/icons/icon-32.png",
     "public/icons/icon-48.png",
@@ -30,6 +32,16 @@ test("approved mark, favicon and PWA icons exist without a padded white canvas",
   }
   assert.ok(readFileSync(join(root, "src/app/favicon.ico")).byteLength > 2000);
   assert.ok(readFileSync(join(root, "public/brand/logo-mark.png")).byteLength < 200_000);
+});
+
+test("landing keeps botanical richness on every breakpoint", () => {
+  const hero = source("src/components/marketing/hero.tsx");
+  assert.match(hero, /FloralWreath/);
+  assert.match(hero, /Exemplo da agenda/);
+  assert.doesNotMatch(hero, /hidden lg:block/);
+  const benefits = source("src/components/marketing/benefits.tsx");
+  assert.match(benefits, /FloralBranch/);
+  assert.doesNotMatch(benefits, /hidden lg:block/);
 });
 
 test("wordmark uses the cropped mark and Playfair stays the heading face", () => {
