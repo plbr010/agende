@@ -35,6 +35,24 @@ test("signup explains the two paths with everyday words and a visible password h
   assert.doesNotMatch(html, /workspace/i);
 });
 
+test("client signup stays free of salon setup and subscription prices", () => {
+  const html = render(createElement(SignupForm, { initialIntent: "client" }));
+  assert.match(html, /Conta de cliente/);
+  assert.match(html, /Criar conta de cliente/);
+  assert.match(html, /Sem salão, sem plano/);
+  assert.doesNotMatch(html, /R\$/);
+  assert.doesNotMatch(html, /Nome do salão/);
+  assert.doesNotMatch(html, /Tenho salão ou atendo clientes/);
+});
+
+test("professional signup names the chosen plan and the free trial", () => {
+  const html = render(createElement(SignupForm, { initialIntent: "professional", plan: "equipe" }));
+  assert.match(html, /Conta profissional/);
+  assert.match(html, /Criar conta profissional/);
+  assert.match(html, /Equipe/);
+  assert.match(html, /7 dias grátis/);
+});
+
 test("invite signup locks the professional intent", () => {
   const html = render(createElement(SignupForm, { next: "/convite/abc", initialIntent: "professional", lockIntent: true }));
   assert.match(html, /Este convite é para entrar na equipe/);

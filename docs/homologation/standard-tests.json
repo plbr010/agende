@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T05:05:07.439Z",
+  "checked_at": "2026-10-15T05:58:39.694Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 209,
+      "passed": 219,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 329,
+    "passed": 339,
     "failed": 0,
     "skipped": 0
   },
@@ -546,6 +546,18 @@
     },
     {
       "file": "src/components/auth/signup-form.test.ts",
+      "name": "client signup stays free of salon setup and subscription prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
+      "name": "professional signup names the chosen plan and the free trial",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
       "name": "invite signup locks the professional intent",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -1051,6 +1063,54 @@
     {
       "file": "src/lib/auth/redirects.test.ts",
       "name": "sanitizeNextPath keeps invite return URLs and rejects open redirects",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "current schema preserves optional metadata without retry",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "legacy schema retries missing residence_city with same authenticated user",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "legacy schema retries missing avatar_path with same authenticated user",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: 42501",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: 42703",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "unrelated failure remains visible: network",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "fallback errors and missing profile are never converted to a profile",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/session-profile.test.ts",
+      "name": "PostgreSQL legacy schema reproduces 42703 and fallback isolates the requested user",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
