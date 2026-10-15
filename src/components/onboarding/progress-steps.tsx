@@ -13,11 +13,21 @@ export const CLIENT_JOURNEY = [
   { id: 4, label: "Descobrir" },
 ] as const;
 
-export const PROFESSIONAL_JOURNEY = [
+export const OWNER_JOURNEY = [
   { id: 1, label: "Conta" },
   { id: 2, label: "E-mail" },
-  { id: 3, label: "Salão" },
-  { id: 4, label: "Agenda" },
+  { id: 3, label: "Plano" },
+  { id: 4, label: "Salão" },
+  { id: 5, label: "Agenda" },
+] as const;
+
+export const PROFESSIONAL_JOURNEY = OWNER_JOURNEY;
+
+export const TEAM_JOURNEY = [
+  { id: 1, label: "Convite" },
+  { id: 2, label: "Conta" },
+  { id: 3, label: "E-mail" },
+  { id: 4, label: "Aceitar" },
 ] as const;
 
 export function JourneySteps({

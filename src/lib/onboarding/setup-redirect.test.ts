@@ -11,6 +11,17 @@ test("createWorkspaceAction sends new salons into setup mode", () => {
   assert.match(block, /redirect\("\/app\?setup=1"\)/);
 });
 
+test("plan choice stores the plan and does not create the salon", () => {
+  const source = readFileSync(new URL("../auth/actions.ts", import.meta.url), "utf8");
+  const block = source.slice(
+    source.indexOf("export async function selectOnboardingPlanAction"),
+    source.indexOf("export async function createWorkspaceAction"),
+  );
+  assert.match(block, /setSelectedPlanCookie/);
+  assert.match(block, /redirect\("\/onboarding\?etapa=salao"\)/);
+  assert.doesNotMatch(block, /create_workspace/);
+});
+
 test("signup only persists plan when professional intent is selected", () => {
   const source = readFileSync(new URL("../../components/auth/signup-form.tsx", import.meta.url), "utf8");
   assert.match(source, /plan && intent === "professional"/);

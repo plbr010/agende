@@ -5,18 +5,19 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const sections = [
-  { href: "/app/configuracoes/geral", label: "Geral" },
-  { href: "/app/configuracoes/perfil", label: "Como clientes te veem" },
-  { href: "/app/configuracoes/equipe", label: "Equipe" },
-  { href: "/app/configuracoes/assinatura", label: "Assinatura" },
+  { href: "/app/configuracoes/geral", label: "Dados do salão", billing: false },
+  { href: "/app/configuracoes/perfil", label: "Logo, capa e página", billing: false },
+  { href: "/app/configuracoes/equipe", label: "Equipe", billing: false },
+  { href: "/app/configuracoes/assinatura", label: "Assinatura", billing: true },
 ];
 
-export function SettingsNav() {
+export function SettingsNav({ showBilling = false }: { showBilling?: boolean }) {
   const pathname = usePathname();
+  const visible = sections.filter((section) => showBilling || !section.billing);
 
   return (
     <nav className="flex gap-1 overflow-x-auto pb-1">
-      {sections.map((section) => {
+      {visible.map((section) => {
         const current = pathname === section.href;
         return (
           <Link

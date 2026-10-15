@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="agende-bloom relative flex min-h-full flex-col overflow-hidden px-4 py-8">
       <FloralSprig className="pointer-events-none absolute -top-8 -left-8 h-48 w-28 opacity-70" />
       <FloralSprig className="pointer-events-none absolute right-0 bottom-0 h-40 w-24 rotate-180 opacity-60" />
-      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         <div className="mb-8 flex items-center justify-between gap-3">
           <BrandLogo />
           <Link href="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:underline">

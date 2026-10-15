@@ -7,6 +7,7 @@ import * as avatarUi from "../account/avatar-ui";
 import * as plans from "../billing/plans";
 import * as redirects from "./redirects";
 import * as signup from "../validation/signup";
+import * as signupJourney from "./signup-journey";
 import * as email from "../validation/email";
 import * as sessionProfile from "./session-profile";
 
@@ -77,6 +78,7 @@ function actions(error: { code?: string; message: string; status?: number } | nu
     } }) },
     "@/lib/http/origin": { getRequestOrigin: async () => "https://agende.test" },
     "@/lib/validation/email": email, "@/lib/validation/signup": signup,
+    "@/lib/auth/signup-journey": signupJourney,
     "@/lib/supabase/server": { createClient: async () => ({ auth: {
       signUp: async (value: unknown) => { calls.push({ name: "signup", value }); return { error }; },
       signInWithPassword: async (value: unknown) => { calls.push({ name: "login", value }); return { error }; },
@@ -119,6 +121,22 @@ test("client and professional signup preserve intent and selected plan without p
   }
   const h = actions();
   assert.ok((await h.signUpAction({}, signupForm("owner"))).error);
+  const team = actions();
+  const teamForm = signupForm("professional");
+  teamForm.set("journey", "team");
+  teamForm.set("intendedUse", "client");
+  teamForm.set("next", "/convite/" + "a".repeat(32));
+  await assert.rejects(team.signUpAction({}, teamForm), /redirect:\/verificar-email\?status=sent/);
+  const teamPayload = team.calls[0].value as { options: { data: { intended_use: string } } };
+  assert.equal(teamPayload.options.data.intended_use, "client");
+  assert.equal(team.cookies.get("agende_selected_plan"), undefined);
+  assert.equal(team.cookies.get("agende_pending_journey"), "team");
+  assert.equal(team.cookies.get("agende_pending_next"), "/convite/" + "a".repeat(32));
+  const missingInvite = actions();
+  const bareTeam = signupForm("client");
+  bareTeam.set("journey", "team");
+  assert.match((await missingInvite.signUpAction({}, bareTeam)).error ?? "", /convite válido/);
+  assert.equal(missingInvite.calls.length, 0);
   assert.equal(h.calls.length, 0);
 });
 
@@ -170,6 +188,8 @@ test("confirmation routes exchange valid tokens, preserve safe destinations and 
           verifyOtp: async () => { calls.push("otp"); return result; },
         } }) },
         "@/lib/auth/redirects": redirects,
+        "@/lib/auth/signup-journey": signupJourney,
+        "@/lib/auth/actions": { getPendingJourney: async () => null, clearPendingJourney: async () => {} },
         "@/lib/auth/session": { loadAppSession: async () => ({ context: {
           emailConfirmed: true, intendedUse: "client", hasWorkspace: false, hasClientProfile: true,
         } }) },

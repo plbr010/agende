@@ -5,34 +5,14 @@ import { useActionState } from "react";
 import { BrandLogo } from "@/components/brand/logo";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FloralSprig } from "@/components/brand/floral";
+import { JourneySteps, TEAM_JOURNEY } from "@/components/onboarding/progress-steps";
+import { INVITE_STATUS_COPY } from "@/lib/auth/signup-journey";
 import { acceptInviteAction } from "@/lib/workspace/actions";
 import { MEMBER_ROLE_LABEL, type MemberRole } from "@/lib/workspace/labels";
 import type { InvitePeek } from "@/lib/workspace/public";
 import { formatDate } from "@/lib/workspace/timezone";
 import { cn } from "@/lib/utils";
-
-const statusCopy: Record<InvitePeek["status"], { title: string; body: string }> = {
-  valid: {
-    title: "Você foi convidada",
-    body: "Entre com a conta certa e aceite para fazer parte da equipe.",
-  },
-  expired: {
-    title: "Este convite expirou",
-    body: "Peça um link novo para quem cuida do salão.",
-  },
-  revoked: {
-    title: "Este convite foi cancelado",
-    body: "Ele não pode mais ser usado.",
-  },
-  accepted: {
-    title: "Este convite já foi utilizado",
-    body: "Se você já entrou, acesse a área do salão.",
-  },
-  not_found: {
-    title: "Convite não encontrado",
-    body: "O link pode estar incompleto ou nunca ter existido.",
-  },
-};
 
 export function InviteAcceptance({
   token,
@@ -48,7 +28,10 @@ export function InviteAcceptance({
   emailConfirmed: boolean;
 }) {
   const [state, action, pending] = useActionState(acceptInviteAction, {});
-  const copy = statusCopy[peek.status];
+  const copy = peek.status === "valid"
+    ? { title: "Você recebeu um convite", body: "Confirme quem você é e aceite para entrar na equipe. Nada é liberado antes disso. Sem mensalidade." }
+    : INVITE_STATUS_COPY[peek.status];
+  const step = peek.status !== "valid" ? 1 : !signedIn ? 2 : !emailConfirmed ? 3 : 4;
   const roleLabel =
     peek.role && peek.role in MEMBER_ROLE_LABEL
       ? MEMBER_ROLE_LABEL[peek.role as MemberRole]
@@ -56,9 +39,11 @@ export function InviteAcceptance({
   const next = `/convite/${encodeURIComponent(token)}`;
 
   return (
-    <div className="agende-bloom flex min-h-full flex-col px-4 py-8">
-      <div className="mx-auto grid w-full max-w-lg gap-6">
+    <div className="agende-bloom relative flex min-h-full flex-col overflow-hidden px-4 py-8">
+      <FloralSprig className="pointer-events-none absolute -top-8 -left-6 h-40 w-24 opacity-70" />
+      <div className="relative mx-auto grid w-full max-w-lg gap-6">
         <BrandLogo />
+        <JourneySteps steps={TEAM_JOURNEY} current={step} label="Entrada na equipe" />
         <Card className="border-none ring-1 ring-border">
           <CardHeader>
             <CardTitle className="font-serif text-3xl">{copy.title}</CardTitle>
@@ -98,7 +83,7 @@ export function InviteAcceptance({
                   Entrar para aceitar
                 </Link>
                 <Link
-                  href={`/cadastro?intent=professional&next=${encodeURIComponent(next)}`}
+                  href={`/cadastro?intent=equipe&next=${encodeURIComponent(next)}`}
                   className={cn(buttonVariants({ variant: "outline" }), "h-12")}
                 >
                   Criar conta

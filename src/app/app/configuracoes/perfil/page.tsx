@@ -27,7 +27,12 @@ export default async function PublicProfileSettingsPage() {
         host={hostFromOrigin(origin)}
       />
       {canEdit && media && !media.error ? <section className="grid gap-4 rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-serif text-2xl">Imagens públicas do estabelecimento</h2>
+        <div>
+          <h2 className="font-serif text-3xl text-wine-deep">Logo e capa</h2>
+          <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
+            Estas imagens aparecem para as clientes. A confirmação só surge depois que o servidor gravar o arquivo.
+          </p>
+        </div>
         <WorkspaceImageForm kind="logo" url={publicLogoUrl(media.data.logo_path)} salonName={settings.name} />
         <WorkspaceImageForm kind="cover" url={publicLogoUrl(media.data.cover_path)} salonName={settings.name} />
       </section> : canEdit ? <p role="status" className="text-sm text-muted-foreground">O envio de imagens públicas está temporariamente indisponível. Tente novamente mais tarde.</p> : null}

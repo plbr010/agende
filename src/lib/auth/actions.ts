@@ -1,6 +1,7 @@
 "use server";
 
 import { parsePlanId, planSchema, type PlanId } from "@/lib/billing/plans";
+import { parseSignupJourney, type SignupJourney } from "@/lib/auth/signup-journey";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -16,6 +17,7 @@ const PENDING_NEXT_COOKIE = "agende_pending_next";
 const PENDING_INTENT_COOKIE = "agende_pending_intent";
 const RESEND_AT_COOKIE = "agende_resend_at";
 const SELECTED_PLAN_COOKIE = "agende_selected_plan";
+const PENDING_JOURNEY_COOKIE = "agende_pending_journey";
 const RESEND_COOLDOWN_MS = 60_000;
 
 async function resolveOrigin(): Promise<string> {
@@ -72,6 +74,29 @@ export async function getSelectedPlan(): Promise<PlanId | null> {
   return parsePlanId(store.get(SELECTED_PLAN_COOKIE)?.value);
 }
 
+async function setPendingJourney(journey: SignupJourney) {
+  const store = await cookies();
+  store.set(PENDING_JOURNEY_COOKIE, journey, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+  });
+}
+
+export async function getPendingJourney(): Promise<SignupJourney | null> {
+  const store = await cookies();
+  const value = store.get(PENDING_JOURNEY_COOKIE)?.value;
+  if (value === "client" || value === "owner" || value === "team") return value;
+  return null;
+}
+
+export async function clearPendingJourney() {
+  const store = await cookies();
+  store.delete(PENDING_JOURNEY_COOKIE);
+}
+
 async function setSelectedPlanCookie(plan: PlanId) {
   const store = await cookies();
   store.set(SELECTED_PLAN_COOKIE, plan, {
@@ -106,10 +131,23 @@ export async function signUpAction(
     return { error: "Confira os campos em vermelho.", fieldErrors };
   }
 
-  const input = parsed.data;
+  let input = parsed.data;
+  const requestedJourney = formData.get("journey");
+  let journey = parseSignupJourney(requestedJourney, input.intendedUse);
+  const next = sanitizeNextPath(String(formData.get("next") ?? ""));
+  if (requestedJourney === "team") {
+    if (!next?.startsWith("/convite/")) {
+      return { error: "Cole um convite válido antes de criar a conta." };
+    }
+    input = { ...input, intendedUse: "client" };
+    journey = "team";
+  } else if (requestedJourney === "client" && input.intendedUse !== "client") {
+    return { error: "A conta de cliente não inclui plano." };
+  } else if (requestedJourney === "owner" && input.intendedUse !== "professional") {
+    return { error: "Escolha a conta do salão para continuar." };
+  }
   const supabase = await createClient();
   const origin = await resolveOrigin();
-  const next = sanitizeNextPath(String(formData.get("next") ?? ""));
   const emailRedirectTo = next
     ? `${origin}/auth/callback?next=${encodeURIComponent(next)}`
     : `${origin}/auth/callback`;
@@ -138,9 +176,13 @@ export async function signUpAction(
 
   await setPendingEmail(input.email, next);
   await setPendingIntent(input.intendedUse);
+  await setPendingJourney(journey);
   const selectedPlan = parsePlanId(formData.get("plan"));
-  if (selectedPlan && input.intendedUse === "professional") {
+  if (journey === "owner" && selectedPlan && input.intendedUse === "professional") {
     await setSelectedPlanCookie(selectedPlan);
+  } else {
+    const store = await cookies();
+    store.delete(SELECTED_PLAN_COOKIE);
   }
   redirect(`/verificar-email?status=sent`);
 }
@@ -235,6 +277,22 @@ export async function resendConfirmationAction(): Promise<ActionState> {
   });
 
   return { success: "Enviamos um novo e-mail de confirmação." };
+}
+
+export async function selectOnboardingPlanAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const plan = planSchema.safeParse(formData.get("plan"));
+  if (!plan.success) return { error: "Escolha um plano válido." };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/onboarding");
+  if (!user.email_confirmed_at) redirect("/verificar-email");
+  await setSelectedPlanCookie(plan.data);
+  redirect("/onboarding?etapa=salao");
 }
 
 export async function createWorkspaceAction(

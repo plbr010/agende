@@ -35,6 +35,11 @@ export default async function LoginPage({
           Senha alterada. Entre com sua nova senha.
         </p>
       ) : null}
+      {safeNext?.startsWith("/convite/") ? (
+        <p role="status" className="mb-4 rounded-2xl bg-metric-blush px-4 py-3 text-sm leading-6">
+          O convite continua guardado. Depois de entrar e confirmar o e-mail, você aceita para entrar na equipe. Sem mensalidade.
+        </p>
+      ) : null}
       {safeNext?.includes("/agendar") ? (
         <p role="status" className="mb-4 rounded-2xl bg-metric-blush px-4 py-3 text-sm leading-6">
           Serviço, profissional, dia e horário continuam escolhidos. Depois de entrar, você volta para confirmar. Se o horário for ocupado nesse meio-tempo, avisamos para escolher outro.

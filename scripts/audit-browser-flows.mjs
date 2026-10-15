@@ -65,16 +65,15 @@ try {
 
     await checkPage(context, `${profile.name}-cadastro`, "/cadastro", async (page, status) => {
       if (status !== 200) throw new Error(`status ${status}`);
-      await page.getByRole("radio", { name: /Quero marcar horários/i }).waitFor();
-      await page.getByRole("radio", { name: /Tenho salão ou atendo/i }).waitFor();
+      await page.getByRole("link", { name: /Quero agendar serviços/i }).waitFor();
+      await page.getByRole("link", { name: /Tenho meu próprio salão/i }).waitFor();
+      await page.getByRole("link", { name: /Trabalho em um salão parceiro/i }).waitFor();
     });
 
     await checkPage(context, `${profile.name}-cadastro-client`, "/cadastro?intent=client", async (page, status) => {
       if (status !== 200) throw new Error(`status ${status}`);
-      const client = page.getByRole("radio", { name: /Quero marcar horários/i });
-      if ((await client.getAttribute("aria-checked")) !== "true") {
-        throw new Error("client intent not preselected");
-      }
+      await page.getByRole("button", { name: /Criar conta de cliente/i }).waitFor();
+      if (/R\$/.test(await page.locator("body").innerText())) throw new Error("client journey showed a price");
     });
 
     await checkPage(context, `${profile.name}-login`, "/login", async (page, status) => {

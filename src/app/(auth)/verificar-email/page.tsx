@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ResendEmailButton } from "@/components/auth/resend-email-button";
-import { CLIENT_JOURNEY, JourneySteps, PROFESSIONAL_JOURNEY } from "@/components/onboarding/progress-steps";
-import { getPendingEmail, getPendingIntent } from "@/lib/auth/actions";
+import { CLIENT_JOURNEY, JourneySteps, OWNER_JOURNEY, TEAM_JOURNEY } from "@/components/onboarding/progress-steps";
+import { getPendingEmail, getPendingIntent, getPendingJourney } from "@/lib/auth/actions";
 import { loadAppSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { getDefaultDestination } from "@/lib/auth/redirects";
@@ -51,21 +51,23 @@ export default async function VerificarEmailPage({
   const { status } = await searchParams;
   const pendingEmail = await getPendingEmail();
   const pendingIntent = session?.context.intendedUse ?? (await getPendingIntent());
-  const clientJourney = pendingIntent !== "professional";
+  const journey = await getPendingJourney();
+  const teamJourney = journey === "team";
+  const clientJourney = !teamJourney && (journey === "client" || (journey === null && pendingIntent !== "professional"));
   const key = status && copy[status] ? status : "loading";
   const content = copy[key];
   const showLoginCta = ["success", "loading", "sent", "error", "browser_mismatch"].includes(key);
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-lg space-y-6">
       <JourneySteps
-        steps={clientJourney ? CLIENT_JOURNEY : PROFESSIONAL_JOURNEY}
-        current={2}
-        label={clientJourney ? "Cadastro de cliente" : "Cadastro profissional"}
+        steps={teamJourney ? TEAM_JOURNEY : clientJourney ? CLIENT_JOURNEY : OWNER_JOURNEY}
+        current={teamJourney ? 3 : 2}
+        label={teamJourney ? "Cadastro da equipe" : clientJourney ? "Cadastro de cliente" : "Cadastro do salão"}
       />
       <div>
         <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">
-          {clientJourney ? "Sou cliente" : "Sou profissional"}
+          {teamJourney ? "Trabalho em um salão parceiro" : clientJourney ? "Quero agendar serviços" : "Tenho meu próprio salão"}
         </p>
         <h1 className="mt-2 font-serif text-3xl text-wine-deep">{content.title}</h1>
         <p className="mt-3 text-muted-foreground">{content.body}</p>
@@ -86,9 +88,11 @@ export default async function VerificarEmailPage({
             Já confirmei — entrar
           </Button>
           <p className="text-center text-sm text-muted-foreground">
-            {clientJourney
-              ? "Depois de entrar, você completa o perfil e pode descobrir estabelecimentos."
-              : "Depois de entrar, você cadastra o estabelecimento e começa os 7 dias grátis."}
+            {teamJourney
+              ? "Depois de entrar, você volta ao convite e aceita para abrir o painel. Sem mensalidade."
+              : clientJourney
+                ? "Depois de entrar, você confere o perfil e pode buscar estabelecimentos."
+                : "Depois de entrar, você escolhe o plano, começa os 7 dias grátis e cadastra o salão."}
           </p>
         </div>
       ) : null}

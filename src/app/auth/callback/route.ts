@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { clearPendingJourney, getPendingJourney } from "@/lib/auth/actions";
 import { getDefaultDestination, sanitizeNextPath } from "@/lib/auth/redirects";
+import { postConfirmationPath } from "@/lib/auth/signup-journey";
 import { loadAppSession } from "@/lib/auth/session";
 
 export async function GET(request: NextRequest) {
@@ -19,7 +21,14 @@ export async function GET(request: NextRequest) {
       const destination = session
         ? getDefaultDestination(session.context)
         : "/verificar-email?status=error";
-      const path = sanitizeNextPath(next) ?? destination;
+      const path = postConfirmationPath({
+        next: sanitizeNextPath(next),
+        destination,
+        journey: await getPendingJourney(),
+        hasClientProfile: Boolean(session?.context.hasClientProfile),
+        intendedUse: session?.context.intendedUse ?? null,
+      });
+      await clearPendingJourney();
       return NextResponse.redirect(`${origin}${path}`);
     }
   }

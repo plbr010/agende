@@ -14,7 +14,7 @@ export function AuthPanel({
   footer?: ReactNode;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-lg space-y-6">
       <div>
         {eyebrow ? (
           <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">{eyebrow}</p>

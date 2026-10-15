@@ -70,9 +70,9 @@ export function GeneralSettingsForm({
   return (
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle>Endereço e contato do salão</CardTitle>
+        <CardTitle className="font-serif text-2xl text-wine-deep">Dados comerciais</CardTitle>
         <CardDescription>
-          Nome, telefone e endereço. O horário padrão é o de Brasília.
+          Nome, telefone, e-mail e endereço do salão. A mensagem de salvo só aparece depois que o servidor gravar.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -179,10 +179,11 @@ export function GeneralSettingsForm({
             </select>
             {state.fieldErrors?.timezone ? <p className="text-sm text-destructive">{state.fieldErrors.timezone}</p> : null}
           </div>
-          {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
-          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
+          {state.error ? <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{state.error}</p> : null}
+          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="inline-flex min-h-11 items-center text-sm underline">Conferir assinatura</Link> : null}
+          {state.success ? <p role="status" className="rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep">{state.success}</p> : null}
           {canEdit ? (
-            <Button type="submit" className="h-12" disabled={pending}>
+            <Button type="submit" size="lg" disabled={pending} aria-busy={pending}>
               {pending ? "Salvando..." : "Salvar dados"}
             </Button>
           ) : (

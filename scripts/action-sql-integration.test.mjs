@@ -12,6 +12,7 @@ import * as phone from '../src/lib/validation/phone.ts';
 import * as plans from '../src/lib/billing/plans.ts';
 import * as redirects from '../src/lib/auth/redirects.ts';
 import * as signup from '../src/lib/validation/signup.ts';
+import * as signupJourney from '../src/lib/auth/signup-journey.ts';
 import * as email from '../src/lib/validation/email.ts';
 import * as bookingValidation from '../src/lib/booking/validation.ts';
 import * as reviewValidation from '../src/lib/reviews/validation.ts';
@@ -86,7 +87,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     'next/headers':{cookies:async()=>({get(){},set(){},delete(){}})}, zod:{z},
     './draft':{BOOKING_DRAFT_COOKIE:'agende_booking_draft'},
     '@/lib/supabase/server':{createClient:async()=>client}, '@/lib/billing/plans':plans,
-    '@/lib/auth/redirects':redirects, '@/lib/auth/session':{loadAppSession:async()=>null,requireConfirmedSession:async()=>({user:{id:actor},workspaces:[{id:workspaceId,role:actor===owner?'owner':'professional'}]})},
+    '@/lib/auth/redirects':redirects, '@/lib/auth/signup-journey':signupJourney, '@/lib/auth/session':{loadAppSession:async()=>null,requireConfirmedSession:async()=>({user:{id:actor},workspaces:[{id:workspaceId,role:actor===owner?'owner':'professional'}]})},
     '@/lib/http/origin':{getRequestOrigin:async()=>'http://127.0.0.1:3000'}, '@/lib/validation/email':email,'@/lib/validation/signup':signup,
     '@/lib/validation/catalog':catalogValidation,'@/lib/validation/money':money,'@/lib/validation/phone':phone,
     '@/lib/validation/agenda':agendaValidation,'@/lib/agenda/status':agendaStatus,'@/lib/agenda/period-rules':periodRules,'@/lib/time/timezone':timezone,
