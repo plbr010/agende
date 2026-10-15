@@ -1,12 +1,8 @@
 {
   "project": "fkpdudnnperufnmdwdlv",
-  "checked_at": "2026-10-15T06:06:35.287Z",
+  "checked_at": "2026-10-15T06:33:11.896Z",
   "latest_run_passed": true,
-  "earlier_attempts": [
-    "profiles-media-first-attempt-20261015.json",
-    "profiles-media-second-attempt-20261015.json",
-    "profiles-media-third-attempt-20261015.json"
-  ],
+  "earlier_attempts": [],
   "checks": [
     {
       "name": "client form signup preserves explicit intent",

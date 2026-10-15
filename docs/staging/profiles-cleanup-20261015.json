@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-10-15T06:10:28.222Z",
+  "checked_at": "2026-10-15T06:34:44.922Z",
   "project": "fkpdudnnperufnmdwdlv",
-  "scope": "only fresh controlled fixtures created by profiles/media runner",
+  "scope": "fresh controlled integrated post-PR56 fixtures; verified with read-only staging counts after browser and booking cleanup",
   "public_objects": 0,
   "cleanup_pending": 0,
   "personal_objects": 0,

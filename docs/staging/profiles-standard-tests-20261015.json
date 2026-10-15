@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T06:10:06.082Z",
+  "checked_at": "2026-10-15T06:29:27.134Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 221,
+      "passed": 223,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 352,
+    "passed": 354,
     "failed": 0,
     "skipped": 0
   },
@@ -86,6 +86,42 @@
       "file": "scripts/workspace-media-sql.test.mjs",
       "name": "workspace image lifecycle SQL: isolation, compare-and-swap, leases and idempotent DDL",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "audience split uses the approved client and professional copy",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "client chrome has a personal nav and no SaaS prices",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "client home greets by first name and never advertises professional plans",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "favorites use the account API and never persist in the browser",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "profile edits name, phone and optional city, and reuses the private avatar route",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-experience.test.ts",
+      "name": "identidade cliente preview is noindex and uses empty real states",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {

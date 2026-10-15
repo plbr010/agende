@@ -1,6 +1,6 @@
 # P0: cadastro, perfis, persistência e imagens
 
-Base `1efb913` (main com PR #55), branch isolada `codex/profiles-media-p0-20261015`. Checkouts anteriores e alterações do Cursor preservados. Nenhum merge, deploy ou escrita produtiva; duas migrations aplicadas somente em staging.
+Base inicial `1efb913` (main com PR #55), branch isolada `codex/profiles-media-p0-20261015`. Integração final com `origin/main` em `bf60012` (PR #56 do Cursor), via merge local `1fa623c`. Checkouts anteriores e alterações do Cursor preservados. Nenhum merge de PR, deploy ou escrita produtiva; duas migrations aplicadas somente em staging.
 
 ## Diagnóstico e causa de cada problema
 
@@ -21,7 +21,7 @@ Base `1efb913` (main com PR #55), branch isolada `codex/profiles-media-p0-202610
 - Capa é exibida no perfil público. Galeria não tinha contrato/modelo/tela no produto inspecionado; não foi introduzida como nova funcionalidade.
 - Limite de entrada4 MiB, saída2 MiB; logo/pessoal até512px, capa até2048px. Multipart4300 KiB fica abaixo do [limite Vercel4,5 MB](https://vercel.com/docs/functions/limitations). Não prometemos superar limite de plataforma via config Next.
 
-Arquivos e integração de frontend: [contrato atualizado](../codex/profiles-media-contract.md). Alterações de interface limitadas aos contratos funcionais, sem redesign. Backend principal: `session-profile.ts`, `session.ts`, `client/actions.ts`, `avatar-image.ts`, `avatar-admin.ts`, avatar route, `workspace/actions.ts`, `queries.ts`, `images.ts`, `image-actions.ts`, validação e erros. Migrations novas e regressões acompanham o PR.
+Arquivos e integração de frontend: [contrato atualizado](../codex/profiles-media-contract.md). Preservadas as telas dedicadas de cadastro, progresso de fotos, onboarding e recorte de logo do Cursor. O `LogoCropField` mantém os defaults e aceita nome/id de input configuráveis para enviar `image` à ação segura; a remoção usa o botão próprio. O runner final executou o recorte real antes do upload. Backend principal: `session-profile.ts`, `session.ts`, `client/actions.ts`, `avatar-image.ts`, `avatar-admin.ts`, avatar route, `workspace/actions.ts`, `queries.ts`, `images.ts`, `image-actions.ts`, validação e erros. Migrations novas e regressões acompanham o PR.
 
 ## Resultados executados
 
@@ -38,12 +38,12 @@ Arquivos e integração de frontend: [contrato atualizado](../codex/profiles-med
 | Cliente busca por cidade, reserva, consulta histórico; mesmo ID na agenda profissional | PASS | [reserva real](profiles-booking-real-20261015.json) |
 | Chave privilegiada ausente dos assets públicos | PASS | Valor staging comparado em memória com todos os JS públicos; nenhum valor registrado |
 | Schema anterior, erros de rede/RLS, retorno incerto de commit, concorrência lógica/leases, DDL reaplicável | PASS | Regressões unitárias e PostgreSQL isolado; não são prova de SMTP |
-| `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` | PASS | Node24; [352 testes categorizados](profiles-standard-tests-20261015.json); build Next16.3.8 |
+| `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` | PASS | Node24; [354 testes categorizados](profiles-standard-tests-20261015.json); build Next16.3.8 |
 | PostgreSQL17.6 nativo:11 testes novos/descoberta + cinco suítes SQL completas | PASS | [runner](profiles-native-pg17-20261015.json), [casos](profiles-native-tests-20261015.json) |
 | Produção: escrita de perfil/foto e aceite pós-publicação | BLOQUEADO | Sem autorização de migrations/binding/deploy; captura não correlacionada à sessão própria |
 | Recuperação do backup produtivo | BLOQUEADO | Não foi exportado/restaurado backup produtivo nesta rodada |
 
-Os testes têm categorias separadas: SQL usa identidade/plataforma sintéticas, Stripe mocks não significam pagamento real, e a jornada de staging usa Auth/SMTP/Storage reais. Cinco advisories HIGH existentes na cadeia de desenvolvimento não foram corrigidos com downgrade forçado; não foram adicionadas dependências.
+Os testes têm categorias separadas: SQL usa identidade/plataforma sintéticas, Stripe mocks não significam pagamento real, e a jornada de staging usa Auth/SMTP/Storage reais. A jornada final foi repetida com contas novas após integrar o PR #56; o [PASS anterior à integração](profiles-media-pre56-20261015.json) também foi preservado. O CI inicial detectou inventário estático de 70 migrations; a lista revisada passou a 72 com os dois arquivos novos, sem alterar hashes ou snapshots históricos. Cinco advisories HIGH existentes na cadeia de desenvolvimento não foram corrigidos com downgrade forçado; não foram adicionadas dependências.
 
 Tentativas intermediárias preservadas: [primeira](profiles-media-first-attempt-20261015.json), [segunda](profiles-media-second-attempt-20261015.json), [terceira](profiles-media-third-attempt-20261015.json). O runner precisou reenviar arquivo/consentimento depois de reset do formulário e substituir espera indefinida de `Response.finished()` por resposta HTTP + comprovação de persistência/limpeza. Apenas servidor/browser headless próprios foram encerrados; processo do Cursor não foi tocado. O primeiro probe de descoberta usou limit100, rejeitado pelo contrato; a [tentativa inicial](profiles-booking-first-attempt-20261015.json) teve cleanup e foi repetida com limit20, sem afrouxar validação. Auditoria SQL antiga esperava upload direto pelo owner; foi atualizada para exigir a negação, sem enfraquecer policies.
 
