@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Bell, LogOut, Shield, Star, UserRound } from "lucide-react";
+import { CLIENT_JOURNEY, JourneySteps } from "@/components/onboarding/progress-steps";
 import { AccountPhotoEditor } from "@/components/account/account-photo-editor";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { PageHeader } from "@/components/app/page-header";
@@ -12,11 +13,32 @@ export const metadata: Metadata = {
   title: "Perfil",
 };
 
-export default async function ClientePerfilPage() {
+export default async function ClientePerfilPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ inicio?: string }>;
+}) {
   const session = await requireConfirmedSession("/cliente/perfil");
+  const { inicio } = await searchParams;
+  const starting = inicio === "1";
 
   return (
     <>
+      {starting ? (
+        <div className="grid gap-4 rounded-[1.8rem] bg-metric-blush p-6 ring-1 ring-[#f0e4de]">
+          <JourneySteps steps={CLIENT_JOURNEY} current={3} label="Cadastro de cliente" />
+          <div>
+            <h2 className="font-serif text-3xl text-wine-deep">Seu perfil de cliente</h2>
+            <p className="mt-2 text-base leading-7">
+              Confira nome, celular e foto. Em seguida, busque um estabelecimento. Esta conta não tem plano nem mensalidade.
+            </p>
+          </div>
+          <Button size="lg" className="w-full sm:w-fit" render={<Link href="/cliente/descobrir" />}>
+            Buscar estabelecimentos
+          </Button>
+        </div>
+      ) : null}
+
       <PageHeader
         eyebrow="Sua conta"
         title="Perfil"

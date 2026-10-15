@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T05:58:39.694Z",
+  "checked_at": "2026-10-15T17:58:14.153Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,12 +7,12 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 31,
+      "passed": 40,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 219,
+      "passed": 228,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 62,
+      "passed": 64,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 339,
+    "passed": 359,
     "failed": 0,
     "skipped": 0
   },
@@ -479,6 +479,60 @@
       "status": "passed"
     },
     {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "owner queues; another user cannot mutate or prepare another tenant",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "missing bytes cannot be referenced and normalized server bytes can",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "replacement is atomic; stale writes lose and referenced bytes are not claimed",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "cover independent of logo; removal clears reference and queues cleanup",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "expired pending upload cannot become current while cleanup runs",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "migration reapplies without removing references or queued work",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "optional commercial fields save; invalid UF, timezone and CEP reject atomically",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "inactive subscription still blocks commercial writes and uploads without mutating profile or billing",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "workspace image lifecycle SQL: isolation, compare-and-swap, leases and idempotent DDL",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
       "file": "src/app/visual-tokens.test.ts",
       "name": "the visual reference palette is the semantic source of the product",
       "category": "unit_or_static_contract",
@@ -540,7 +594,7 @@
     },
     {
       "file": "src/components/auth/signup-form.test.ts",
-      "name": "signup explains the two paths with everyday words and a visible password hint",
+      "name": "signup opens with three plain choices and no subscription prices",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -558,7 +612,13 @@
     },
     {
       "file": "src/components/auth/signup-form.test.ts",
-      "name": "invite signup locks the professional intent",
+      "name": "team signup keeps the invite and never shows a subscription price",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/auth/signup-form.test.ts",
+      "name": "owner plan step shows the real prices before the salon name",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -673,6 +733,12 @@
     {
       "file": "src/components/client/client-experience.test.ts",
       "name": "identidade cliente preview is noindex and uses empty real states",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/client/client-profile-form.test.ts",
+      "name": "legacy schema form omits unsupported city while keeping core profile editable",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1115,6 +1181,24 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/auth/signup-journey.test.ts",
+      "name": "invite tokens come from the code or a convite link and reject other addresses",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/signup-journey.test.ts",
+      "name": "signup journey keeps clients away from plans and preserves an opened invite",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/signup-journey.test.ts",
+      "name": "email confirmation returns clients to profile unless a safe destination already exists",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/billing/billing-actions.test.ts",
       "name": "all six checkout selections reach stripe-billing with authenticated workspace and no redirect input",
       "category": "unit_or_static_contract",
@@ -1345,6 +1429,12 @@
     {
       "file": "src/lib/client/avatar-image.test.ts",
       "name": "avatars reject SVG executables corruption size and invalid dimensions",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/client/avatar-image.test.ts",
+      "name": "public covers keep useful resolution and still remove metadata within server limits",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1621,6 +1711,12 @@
     {
       "file": "src/lib/onboarding/setup-redirect.test.ts",
       "name": "createWorkspaceAction sends new salons into setup mode",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/onboarding/setup-redirect.test.ts",
+      "name": "plan choice stores the plan and does not create the salon",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -2003,6 +2099,24 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/workspace/images.test.ts",
+      "name": "public image action refuses foreign roles, absent consent and oversized input before privileged access",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/images.test.ts",
+      "name": "public image upload preserves new bytes on uncertain or stale swap acknowledgement",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/settings-errors.test.ts",
+      "name": "database validation produces field errors without leaking private details",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/workspace/slug.test.ts",
       "name": "slugifyPreview lowercases, strips accents and spaces",
       "category": "unit_or_static_contract",
@@ -2047,6 +2161,12 @@
     {
       "file": "src/lib/workspace/validation.test.ts",
       "name": "reserved slug is rejected in the form",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "invalid optional commercial fields are rejected instead of silently discarded",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

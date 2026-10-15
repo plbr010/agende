@@ -186,13 +186,17 @@ try {
 
       try {
         await page.goto(`${base}/cadastro`, { waitUntil: "domcontentloaded", timeout: 20000 });
-        const client = page.getByRole("radio", { name: /Quero marcar horários/i });
-        const professional = page.getByRole("radio", { name: /Tenho salão ou atendo/i });
+        const client = page.getByRole("link", { name: /Quero agendar serviços/i });
+        const owner = page.getByRole("link", { name: /Tenho meu próprio salão/i });
+        const team = page.getByRole("link", { name: /Trabalho em um salão parceiro/i });
         await client.waitFor();
-        await professional.focus();
-        await professional.press("ArrowUp");
-        if ((await client.getAttribute("aria-checked")) !== "true") {
-          throw new Error("arrow key did not select client intent");
+        await owner.waitFor();
+        await team.waitFor();
+        await client.focus();
+        await client.press("Enter");
+        await page.getByRole("button", { name: /Criar conta de cliente/i }).waitFor();
+        if (/R\$/.test(await page.locator("body").innerText())) {
+          throw new Error("client signup showed a subscription price");
         }
         record({ name: "cadastro-keyboard", result: "PASS", evidence: await shot(page, "cadastro") });
       } catch (error) {

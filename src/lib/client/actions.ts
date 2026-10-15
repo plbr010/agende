@@ -49,5 +49,5 @@ export async function updateClientProfileAction(
   revalidatePath("/cliente");
   revalidatePath("/cliente/perfil");
   revalidatePath("/app", "layout");
-  return { success: "Perfil atualizado." };
+  return { success: "Seus dados foram salvos." };
 }

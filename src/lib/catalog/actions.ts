@@ -110,19 +110,23 @@ export async function saveProfessionalProfileAction(
     patch.booking_enabled = parsed.data.bookingEnabled;
   }
 
-  const { error: updateError } = await supabase
+  const { data: saved, error: updateError } = await supabase
     .from("professional_profiles")
     .update(patch)
     .eq("member_id", parsed.data.memberId)
-    .eq("workspace_id", workspace.id);
+    .eq("workspace_id", workspace.id)
+    .select("member_id");
 
   if (updateError) {
     return { error: mapCatalogError(updateError.message) };
   }
+  if (!saved?.length) {
+    return { error: "Não foi possível salvar o perfil de atendimento. Atualize a página e tente de novo." };
+  }
 
   revalidatePath("/app");
   revalidatePath("/app/equipe");
-  return { success: "Perfil atualizado." };
+  return { success: "Perfil de atendimento salvo." };
 }
 
 export async function saveServiceAction(

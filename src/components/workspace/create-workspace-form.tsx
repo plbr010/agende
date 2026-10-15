@@ -3,8 +3,9 @@
 import { PLANS } from "@/lib/marketing/content";
 import { type PlanId } from "@/lib/billing/plans";
 import { TRIAL_PLAIN } from "@/lib/usability/copy";
+import Link from "next/link";
 import { useActionState, useState } from "react";
-import { createWorkspaceAction, type ActionState } from "@/lib/auth/actions";
+import { createWorkspaceAction, selectOnboardingPlanAction, type ActionState } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,28 +14,15 @@ import { PortugueseForm } from "@/components/usability/portuguese-form";
 
 const initial: ActionState = {};
 
-export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: PlanId }) {
-  const [state, action, pending] = useActionState(createWorkspaceAction, initial);
+export function PlanChoiceForm({ defaultPlan = "equipe" }: { defaultPlan?: PlanId }) {
+  const [state, action, pending] = useActionState(selectOnboardingPlanAction, initial);
   const [selected, setSelected] = useState<PlanId>(defaultPlan);
 
   return (
     <PortugueseForm action={action} className="grid gap-5">
-      <div className="grid gap-2">
-        <Label htmlFor="name">Nome do salão ou estúdio</Label>
-        <Input
-          id="name"
-          name="name"
-          required
-          minLength={2}
-          maxLength={80}
-          className="h-11"
-          placeholder="Ex.: Studio Ana, Salão Bella"
-        />
-        {state.fieldErrors?.name ? <p className="text-sm text-destructive">{state.fieldErrors.name}</p> : null}
-      </div>
       <fieldset className="grid gap-3">
         <legend className="mb-1 font-medium">Escolha seu plano</legend>
-        <p className="text-sm text-muted-foreground">Você pode trocar durante os 7 dias grátis. Sem cartão agora.</p>
+        <p className="text-sm leading-6 text-muted-foreground">Os preços abaixo são os do Agendê. O teste de 7 dias começa quando o salão for criado. Sem cartão agora.</p>
         <div className="grid gap-3">
           {PLANS.map((plan) => (
             <label
@@ -64,9 +52,6 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
                         Mais escolhido
                       </span>
                     ) : null}
-                    {selected === plan.id ? (
-                      <span className="text-xs font-medium text-[var(--rose-ink)]">Selecionado</span>
-                    ) : null}
                   </span>
                   <span className="font-serif text-xl text-wine-deep">
                     {plan.price}
@@ -80,6 +65,50 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
           ))}
         </div>
       </fieldset>
+      <p className="rounded-2xl bg-metric-ivory px-4 py-3 text-sm text-muted-foreground">{TRIAL_PLAIN}</p>
+      {state.error ? (
+        <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {state.error}
+        </p>
+      ) : null}
+      <Button type="submit" size="lg" className="w-full" disabled={pending} aria-busy={pending}>
+        {pending ? "Guardando plano..." : "Continuar para o teste de 7 dias"}
+      </Button>
+    </PortugueseForm>
+  );
+}
+
+export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: PlanId }) {
+  const [state, action, pending] = useActionState(createWorkspaceAction, initial);
+  const selectedPlan = PLANS.find((plan) => plan.id === defaultPlan) ?? PLANS[1];
+
+  return (
+    <PortugueseForm action={action} className="grid gap-5">
+      <input type="hidden" name="plan" value={defaultPlan} />
+      <div className="rounded-[1.25rem] bg-metric-blush px-4 py-4">
+        <p className="text-xs font-semibold tracking-[0.16em] text-[var(--rose-ink)] uppercase">Teste de 7 dias</p>
+        <p className="mt-1 font-serif text-2xl text-wine-deep">
+          {selectedPlan?.name} · {selectedPlan?.price}
+          <span className="text-base font-sans text-muted-foreground">{selectedPlan?.period}</span>
+        </p>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">{selectedPlan?.seats}. O teste começa quando o salão for criado.</p>
+        <Link href="/onboarding" className="mt-2 inline-flex min-h-11 items-center text-sm text-wine-deep underline underline-offset-4">
+          Trocar plano
+        </Link>
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="name">Nome do salão ou estúdio</Label>
+        <Input
+          id="name"
+          name="name"
+          required
+          minLength={2}
+          maxLength={80}
+          className="h-12"
+          placeholder="Ex.: Studio Ana, Salão Bella"
+        />
+        {state.fieldErrors?.name ? <p className="text-sm text-destructive">{state.fieldErrors.name}</p> : null}
+      </div>
       <p className="rounded-2xl bg-metric-ivory px-4 py-3 text-sm text-muted-foreground">{TRIAL_PLAIN}</p>
       {state.error ? (
         <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">

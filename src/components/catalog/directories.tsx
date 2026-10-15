@@ -40,6 +40,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatCentsInput, formatCentsToReais } from "@/lib/validation/money";
 import { formatPhoneBr } from "@/lib/validation/phone";
 import { ConfirmAction } from "@/components/usability/confirm-action";
+import { OwnProfessionalProfile } from "@/components/catalog/own-professional-profile";
 
 const roleLabel: Record<MemberRole, string> = {
   owner: "Dono",
@@ -122,8 +123,11 @@ export function TeamDirectory({
     setEditing(null);
   });
 
+  const mine = members.find((member) => member.userId === currentUserId);
+
   return (
     <div className="grid gap-4">
+      {mine ? <OwnProfessionalProfile member={mine} canManage={canManage} /> : null}
       {members.length === 0 ? (
         <Card className="border-none ring-1 ring-[#f0e4de]">
           <CardContent>
@@ -195,8 +199,8 @@ export function TeamDirectory({
       <Dialog open={Boolean(editing)} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Perfil profissional</DialogTitle>
-            <DialogDescription>Nome de apresentação e bio para o atendimento.</DialogDescription>
+            <DialogTitle>Perfil de atendimento</DialogTitle>
+            <DialogDescription>Nome e frase que as clientes veem. O aviso de salvo só aparece depois da gravação.</DialogDescription>
           </DialogHeader>
           {editing ? (
             <form key={editing.memberId} action={action} className="grid gap-4">
