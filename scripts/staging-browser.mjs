@@ -9,21 +9,35 @@ assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,'fkpdudnnperufnmdwdlv');
 assert.ok(process.env.AGENDE_PLAYWRIGHT_MODULE_PATH,'Set the installed Playwright module path');
 const {chromium}=createRequire(import.meta.url)(process.env.AGENDE_PLAYWRIGHT_MODULE_PATH);
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));
-const redact=value=>String(value??'').replaceAll(config.fixture_password,'[redacted]').replaceAll(config.publishable_key,'[redacted]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted]');
+const ownedAuth=process.env.AGENDE_STAGING_BROWSER_OWNED_AUTH_FIXTURE==='1';
+const actor=ownedAuth?JSON.parse(readFileSync('.env.final-auth-owned-fixture.json','utf8')):{email:'owner-a@agende-staging.invalid',password:config.fixture_password};
+const redact=value=>String(value??'').replaceAll(config.fixture_password,'[redacted]').replaceAll(actor.password,'[redacted]').replaceAll(actor.email,'[redacted-test-email]').replaceAll(config.publishable_key,'[redacted]').replace(/eyJ[A-Za-z0-9_.-]+/g,'[redacted]');
 assert.equal(config.url,'https://fkpdudnnperufnmdwdlv.supabase.co');
 const client=createClient(config.url,config.publishable_key,{auth:{persistSession:false,autoRefreshToken:false}});
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error?.message);return r.data;};
+const settingsPayload=(workspace,settings)=>({p_workspace_id:workspace.id,p_name:workspace.name,p_slug:workspace.slug,
+ p_business_phone:settings.business_phone,p_business_email:settings.business_email,p_description:settings.description,
+ p_address:settings.address,p_city:settings.city,p_state:settings.state,p_postal_code:settings.postal_code,
+ p_instagram:settings.instagram,p_timezone:settings.timezone,p_logo_path:settings.logo_path,p_clear_logo:false});
 const socket=createServer();await new Promise(resolve=>socket.listen(0,'127.0.0.1',resolve));const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
-const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-2026-10-14';mkdirSync(evidence,{recursive:true});
+const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-'+new Date().toISOString().slice(0,10);mkdirSync(evidence,{recursive:true});
 let browser,server,w,s,enabled,serviceId,lastPage,appointmentId,workingHoursId,restored=true,failure;
 let serverDiagnostics='';
 const check=async(name,fn)=>{await fn();checks.push(name);console.log('PASS '+name);};
 try{
-  await ok(client.auth.signInWithPassword({email:'owner-a@agende-staging.invalid',password:config.fixture_password}));
-  w=(await ok(client.from('workspaces').select('id,name,slug').eq('name','Staging Studio A')))[0];assert.ok(w);
-  s=await ok(client.from('workspace_settings').select('city,state').eq('workspace_id',w.id).single());
+  const login=await ok(client.auth.signInWithPassword({email:actor.email,password:actor.password}));assert.ok(login.user.email_confirmed_at);
+  let query=client.from('workspaces').select('id,name,slug');
+  if(ownedAuth){
+    // Fresh SMTP-confirmed owner/trial from the same run. The app manages its
+    // primary workspace, so don't target another tenant of the shared owner.
+    const memberships=await ok(client.from('workspace_members').select('workspace_id,role').eq('user_id',login.user.id).eq('status','active'));
+    assert.equal(memberships.length,1);assert.equal(memberships[0].role,'owner');assert.equal(memberships[0].workspace_id,actor.workspace_id);
+    query=query.eq('id',actor.workspace_id);
+  }else query=query.eq('name','Staging Studio A');
+  w=(await ok(query))[0];assert.ok(w);
+  s=await ok(client.from('workspace_settings').select('*').eq('workspace_id',w.id).single());
   enabled=await ok(client.rpc('get_workspace_discovery',{p_workspace_id:w.id}));
-  await ok(client.rpc('update_workspace_settings',{p_workspace_id:w.id,p_name:w.name,p_slug:w.slug,p_city:'São Paulo',p_state:'SP'}));
+  await ok(client.rpc('update_workspace_settings',{...settingsPayload(w,s),p_city:'São Paulo',p_state:'SP'}));
   await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:false}));
   server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port',String(port)],{windowsHide:true,env:{...process.env,
     NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key,NEXT_PUBLIC_SITE_URL:base},stdio:['ignore','pipe','pipe']});
@@ -36,8 +50,8 @@ try{
   browser=await chromium.launch({headless:true,channel:process.env.AGENDE_BROWSER_CHANNEL||undefined});const context=await browser.newContext({viewport:{width:1366,height:900}}),page=await context.newPage();
   lastPage=page;
   await check('browser login creates a real staging session and opens manager settings',async()=>{
-    await page.goto(base+'/login?next=%2Fapp%2Fconfiguracoes%2Fperfil');await page.getByLabel('E-mail',{exact:true}).fill('owner-a@agende-staging.invalid');
-    await page.locator('input[name=password]').fill(config.fixture_password);await page.getByRole('button',{name:'Entrar',exact:true}).click();
+    await page.goto(base+'/login?next=%2Fapp%2Fconfiguracoes%2Fperfil');await page.getByLabel('E-mail',{exact:true}).fill(actor.email);
+    await page.locator('input[name=password]').fill(actor.password);await page.getByRole('button',{name:'Entrar',exact:true}).click();
     await page.waitForURL('**/app/configuracoes/perfil');await page.getByText('Aparecer na busca de salões',{exact:true}).waitFor();
   });
   await check('manager publishes through the actual form and persistence survives reload',async()=>{
@@ -81,14 +95,28 @@ try{
     const dateLabel=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',weekday:'long',day:'numeric',month:'long'}).format(new Date(day+'T15:00:00Z'));
     await search.getByRole('button',{name:dateLabel,exact:true}).click();
     await search.getByRole('region',{name:'Escolher horário'}).getByRole('button',{name:/^\d\d:\d\d$/}).first().click();
-    await search.getByLabel('Nome completo',{exact:true}).fill('Browser Cliente Sintetico');
-    await search.getByLabel('Celular',{exact:true}).fill('32999999999');
+    // Current contract authenticates before reservation and keeps the slot in
+    // an HttpOnly draft. A guest cannot claim an existing client by typed email.
+    await search.waitForURL('**/login?next=**');
+    const draft=(await guest.cookies()).find(c=>c.name==='agende_booking_draft');assert.ok(draft?.httpOnly);
+    const selection=JSON.parse(decodeURIComponent(draft.value)).selection;assert.equal(selection.serviceId,serviceId);
     await search.getByLabel('E-mail',{exact:true}).fill('client@agende-staging.invalid');
-    await search.getByRole('button',{name:'Continuar',exact:true}).click();
+    await search.locator('input[name=password]').fill(config.fixture_password);await search.getByRole('button',{name:'Entrar',exact:true}).click();
+    await search.waitForURL(`**/p/${w.slug}/agendar`);
+    const available=await ok(client.rpc('list_public_available_slots',{p_slug:w.slug,p_service_id:serviceId,p_professional_member_id:member,p_local_date:day}));
+    assert.ok(available.some(x=>x.starts_at===selection.startsAt),'Draft slot must still be available after login');
+    if(await search.locator('input[name=fullName]').count()){
+      await search.getByLabel('Nome completo',{exact:true}).fill('Browser Cliente Sintetico');
+      await search.getByLabel('Celular',{exact:true}).fill('32999999999');
+      await search.getByLabel('E-mail',{exact:true}).fill('client@agende-staging.invalid');
+      await search.getByRole('button',{name:'Continuar',exact:true}).click();
+    }
     await search.getByRole('button',{name:'Reservar este horário',exact:true}).click();
-    await search.getByRole('heading',{name:'Seu horário está reservado',exact:true}).waitFor();
+    await search.getByRole('heading',{name:'Agendamento confirmado!',exact:true}).waitFor();
     const appointment=(await ok(client.from('appointments').select('id,status').eq('workspace_id',w.id).eq('service_id',serviceId)))[0];
     appointmentId=appointment?.id;assert.ok(appointmentId);assert.equal(appointment.status,'scheduled');
+    assert.equal((await ok(client.from('appointments').select('id').eq('workspace_id',w.id).eq('service_id',serviceId))).length,1);
+    assert.ok(!(await guest.cookies()).some(c=>c.name==='agende_booking_draft'));
     lastPage=page;await page.goto(base+'/app/agenda?view=day&date='+day);
     await page.getByText(new RegExp(serviceName)).first().waitFor();
     await search.screenshot({path:evidence+'/booking-confirmed-mobile.png',fullPage:true});
@@ -111,8 +139,10 @@ try{
     if(appointmentId)await ok(client.rpc('set_appointment_status',{p_appointment_id:appointmentId,p_status:'cancelled'}));
     if(workingHoursId)await ok(client.from('professional_working_hours').delete().eq('id',workingHoursId));
     await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:false}));
-    await ok(client.rpc('update_workspace_settings',{p_workspace_id:w.id,p_name:w.name,p_slug:w.slug,p_city:s.city,p_state:s.state}));
+    await ok(client.rpc('update_workspace_settings',settingsPayload(w,s)));
     if(enabled)await ok(client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:true}));
+    const restoredSettings=await ok(client.from('workspace_settings').select('*').eq('workspace_id',w.id).single());
+    for(const key of ['business_phone','business_email','description','address','city','state','postal_code','instagram','timezone','logo_path'])assert.equal(restoredSettings[key],s[key]);
     if(serviceId)await ok(client.from('services').update({archived_at:new Date().toISOString(),active:false}).eq('id',serviceId));
   }catch{restored=false;}}
   await client.auth.signOut();writeFileSync('docs/staging/browser-functional.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&restored,booking_skipped:process.env.AGENDE_STAGING_SKIP_BOOKING==='1',booking_skip_reason:process.env.AGENDE_STAGING_SKIP_BOOKING==='1'?'Explicit bounded rerun; real booking fixture quota already reached':undefined,fixtures_restored:restored,synthetic_service_archived:Boolean(serviceId)&&restored,synthetic_booking_cancelled:Boolean(appointmentId)&&restored,production_connections:0,error:failure?.message,secrets_in_report:false},null,2)+'\n');

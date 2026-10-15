@@ -14,7 +14,11 @@ const serverKey=existingStagingServerKey();
 const admin=createClient(config.url,serverKey,{auth:{persistSession:false,autoRefreshToken:false}});
 const socket=createServer();await new Promise(r=>socket.listen(0,'127.0.0.1',r));const port=socket.address().port;await new Promise(r=>socket.close(r));
 const preview=process.env.AGENDE_AVATAR_PREVIEW_ORIGIN;
-if(preview)assert.equal(preview,'https://agende-git-codex-stabilization-38c7eb-pedros-projects-cfddfd39.vercel.app','Only the dedicated stabilization Preview is allowed');
+if(preview)assert.ok([
+ 'https://agende-git-codex-stabilization-38c7eb-pedros-projects-cfddfd39.vercel.app',
+ // Vercel API verified: project agende, final acceptance branch, commit 6bedaf6.
+ 'https://agende-lme3386lk-pedros-projects-cfddfd39.vercel.app',
+].includes(preview),'Only explicitly verified staging Previews are allowed');
 const origin=preview??`http://127.0.0.1:${port}`,checks=[];
 const server=preview?null:spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port',String(port)],{windowsHide:true,stdio:'ignore',env:{...process.env,SUPABASE_SERVICE_ROLE_KEY:serverKey,SITE_URL:origin,NEXT_PUBLIC_SUPABASE_URL:config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:config.publishable_key,NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV:'staging',NEXT_PUBLIC_SITE_URL:origin}});
 const login=async(email)=>{

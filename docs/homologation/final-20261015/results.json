@@ -1,0 +1,103 @@
+{
+  "checked_at": "2026-10-15T05:06:31.078Z",
+  "release_decision": "NO-GO",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "commands": [
+    {
+      "name": "npm ci",
+      "status": "PASS",
+      "evidence": "npm-ci.log"
+    },
+    {
+      "name": "npm run lint",
+      "status": "PASS",
+      "evidence": "lint-final.log; lint-final-session-fix.log"
+    },
+    {
+      "name": "npm run typecheck",
+      "status": "PASS",
+      "evidence": "typecheck-integrated-main.log"
+    },
+    {
+      "name": "npm test",
+      "status": "PASS",
+      "totals": {
+        "passed": 329,
+        "failed": 0,
+        "skipped": 0
+      },
+      "evidence": "test-final-complete.log"
+    },
+    {
+      "name": "npm run build",
+      "status": "PASS",
+      "evidence": "build-integrated-fresh-cache.log"
+    },
+    {
+      "name": "npm run test:postgres",
+      "status": "PASS",
+      "cases": 49,
+      "evidence": "postgres-configured.log"
+    },
+    {
+      "name": "npm audit --omit=dev",
+      "status": "PASS",
+      "vulnerabilities": 0
+    },
+    {
+      "name": "npm audit all",
+      "status": "FAIL",
+      "high": 5,
+      "scope": "dev lint dependency chain"
+    }
+  ],
+  "journeys": [
+    {
+      "name": "real SMTP signup PKCE login trial dashboard recovery old/new password cross-browser denial session logout",
+      "status": "PASS",
+      "evidence": "docs/staging/final-auth-owned-20261015.json"
+    },
+    {
+      "name": "natural JWT expiry and complementary original-session refresh/logout",
+      "status": "PASS",
+      "evidence": "docs/staging/final-session-20261015.json",
+      "initial_harness_attempt": "FAIL; incorrect 401-only expectation corrected; actual provider rejection403 bad_jwt expired"
+    },
+    {
+      "name": "real browser booking on isolated SMTP-created tenant; service and agenda; publication and search",
+      "status": "PASS",
+      "evidence": "docs/staging/browser-functional.json"
+    },
+    {
+      "name": "real modules roles tenant isolation private Storage and avatar lifecycle",
+      "status": "PASS",
+      "evidence": "docs/staging/real-api-results.json; modules-real-api.json; client-phase2-real-tests.json; client-phase2-avatar-http.json"
+    },
+    {
+      "name": "six TEST prices and real hosted payments signed webhooks subscriptions entitlements Portal plan change cancellation declined renewal",
+      "status": "PASS",
+      "evidence": "docs/staging/final-billing-provider-20261015.json"
+    },
+    {
+      "name": "signed direct replay of actual TEST provider events preserves latest states and unique rows",
+      "status": "PASS",
+      "evidence": "docs/staging/final-event-replay-20261015.json"
+    },
+    {
+      "name": "official Stripe Dashboard/CLI resend",
+      "status": "BLOCKED",
+      "reason": "No connected Dashboard or supported resend operation; distinct from direct replay"
+    },
+    {
+      "name": "real production backup and full platform recovery",
+      "status": "BLOCKED",
+      "reason": "Existing database credential and specific authorization required; synthetic restore is not production recovery"
+    },
+    {
+      "name": "production migrations and billing configuration rollout",
+      "status": "BLOCKED",
+      "reason": "Eight pending migrations, missing avatar bucket and stripe_api_key, Edge drift; explicit production restrictions respected"
+    }
+  ]
+}

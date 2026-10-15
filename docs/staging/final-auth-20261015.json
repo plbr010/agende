@@ -1,0 +1,67 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real browser, delivered SMTP, staging backend",
+  "checks": [
+    {
+      "name": "fresh professional signup through actual form",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered signup email confirms in original PKCE browser",
+      "status": "PASS"
+    },
+    {
+      "name": "full browser journey (private diagnostics withheld)",
+      "status": "FAIL"
+    },
+    {
+      "name": "explicit login after confirmation",
+      "status": "PASS"
+    },
+    {
+      "name": "fresh onboarding trial dashboard and persisted browser session",
+      "status": "PASS"
+    },
+    {
+      "name": "real persisted owner membership and trialing subscription",
+      "status": "PASS"
+    },
+    {
+      "name": "dashboard logout",
+      "status": "PASS"
+    },
+    {
+      "name": "recovery requested through actual form",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign browser without PKCE verifier rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered recovery link resets password in originating browser",
+      "status": "PASS"
+    },
+    {
+      "name": "previous password rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "new password login and persisted session",
+      "status": "PASS"
+    },
+    {
+      "name": "logout prevents dashboard access",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered signup and recovery links cannot be reused",
+      "status": "PASS"
+    }
+  ],
+  "checked_at": "2026-10-15T04:08:02.565Z",
+  "harness_limitations": [
+    "First attempt expected /login after logout; application correctly redirects to /. Remaining steps resumed with the same confirmed identity.",
+    "IPv4 port 3000 belongs to Cursor. This first run proves real staging flows, but owned-server proof for current revision is recorded separately in final-auth-owned-20261015.json."
+  ]
+}

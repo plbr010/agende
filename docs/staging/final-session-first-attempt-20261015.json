@@ -1,0 +1,20 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real GoTrue; natural JWT expiry; no clock or token edits",
+  "status": "FAIL",
+  "checks": [
+    {
+      "name": "confirmed real login creates session",
+      "status": "PASS"
+    },
+    {
+      "name": "session lifecycle",
+      "status": "FAIL",
+      "detail": "Diagnostics withheld to avoid credentials/session leakage"
+    }
+  ],
+  "issued_at": 1792036588,
+  "expires_at": 1792040188,
+  "lifetime_seconds": 3600,
+  "checked_at": "2026-10-15T04:56:31.562Z"
+}

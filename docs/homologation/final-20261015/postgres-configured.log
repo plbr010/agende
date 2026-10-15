@@ -1,0 +1,61 @@
+
+> agende@0.1.0 test:postgres
+> node scripts/run-pg17-tests.mjs
+
+{"native_version":"postgres (PostgreSQL) 17.6","host":"127.0.0.1","port":51560,"mode":"isolated native SQL; Auth/Storage/Cron are fixtures"}
+PASS [native_pg17_integration_with_mock_auth] workspace create action starts one trial and respects Cursor setup redirect
+PASS [native_pg17_integration_with_mock_auth] profile, service and availability actions persist a bookable catalog
+PASS [native_pg17_integration_with_mock_auth] public actions book an actual slot and reject overlapping requests
+PASS [native_pg17_integration_with_mock_auth] client rescheduling preserves appointment ID and denies another client
+PASS [native_pg17_integration_with_mock_auth] reschedule remains committed when its follow-up read fails, without returning an empty success
+PASS [native_pg17_integration_with_mock_auth] completed appointment receives exactly one immutable client review
+PASS [native_pg17_integration_with_mock_auth] client cancellation action frees a second booked slot
+PASS [native_pg17_integration_with_mock_auth] finance actions register a local payment and finance RPC reflects it
+PASS [native_pg17_integration_with_mock_auth] expired identity and foreign user cannot mutate bookings or read finance
+PASS [native_pg17_integration_with_mock_auth] stock and package actions persist their business operations
+PASS [native_pg17_integration_with_mock_auth] server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews
+PASS [native_pg17_sql] prepared one-migration transaction preserves existing catalog and other history
+PASS [native_pg17_sql] missing production service contract is restored by the exact additive migration
+PASS [native_pg17_sql] atomic catalog SQL protects tenant boundaries, roles and existing overrides
+PASS [native_pg17_sql] an error after service insertion rolls back the entire atomic RPC
+PASS [native_pg17_sql] selected plans, invalid plan, confirmed email and anonymous access
+PASS [native_pg17_sql] second workspace never earns another trial
+PASS [native_pg17_sql] trial plan change preserves all dates and rejects invalid/expired trials
+PASS [native_pg17_sql] downgrade rejects excess professionals and admin can change eligible plan
+PASS [native_pg17_sql] professionals, receptionists and other tenants cannot change plans or access management reads
+PASS [native_pg17_sql] Stripe leases serialize attempts, protect tokens and reject user access
+PASS [native_pg17_sql] Stripe binding and subscription lifecycle preserve trial and require service role
+PASS [native_pg17_sql] inventory create, entry, exit, adjustment, edit, archive, reactivate and insufficient stock
+PASS [native_pg17_sql] packages create and sell use real services, clients, sessions and cancellation rules
+PASS [native_pg17_sql] finance income/expense, idempotency, payment, refund limits, cancel and reopen
+PASS [native_pg17_sql] real SQL migrations: trial, tenant authorization and management operations
+PASS [native_pg17_sql] reviewed discovery rollout preserves rows and history, defaults to private and rejects replay
+PASS [native_pg17_sql] public discovery: consent, any city, global name, pagination, privacy and tenant permissions
+PASS [native_pg17_sql] pending migrations dry-run on the observed remote membership state preserves data and definitions
+PASS [native_pg17_sql] owner reconciliation refuses unknown functions and rolls back all changes
+PASS [native_pg17_sql] last-owner trigger protects direct privileged writes and RPCs retain tenant and role checks
+PASS [native_pg17_sql] expiry and payment failure block operational access even before the maintenance job runs
+PASS [native_pg17_sql] paid downgrade with excess seats never retains active access and never blocks cancellation or failed payment
+PASS [native_pg17_sql] client read model exposes stable IDs and slots preserve appointment duration
+PASS [native_pg17_sql] client reschedule rejects unavailable slots and IDOR, then updates same instant safely
+PASS [native_pg17_sql] timezone changes display and slots without changing stored appointment instant
+PASS [native_pg17_sql] review rejects incomplete and foreign appointments
+PASS [native_pg17_sql] review validates rating/comment, persists once and rejects duplicates
+PASS [native_pg17_sql] review RLS isolates tenants and prohibits all direct writes, edits and deletes
+PASS [native_pg17_sql] appointment_reviews uses FORCE RLS and SECURITY DEFINER functions pin empty search_path
+PASS [native_pg17_sql] launch readiness SQL: reviews, rescheduling, roles and timezone
+PASS [native_pg17_concurrency] PG17 concurrent public reservations: one winner for the same professional/slot
+PASS [native_pg17_concurrency] PG17 a rolled-back reservation frees the waiting client to book
+PASS [native_pg17_concurrency] PG17 concurrent client reschedules cannot converge on one occupied slot
+PASS [native_pg17_concurrency] PG17 duplicate concurrent reviews persist exactly one immutable rating
+PASS [native_pg17_concurrency] PG17 concurrent owner demotions retain one active owner
+PASS [native_pg17_concurrency] PG17 concurrent invite acceptance cannot exceed the plan seat limit
+PASS [native_pg17_concurrency] PG17 concurrent billing-event replay returns one event ID
+PASS [native_pg17_concurrency] PG17 concurrent checkout leases cannot both acquire the same workspace
+{"totals":{"passed":49,"failed":0,"skipped":0},"groups":{"native_pg17_integration_with_mock_auth":{"passed":11,"failed":0,"skipped":0},"native_pg17_sql":{"passed":30,"failed":0,"skipped":0},"native_pg17_concurrency":{"passed":8,"failed":0,"skipped":0}}}
+{"suite":"foundation","result":"PASS","evidence":[{"foundation_test_results":"client_no_subscription_no_trial\nprofessional_no_trial_before_workspace\ncreate_workspace_atomic_7_day_trial\nrls_cannot_select_foreign_workspace\ncannot_update_subscription\ncannot_update_trial_ends_at\ncannot_update_own_role\nunconfirmed_email_cannot_create_workspace\nphone_need_not_be_confirmed\nsecond_workspace_no_new_trial\nphone_normalize_ddd_55\ninvite_email_must_match_confirmed_auth_email\ninvite_null_email_secret_link\nseat_limit_accept_serialized\nseat_limit_constraint_trigger\nleast_privilege_execute_grants"}]}
+{"suite":"catalog","result":"PASS","evidence":[{"catalog_test_results":"owner_gets_professional_profile\nforce_rls_catalog_tables\nreceptionist_has_no_professional_profile\nreceptionist_cannot_insert_professional_profile\nprofessional_gets_professional_profile\ninactive_or_receptionist_disables_booking\nservice_price_and_duration_constraints\nreceptionist_cannot_manage_services\nrls_hides_foreign_services\nrls_blocks_service_idor\nnon_member_cannot_read_catalog\ncross_workspace_professional_service_denied\nclient_phone_ddd_55\nrls_hides_foreign_clients\nrls_blocks_client_idor\nclient_workspace_id_immutable\nlinked_user_id_not_writable\nreceptionist_can_create_client\ninternal_app_functions_not_granted"}]}
+{"suite":"workspace_settings","result":"PASS","evidence":[{"workspace_settings_test_results":"settings_provisioned_force_rls\n1_owner_edits_own_settings\n2_admin_edits_own_settings\n3_professional_cannot_edit_settings\n4_cross_workspace_settings_denied\n5_duplicate_slug_rejected\n6_reserved_slug_rejected\n7_missing_public_workspace_hidden\n8_anon_cannot_read_internals\n9_anon_public_profile_allowed\n10_archived_service_hidden\n11_inactive_service_hidden\n12_booking_disabled_hidden\n13_receptionist_not_public_professional\n14_email_bound_invite_rejects_mismatch\n15_secret_invite_without_email\n16_expired_invite_fails\n17_used_invite_fails\n18_professional_blocked_without_seat\n19_receptionist_invite_without_professional_seat\n20_owner_deactivates_member\n21_professional_cannot_remove_member\n22_workspace_keeps_owner\n23_reactivation_respects_plan\n24_idor_cross_tenant_blocked\n25_logo_storage_rls"}]}
+{"suite":"agenda","result":"PASS","evidence":[{"agenda_test_results":"force_rls_and_exclusion, create_valid_with_override_snapshot, catalog_snapshot_without_override, archived_and_booking_disabled, cross_tenant_and_unlinked_blocked, overlap_blocked, exclusion_blocks_race, hours_and_breaks, time_block_respected, cancelled_frees_slot, receptionist_scope, professional_cannot_edit_other, owner_admin_manage, workspace_id_immutable, idor_cross_tenant, available_slots, reschedule_and_complete, receptionist_can_block, internal_rpc_not_granted"}]}
+{"suite":"public_booking","result":"PASS","evidence":[{"public_booking_test_results":"anon_lists_public_catalog, anon_cannot_read_private_tables, guest_booking_snapshot, workspace_client_reused, public_create_validations, no_duplicate_slot, override_snapshot, workspace_timezone, past_and_lead_buffer, no_cross_tenant_leak, authenticated_client_reads_own, client_cannot_read_others, client_reschedule_rpc_and_idor, client_cancel_own, client_cancel_others_denied, cancel_too_late, terminal_not_cancellable, rpc_grants, slots_are_availability_only"}]}
+Owned PG17 cluster stopped; synthetic data retained in ignored .test-postgres.

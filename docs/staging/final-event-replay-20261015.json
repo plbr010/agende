@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-15T04:29:32.105Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "actual TEST provider events, direct runner-signed replay; not Stripe Dashboard resend",
+  "livemode": false,
+  "secrets_in_report": false,
+  "checks": [
+    {
+      "event_id": "evt_1UQfvYQQUyqAaZvSVNqcOLmi",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfvYQQUyqAaZvSn4cqbPOj",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfvPQQUyqAaZvSA2udekpc",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfvOQQUyqAaZvSVtBJ69BR",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfvFQQUyqAaZvSGVjBt2DA",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfvEQQUyqAaZvSmm1DWO6L",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfv3QQUyqAaZvSWcLYpS9z",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfv3QQUyqAaZvSWGznVvNU",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfutQQUyqAaZvSDml815RF",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfutQQUyqAaZvSfH8y78GI",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfugQQUyqAaZvSbbCFdSnI",
+      "type": "checkout.session.completed",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "event_id": "evt_1UQfugQQUyqAaZvS6t02F3ca",
+      "type": "invoice.paid",
+      "deliveries": 2,
+      "persisted_rows": 1,
+      "status": "PASS"
+    },
+    {
+      "name": "old paid events preserve current canceled/past_due states and current plan",
+      "status": "PASS"
+    }
+  ]
+}

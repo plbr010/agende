@@ -1,0 +1,140 @@
+{
+  "checked_at": "2026-10-15T04:36:47.595Z",
+  "production_writes": 0,
+  "production_vault_names": {
+    "stripe_api_key_count": 0,
+    "stripe_webhook_secret_count": 1,
+    "values_read": false
+  },
+  "production_avatar_bucket_present": false,
+  "edge_functions": [
+    {
+      "project": "fkpdudnnperufnmdwdlv",
+      "functions": [
+        {
+          "name": "stripe-webhook",
+          "status": "ACTIVE",
+          "version": 4,
+          "verify_jwt": false,
+          "hash": "5af454fcde463e4ca28ad554e804379c6ee28844f65b9c8bbfdce404f2315be7"
+        },
+        {
+          "name": "stripe-billing",
+          "status": "ACTIVE",
+          "version": 10,
+          "verify_jwt": false,
+          "hash": "d5d3fda778b2d73a6a775d5596f735fa61c6f366e9a199f7a38ab2d2b13a1713"
+        }
+      ]
+    },
+    {
+      "project": "wohimauqgywshbbejjcl",
+      "functions": [
+        {
+          "name": "stripe-webhook",
+          "status": "ACTIVE",
+          "version": 3,
+          "verify_jwt": false,
+          "hash": "303dab1b1dc243b0e1922298e0397719fe5573f6fa3dc6daf06d2298aeed43b6"
+        },
+        {
+          "name": "stripe-billing",
+          "status": "ACTIVE",
+          "version": 4,
+          "verify_jwt": true,
+          "hash": "597ba721b4bd3a9b01f21ca43e78c6cf96090638813915523909dc561748c41c"
+        }
+      ]
+    }
+  ],
+  "preview_overrides": [
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "branch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "branch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "branch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "branch": "codex/final-homologation-2026-10-15"
+    }
+  ],
+  "preview_supabase": "fkpdudnnperufnmdwdlv",
+  "global_supabase": "wohimauqgywshbbejjcl",
+  "global_targets": [
+    "production",
+    "preview",
+    "development"
+  ],
+  "global_unchanged": true,
+  "production_deployments": [
+    {
+      "id": "dpl_6qAQWbkHpH4qbZW3iMszSMzzxPDz",
+      "url": "agende-3zasyywag-pedros-projects-cfddfd39.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "commit": "de159808b69e52501777f95478407e4e4b1012ce",
+      "branch": "main"
+    },
+    {
+      "id": "dpl_57CBorJzg6qYpRV88qP3CKDa6fsu",
+      "url": "agende-imp54w4dv-pedros-projects-cfddfd39.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "commit": "cf5e14e9e639b8e8ddfa80d94481948067cda540",
+      "branch": "main"
+    }
+  ],
+  "production_read_only_smoke": [
+    {
+      "path": "/",
+      "http": 200
+    },
+    {
+      "path": "/login",
+      "http": 200
+    },
+    {
+      "path": "/cadastro",
+      "http": 200
+    },
+    {
+      "path": "/recuperar-senha",
+      "http": 200
+    },
+    {
+      "path": "/app",
+      "http": 307
+    },
+    {
+      "path": "/cliente",
+      "http": 307
+    },
+    {
+      "path": "/api/account/avatar",
+      "http": 401
+    }
+  ]
+}

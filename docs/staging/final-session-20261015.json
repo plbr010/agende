@@ -1,0 +1,43 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real natural expiry, provider error evidence and complementary real refresh of the original session",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "confirmed real login creates session",
+      "status": "PASS"
+    },
+    {
+      "name": "unchanged original JWT rejected after 3600-second natural expiry",
+      "status": "PASS",
+      "http": 403,
+      "error_code": "bad_jwt",
+      "provider_logs_window": [
+        "2026-10-15T04:56:25Z",
+        "2026-10-15T04:56:40Z"
+      ],
+      "provider_error_mentions_expiry": true
+    },
+    {
+      "name": "original expired session refreshed; same session ID and identity verified",
+      "status": "PASS",
+      "http": 200,
+      "evidence": "final-session-refresh-completion-20261015.json"
+    },
+    {
+      "name": "logout of renewed session revokes refresh",
+      "status": "PASS",
+      "logout_http": 204,
+      "reuse_refresh_http": 400
+    }
+  ],
+  "issued_at": 1792036588,
+  "expires_at": 1792040188,
+  "lifetime_seconds": 3600,
+  "checked_at": "2026-10-15T05:04:42.514Z",
+  "harness_first_attempt": {
+    "status": "FAIL",
+    "cause": "Expected HTTP401 only; GoTrue returned HTTP403 bad_jwt with expired-token error; first attempt preserved separately",
+    "evidence": "final-session-first-attempt-20261015.json"
+  }
+}

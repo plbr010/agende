@@ -16,7 +16,10 @@ try{
   const service=(await ok(owner.from('services').select('id').eq('workspace_id',wid).eq('name','Corte Staging')))[0].id;
   const user=(await ok(owner.auth.getUser())).user.id;
   const member=(await ok(owner.from('workspace_members').select('id').eq('workspace_id',wid).eq('user_id',user)))[0].id;
-  const client=(await ok(owner.from('workspace_clients').select('id').eq('workspace_id',wid).eq('email','client@agende-staging.invalid')))[0].id;
+  const customerId=(await ok(customer.auth.getUser())).user.id;
+  // Verified identity, not a typed email or arbitrary duplicate contact row.
+  const client=(await ok(owner.from('workspace_clients').select('id').eq('workspace_id',wid)
+    .eq('linked_user_id',customerId).is('archived_at',null).order('created_at').limit(1)))[0].id;
   await check('inventory entry, exit and adjustment persist and negative stock is refused',async()=>{
     product=(await ok(owner.rpc('create_inventory_product',{p_workspace_id:wid,p_name:'Synthetic inventory '+Date.now(),p_initial_quantity:10,p_minimum_quantity:2,p_cost_cents:1200}))).id;
     await ok(owner.rpc('apply_inventory_movement',{p_workspace_id:wid,p_product_id:product,p_type:'entry',p_quantity:5}));
@@ -38,8 +41,11 @@ try{
   const day=new Date(Date.now()+3*86400000).toISOString().slice(0,10);
   await check('public booking and package redemption link the same client and service exactly once',async()=>{
     const slots=await ok(guest.rpc('list_public_available_slots',{p_slug:w.slug,p_service_id:service,p_professional_member_id:member,p_local_date:day}));assert.ok(slots.length);
-    await ok(guest.rpc('create_public_appointment',{p_slug:w.slug,p_service_id:service,p_professional_member_id:member,p_starts_at:slots.at(-1).starts_at,p_full_name:'Cliente Sintetico',p_phone:'+5532999999999',p_email:'client@agende-staging.invalid',p_customer_note:null,p_ip_hash:'synthetic-package-only'}));
+    // Anonymous booking deliberately cannot claim a linked package by email.
+    // This acceptance path represents a signed-in package owner, like the UI.
+    await ok(customer.rpc('create_public_appointment',{p_slug:w.slug,p_service_id:service,p_professional_member_id:member,p_starts_at:slots.at(-1).starts_at,p_full_name:'Cliente Sintetico',p_phone:'+5532999999999',p_email:'client@agende-staging.invalid',p_customer_note:'Synthetic package acceptance',p_ip_hash:'synthetic-package-only'}));
     appointment=(await ok(customer.rpc('list_my_appointments'))).find(x=>x.status==='scheduled'&&new Date(x.starts_at).getTime()===new Date(slots.at(-1).starts_at).getTime()).id;
+    assert.equal((await ok(owner.from('appointments').select('client_id').eq('id',appointment).single())).client_id,client);
     const args={p_workspace_id:wid,p_client_package_id:sale,p_appointment_id:appointment};
     assert.equal((await owner.rpc('redeem_client_package',args)).error?.message,'appointment_must_be_completed_for_redemption');
     for(const status of ['confirmed','in_progress','completed'])await ok(owner.rpc('set_appointment_status',{p_appointment_id:appointment,p_status:status}));
@@ -57,7 +63,7 @@ try{
 }catch(error){failure=error;}finally{
   const cleanupRpc=async(name,args)=>{try{await ok(owner.rpc(name,args));}catch{cleanup=false;}};
   if(redemption)await cleanupRpc('reverse_package_redemption',{p_workspace_id:wid,p_redemption_id:redemption,p_reason:'Synthetic cleanup'});
-  if(appointment&&!completed)await cleanupRpc('cancel_my_appointment',{p_appointment_id:appointment});
+  if(appointment&&!completed)try{await ok(customer.rpc('cancel_my_appointment',{p_appointment_id:appointment}));}catch{cleanup=false;}
   if(sale)await cleanupRpc('cancel_client_package',{p_workspace_id:wid,p_client_package_id:sale});
   if(pack)await cleanupRpc('archive_service_package',{p_workspace_id:wid,p_package_id:pack});
   if(product)await cleanupRpc('archive_inventory_product',{p_workspace_id:wid,p_product_id:product});
