@@ -78,5 +78,14 @@
   "provider_resend": {
     "status": "BLOCKED",
     "reason": "No connected Dashboard or supported resend operation; direct signed actual-event replay tested separately"
+  },
+  "portal_paid_period_end": {
+    "status": "PASS",
+    "subscription_id": "sub_1UQfusQQUyqAaZvSLgwh8vnq",
+    "test_clock": "clock_1UQgRpQQUyqAaZvSo1B0xlD4",
+    "provider_status": "canceled",
+    "database_status": "canceled",
+    "manager_write_denied": true,
+    "mode": "Stripe TEST clock advanced past scheduled annual cancellation; real signed webhook"
   }
 }

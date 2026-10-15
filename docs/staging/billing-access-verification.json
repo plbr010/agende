@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T04:28:16.625Z",
+  "checked_at": "2026-10-15T04:41:01.016Z",
   "project": "fkpdudnnperufnmdwdlv",
   "livemode": false,
   "status": "PASS",
@@ -27,14 +27,14 @@
       "original_interval": "annual",
       "current_plan": "solo",
       "current_interval": "annual",
-      "status": "active",
+      "status": "canceled",
       "current_period_end": "2027-10-15T04:05:16+00:00",
       "subscription_id": "sub_1UQfusQQUyqAaZvSLgwh8vnq",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
       "foreign_write_denied": true,
-      "manager_write_allowed": true,
+      "manager_write_allowed": false,
       "entitlement_enforced": true,
       "result": "PASS"
     },
