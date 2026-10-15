@@ -71,7 +71,7 @@ export const HOME_BENEFITS = [
   {
     id: "financeiro",
     title: "Financeiro completo",
-    text: "Controle seus ganhos, assinaturas e repasses.",
+    text: "Acompanhe o que entrou no dia e no mês.",
   },
   {
     id: "relatorios",

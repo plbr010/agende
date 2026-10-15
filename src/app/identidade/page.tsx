@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ProfessionalDashboard } from "@/components/app/professional-dashboard";
 import { AppShell } from "@/components/app/app-shell";
 import { BrandLogo } from "@/components/brand/logo";
-import { FloralBranch, FloralCorner } from "@/components/brand/floral";
+import { FloralCorner, FloralSprig } from "@/components/brand/floral";
 import { Button } from "@/components/ui/button";
 import { buildMonthGrid } from "@/lib/dashboard/summary";
 
@@ -77,11 +77,15 @@ export default function IdentidadePreviewPage() {
             <span className="text-xs text-muted-foreground">9:41</span>
           </div>
           <div className="relative overflow-hidden px-5 pb-8 pt-2">
-            <FloralCorner className="pointer-events-none absolute right-0 top-0 h-24 w-32 opacity-80" />
-            <FloralBranch className="pointer-events-none absolute -left-10 bottom-0 h-36 w-28 opacity-70" />
-            <p className="text-xs font-medium tracking-[0.16em] text-[var(--rose-ink)] uppercase">Agendamento</p>
-            <h3 className="mt-2 font-serif text-3xl text-wine-deep">Escolha o profissional</h3>
-            <div className="mt-4 grid gap-3">
+            <div className="relative z-10 flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-medium tracking-[0.16em] text-[var(--rose-ink)] uppercase">Agendamento</p>
+                <h3 className="mt-2 font-serif text-3xl leading-tight text-wine-deep">Escolha o profissional</h3>
+              </div>
+              <FloralSprig className="h-16 w-12 shrink-0" />
+            </div>
+            <FloralCorner className="pointer-events-none absolute -right-6 bottom-0 h-20 w-28 opacity-80" />
+            <div className="relative z-10 mt-4 grid gap-3">
               {["Camila Santos", "Juliana Costa", "Larissa Ferreira"].map((name) => (
                 <div key={name} className="flex items-center gap-3 rounded-[1.25rem] bg-[var(--cream)] p-3 ring-1 ring-[#f0e4de]">
                   <span className="grid size-12 place-items-center rounded-full bg-metric-blush font-serif text-wine-deep">
