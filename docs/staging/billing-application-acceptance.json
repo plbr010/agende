@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T15:44:57.138Z",
+  "checked_at": "2026-10-15T04:00:56.857Z",
   "project": "fkpdudnnperufnmdwdlv",
   "livemode": false,
   "status": "PARTIAL_ACCEPTANCE",
@@ -7,7 +7,7 @@
     {
       "plan": "solo",
       "interval": "monthly",
-      "session_id": "cs_test_a1GeDeCvqSJKE0dAHJvrHmwGjbAKK6sHFm4Ams6RtEE1D2JLGGPhVI6nOu",
+      "session_id": "cs_test_a1bMDzGKZjpOUfk6jMn6A1nU6DoCQrjpBDID3CWA3OktluptBxdwXYOkN9",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -18,7 +18,7 @@
     {
       "plan": "solo",
       "interval": "annual",
-      "session_id": "cs_test_a1tyiKOQgCyAdEYGdPyU3InUwCczATG5h33meE17RngsSnPYzer4fZMoAX",
+      "session_id": "cs_test_a18V99Xvm9FOLPG3cb9Sq8fzv2BD7CJse396NP9HQORt1f7t9a64YHcWde",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -29,7 +29,7 @@
     {
       "plan": "equipe",
       "interval": "monthly",
-      "session_id": "cs_test_a1vykyLYRn6szWPyRcXHZVUKVxSDQW4t7dKj7GZm3zXhKq9JkgjtugY7IK",
+      "session_id": "cs_test_a1Fv9VvtaT5gFh3vywjQtWlwf1YBDkyj9L7nFtGORJbdxYkpqph4MXz3bZ",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -40,7 +40,7 @@
     {
       "plan": "equipe",
       "interval": "annual",
-      "session_id": "cs_test_a1WkLGN29RbQ2TFR5ectdb1D7NHMIWvLCj2gkNN9cgdZ2k2lVTGjzB9uBY",
+      "session_id": "cs_test_a12XBZaY5ihR8pYFc9eojkTAotZpNitP9LpiVTya0VknLX38QRy0kuzKpt",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -51,7 +51,7 @@
     {
       "plan": "salao",
       "interval": "monthly",
-      "session_id": "cs_test_a1kWhkjfsfkD2QrKQ5sP7fkiKtO75BpK4mdCJmSw91ksJ8i3KEYtSJcSZL",
+      "session_id": "cs_test_a14yZwwNniEcy8N9nWdGWnGnhriYc9KjDjsEU594L3pzy7b9yklKjMsEgw",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -62,7 +62,7 @@
     {
       "plan": "salao",
       "interval": "annual",
-      "session_id": "cs_test_a1nZQsXiTJZTXMtCYbUSSJWdwSYD7oWFYy5pkH6VIy5qu6jcELHBsmB2Re",
+      "session_id": "cs_test_a1qCoOZlIMiHerwSO0l458q8udrepwf8Wg0z9N3teBEOhx9zZrkAtmeTyh",
       "checkout_through_application": true,
       "duplicate_reused": true,
       "customer_bound": true,
@@ -72,12 +72,12 @@
     }
   ],
   "synthetic_workspace_ids": [
-    "cb236b03-3401-4b65-8aef-1632aee76083",
-    "454f310e-9160-4075-ac70-a37750f6d136",
-    "98874cf9-cebb-44ac-9011-4b749067178b",
-    "20a23122-0164-489f-b6c2-c9ea78c774a1",
-    "2293888c-83c7-4252-a5bb-ba2c4e381c66",
-    "ad9278f6-874c-4923-b376-74d65d087921"
+    "4317aabc-b976-4984-b528-6417270acded",
+    "53aea8ca-80c2-4554-a7c5-b35680b76056",
+    "61223938-ba74-4f4f-a428-82c7c04d62a3",
+    "15bf5c54-e22c-4074-87e2-38229210bcd7",
+    "ec254bfb-9ec9-4474-8e42-5b84078e282d",
+    "c0398946-f812-480a-87bc-718f44589c1f"
   ],
   "payment_completed": false,
   "provider_webhook_delivery_verified": false,

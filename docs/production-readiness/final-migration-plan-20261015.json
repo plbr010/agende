@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-15T04:23:40.708Z",
+  "project": "wohimauqgywshbbejjcl",
+  "approved": false,
+  "production_writes": 0,
+  "local_files": 70,
+  "remote_count": 63,
+  "missing": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20260927014947_launch_readiness_reviews.sql",
+      "sha256": "952a8f9e2e93c74bab851f9c8fa7c0a3abeeb568beedbccb4545f9407e5b1253",
+      "sha256_lf": "952a8f9e2e93c74bab851f9c8fa7c0a3abeeb568beedbccb4545f9407e5b1253"
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20261008131859_launch_hardening_reviews_force_rls.sql",
+      "sha256": "43f7703526687a25abfac200086b1999ea179b71ec144ca5da6e03a339b6e2ec",
+      "sha256_lf": "39b4f8617d80ff0aa10619c684d0565fe75e3f6ad7f431440d7aded474408848"
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20261009172028_launch_observed_owner_guard.sql",
+      "sha256": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673",
+      "sha256_lf": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673"
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20261009173042_billing_reconcile_excess_seats.sql",
+      "sha256": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab",
+      "sha256_lf": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab"
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20261010232248_atomic_service_professional_links.sql",
+      "sha256": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37",
+      "sha256_lf": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37"
+    },
+    {
+      "order": 6,
+      "path": "supabase/migrations/20261014030220_public_workspace_discovery.sql",
+      "sha256": "aa723be1849798e11ed117a8dd5266fb6ab5fa11351ad035f356aa2585642f36",
+      "sha256_lf": "d86c2a9c666d34ec7fc66c1a60a30eb5dce20dfda197219f1f979dbd69d16224"
+    },
+    {
+      "order": 7,
+      "path": "supabase/migrations/20261014172158_client_phase2_profiles_favorites.sql",
+      "sha256": "9dae3e0c8e9c9cde7a32cdc1234e4893e4e3dee6a69323b9d6d0dcb19c1684ce",
+      "sha256_lf": "563c70bc3b3ad932410867670f3260454639c5d391769e65b15c8c9fadaa04f9"
+    },
+    {
+      "order": 8,
+      "path": "supabase/migrations/20261014173903_client_phase2_avatar_upload_cleanup.sql",
+      "sha256": "1bc31d606842e69b8aede5dc1f39678ead11bac8def5882028a2266a2fcaad03",
+      "sha256_lf": "6af57ba750910a4330723cf5e677bd76c6acd2bedd0b121dc268473998b788b3"
+    }
+  ],
+  "remote_only": [
+    {
+      "version": "20260919201138",
+      "name": "hardening_snapshot_owner_timezone"
+    }
+  ],
+  "execution": "prepare only; inspect object definitions and historical divergence before authorized transactional rollout",
+  "hash_note": "sha256 is current worktree bytes; sha256_lf is portable canonical LF artifact hash"
+}

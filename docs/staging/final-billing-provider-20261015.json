@@ -1,0 +1,82 @@
+{
+  "checked_at": "2026-10-15T04:33:50.338Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "stripe_context": "acct_1UPNGJQQUyqAaZvS",
+  "livemode": false,
+  "production_writes": 0,
+  "six_payments_and_persisted_events": [
+    {
+      "workspace_id": "15bf5c54-e22c-4074-87e2-38229210bcd7",
+      "plan": "equipe",
+      "status": "active",
+      "checkout_events": 1,
+      "paid_events": 1
+    },
+    {
+      "workspace_id": "4317aabc-b976-4984-b528-6417270acded",
+      "plan": "equipe",
+      "status": "canceled",
+      "checkout_events": 1,
+      "paid_events": 1
+    },
+    {
+      "workspace_id": "53aea8ca-80c2-4554-a7c5-b35680b76056",
+      "plan": "solo",
+      "status": "active",
+      "checkout_events": 1,
+      "paid_events": 1
+    },
+    {
+      "workspace_id": "61223938-ba74-4f4f-a428-82c7c04d62a3",
+      "plan": "equipe",
+      "status": "past_due",
+      "checkout_events": 1,
+      "paid_events": 1
+    },
+    {
+      "workspace_id": "c0398946-f812-480a-87bc-718f44589c1f",
+      "plan": "salao",
+      "status": "active",
+      "checkout_events": 1,
+      "paid_events": 1
+    },
+    {
+      "workspace_id": "ec254bfb-9ec9-4474-8e42-5b84078e282d",
+      "plan": "salao",
+      "status": "active",
+      "checkout_events": 1,
+      "paid_events": 1
+    }
+  ],
+  "renewal": {
+    "status": "PASS",
+    "subscription_id": "sub_1UQfv2QQUyqAaZvSZIdBj2ce",
+    "provider_status": "past_due",
+    "invoice_id": "in_1UQgF1QQUyqAaZvSLIc7qdmd",
+    "test_clock": "clock_1UQgExQQUyqAaZvSpbM7HX5N",
+    "database": [
+      {
+        "status": "past_due",
+        "failed_event_persisted": true
+      }
+    ],
+    "event_id": "evt_1UQgFFQQUyqAaZvScUkGvnzT",
+    "amount_cents": 16990,
+    "entitlement": "denied by real manager mutation; billing-access-verification.json"
+  },
+  "upgrade": {
+    "from": "solo",
+    "to": "equipe",
+    "status": "PASS",
+    "event_id": "evt_1UQfyxQQUyqAaZvSDR9PBAoZ"
+  },
+  "immediate_cancel": {
+    "status": "PASS",
+    "subscription_id": "sub_1UQfueQQUyqAaZvSUZMiVOw8",
+    "final_database_status": "canceled"
+  },
+  "provider_resend": {
+    "status": "BLOCKED",
+    "reason": "No connected Dashboard or supported resend operation; direct signed actual-event replay tested separately"
+  }
+}

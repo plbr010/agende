@@ -1,11 +1,12 @@
 {
-  "checked_at": "2026-10-14T16:28:35.714Z",
+  "checked_at": "2026-10-15T04:11:21.434Z",
   "project": "fkpdudnnperufnmdwdlv",
   "livemode": false,
+  "status": "PASS",
   "checks": [
     {
       "plan": "solo",
-      "workspace_id": "454f310e-9160-4075-ac70-a37750f6d136",
+      "workspace_id": "53aea8ca-80c2-4554-a7c5-b35680b76056",
       "paid_status": "active",
       "active_professionals": 1,
       "extra_professional_denied": true,
@@ -13,7 +14,7 @@
     },
     {
       "plan": "equipe",
-      "workspace_id": "20a23122-0164-489f-b6c2-c9ea78c774a1",
+      "workspace_id": "15bf5c54-e22c-4074-87e2-38229210bcd7",
       "paid_status": "active",
       "active_professionals": 5,
       "extra_professional_denied": true,
@@ -21,7 +22,7 @@
     },
     {
       "plan": "salao",
-      "workspace_id": "ad9278f6-874c-4923-b376-74d65d087921",
+      "workspace_id": "c0398946-f812-480a-87bc-718f44589c1f",
       "paid_status": "active",
       "active_professionals": 15,
       "extra_professional_denied": true,
@@ -30,6 +31,5 @@
   ],
   "auth_accounts": "confirmed synthetic SQL fixtures; not email acceptance",
   "production_changed": false,
-  "secrets_in_report": false,
-  "status": "PASS"
+  "secrets_in_report": false
 }

@@ -1,17 +1,18 @@
 {
-  "checked_at": "2026-10-14T16:30:14.396Z",
+  "checked_at": "2026-10-15T04:28:16.625Z",
   "project": "fkpdudnnperufnmdwdlv",
   "livemode": false,
+  "status": "PASS",
   "checks": [
     {
-      "workspace_id": "cb236b03-3401-4b65-8aef-1632aee76083",
+      "workspace_id": "4317aabc-b976-4984-b528-6417270acded",
       "original_plan": "solo",
       "original_interval": "monthly",
       "current_plan": "equipe",
       "current_interval": "monthly",
       "status": "canceled",
-      "current_period_end": "2026-11-14T15:48:27+00:00",
-      "subscription_id": "sub_1UQUPpQQUyqAaZvSP1cHuQ9G",
+      "current_period_end": "2026-11-15T04:05:03+00:00",
+      "subscription_id": "sub_1UQfueQQUyqAaZvSUZMiVOw8",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -21,14 +22,14 @@
       "result": "PASS"
     },
     {
-      "workspace_id": "454f310e-9160-4075-ac70-a37750f6d136",
+      "workspace_id": "53aea8ca-80c2-4554-a7c5-b35680b76056",
       "original_plan": "solo",
       "original_interval": "annual",
       "current_plan": "solo",
       "current_interval": "annual",
       "status": "active",
-      "current_period_end": "2027-10-14T15:57:17+00:00",
-      "subscription_id": "sub_1UQUYMQQUyqAaZvS9tXDnrTj",
+      "current_period_end": "2027-10-15T04:05:16+00:00",
+      "subscription_id": "sub_1UQfusQQUyqAaZvSLgwh8vnq",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -38,14 +39,14 @@
       "result": "PASS"
     },
     {
-      "workspace_id": "98874cf9-cebb-44ac-9011-4b749067178b",
+      "workspace_id": "61223938-ba74-4f4f-a428-82c7c04d62a3",
       "original_plan": "equipe",
       "original_interval": "monthly",
       "current_plan": "equipe",
       "current_interval": "monthly",
       "status": "past_due",
-      "current_period_end": "2027-01-14T15:58:51+00:00",
-      "subscription_id": "sub_1UQUZtQQUyqAaZvS3VB7OUDs",
+      "current_period_end": "2026-12-15T04:24:39+00:00",
+      "subscription_id": "sub_1UQfv2QQUyqAaZvSZIdBj2ce",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -55,14 +56,14 @@
       "result": "PASS"
     },
     {
-      "workspace_id": "20a23122-0164-489f-b6c2-c9ea78c774a1",
+      "workspace_id": "15bf5c54-e22c-4074-87e2-38229210bcd7",
       "original_plan": "equipe",
       "original_interval": "annual",
       "current_plan": "equipe",
       "current_interval": "annual",
       "status": "active",
-      "current_period_end": "2027-10-14T16:00:31+00:00",
-      "subscription_id": "sub_1UQUbVQQUyqAaZvStWn7a5Zc",
+      "current_period_end": "2027-10-15T04:05:38+00:00",
+      "subscription_id": "sub_1UQfvDQQUyqAaZvSq7eDxHlB",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -72,14 +73,14 @@
       "result": "PASS"
     },
     {
-      "workspace_id": "2293888c-83c7-4252-a5bb-ba2c4e381c66",
+      "workspace_id": "ec254bfb-9ec9-4474-8e42-5b84078e282d",
       "original_plan": "salao",
       "original_interval": "monthly",
       "current_plan": "salao",
       "current_interval": "monthly",
       "status": "active",
-      "current_period_end": "2026-11-14T16:02:18+00:00",
-      "subscription_id": "sub_1UQUdEQQUyqAaZvSDw1l8OOA",
+      "current_period_end": "2026-11-15T04:05:48+00:00",
+      "subscription_id": "sub_1UQfvNQQUyqAaZvSVlvI2NPB",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -89,14 +90,14 @@
       "result": "PASS"
     },
     {
-      "workspace_id": "ad9278f6-874c-4923-b376-74d65d087921",
+      "workspace_id": "c0398946-f812-480a-87bc-718f44589c1f",
       "original_plan": "salao",
       "original_interval": "annual",
       "current_plan": "salao",
       "current_interval": "annual",
       "status": "active",
-      "current_period_end": "2027-10-14T16:03:33+00:00",
-      "subscription_id": "sub_1UQUeRQQUyqAaZvSdLMnyzJT",
+      "current_period_end": "2027-10-15T04:05:58+00:00",
+      "subscription_id": "sub_1UQfvXQQUyqAaZvSUhkXMDpO",
       "customer_bound": true,
       "foreign_subscription_hidden": true,
       "foreign_finance_denied": true,
@@ -107,6 +108,5 @@
     }
   ],
   "production_changed": false,
-  "secrets_in_report": false,
-  "status": "PASS"
+  "secrets_in_report": false
 }

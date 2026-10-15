@@ -1,0 +1,29 @@
+{
+  "synthetic_selftest": true,
+  "checked_at": "2026-10-15T03:57:43.501Z",
+  "passed": true,
+  "scope": [
+    "app",
+    "public",
+    "auth",
+    "extensions",
+    "supabase_migrations"
+  ],
+  "all_encrypted_files_authenticated": true,
+  "full_archive_toc_readable": true,
+  "table_content_fingerprints_equal": true,
+  "catalog_equal": true,
+  "role_attributes_and_memberships_equal": true,
+  "sequences_checked": 1,
+  "auth_database_rows_verified": true,
+  "full_platform_restore_verified": false,
+  "restored_tables": 2,
+  "production_writes": 0,
+  "staging_connections": 0,
+  "rto_seconds": 11.396,
+  "owned_cluster_stopped": true,
+  "temporary_plaintext_cluster_removed": true,
+  "checksum_tampering_rejected": true,
+  "manifest_timestamp_tampering_rejected": true,
+  "wrong_passphrase_rejected": true
+}

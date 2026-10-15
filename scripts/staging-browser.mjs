@@ -14,7 +14,7 @@ assert.equal(config.url,'https://fkpdudnnperufnmdwdlv.supabase.co');
 const client=createClient(config.url,config.publishable_key,{auth:{persistSession:false,autoRefreshToken:false}});
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error?.message);return r.data;};
 const socket=createServer();await new Promise(resolve=>socket.listen(0,'127.0.0.1',resolve));const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));
-const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-2026-10-14';mkdirSync(evidence,{recursive:true});
+const base=`http://127.0.0.1:${port}`,checks=[],evidence='docs/evidence/functional-'+new Date().toISOString().slice(0,10);mkdirSync(evidence,{recursive:true});
 let browser,server,w,s,enabled,serviceId,lastPage,appointmentId,workingHoursId,restored=true,failure;
 let serverDiagnostics='';
 const check=async(name,fn)=>{await fn();checks.push(name);console.log('PASS '+name);};
@@ -81,14 +81,28 @@ try{
     const dateLabel=new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',weekday:'long',day:'numeric',month:'long'}).format(new Date(day+'T15:00:00Z'));
     await search.getByRole('button',{name:dateLabel,exact:true}).click();
     await search.getByRole('region',{name:'Escolher horário'}).getByRole('button',{name:/^\d\d:\d\d$/}).first().click();
-    await search.getByLabel('Nome completo',{exact:true}).fill('Browser Cliente Sintetico');
-    await search.getByLabel('Celular',{exact:true}).fill('32999999999');
+    // Current contract authenticates before reservation and keeps the slot in
+    // an HttpOnly draft. A guest cannot claim an existing client by typed email.
+    await search.waitForURL('**/login?next=**');
+    const draft=(await guest.cookies()).find(c=>c.name==='agende_booking_draft');assert.ok(draft?.httpOnly);
+    const selection=JSON.parse(decodeURIComponent(draft.value)).selection;assert.equal(selection.serviceId,serviceId);
     await search.getByLabel('E-mail',{exact:true}).fill('client@agende-staging.invalid');
-    await search.getByRole('button',{name:'Continuar',exact:true}).click();
+    await search.locator('input[name=password]').fill(config.fixture_password);await search.getByRole('button',{name:'Entrar',exact:true}).click();
+    await search.waitForURL(`**/p/${w.slug}/agendar`);
+    const available=await ok(client.rpc('list_public_available_slots',{p_slug:w.slug,p_service_id:serviceId,p_professional_member_id:member,p_local_date:day}));
+    assert.ok(available.some(x=>x.starts_at===selection.startsAt),'Draft slot must still be available after login');
+    if(await search.locator('input[name=fullName]').count()){
+      await search.getByLabel('Nome completo',{exact:true}).fill('Browser Cliente Sintetico');
+      await search.getByLabel('Celular',{exact:true}).fill('32999999999');
+      await search.getByLabel('E-mail',{exact:true}).fill('client@agende-staging.invalid');
+      await search.getByRole('button',{name:'Continuar',exact:true}).click();
+    }
     await search.getByRole('button',{name:'Reservar este horário',exact:true}).click();
-    await search.getByRole('heading',{name:'Seu horário está reservado',exact:true}).waitFor();
+    await search.getByRole('heading',{name:'Agendamento confirmado!',exact:true}).waitFor();
     const appointment=(await ok(client.from('appointments').select('id,status').eq('workspace_id',w.id).eq('service_id',serviceId)))[0];
     appointmentId=appointment?.id;assert.ok(appointmentId);assert.equal(appointment.status,'scheduled');
+    assert.equal((await ok(client.from('appointments').select('id').eq('workspace_id',w.id).eq('service_id',serviceId))).length,1);
+    assert.ok(!(await guest.cookies()).some(c=>c.name==='agende_booking_draft'));
     lastPage=page;await page.goto(base+'/app/agenda?view=day&date='+day);
     await page.getByText(new RegExp(serviceName)).first().waitFor();
     await search.screenshot({path:evidence+'/booking-confirmed-mobile.png',fullPage:true});

@@ -1,9 +1,10 @@
-// Only the dedicated stabilization Preview. Never prints credentials or CLI output.
+// Explicit Codex staging Preview only. Never prints credentials or CLI output.
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import {existingStagingServerKey} from './staging-existing-server-key.mjs';
 assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,'fkpdudnnperufnmdwdlv');
-const branch='codex/stabilization-post49-2026-10-14';
+const branch=process.env.AGENDE_STAGING_PREVIEW_BRANCH;
+assert.match(branch??'',/^codex\/[a-z0-9][a-z0-9/-]{1,100}$/,'Explicit safe staging Preview branch required');
 const key=existingStagingServerKey();
 const claims=JSON.parse(Buffer.from(key.split('.')[1],'base64url'));
 assert.equal(claims.ref,'fkpdudnnperufnmdwdlv');
