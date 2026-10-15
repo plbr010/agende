@@ -14,6 +14,22 @@ BEGIN
      OR to_regprocedure('app.lock_workspace_membership(uuid)') IS NULL THEN
     RAISE EXCEPTION 'service_migration_dependency_missing';
   END IF;
+  IF (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+      WHERE n.nspname='public' AND c.relname IN
+        ('services','professional_services','professional_profiles','workspace_members')
+        AND c.relkind='r' AND c.relrowsecurity AND c.relforcerowsecurity) <> 4 THEN
+    RAISE EXCEPTION 'service_migration_table_security_drift';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint
+      WHERE conrelid='public.professional_services'::regclass AND contype='u'
+        AND pg_get_constraintdef(oid)='UNIQUE (professional_member_id, service_id)') THEN
+    RAISE EXCEPTION 'service_migration_link_unique_key_missing';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_proc WHERE oid IN
+       (to_regprocedure('app.require_workspace_manager(uuid)'),to_regprocedure('app.lock_workspace_membership(uuid)'))
+       AND (NOT prosecdef OR pg_get_functiondef(oid) NOT LIKE '%SET search_path TO ''''%')) THEN
+    RAISE EXCEPTION 'service_migration_guard_security_drift';
+  END IF;
 END;
 $preflight$;
 -- Additive service write contract. Approval required before production rollout.

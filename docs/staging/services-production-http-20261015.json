@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-15T20:13:41.239Z",
+  "project": "wohimauqgywshbbejjcl",
+  "method": "POST",
+  "path": "/rest/v1/rpc/save_service_with_professionals",
+  "authenticated": false,
+  "tenant": null,
+  "status": 404,
+  "error": {
+    "code": "PGRST202",
+    "details": "Searched for the function public.save_service_with_professionals with parameters p_active, p_description, p_duration_minutes, p_name, p_price_cents, p_professional_member_ids, p_service_id, p_workspace_id or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.",
+    "hint": "Perhaps you meant to call the function public.sell_service_package",
+    "message": "Could not find the function public.save_service_with_professionals(p_active, p_description, p_duration_minutes, p_name, p_price_cents, p_professional_member_ids, p_service_id, p_workspace_id) in the schema cache"
+  },
+  "production_business_writes": 0
+}

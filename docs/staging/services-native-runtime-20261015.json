@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-15T20:17:25.557Z",
+  "version": "postgres (PostgreSQL) 17.6",
+  "host": "127.0.0.1",
+  "port": 54171,
+  "suites": [
+    "scripts/atomic-service-sql.test.mjs",
+    "scripts/discovery-sql.test.mjs"
+  ],
+  "passed": true,
+  "server_stopped_after_run": true,
+  "auth": "synthetic SQL fixture; no Auth/SMTP service",
+  "data_policy": "owned test databases retained locally, ignored by Git"
+}

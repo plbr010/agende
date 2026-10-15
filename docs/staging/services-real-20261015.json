@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-15T20:15:18.692Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "cleanup": true,
+  "production_writes": 0,
+  "mode": "real staging GoTrue/PostgREST; pre-existing confirmed synthetic identities, no SMTP or production acceptance",
+  "checks": [
+    {
+      "name": "owner creates service with one professional and all scalar fields persist",
+      "status": "PASS"
+    },
+    {
+      "name": "owner creates multi-professional service with exactly three active links",
+      "status": "PASS"
+    },
+    {
+      "name": "administrator edits fields and selected links atomically, preserved after independent reload",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign establishment and professional cannot edit manager catalog",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid foreign professional rejects entire create and edit without partial changes",
+      "status": "PASS"
+    },
+    {
+      "name": "eligible service appears in anonymous booking catalog and offers actual available slots",
+      "status": "PASS"
+    },
+    {
+      "name": "deactivation persists and removes service from public booking and available slots",
+      "status": "PASS"
+    }
+  ]
+}
