@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ResendEmailButton } from "@/components/auth/resend-email-button";
-import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
-import { getPendingEmail } from "@/lib/auth/actions";
+import { CLIENT_JOURNEY, JourneySteps, PROFESSIONAL_JOURNEY } from "@/components/onboarding/progress-steps";
+import { getPendingEmail, getPendingIntent } from "@/lib/auth/actions";
 import { loadAppSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { getDefaultDestination } from "@/lib/auth/redirects";
@@ -50,15 +50,23 @@ export default async function VerificarEmailPage({
 
   const { status } = await searchParams;
   const pendingEmail = await getPendingEmail();
+  const pendingIntent = session?.context.intendedUse ?? (await getPendingIntent());
+  const clientJourney = pendingIntent !== "professional";
   const key = status && copy[status] ? status : "loading";
   const content = copy[key];
   const showLoginCta = ["success", "loading", "sent", "error", "browser_mismatch"].includes(key);
 
   return (
     <div className="space-y-6">
-      <OnboardingProgressSteps current={1} />
+      <JourneySteps
+        steps={clientJourney ? CLIENT_JOURNEY : PROFESSIONAL_JOURNEY}
+        current={2}
+        label={clientJourney ? "Cadastro de cliente" : "Cadastro profissional"}
+      />
       <div>
-        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Próximo passo</p>
+        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">
+          {clientJourney ? "Sou cliente" : "Sou profissional"}
+        </p>
         <h1 className="mt-2 font-serif text-3xl text-wine-deep">{content.title}</h1>
         <p className="mt-3 text-muted-foreground">{content.body}</p>
       </div>
@@ -78,7 +86,9 @@ export default async function VerificarEmailPage({
             Já confirmei — entrar
           </Button>
           <p className="text-center text-sm text-muted-foreground">
-            Depois de entrar, o Agendê te leva para o próximo passo.
+            {clientJourney
+              ? "Depois de entrar, você completa o perfil e pode descobrir estabelecimentos."
+              : "Depois de entrar, você cadastra o estabelecimento e começa os 7 dias grátis."}
           </p>
         </div>
       ) : null}

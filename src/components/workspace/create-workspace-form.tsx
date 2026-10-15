@@ -42,8 +42,8 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
               className={cn(
                 "flex min-h-16 cursor-pointer items-start gap-3 rounded-[1.25rem] p-4 ring-1 transition-colors",
                 selected === plan.id
-                  ? "bg-metric-blush ring-primary"
-                  : "bg-[#fffaf8] ring-[#eadfd8] hover:bg-metric-blush/50",
+                  ? "bg-metric-blush ring-2 ring-primary"
+                  : "bg-white ring-[#eadfd8] hover:bg-metric-blush/40",
               )}
             >
               <input
@@ -53,28 +53,28 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
                 required
                 checked={selected === plan.id}
                 onChange={() => setSelected(plan.id)}
-                className="mt-1 size-5"
+                className="mt-1 size-5 accent-[var(--rose)]"
               />
-              <span className="min-w-0">
-                <span className="flex flex-wrap items-center gap-2">
-                  <strong className="font-serif text-xl text-wine-deep">{plan.name}</strong>
-                  {plan.popular ? (
-                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                      Mais escolhido
-                    </span>
-                  ) : null}
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <strong className="font-serif text-xl text-wine-deep">{plan.name}</strong>
+                    {plan.popular ? (
+                      <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                        Mais escolhido
+                      </span>
+                    ) : null}
+                    {selected === plan.id ? (
+                      <span className="text-xs font-medium text-[var(--rose-ink)]">Selecionado</span>
+                    ) : null}
+                  </span>
+                  <span className="font-serif text-xl text-wine-deep">
+                    {plan.price}
+                    <span className="text-sm font-sans text-muted-foreground">{plan.period}</span>
+                  </span>
                 </span>
-                <span className="mt-1 block text-sm text-muted-foreground">{plan.seats}</span>
-                <span className="mt-2 block font-serif text-2xl text-wine-deep">
-                  {plan.price}
-                  <span className="text-base font-sans text-muted-foreground">{plan.period}</span>
-                </span>
-                <span className="mt-1 block text-xs text-muted-foreground">Ou {plan.annualPrice} se pagar o ano.</span>
-                <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-                  {plan.highlights.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+                <span className="mt-1 block text-sm text-muted-foreground">{plan.seats} · ou {plan.annualPrice}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{plan.highlights[0]}</span>
               </span>
             </label>
           ))}
@@ -86,7 +86,7 @@ export function CreateWorkspaceForm({ defaultPlan = "equipe" }: { defaultPlan?: 
           {state.error}
         </p>
       ) : null}
-      <Button type="submit" className="h-12" disabled={pending}>
+      <Button type="submit" className="h-12 rounded-full" disabled={pending} aria-busy={pending}>
         {pending ? "Criando..." : "Criar salão e começar teste grátis"}
       </Button>
     </PortugueseForm>

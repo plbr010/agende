@@ -1,6 +1,6 @@
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
-import { OnboardingProgressSteps } from "@/components/onboarding/progress-steps";
+import { JourneySteps, PROFESSIONAL_JOURNEY } from "@/components/onboarding/progress-steps";
 import { getSelectedPlan, signOutAction } from "@/lib/auth/actions";
 import { parsePlanId } from "@/lib/billing/plans";
 import { Button } from "@/components/ui/button";
@@ -26,13 +26,12 @@ export default async function OnboardingPage({
             </Button>
           </form>
         </div>
-        <OnboardingProgressSteps current={2} />
+        <JourneySteps steps={PROFESSIONAL_JOURNEY} current={3} label="Cadastro profissional" />
         <div>
-          <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Primeiros passos</p>
-          <h1 className="mt-2 font-serif text-3xl text-wine-deep">Cadastre seu salão</h1>
-          <p className="mt-3 text-muted-foreground">
-            Oi, {session.profile.fullName.split(/\s+/)[0]}! Coloque o nome do salão e escolha o plano. São 7 dias
-            grátis, sem cartão. Se sair agora, entre de novo para continuar.
+          <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Sou profissional</p>
+          <h1 className="mt-2 font-serif text-3xl text-wine-deep">Cadastre seu estabelecimento</h1>
+          <p className="mt-3 max-w-xl text-muted-foreground">
+            Oi, {session.profile.fullName.split(/\s+/)[0]}! Nome do espaço e plano. São 7 dias grátis, sem cartão. Se sair agora, entre de novo para continuar.
           </p>
         </div>
         <div className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de] sm:p-6">

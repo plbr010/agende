@@ -78,7 +78,7 @@ export function ClientProfileForm({
         </p>
       ) : null}
       {state.success ? (
-        <p className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm" role="status">
+        <p className="rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep" role="status">
           {state.success}
         </p>
       ) : null}

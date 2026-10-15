@@ -6,6 +6,60 @@ const STEPS = [
   { id: 3, label: "Pronto" },
 ] as const;
 
+export const CLIENT_JOURNEY = [
+  { id: 1, label: "Conta" },
+  { id: 2, label: "E-mail" },
+  { id: 3, label: "Perfil" },
+  { id: 4, label: "Descobrir" },
+] as const;
+
+export const PROFESSIONAL_JOURNEY = [
+  { id: 1, label: "Conta" },
+  { id: 2, label: "E-mail" },
+  { id: 3, label: "Salão" },
+  { id: 4, label: "Agenda" },
+] as const;
+
+export function JourneySteps({
+  steps,
+  current,
+  className,
+  label = "Etapas",
+}: {
+  steps: readonly { id: number; label: string }[];
+  current: number;
+  className?: string;
+  label?: string;
+}) {
+  return (
+    <ol
+      className={cn("grid gap-2", className)}
+      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+      aria-label={label}
+    >
+      {steps.map((step) => {
+        const done = step.id < current;
+        const active = step.id === current;
+        return (
+          <li key={step.id} className="grid gap-1.5 text-center" aria-current={active ? "step" : undefined}>
+            <span
+              className={cn(
+                "h-1.5 rounded-full",
+                active && "bg-primary",
+                done && "bg-[var(--rose)]",
+                !active && !done && "bg-[#eadfd8]",
+              )}
+            />
+            <span className={cn("text-[0.7rem] font-medium", active ? "text-wine-deep" : "text-muted-foreground")}>
+              {step.label}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function OnboardingProgressSteps({
   current,
   className,

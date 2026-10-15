@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { SignupForm } from "@/components/auth/signup-form";
+import { CLIENT_JOURNEY, JourneySteps, PROFESSIONAL_JOURNEY } from "@/components/onboarding/progress-steps";
 import { requireAnonymous } from "@/lib/auth/session";
 import { sanitizeNextPath } from "@/lib/auth/redirects";
 import { parsePlanId } from "@/lib/billing/plans";
-import { PLANS } from "@/lib/marketing/content";
-
 export default async function CadastroPage({
   searchParams,
 }: {
@@ -13,23 +12,41 @@ export default async function CadastroPage({
   const { next, plan: planParam, intent: intentParam } = await searchParams;
   const safeNext = sanitizeNextPath(next);
   const plan = parsePlanId(planParam);
-  const selectedPlan = plan ? PLANS.find((item) => item.id === plan) : null;
   const inviteSignup = Boolean(safeNext?.startsWith("/convite/"));
   const intentFromQuery =
     intentParam === "client" || intentParam === "professional"
       ? intentParam
       : inviteSignup
         ? "professional"
-        : "";
+        : plan
+          ? "professional"
+          : "";
+  const clientJourney = intentFromQuery === "client";
+  const professionalJourney = intentFromQuery === "professional";
   await requireAnonymous(safeNext);
 
   return (
     <div className="space-y-6">
+      {clientJourney || professionalJourney ? (
+        <JourneySteps
+          steps={clientJourney ? CLIENT_JOURNEY : PROFESSIONAL_JOURNEY}
+          current={1}
+          label={clientJourney ? "Cadastro de cliente" : "Cadastro profissional"}
+        />
+      ) : null}
       <div>
-        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Começar no Agendê</p>
-        <h1 className="mt-2 font-serif text-3xl text-wine-deep">Criar conta</h1>
+        <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">
+          {clientJourney ? "Sou cliente" : professionalJourney ? "Sou profissional" : "Começar no Agendê"}
+        </p>
+        <h1 className="mt-2 font-serif text-3xl text-wine-deep">
+          {clientJourney ? "Criar conta de cliente" : professionalJourney ? "Criar conta profissional" : "Criar conta"}
+        </h1>
         <p className="mt-2 text-muted-foreground">
-          Escolha se você quer marcar horários ou organizar o salão. Os dois cabem na mesma conta.
+          {clientJourney
+            ? "Depois do e-mail, você completa o perfil e encontra estabelecimentos. Não pedimos nome de salão nem plano."
+            : professionalJourney
+              ? "Depois do e-mail, você cadastra o estabelecimento e começa o teste de 7 dias."
+              : "Escolha se você quer marcar horários ou organizar o salão. Os dois cabem na mesma conta."}
         </p>
       </div>
       {safeNext?.includes("/agendar") ? (
@@ -37,16 +54,10 @@ export default async function CadastroPage({
           Serviço, profissional, dia e horário continuam escolhidos. Depois de criar a conta e confirmar o e-mail, você volta para concluir. Se o horário for ocupado nesse meio-tempo, avisamos para escolher outro.
         </p>
       ) : null}
-      {selectedPlan && intentFromQuery !== "client" ? (
-        <p className="rounded-[1.25rem] bg-metric-blush px-4 py-3 text-sm">
-          Você escolheu o plano <strong>{selectedPlan.name}</strong> ({selectedPlan.seats}). Depois de confirmar o
-          e-mail, começam <strong>7 dias grátis</strong> nesse plano — sem cartão.
-        </p>
-      ) : null}
       <SignupForm
         next={safeNext}
-        plan={plan}
-        initialIntent={intentFromQuery || (plan ? "professional" : "")}
+        plan={clientJourney ? null : plan}
+        initialIntent={intentFromQuery}
         lockIntent={inviteSignup}
       />
       <p className="text-sm text-muted-foreground">

@@ -283,6 +283,7 @@ export function PublicProfileSettingsForm({
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
           {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
+          {state.success ? <p role="status" className="rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep">{state.success}</p> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="submit" className="h-12" disabled={pending}>
