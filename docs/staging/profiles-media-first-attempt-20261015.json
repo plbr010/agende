@@ -1,0 +1,61 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "checked_at": "2026-10-15T05:53:14.733Z",
+  "checks": [
+    {
+      "name": "client form signup preserves explicit intent",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "professional form signup preserves explicit intent",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "client actual delivered email confirms with original PKCE verifier",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "professional actual delivered email confirms with original PKCE verifier",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "client has client profile and zero salon, memberships or trial creation",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "client name, phone and optional/cleared city persist through form and reload",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "professional selected Solo, created own salon and persisted seven-day trial",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "commercial name, phone, email, address, city, UF, CEP and timezone persist through actual form",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "client private photo upload, normalization, replacement, removal, reload and isolation",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "professional private photo upload, normalization, replacement, removal, reload and isolation",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "remaining real profile/media journey",
+      "status": "FAIL",
+      "diagnostic": "private local file; no credentials published"
+    }
+  ]
+}

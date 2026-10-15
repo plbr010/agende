@@ -1,0 +1,21 @@
+{
+  "project": "wohimauqgywshbbejjcl",
+  "production_writes": 0,
+  "personal_photo": {
+    "postgres_error": "column profiles.avatar_path does not exist",
+    "account_avatars_bucket_exists": false,
+    "production_server_credential_binding_found": false,
+    "credential_values_requested": false
+  },
+  "commercial_settings": {
+    "postgres_error": "workspace_subscription_inactive",
+    "observed_utc": ["2026-10-15T05:31:15.646Z", "2026-10-15T05:31:27.693Z", "2026-10-15T05:35:07.393Z"],
+    "existing_guard": "app.update_workspace_settings calls app.require_workspace_manager, which calls app.assert_workspace_entitled",
+    "subscription_counts": {"trialing_and_entitled": 1, "expired_and_not_entitled": 2},
+    "identities_with_multiple_workspaces": 0,
+    "missing_workspace_settings_rows": 0,
+    "settings_rpc_present": true,
+    "capture_request_correlated_to_specific_workspace": false,
+    "conclusion": "Confirmed production rejection and shared cause for either commercial form on an inactive workspace; capture's own session/workspace was not available for independent correlation. Do not reset trial or bypass billing."
+  }
+}

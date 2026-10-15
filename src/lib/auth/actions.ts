@@ -87,6 +87,7 @@ export type ActionState = {
   error?: string;
   success?: string;
   fieldErrors?: Record<string, string>;
+  subscriptionInactive?: boolean;
 };
 
 export async function signUpAction(

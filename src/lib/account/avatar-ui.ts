@@ -3,7 +3,7 @@ export function avatarUploadMessage(status: number, code: string | null): string
     return "A foto foi alterada em outro lugar. Atualize a página antes de tentar de novo.";
   }
   if (status === 413 || code === "image_size_invalid") {
-    return "Essa foto é grande demais. Escolha uma de até 5 MB.";
+    return "Essa foto é grande demais. Escolha uma de até 4 MB.";
   }
   if (status === 422 || code === "image_invalid") {
     return "Não foi possível usar essa imagem. Escolha uma foto JPG, PNG ou WebP.";

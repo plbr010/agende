@@ -29,6 +29,7 @@ export type PublicWorkspaceProfile = {
   instagram: string | null;
   logo_path: string | null;
   logoUrl: string | null;
+  coverUrl?: string | null;
   services: PublicService[];
   professionals: PublicProfessional[];
 };

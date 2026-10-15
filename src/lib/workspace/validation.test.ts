@@ -51,6 +51,15 @@ test("reserved slug is rejected in the form", () => {
   assert.equal(parsed.success, false);
 });
 
+test("invalid optional commercial fields are rejected instead of silently discarded", () => {
+  for (const [key, value] of [["state", "ZZ"], ["timezone", "Mars/Nowhere"], ["postalCode", "abc"], ["address", "a".repeat(161)], ["city", "A"]]) {
+    const form = new FormData(); form.set("name", "Studio"); form.set("slug", "studio"); form.set(key, value);
+    const parsed = parseWorkspaceSettingsForm(form);
+    assert.equal(parsed.success, false, key);
+    if (!parsed.success) assert.ok(parsed.error.issues.some(issue => issue.path[0] === key));
+  }
+});
+
 test("invite without email is a secret link; owner role is rejected", () => {
   const secret = new FormData();
   secret.set("role", "professional");

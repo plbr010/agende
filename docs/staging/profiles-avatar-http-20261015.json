@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-15T05:51:32.650Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "origin": "http://127.0.0.1:58959",
+  "production_touched": false,
+  "secrets_modified": false,
+  "checks": [
+    {
+      "name": "no photo returns 204; unauthenticated read denied; CSRF denied",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    },
+    {
+      "name": "invalid SVG corrupt and oversized uploads rejected",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    },
+    {
+      "name": "valid upload persisted normalized private photo with authorized proxy",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    },
+    {
+      "name": "replacement deletes old bytes and survives new login",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    },
+    {
+      "name": "removal clears reference and Storage and returns initials fallback",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    },
+    {
+      "name": "professional account uses same private upload and read contract independently",
+      "status": "PASS",
+      "mode": "real local Next HTTP + staging Auth/Storage/PostgREST"
+    }
+  ]
+}

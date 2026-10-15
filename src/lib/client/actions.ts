@@ -35,17 +35,19 @@ export async function updateClientProfileAction(
     return { error: "Não foi possível salvar. Entre novamente." };
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .update({ full_name: parsed.data.fullName, phone: parsed.data.phone,
       ...(formData.has("residenceCity") ? { residence_city: parsed.data.residenceCity } : {}) })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id).select("user_id").single();
 
-  if (error) {
+  if (error || !data) {
+    console.error("account_profile_save_failed", { code: error?.code ?? "profile_missing" });
     return { error: "Não foi possível salvar seu perfil. Tente novamente." };
   }
 
   revalidatePath("/cliente");
   revalidatePath("/cliente/perfil");
+  revalidatePath("/app", "layout");
   return { success: "Perfil atualizado." };
 }

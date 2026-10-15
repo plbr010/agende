@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-15T06:33:27.260Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "checks": [
+    {
+      "name": "confirmed independent client finds published fixture by city",
+      "status": "PASS",
+      "mode": "real staging PostgREST RPCs; separate from browser evidence"
+    },
+    {
+      "name": "client books real slot, sees own appointment and professional sees same id",
+      "status": "PASS",
+      "mode": "real staging PostgREST RPCs; separate from browser evidence"
+    },
+    {
+      "name": "professional account does not inherit client personal appointment history",
+      "status": "PASS",
+      "mode": "real staging PostgREST RPCs; separate from browser evidence"
+    }
+  ],
+  "cleanup": {
+    "booking_cancelled": true,
+    "service_archived": true,
+    "fixture_unpublished": true
+  }
+}

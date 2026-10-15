@@ -1297,6 +1297,7 @@ export type Database = {
           postal_code: string | null;
           instagram: string | null;
           logo_path: string | null;
+          cover_path: string | null;
           timezone: string;
           created_at: string;
           updated_at: string;
@@ -1313,6 +1314,7 @@ export type Database = {
           postal_code?: string | null;
           instagram?: string | null;
           logo_path?: string | null;
+          cover_path?: string | null;
           timezone?: string;
           created_at?: string;
           updated_at?: string;
@@ -1329,6 +1331,7 @@ export type Database = {
           postal_code?: string | null;
           instagram?: string | null;
           logo_path?: string | null;
+          cover_path?: string | null;
           timezone?: string;
           created_at?: string;
           updated_at?: string;
@@ -1370,6 +1373,11 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
+      queue_workspace_image_upload: { Args: { p_workspace_id: string; p_kind: string; p_path: string }; Returns: undefined };
+      swap_workspace_image: { Args: { p_workspace_id: string; p_kind: string; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
+      claim_workspace_image_cleanup: { Args: { p_workspace_id: string }; Returns: string[] };
+      finish_workspace_image_cleanup: { Args: { p_workspace_id: string; p_path: string }; Returns: undefined };
+      get_public_workspace_cover: { Args: { p_slug: string }; Returns: string | null };
       accept_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       acquire_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: boolean };
       add_my_workspace_favorite: { Args: { p_workspace_id: string | null }; Returns: undefined };

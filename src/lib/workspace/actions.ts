@@ -9,13 +9,11 @@ import { getRequestOrigin } from "@/lib/http/origin";
 import { invitePath, publicProfilePath } from "@/lib/workspace/slug";
 import { isManagerRole } from "@/lib/workspace/queries";
 import {
-  LOGO_MAX_BYTES,
-  LOGO_MIME_TYPES,
-  logoExtension,
   parseInviteForm,
   parseWorkspaceSettingsForm,
 } from "@/lib/workspace/validation";
 import type { MemberRole } from "@/lib/workspace/labels";
+import { inactiveWorkspaceMessage, workspaceSettingsFieldError } from "@/lib/workspace/settings-errors";
 
 function fieldErrorsFromZod(error: {
   issues: ReadonlyArray<{ path: readonly PropertyKey[]; message: string }>;
@@ -31,6 +29,7 @@ function fieldErrorsFromZod(error: {
 }
 
 function mapWorkspaceError(message: string): string {
+  if (message.includes("workspace_subscription_inactive")) return inactiveWorkspaceMessage;
   if (message.includes("not_authorized") || message.includes("42501")) {
     return "Você não tem permissão para esta ação.";
   }
@@ -132,28 +131,9 @@ export async function saveWorkspaceSettingsAction(
   }
 
   const supabase = await createClient();
-  const logo = formData.get("logo");
-  let logoPath: string | null = null;
-  const clearLogo = Boolean(parsed.data.clearLogo);
-
-  if (logo instanceof File && logo.size > 0) {
-    if (logo.size > LOGO_MAX_BYTES) {
-      return { error: "A imagem pode ter no máximo 2 MB." };
-    }
-    if (!(LOGO_MIME_TYPES as readonly string[]).includes(logo.type)) {
-      return { error: "Use uma imagem JPEG, PNG ou WebP. SVG não é permitido." };
-    }
-    const ext = logoExtension(logo.type);
-    if (!ext) {
-      return { error: "Use uma imagem JPEG, PNG ou WebP." };
-    }
-    logoPath = `${workspace.id}/logo.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("workspace-logos")
-      .upload(logoPath, logo, { upsert: true, contentType: logo.type });
-    if (uploadError) {
-      return { error: "Não foi possível enviar a imagem. Tente novamente." };
-    }
+  const legacyLogo = formData.get("logo");
+  if ((legacyLogo instanceof File && legacyLogo.size > 0) || parsed.data.clearLogo) {
+    return { error: "Use a seção de imagens públicas para enviar ou remover a logo." };
   }
 
   const { error: rpcError } = await supabase.rpc("update_workspace_settings", {
@@ -169,12 +149,16 @@ export async function saveWorkspaceSettingsAction(
     p_postal_code: parsed.data.postalCode,
     p_instagram: parsed.data.instagram,
     p_timezone: parsed.data.timezone,
-    p_logo_path: logoPath,
-    p_clear_logo: clearLogo && !logoPath,
+    p_logo_path: null,
+    p_clear_logo: false,
   });
 
   if (rpcError) {
-    return { error: mapWorkspaceError(rpcError.message) };
+    console.error("workspace_settings_save_failed", { code: rpcError.code });
+    if (rpcError.message.includes("workspace_subscription_inactive")) {
+      return { error: inactiveWorkspaceMessage, subscriptionInactive: true };
+    }
+    return workspaceSettingsFieldError(rpcError.message) ?? { error: mapWorkspaceError(rpcError.message) };
   }
 
   revalidateWorkspace(parsed.data.slug);

@@ -1,0 +1,84 @@
+{
+  "checked_at": "2026-10-15T06:13:42.127Z",
+  "groups": {
+    "native_pg17_sql": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "reviewed discovery rollout preserves rows and history, defaults to private and rejects replay",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "owner queues; another user cannot mutate or prepare another tenant",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "missing bytes cannot be referenced and normalized server bytes can",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "replacement is atomic; stale writes lose and referenced bytes are not claimed",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "cover independent of logo; removal clears reference and queues cleanup",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "expired pending upload cannot become current while cleanup runs",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "migration reapplies without removing references or queued work",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "optional commercial fields save; invalid UF, timezone and CEP reject atomically",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "inactive subscription still blocks commercial writes and uploads without mutating profile or billing",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "workspace image lifecycle SQL: isolation, compare-and-swap, leases and idempotent DDL",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    }
+  ]
+}

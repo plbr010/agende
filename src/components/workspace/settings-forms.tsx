@@ -10,7 +10,6 @@ import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
 import { formatPublicProfilePreview, slugifyPreview } from "@/lib/workspace/slug";
 import { WORKSPACE_TIMEZONES } from "@/lib/workspace/timezone";
 import { publicLogoUrl } from "@/lib/workspace/public";
-import { LogoCropField } from "@/components/workspace/logo-crop-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -121,11 +120,13 @@ export function GeneralSettingsForm({
           <div className="grid gap-2">
             <Label htmlFor="address">Endereço</Label>
             <Input id="address" name="address" defaultValue={settings.address ?? ""} className="h-11" disabled={!canEdit} />
+            {state.fieldErrors?.address ? <p className="text-sm text-destructive">{state.fieldErrors.address}</p> : null}
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="grid gap-2 sm:col-span-1">
               <Label htmlFor="city">Cidade</Label>
               <Input id="city" name="city" defaultValue={settings.city ?? ""} className="h-11" disabled={!canEdit} />
+              {state.fieldErrors?.city ? <p className="text-sm text-destructive">{state.fieldErrors.city}</p> : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="state">Estado</Label>
@@ -143,6 +144,7 @@ export function GeneralSettingsForm({
                   </option>
                 ))}
               </select>
+              {state.fieldErrors?.state ? <p className="text-sm text-destructive">{state.fieldErrors.state}</p> : null}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="postalCode">CEP</Label>
@@ -175,8 +177,10 @@ export function GeneralSettingsForm({
                 </option>
               ))}
             </select>
+            {state.fieldErrors?.timezone ? <p className="text-sm text-destructive">{state.fieldErrors.timezone}</p> : null}
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
+          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
           {canEdit ? (
             <Button type="submit" className="h-12" disabled={pending}>
               {pending ? "Salvando..." : "Salvar dados"}
@@ -263,9 +267,22 @@ export function PublicProfileSettingsForm({
           </div>
           <div className="grid gap-2">
             <Label>Logo do estabelecimento</Label>
-            <LogoCropField currentUrl={logoUrl} salonName={settings.name} disabled={!canEdit} />
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoUrl}
+                alt={`Logo de ${settings.name}`}
+                className="size-20 rounded-2xl object-cover ring-1 ring-border"
+              />
+            ) : (
+              <div className="flex size-20 items-center justify-center rounded-2xl bg-secondary font-serif text-2xl text-primary">
+                {settings.name.slice(0, 1)}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Envie, troque ou remova logo e capa na seção de imagens públicas abaixo.</p>
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
+          {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
           {state.success ? <p role="status" className="rounded-full bg-metric-blush px-4 py-2 text-sm text-wine-deep">{state.success}</p> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (

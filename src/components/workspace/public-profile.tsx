@@ -47,7 +47,10 @@ export function PublicWorkspacePage({
       </header>
       <main className="mx-auto grid w-full max-w-3xl gap-8 px-4 py-8">
         <section className="overflow-hidden rounded-[2rem] bg-card ring-1 ring-border">
-          <div className="h-28 bg-gradient-to-br from-secondary via-accent/40 to-primary/20" />
+          {profile.coverUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={profile.coverUrl} alt={`Capa de ${profile.name}`} className="h-40 w-full object-cover" />
+          ) : <div className="h-28 bg-gradient-to-br from-secondary via-accent/40 to-primary/20" />}
           <div className="grid gap-4 px-5 pb-6 sm:px-8">
             <div className="-mt-10 flex items-end gap-4">
               {profile.logoUrl ? (

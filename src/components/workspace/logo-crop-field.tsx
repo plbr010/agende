@@ -21,10 +21,16 @@ export function LogoCropField({
   currentUrl,
   salonName,
   disabled,
+  inputName = "logo",
+  inputId = "logo",
+  allowRemoval = true,
 }: {
   currentUrl: string | null;
   salonName: string;
   disabled?: boolean;
+  inputName?: string;
+  inputId?: string;
+  allowRemoval?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const drag = useRef<{ x: number; y: number; originX: number; originY: number } | null>(null);
@@ -108,7 +114,7 @@ export function LogoCropField({
 
   return (
     <div className="grid justify-items-center gap-3 rounded-[1.4rem] bg-[var(--cream)] px-4 py-5">
-      <input ref={inputRef} id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} disabled={disabled} />
+      <input ref={inputRef} id={inputId} name={inputName} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} disabled={disabled} />
       {draft ? (
         <div
           className="relative touch-none overflow-hidden rounded-[1.4rem] bg-white ring-1 ring-[#f0e4de]"
@@ -192,7 +198,7 @@ export function LogoCropField({
 
       <div className="flex flex-wrap justify-center gap-2">
         <input
-          id="logo-gallery"
+          id={`${inputId}-gallery`}
           type="file"
           accept="image/jpeg,image/png,image/webp"
           className="sr-only"
@@ -202,7 +208,7 @@ export function LogoCropField({
             event.target.value = "";
           }}
         />
-        <label htmlFor="logo-gallery" className={cn(buttonVariants({ variant: "outline" }), "h-11 cursor-pointer rounded-full", disabled && "pointer-events-none opacity-50")}>
+        <label htmlFor={`${inputId}-gallery`} className={cn(buttonVariants({ variant: "outline" }), "h-11 cursor-pointer rounded-full", disabled && "pointer-events-none opacity-50")}>
           Escolher logo
         </label>
         {draft ? (
@@ -229,9 +235,9 @@ export function LogoCropField({
       <p className="max-w-sm text-center text-xs leading-5 text-muted-foreground">
         {preparedUrl
           ? "Enquadramento pronto. A logo só troca depois que você salvar e o envio terminar."
-          : "JPG, PNG ou WebP, até 2 MB. A foto de capa e a galeria ainda não fazem parte do Agendê."}
+          : "JPG, PNG ou WebP. A logo é preparada com até 2 MB; a capa fica na seção própria."}
       </p>
-      {currentUrl ? (
+      {currentUrl && allowRemoval ? (
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="clearLogo" value="true" className="size-4 rounded border-input" disabled={disabled} />
           Remover imagem atual

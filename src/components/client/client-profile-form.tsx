@@ -16,11 +16,13 @@ export function ClientProfileForm({
   phone,
   email,
   residenceCity = "",
+  residenceCityAvailable = true,
 }: {
   fullName: string;
   phone: string | null;
   email: string;
   residenceCity?: string | null;
+  residenceCityAvailable?: boolean;
 }) {
   const [state, action, pending] = useActionState(updateClientProfileAction, initial);
   const [phoneValue, setPhoneValue] = useState(phone ? formatPhoneBr(phone) : "");
@@ -50,7 +52,7 @@ export function ClientProfileForm({
           <p className="text-sm text-destructive" role="alert">{state.fieldErrors.phone}</p>
         ) : null}
       </div>
-      <div className="grid gap-2">
+      {residenceCityAvailable ? <div className="grid gap-2">
         <Label htmlFor="residenceCity">Cidade onde você mora</Label>
         <Input
           id="residenceCity"
@@ -64,7 +66,7 @@ export function ClientProfileForm({
         {state.fieldErrors?.residenceCity ? (
           <p className="text-sm text-destructive" role="alert">{state.fieldErrors.residenceCity}</p>
         ) : null}
-      </div>
+      </div> : null}
       <div className="grid gap-2">
         <Label htmlFor="email">E-mail</Label>
         <Input id="email" value={email} readOnly className="h-11 bg-muted" />

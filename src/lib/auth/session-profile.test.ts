@@ -24,7 +24,7 @@ function fixture(results: unknown[]) {
 test("current schema preserves optional metadata without retry", async () => {
   const result = { data: { residence_city: "Juiz de Fora", avatar_path: "user/photo" }, error: null };
   const { client, calls } = fixture([result]);
-  assert.equal(await loadSessionProfile(client, "verified-user"), result);
+  assert.deepEqual(await loadSessionProfile(client, "verified-user"), { ...result, metadataAvailable: true });
   assert.equal(calls.length, 1);
 });
 
@@ -39,6 +39,7 @@ for (const column of ["residence_city", "avatar_path"]) {
     assert.equal(result.data?.intended_use, "professional");
     assert.equal(result.data?.residence_city, null);
     assert.equal(result.data?.avatar_path, null);
+    assert.equal(result.metadataAvailable, false);
     assert.deepEqual(calls.map(c => c.userId), ["verified-user", "verified-user"]);
     assert.equal(calls[1].fields, "full_name, email, phone, intended_use");
   });
@@ -51,7 +52,7 @@ for (const error of [
 ]) test(`unrelated failure remains visible: ${error.code || "network"}`, async () => {
   const result = { data: null, error };
   const { client, calls } = fixture([result]);
-  assert.equal(await loadSessionProfile(client, "verified-user"), result);
+  assert.deepEqual(await loadSessionProfile(client, "verified-user"), { ...result, metadataAvailable: true });
   assert.equal(calls.length, 1);
 });
 
@@ -60,7 +61,7 @@ test("fallback errors and missing profile are never converted to a profile", asy
     const { client } = fixture([
       { data: null, error: { code: "42703", message: "column profiles.avatar_path does not exist" } }, fallback,
     ]);
-    assert.deepEqual(await loadSessionProfile(client, "verified-user"), fallback);
+    assert.deepEqual(await loadSessionProfile(client, "verified-user"), { ...fallback, metadataAvailable: false });
   }
 });
 

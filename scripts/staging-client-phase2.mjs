@@ -24,7 +24,7 @@ try {
   for(const [c,name] of [[owner,'Staging Studio A'],[foreign,'Staging Studio B']]) {
    const workspace=(await ok(c.from('workspaces').select('id,name,slug').eq('name',name)))[0];assert.ok(workspace);
    const settings=(await ok(c.from('workspace_settings').select('*').eq('workspace_id',workspace.id)))[0];
-   const args={p_workspace_id:workspace.id,p_name:workspace.name,p_slug:workspace.slug,p_business_phone:settings.business_phone,p_business_email:settings.business_email,p_description:settings.description,p_address:settings.address,p_city:settings.city,p_state:settings.state,p_postal_code:settings.postal_code,p_instagram:settings.instagram,p_timezone:settings.timezone,p_logo_path:settings.logo_path,p_clear_logo:false};
+   const args={p_workspace_id:workspace.id,p_name:workspace.name,p_slug:workspace.slug,p_business_phone:settings.business_phone,p_business_email:settings.business_email,p_description:settings.description,p_address:settings.address,p_city:settings.city,p_state:settings.state,p_postal_code:settings.postal_code,p_instagram:settings.instagram,p_timezone:settings.timezone,p_logo_path:null,p_clear_logo:false};
    restore.push(async()=>{await ok(c.rpc('set_workspace_discovery',{p_workspace_id:workspace.id,p_enabled:settings.discovery_enabled}));await ok(c.rpc('update_workspace_settings',args));});
    await ok(c.rpc('update_workspace_settings',{...args,p_city:'Muriaé',p_state:'MG'}));
    await ok(c.rpc('set_workspace_discovery',{p_workspace_id:workspace.id,p_enabled:true}));

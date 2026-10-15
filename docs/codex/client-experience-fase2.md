@@ -1,5 +1,7 @@
 # Agendê — backend da Fase 2
 
+Atualização de 15/10: [contrato de perfis/imagens](profiles-media-contract.md). O limite HTTP atual de fotos é 4 MiB; a descrição de 5 MiB abaixo registra o contrato original desta fase.
+
 Alvo único de homologação: `fkpdudnnperufnmdwdlv`. Produção `wohimauqgywshbbejjcl` não foi alterada. Não houve alterações de DNS, secrets persistidos, preços, Stripe LIVE ou merge.
 
 ## Auditoria antes da implementação
