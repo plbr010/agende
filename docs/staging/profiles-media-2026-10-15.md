@@ -32,6 +32,7 @@ Arquivos e integração de frontend: [contrato atualizado](../codex/profiles-med
 | Nome/telefone/cidade opcional e remoção da cidade; reload | PASS | Formulário e PostgREST reais |
 | Dados comerciais completos e reload; opcionais omitidos; UF/fuso/CEP/telefone inválidos sem gravação parcial | PASS | [validação real](profiles-settings-real-20261015.json) |
 | Cliente e profissional: foto privada, leitura, troca, remoção, nova sessão, arquivos inválidos, tamanho e CSRF | PASS | [HTTP/Storage real](profiles-avatar-http-20261015.json) e jornada nova |
+| API de avatar no Vercel Preview com credencial exclusiva do servidor | PASS | [Seis grupos HTTP/Auth/Storage reais](profiles-preview-avatar-http-20261015.json), deployment `dpl_DKD6PdPUsLyMUYkgc6hyGTrqo2cX`, commit `3154393`; sem escrita produtiva |
 | Logo/capa: consentimento, upload, normalização, exibição pública, troca, limpeza do antigo e remoção | PASS | Jornada real, banco e catálogo Storage |
 | Usuário alheio: leitura de foto privada, assinatura de URL, settings, RPC e alteração de imagem | PASS | Storage/RLS/RPCs reais; testes SQL adicionais |
 | Mesma identidade profissional usa `/app` e `/cliente` | PASS | Ativação real de client profile, sem segunda assinatura |
