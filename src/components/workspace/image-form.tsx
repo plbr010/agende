@@ -8,14 +8,14 @@ import { Label } from "@/components/ui/label";
 import type { ActionState } from "@/lib/auth/actions";
 import { LogoCropField } from "@/components/workspace/logo-crop-field";
 
-export function WorkspaceImageForm({ kind, url }: { kind: "logo" | "cover"; url: string | null }) {
+export function WorkspaceImageForm({ kind, url, salonName }: { kind: "logo" | "cover"; url: string | null; salonName: string }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveWorkspaceImageAction, {});
   const [fileError, setFileError] = useState<string | null>(null);
   const name = kind === "logo" ? "Logo" : "Foto de capa";
   return <form action={action} className="grid gap-3 rounded-2xl border p-4">
     <input type="hidden" name="kind" value={kind} />
     <Label htmlFor={`workspace-image-${kind}`}>{name}</Label>
-    {kind === "logo" ? <LogoCropField currentUrl={url} salonName="estabelecimento" inputName="image" inputId={`workspace-image-${kind}`} allowRemoval={false} disabled={pending} /> : url ? (
+    {kind === "logo" ? <LogoCropField key={url ?? "empty"} currentUrl={url} salonName={salonName} inputName="image" inputId={`workspace-image-${kind}`} allowRemoval={false} disabled={pending} /> : url ? (
       // eslint-disable-next-line @next/next/no-img-element
       <img src={url} alt={`${name} do estabelecimento`} className="max-h-40 max-w-full rounded-xl object-contain" />
     ) : <p className="text-sm text-muted-foreground">Nenhuma imagem cadastrada.</p>}

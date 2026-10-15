@@ -8,7 +8,8 @@ import {chromium} from 'playwright';
 import {createClient} from '@supabase/supabase-js';
 import sharp from 'sharp';
 import {existingStagingServerKey} from './staging-existing-server-key.mjs';
-const project='fkpdudnnperufnmdwdlv',origin='http://localhost:3000',prefix='.env.profiles-media';
+const project='fkpdudnnperufnmdwdlv',origin='http://localhost:3000',prefix=process.env.AGENDE_PROFILES_FIXTURE_PREFIX??'.env.profiles-media';
+assert.match(prefix,/^[.]env[.]profiles-media(?:-[a-z0-9-]+)?$/);
 assert.equal(process.env.AGENDE_STAGING_ACCEPTANCE,project);
 const config=JSON.parse(readFileSync('.env.staging-homologation.json','utf8'));assert.equal(config.url,`https://${project}.supabase.co`);
 const bundles=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?bundles(`${dir}/${e.name}`):e.name.endsWith('.js')?[`${dir}/${e.name}`]:[]);
@@ -35,9 +36,9 @@ try {
     const f=fixtures[role],context=await browser.newContext(),page=await context.newPage();page.setDefaultTimeout(30000);contexts[role]=context;pages[role]=page;
     if(!resume){
       await page.goto(`${origin}/cadastro?intent=${role}&plan=solo`);
-      assert.equal(await page.locator(`#signup-intent-${role}`).getAttribute('aria-checked'),'true');
+      assert.equal(await page.locator('input[name=intendedUse]').inputValue(),role);
       for(const [name,value] of Object.entries({fullName:'Homologação '+role,email:f.email,phone:f.phone,password:f.password,confirmPassword:f.password}))await page.locator(`input[name=${name}]`).fill(value);
-      await page.getByRole('checkbox').check();await page.getByRole('button',{name:'Criar minha conta',exact:true}).click();await page.waitForURL('**/verificar-email?status=sent');record(role+' form signup preserves explicit intent');
+      await page.getByRole('checkbox').check();await page.getByRole('button',{name:role==='client'?'Criar conta de cliente':'Criar conta profissional',exact:true}).click();await page.waitForURL('**/verificar-email?status=sent');record(role+' form signup preserves explicit intent');
     }
   }
   if(!resume){console.log('WAITING delivered client and professional signup links');
@@ -85,15 +86,22 @@ try {
     assert.equal((await req('DELETE')).status(),200);assert.equal((await req()).status(),204);record(role+' private photo upload, normalization, replacement, removal, reload and isolation');
   }
   await pp.goto(origin+'/app/configuracoes/perfil');
+  const chooseImage=async(form,kind,file)=>{
+    if(kind==='logo'){
+      await form.locator('#workspace-image-logo-gallery').setInputFiles(file);
+      await form.getByRole('button',{name:'Usar este enquadramento',exact:true}).click();
+      await form.getByAltText('Logo pronta para salvar').waitFor();
+    }else await form.locator('input[name=image]').setInputFiles(file);
+  };
   for(const kind of ['logo','cover']){
     const form=pp.locator('form').filter({has:pp.locator(`input[name=kind][value=${kind}]`)});
-    await form.locator('input[name=image]').setInputFiles({name:'test.jpg',mimeType:'image/jpeg',buffer:image});
+    await chooseImage(form,kind,{name:'test.jpg',mimeType:'image/jpeg',buffer:image});
     await form.getByRole('button',{name:kind==='logo'?'Salvar logo':'Salvar capa',exact:true}).click();await form.getByRole('alert').filter({hasText:'Confirme que esta imagem'}).waitFor();
-    await form.locator('input[name=publicConsent]').check();await form.locator('input[name=image]').setInputFiles({name:'test.jpg',mimeType:'image/jpeg',buffer:image});await form.getByRole('button',{name:kind==='logo'?'Salvar logo':'Salvar capa',exact:true}).click();await form.getByRole('status').waitFor();
+    await form.locator('input[name=publicConsent]').check();await chooseImage(form,kind,{name:'test.jpg',mimeType:'image/jpeg',buffer:image});await form.getByRole('button',{name:kind==='logo'?'Salvar logo':'Salvar capa',exact:true}).click();await form.getByRole('status').waitFor();
     const old=(await ok(clients.professional.from('workspace_settings').select('logo_path,cover_path').eq('workspace_id',p.workspaceId).single()))[kind+'_path'];assert.ok(old.includes('/'+kind+'/'));
     const publicResponse=await fetch(config.url+'/storage/v1/object/public/workspace-logos/'+old);assert.equal(publicResponse.status,200);
     assert.ok((await clients.client.storage.from('workspace-logos').remove([old])).error || (await ok(admin.storage.from('workspace-logos').list(`${p.workspaceId}/${kind}`))).some(x=>x.name===old.split('/').at(-1)));
-    await form.locator('input[name=image]').setInputFiles({name:'replacement.png',mimeType:'image/png',buffer:replacement});await form.locator('input[name=publicConsent]').check();
+    await chooseImage(form,kind,{name:'replacement.png',mimeType:'image/png',buffer:replacement});await form.locator('input[name=publicConsent]').check();
     const replaced=pp.waitForResponse(response=>response.request().method()==='POST'&&new URL(response.url()).pathname==='/app/configuracoes/perfil');
     await form.getByRole('button',{name:kind==='logo'?'Salvar logo':'Salvar capa',exact:true}).click();await replaced;await pp.reload();
     assert.ok(!(await ok(admin.storage.from('workspace-logos').list(`${p.workspaceId}/${kind}`))).some(x=>x.name===old.split('/').at(-1)));

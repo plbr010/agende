@@ -28,8 +28,8 @@ export default async function PublicProfileSettingsPage() {
       />
       {canEdit && media && !media.error ? <section className="grid gap-4 rounded-3xl bg-card p-6 ring-1 ring-border">
         <h2 className="font-serif text-2xl">Imagens públicas do estabelecimento</h2>
-        <WorkspaceImageForm kind="logo" url={publicLogoUrl(media.data.logo_path)} />
-        <WorkspaceImageForm kind="cover" url={publicLogoUrl(media.data.cover_path)} />
+        <WorkspaceImageForm kind="logo" url={publicLogoUrl(media.data.logo_path)} salonName={settings.name} />
+        <WorkspaceImageForm kind="cover" url={publicLogoUrl(media.data.cover_path)} salonName={settings.name} />
       </section> : canEdit ? <p role="status" className="text-sm text-muted-foreground">O envio de imagens públicas está temporariamente indisponível. Tente novamente mais tarde.</p> : null}
       {canEdit && publication?.error ? <DiscoveryPublicationUnavailable /> : null}
       {canEdit && publication && !publication.error ? (

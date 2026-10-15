@@ -3,6 +3,9 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { LogoCropField } from "@/components/workspace/logo-crop-field";
 import { readPublicWorkspaceId } from "@/lib/client/favorites";
 import { firstNameFrom, parseClientProfileUpdate } from "@/lib/client/profile";
 
@@ -94,8 +97,12 @@ test("profile edits name, phone and optional city, and reuses the private avatar
   assert.match(editor, /Cancelar/);
   assert.match(editor, /role="progressbar"/);
   const logo = source("src/components/workspace/logo-crop-field.tsx");
-  assert.match(logo, /name="logo"/);
-  assert.match(logo, /A foto de capa e a galeria ainda não fazem parte do Agendê/);
+  const logoMarkup = renderToStaticMarkup(createElement(LogoCropField, { currentUrl: null, salonName: "Studio" }));
+  assert.match(logoMarkup, /name="logo"/);
+  const publicImageMarkup = renderToStaticMarkup(createElement(LogoCropField, { currentUrl: "/fixture-logo.webp", salonName: "Studio", inputName: "image", inputId: "workspace-image-logo", allowRemoval: false }));
+  assert.match(publicImageMarkup, /name="image"/);
+  assert.doesNotMatch(publicImageMarkup, /name="clearLogo"/);
+  assert.doesNotMatch(publicImageMarkup, /capa e a galeria ainda não fazem parte/);
   assert.doesNotMatch(logo, /fetch\(/);
   assert.match(source("src/app/cliente/perfil/page.tsx"), /residenceCity/);
   const parsed = parseClientProfileUpdate({ fullName: "  Ana Souza ", phone: "(32) 99999-9999", residenceCity: " Juiz de Fora " });
