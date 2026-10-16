@@ -46,6 +46,7 @@ Node 24.19.0 do runtime local; Next.js 16.3.8. O Node padrão da máquina é 20,
 | npm run test | 388 PASS, zero falhas/skip |
 | npm run build | PASS; nenhuma publicação |
 | npm run test:postgres | 70 PASS, incluindo 10 casos de concorrência real em PostgreSQL 17.6; cluster próprio em loopback, encerrado ao final |
+| Verificação de recuperação histórica | PASS; hashes históricos preservados e lista atualizada para a migration nova |
 | Auditoria SQL dos cinco módulos legados | foundation/catalog/workspace_settings/agenda/public_booking PASS |
 | Staging: fotos e WhatsApp | 8 PASS com GoTrue/PostgREST/Storage reais, Next local e Edge headless |
 | Staging: rascunho e login | 3 PASS: seleção anônima, login real e horário ocupado durante login com escolhas preservadas |
@@ -107,6 +108,7 @@ Nenhuma migration produtiva, deploy, secret produtivo, cobrança ou alteração 
 - `scripts/staging-booking-draft-browser.mjs`
 - `scripts/staging-profiles-booking-whatsapp.mjs`
 - `scripts/test-category-reporter.mjs`
+- `scripts/verify-stripe-recovery.mjs`
 - `scripts/workspace-media-sql.test.mjs`
 - `src/app/api/appointments/whatsapp/route.ts`
 - `src/app/api/clients/avatar/route.ts`
