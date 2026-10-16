@@ -1,5 +1,7 @@
 # Entrega — perfis, imagens, reserva autenticada e WhatsApp
 
+PR independente em rascunho: https://github.com/plbr010/agende/pull/63.
+
 16/10/2026, America/Sao_Paulo. Branch `codex/profiles-booking-whatsapp-20261016`, base `b937621` de `origin/main`.
 
 ## Auditoria e preservação
