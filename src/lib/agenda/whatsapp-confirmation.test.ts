@@ -25,7 +25,7 @@ test("confirmation message follows the salon template", () => {
       "Seu agendamento no *Luna* está confirmado!",
       "",
       "✨ Serviço: Manicure",
-      "👤 Profissional: Ana",
+      "👩 Profissional: Ana",
       "📅 Data: 16 de outubro de 2026",
       "🕒 Horário: 14:30",
       "",
@@ -40,6 +40,8 @@ test("whatsapp opens only for a real phone and never for a cancelled visit", () 
   if (ready.mode === "send") {
     assert.match(ready.href, /^https:\/\/wa\.me\/5532999999999\?text=/);
     assert.doesNotMatch(ready.href, /confirmed=true/);
+    assert.match(ready.message, /ainda aguarda confirmação/);
+    assert.doesNotMatch(ready.message, /está confirmado/);
   }
 
   const confirmed = buildWhatsAppConfirmation({ ...sample, status: "confirmed", phone: "+5532999999999" });

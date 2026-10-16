@@ -12,7 +12,15 @@ test("public booking reduces steps and keeps undo actions visible", () => {
   assert.match(source, /Reservar este horário/);
   assert.match(source, /Esse horário foi ocupado enquanto você entrava/);
   assert.match(source, /não atende mais este serviço/);
-  assert.match(source, /você entra ou cria uma conta/);
+  assert.match(source, /Entrar para confirmar/);
+  assert.match(source, /grátis e sem mensalidade/);
+  assert.doesNotMatch(source, /você entra ou cria uma conta/);
+  const confirmFn = source.slice(source.indexOf("function confirm("), source.indexOf("function proceedAfterSlot"));
+  const proceedFn = source.slice(source.indexOf("function proceedAfterSlot"), source.indexOf("const visibleSteps"));
+  assert.match(confirmFn, /if \(!authenticated\)/);
+  assert.match(confirmFn, /continueBookingAfterLogin/);
+  assert.match(confirmFn, /createPublicAppointmentAction/);
+  assert.doesNotMatch(proceedFn, /continueBookingAfterLogin/);
   assert.match(source, /Duração/);
   assert.match(source, /Mudar horário/);
   assert.match(source, /Alterar meus dados/);

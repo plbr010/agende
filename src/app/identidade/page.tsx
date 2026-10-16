@@ -34,6 +34,10 @@ export default function IdentidadePreviewPage() {
         <a href="/identidade/salao" className="underline underline-offset-4">
           Ver a página do salão
         </a>
+        {" · "}
+        <a href="/identidade/agendar" className="underline underline-offset-4">
+          Ver a confirmação
+        </a>
       </p>
 
       <AppShell workspaceName="Studio Beleza" workspaceSlug="studio-beleza" userName="Ana Carolina" roleLabel="Proprietária" role="owner">

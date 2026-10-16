@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-16T16:47:26.515Z",
+  "checked_at": "2026-10-16T23:49:40.649Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 70,
+      "passed": 73,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 393,
+    "passed": 396,
     "failed": 0,
     "skipped": 0
   },
@@ -1421,6 +1421,18 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/booking/authenticated-booking.test.ts",
+      "name": "public booking action rejects anonymous and unconfirmed sessions before any RPC",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/authenticated-booking.test.ts",
+      "name": "confirmed public booking migration refuses to continue as a guest",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/booking/cancel-revalidate.test.ts",
       "name": "cancelMyAppointmentAction revalidates client and agenda paths",
       "category": "unit_or_static_contract",
@@ -1436,6 +1448,12 @@
       "file": "src/lib/booking/catalog-availability.test.ts",
       "name": "agendar page distinguishes unavailable from not found",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/draft-actions.test.ts",
+      "name": "login keeps the chosen time only after the server confirms it is still free",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {

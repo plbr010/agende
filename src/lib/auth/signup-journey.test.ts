@@ -31,6 +31,9 @@ test("signup journey keeps clients away from plans and preserves an opened invit
   assert.equal(resolveSignupJourney({ intent: "equipe" }), "team");
   assert.equal(resolveSignupJourney({ intent: "cliente", next: `/convite/${token}` }), "team");
   assert.equal(resolveSignupJourney({ next: `/convite/${token}`, forceChoice: true }), null);
+  assert.equal(resolveSignupJourney({ next: "/p/luna/agendar" }), "client");
+  assert.equal(resolveSignupJourney({ next: "/p/luna/agendar", intent: "profissional" }), "owner");
+  assert.equal(resolveSignupJourney({ next: "/p/luna/agendar", forceChoice: true }), null);
   assert.equal(signupChoiceHref("client", { next: "/p/luna/agendar" }), "/cadastro?intent=cliente&next=%2Fp%2Fluna%2Fagendar");
   assert.equal(signupChoiceHref("owner", { plan: "solo" }), "/cadastro?intent=profissional&plan=solo");
   assert.equal(parseSignupJourney("team", "professional"), "team");

@@ -45,11 +45,35 @@ export function professionalConfirmationMessage(input: {
     `Seu agendamento no *${input.workspaceName}* está confirmado!`,
     "",
     `✨ Serviço: ${input.serviceName}`,
-    `👤 Profissional: ${input.professionalName}`,
+    `👩 Profissional: ${input.professionalName}`,
     `📅 Data: ${formatAppointmentDateLabel(input.localDate)}`,
     `🕒 Horário: ${input.localTime}`,
     "",
     "Estamos te esperando! 💕",
+  ].join("\n");
+}
+
+export function professionalPendingMessage(input: {
+  clientName: string;
+  workspaceName: string;
+  serviceName: string;
+  professionalName: string;
+  localDate: string;
+  localTime: string;
+}): string {
+  const first = clientFirstName(input.clientName);
+  const hello = first ? `Olá, ${first}! 💗` : "Olá! 💗";
+  return [
+    hello,
+    "",
+    `Recebemos sua solicitação de agendamento no *${input.workspaceName}*. Ela ainda aguarda confirmação.`,
+    "",
+    `✨ Serviço: ${input.serviceName}`,
+    `👩 Profissional: ${input.professionalName}`,
+    `📅 Data: ${formatAppointmentDateLabel(input.localDate)}`,
+    `🕒 Horário: ${input.localTime}`,
+    "",
+    "Avisaremos assim que for confirmada. 💕",
   ].join("\n");
 }
 
@@ -79,7 +103,8 @@ export function buildWhatsAppConfirmation(input: {
   if (blocked) {
     return { mode: "blocked", guidance: blocked };
   }
-  const message = professionalConfirmationMessage(input);
+  const message =
+    input.status === "confirmed" ? professionalConfirmationMessage(input) : professionalPendingMessage(input);
   const href = buildWhatsAppLink(normalizePhone(input.phone ?? ""), message);
   if (!href) {
     return {

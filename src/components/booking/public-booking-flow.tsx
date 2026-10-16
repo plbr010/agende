@@ -76,6 +76,7 @@ export function PublicBookingFlow({
   initialDraft = null,
   initialDraftSlotUnavailable = false,
   initialProfessionalUnavailable = false,
+  initialAvailabilityError = null,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
@@ -86,6 +87,7 @@ export function PublicBookingFlow({
   initialDraft?: BookingDraft | null;
   initialDraftSlotUnavailable?: boolean;
   initialProfessionalUnavailable?: boolean;
+  initialAvailabilityError?: string | null;
 }) {
   const initialService =
     initialServiceId && catalog.services.some((item) => item.id === initialServiceId)
@@ -95,7 +97,7 @@ export function PublicBookingFlow({
     initialProfessionalUnavailable
       ? "professional"
       : initialDraft
-        ? initialDraftSlotUnavailable
+        ? initialDraftSlotUnavailable || initialAvailabilityError
           ? "slot"
           : parsePublicBookingDetails({ ...prefill, customerNote: "" }).success
             ? "confirm"
@@ -110,7 +112,7 @@ export function PublicBookingFlow({
   );
   const [localDate, setLocalDate] = useState<string | null>(initialProfessionalUnavailable ? null : initialDraft?.localDate ?? null);
   const [startsAt, setStartsAt] = useState<string | null>(
-    initialProfessionalUnavailable || initialDraftSlotUnavailable ? null : initialDraft?.startsAt ?? null,
+    initialProfessionalUnavailable || initialDraftSlotUnavailable || initialAvailabilityError ? null : initialDraft?.startsAt ?? null,
   );
   const [fullName, setFullName] = useState(prefill.fullName);
   const [phone, setPhone] = useState(prefill.phone);
@@ -118,13 +120,15 @@ export function PublicBookingFlow({
   const [customerNote, setCustomerNote] = useState("");
   const [slots, setSlots] = useState<string[]>([]);
   const [slotsError, setSlotsError] = useState<string | null>(null);
-  const [slotsLoading, setSlotsLoading] = useState(initialDraftSlotUnavailable);
+  const [slotsLoading, setSlotsLoading] = useState(initialDraftSlotUnavailable || Boolean(initialAvailabilityError));
   const [formError, setFormError] = useState<string | null>(
     initialProfessionalUnavailable
       ? "Essa profissional não atende mais este serviço. Escolha outra pessoa."
-      : initialDraftSlotUnavailable
-        ? "Esse horário foi ocupado enquanto você entrava. Escolha outro."
-        : null,
+      : initialAvailabilityError
+        ? initialAvailabilityError
+        : initialDraftSlotUnavailable
+          ? "Esse horário foi ocupado enquanto você entrava. Escolha outro."
+          : null,
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmation, setConfirmation] = useState<PublicBookingConfirmation | null>(null);
@@ -252,17 +256,29 @@ export function PublicBookingFlow({
 
   function confirm() {
     if (pending || reserving.current) return;
-    if (!serviceId || professionalId === null || !startsAt) {
+    if (!serviceId || professionalId === null || !startsAt || !localDate) {
       setFormError("Escolha serviço, profissional e horário.");
       return;
     }
+    const professionalMemberId = professionalId === ANY_PROFESSIONAL ? null : professionalId;
     reserving.current = true;
     startTransition(async () => {
       try {
+        if (!authenticated) {
+          const result = await continueBookingAfterLogin({
+            slug: catalog.slug,
+            serviceId,
+            professionalMemberId,
+            localDate,
+            startsAt,
+          });
+          if (result?.error) setFormError(result.error);
+          return;
+        }
         const result = await createPublicAppointmentAction({
           slug: catalog.slug,
           serviceId,
-          professionalMemberId: professionalId === ANY_PROFESSIONAL ? null : professionalId,
+          professionalMemberId,
           startsAt,
           fullName,
           phone,
@@ -284,15 +300,11 @@ export function PublicBookingFlow({
 
   function proceedAfterSlot(slot: string) {
     if (pending || reserving.current) return;
-    if (!authenticated && serviceId && professionalId !== null && localDate) {
-      startTransition(async () => {
-        const result = await continueBookingAfterLogin({ slug: catalog.slug, serviceId,
-          professionalMemberId: professionalId === ANY_PROFESSIONAL ? null : professionalId, localDate, startsAt: slot });
-        if (result?.error) setFormError(result.error);
-      });
+    setStartsAt(slot);
+    if (!authenticated) {
+      go("confirm");
       return;
     }
-    setStartsAt(slot);
     const parsed = parsePublicBookingDetails({ fullName, phone, email, customerNote });
     if (parsed.success) {
       setFieldErrors({});
@@ -458,7 +470,7 @@ export function PublicBookingFlow({
             ) : null}
             {authenticated ? null : (
               <p className="text-sm leading-6 text-muted-foreground">
-                Ao escolher o horário, você entra ou cria uma conta. Serviço, profissional, dia e horário continuam selecionados.
+                Você pode ver os horários sem entrar. A confirmação pede uma conta de cliente, grátis e sem mensalidade.
               </p>
             )}
             {slotsLoading ? (
@@ -608,9 +620,17 @@ export function PublicBookingFlow({
                     : formatCentsToReais(offering?.priceCents ?? service.priceCents)
                 }
               />
-              <SummaryRow label="Nome" value={fullName} />
-              <SummaryRow label="Celular" value={phone} />
-              <SummaryRow label="E-mail" value={email} />
+              {authenticated ? (
+                <>
+                  <SummaryRow label="Nome" value={fullName} />
+                  <SummaryRow label="Celular" value={phone} />
+                  <SummaryRow label="E-mail" value={email} />
+                </>
+              ) : (
+                <p className="pt-3 text-sm leading-6 text-muted-foreground">
+                  Para concluir, entre ou crie uma conta de cliente. Ela é grátis e não tem mensalidade. Serviço, profissional, dia e horário continuam selecionados, e a disponibilidade é conferida de novo antes de reservar.
+                </p>
+              )}
             </article>
             <Button
               type="button"
@@ -618,7 +638,13 @@ export function PublicBookingFlow({
               disabled={pending}
               onClick={confirm}
             >
-              {pending ? "Reservando…" : "Reservar este horário"}
+              {pending
+                ? authenticated
+                  ? "Reservando…"
+                  : "Abrindo a conta…"
+                : authenticated
+                  ? "Reservar este horário"
+                  : "Entrar para confirmar"}
             </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("service")}>
@@ -630,9 +656,11 @@ export function PublicBookingFlow({
               <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("slot")}>
                 Mudar horário
               </Button>
-              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("details")}>
-                Alterar meus dados
-              </Button>
+              {authenticated ? (
+                <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("details")}>
+                  Alterar meus dados
+                </Button>
+              ) : null}
             </div>
           </section>
         ) : null}

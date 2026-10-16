@@ -15,6 +15,7 @@ DECLARE
   v_pro2 uuid;
   v_client_user uuid;
   v_client_other uuid;
+  v_unconfirmed uuid;
   v_ws_a uuid;
   v_ws_b uuid;
   v_slug_a text;
@@ -241,6 +242,24 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   EXECUTE 'RESET ROLE';
   v_passed := array_append(v_passed, 'anonymous_create_denied');
+
+  v_unconfirmed := test_helpers.create_auth_user('unconfirmed-book@agende-public-booking.test', 'client', false);
+  PERFORM test_helpers.login_as(v_unconfirmed);
+  PERFORM test_helpers.assert_error(
+    format(
+      'SELECT public.create_public_appointment(%L,%L,%L,%L,%L,%L,%L)',
+      v_slug_a, v_service_a, v_member_pro, v_start, 'Sem confirmacao', '32998880099', 'unconfirmed-book@agende-public-booking.test'
+    ),
+    'email_not_confirmed',
+    'unconfirmed email cannot create a public appointment',
+    true
+  );
+  PERFORM test_helpers.assert_eq(
+    (SELECT count(*)::int FROM public.appointments a WHERE a.customer_note IS NULL AND a.workspace_id = v_ws_a AND a.starts_at = v_start),
+    0,
+    'unconfirmed attempt does not insert the slot'
+  );
+  v_passed := array_append(v_passed, 'unconfirmed_create_denied');
 
   PERFORM test_helpers.login_as(v_client_user);
   EXECUTE 'SET ROLE authenticated';
