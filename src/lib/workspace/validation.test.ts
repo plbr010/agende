@@ -106,6 +106,32 @@ test("public profile parser keeps only public fields", () => {
   assert.equal(parsed?.services[0]?.id, null);
 });
 
+test("public profile keeps a real average and public photos, and drops the rest", () => {
+  const missing = parsePublicWorkspaceProfile({
+    name: "Luna",
+    slug: "luna",
+    average_rating: 4.9,
+    photos: ["javascript:alert(1)", "https://cdn.example.com/salao.webp", { url: "nota-url" }],
+  });
+  assert.equal(missing?.averageRating, null);
+  assert.equal(missing?.reviewCount, null);
+  assert.equal(missing?.photos.length, 1);
+  assert.equal(missing?.photos[0]?.url, "https://cdn.example.com/salao.webp");
+  assert.equal(missing?.photos[0]?.alt, null);
+
+  const published = parsePublicWorkspaceProfile({
+    name: "Luna",
+    slug: "luna",
+    average_rating: 4.74,
+    review_count: 12,
+    gallery: [{ path: "https://cdn.example.com/recepcao.webp", alt: "Recepção" }],
+  });
+  assert.equal(published?.averageRating, 4.7);
+  assert.equal(published?.reviewCount, 12);
+  assert.equal(published?.photos[0]?.alt, "Recepção");
+  assert.equal(parsePublicWorkspaceProfile({ name: "Luna", slug: "luna", rating_average: 5, rating_count: 0 })?.averageRating, null);
+});
+
 test("bookablePublicServices hides services without a published professional", () => {
   const profile = parsePublicWorkspaceProfile({
     name: "Luna",

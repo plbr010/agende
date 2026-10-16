@@ -18,6 +18,11 @@ export type PublicProfessional = {
   services: string[];
 };
 
+export type PublicPhoto = {
+  url: string;
+  alt: string | null;
+};
+
 export type PublicWorkspaceProfile = {
   workspaceId: string | null;
   name: string;
@@ -30,6 +35,9 @@ export type PublicWorkspaceProfile = {
   logo_path: string | null;
   logoUrl: string | null;
   coverUrl?: string | null;
+  photos: PublicPhoto[];
+  averageRating: number | null;
+  reviewCount: number | null;
   services: PublicService[];
   professionals: PublicProfessional[];
 };
@@ -47,6 +55,57 @@ export function publicLogoUrl(logoPath: string | null | undefined): string | nul
     return null;
   }
   return `${getSupabaseUrl()}/storage/v1/object/public/workspace-logos/${logoPath}`;
+}
+
+const STORAGE_IMAGE_PATH = /^[0-9a-f-]{36}\/(?:logo|cover|gallery)\/[0-9a-f-]{36}\.webp$/i;
+
+/** Accepts an already-public https URL or an owned storage path. Drops anything else. */
+export function publicImageUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  if (STORAGE_IMAGE_PATH.test(value)) return publicLogoUrl(value);
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+function parsePublicPhotos(data: Record<string, unknown>): PublicPhoto[] {
+  const source = Array.isArray(data.photos) ? data.photos : Array.isArray(data.gallery) ? data.gallery : [];
+  const seen = new Set<string>();
+  const photos: PublicPhoto[] = [];
+  for (const item of source) {
+    const raw = typeof item === "string"
+      ? item
+      : item && typeof item === "object"
+        ? asString((item as Record<string, unknown>).url)
+          ?? asString((item as Record<string, unknown>).path)
+          ?? asString((item as Record<string, unknown>).photo_path)
+        : null;
+    const url = publicImageUrl(raw);
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    const alt = item && typeof item === "object" ? asString((item as Record<string, unknown>).alt) : null;
+    photos.push({ url, alt });
+    if (photos.length === 12) break;
+  }
+  return photos;
+}
+
+function parsePublicRating(data: Record<string, unknown>): { averageRating: number | null; reviewCount: number | null } {
+  const pairs = [
+    [data.average_rating, data.review_count],
+    [data.rating_average, data.rating_count],
+  ];
+  for (const [rating, count] of pairs) {
+    if (typeof rating !== "number" || typeof count !== "number") continue;
+    if (!Number.isFinite(rating) || !Number.isInteger(count)) continue;
+    if (count < 1 || rating < 1 || rating > 5) continue;
+    return { averageRating: Math.round(rating * 10) / 10, reviewCount: count };
+  }
+  return { averageRating: null, reviewCount: null };
 }
 
 /** Services that at least one published professional can perform (bookable on the public page). */
@@ -111,6 +170,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
     : [];
 
   const logoPath = asString(data.logo_path);
+  const rating = parsePublicRating(data);
   return {
     workspaceId: readPublicWorkspaceId(data),
     name,
@@ -122,6 +182,9 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
     instagram: asString(data.instagram),
     logo_path: logoPath,
     logoUrl: publicLogoUrl(logoPath),
+    photos: parsePublicPhotos(data),
+    averageRating: rating.averageRating,
+    reviewCount: rating.reviewCount,
     services,
     professionals,
   };

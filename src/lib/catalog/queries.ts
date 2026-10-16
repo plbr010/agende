@@ -61,22 +61,26 @@ function sanitizeSearch(query?: string): string | null {
   return cleaned.length >= 2 ? cleaned : null;
 }
 
-export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
+export async function loadTeamCatalog(workspaceId: string): Promise<{ members: TeamMember[]; error: string | null }> {
   const supabase = await createClient();
-  const { data: members } = await supabase
+  const membersResult = await supabase
     .from("workspace_members")
     .select("id, user_id, role, status, created_at")
     .eq("workspace_id", workspaceId)
     .neq("status", "removed")
     .order("created_at", { ascending: true });
 
-  const rows = members ?? [];
+  if (membersResult.error) {
+    return { members: [], error: membersResult.error.message };
+  }
+
+  const rows = membersResult.data ?? [];
   const userIds = rows.map((row) => row.user_id);
   const memberIds = rows.map((row) => row.id);
 
   const peopleQuery = userIds.length
     ? supabase.from("profiles").select("user_id, full_name, email").in("user_id", userIds)
-    : Promise.resolve({ data: [] as { user_id: string; full_name: string; email: string }[] });
+    : Promise.resolve({ data: [] as { user_id: string; full_name: string; email: string }[], error: null });
   const linksQuery = memberIds.length
     ? supabase
         .from("professional_services")
@@ -84,9 +88,9 @@ export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
         .eq("workspace_id", workspaceId)
         .eq("active", true)
         .in("professional_member_id", memberIds)
-    : Promise.resolve({ data: [] as { professional_member_id: string }[] });
+    : Promise.resolve({ data: [] as { professional_member_id: string }[], error: null });
 
-  const [{ data: people }, { data: profiles }, { data: links }] = await Promise.all([
+  const [peopleResult, profilesResult, linksResult] = await Promise.all([
     peopleQuery,
     supabase
       .from("professional_profiles")
@@ -94,6 +98,15 @@ export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
       .eq("workspace_id", workspaceId),
     linksQuery,
   ]);
+
+  const teamError = [peopleResult.error?.message, profilesResult.error?.message, linksResult.error?.message].filter(Boolean).join(" ");
+  if (teamError) {
+    return { members: [], error: teamError };
+  }
+
+  const people = peopleResult.data;
+  const profiles = profilesResult.data;
+  const links = linksResult.data;
 
   const personByUser = new Map((people ?? []).map((row) => [row.user_id, row]));
 
@@ -103,32 +116,43 @@ export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
     counts.set(link.professional_member_id, (counts.get(link.professional_member_id) ?? 0) + 1);
   }
 
-  return rows.flatMap((row) => {
-    const person = personByUser.get(row.user_id);
-    if (!person) {
-      return [];
-    }
-    const profile = profileByMember.get(row.id);
-    return [
-      {
-        memberId: row.id,
-        userId: row.user_id,
-        role: row.role,
-        status: row.status,
-        fullName: person.full_name,
-        email: person.email,
-        displayName: profile?.display_name ?? null,
-        bio: profile?.bio ?? null,
-        bookingEnabled: profile?.booking_enabled ?? null,
-        hasProfessionalProfile: Boolean(profile),
-        serviceCount: counts.get(row.id) ?? 0,
-        joinedAt: row.created_at,
-      },
-    ];
-  });
+  return {
+    members: rows.flatMap((row) => {
+      const person = personByUser.get(row.user_id);
+      if (!person) {
+        return [];
+      }
+      const profile = profileByMember.get(row.id);
+      return [
+        {
+          memberId: row.id,
+          userId: row.user_id,
+          role: row.role,
+          status: row.status,
+          fullName: person.full_name,
+          email: person.email,
+          displayName: profile?.display_name ?? null,
+          bio: profile?.bio ?? null,
+          bookingEnabled: profile?.booking_enabled ?? null,
+          hasProfessionalProfile: Boolean(profile),
+          serviceCount: counts.get(row.id) ?? 0,
+          joinedAt: row.created_at,
+        },
+      ];
+    }),
+    error: null,
+  };
 }
 
-export async function loadServices(workspaceId: string, query?: string): Promise<ServiceRow[]> {
+export async function loadTeam(workspaceId: string): Promise<TeamMember[]> {
+  const { members } = await loadTeamCatalog(workspaceId);
+  return members;
+}
+
+export async function loadServiceCatalog(
+  workspaceId: string,
+  query?: string,
+): Promise<{ services: ServiceRow[]; error: string | null }> {
   const supabase = await createClient();
   let request = supabase
     .from("services")
@@ -142,7 +166,7 @@ export async function loadServices(workspaceId: string, query?: string): Promise
     request = request.ilike("name", `%${search}%`);
   }
 
-  const [{ data: services }, { data: links }] = await Promise.all([
+  const [servicesResult, linksResult] = await Promise.all([
     request,
     supabase
       .from("professional_services")
@@ -151,23 +175,36 @@ export async function loadServices(workspaceId: string, query?: string): Promise
       .eq("active", true),
   ]);
 
+  if (servicesResult.error || linksResult.error) {
+    const message = [servicesResult.error?.message, linksResult.error?.message].filter(Boolean).join(" ");
+    return { services: [], error: message || "Não foi possível carregar os serviços." };
+  }
+
   const byService = new Map<string, string[]>();
-  for (const link of links ?? []) {
+  for (const link of linksResult.data ?? []) {
     const current = byService.get(link.service_id) ?? [];
     current.push(link.professional_member_id);
     byService.set(link.service_id, current);
   }
 
-  return (services ?? []).map((row) => ({
-    id: row.id,
-    name: row.name,
-    description: row.description,
-    durationMinutes: row.duration_minutes,
-    priceCents: row.price_cents,
-    active: row.active,
-    archivedAt: row.archived_at,
-    professionalMemberIds: byService.get(row.id) ?? [],
-  }));
+  return {
+    services: (servicesResult.data ?? []).map((row) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      durationMinutes: row.duration_minutes,
+      priceCents: row.price_cents,
+      active: row.active,
+      archivedAt: row.archived_at,
+      professionalMemberIds: byService.get(row.id) ?? [],
+    })),
+    error: null,
+  };
+}
+
+export async function loadServices(workspaceId: string, query?: string): Promise<ServiceRow[]> {
+  const { services } = await loadServiceCatalog(workspaceId, query);
+  return services;
 }
 
 export async function loadClients(workspaceId: string, query?: string): Promise<ClientRow[]> {
