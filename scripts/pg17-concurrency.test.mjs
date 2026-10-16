@@ -45,7 +45,7 @@ async function waitForBlock(db,waiting,blocking){
   }
   throw new Error('Expected a genuine overlapping lock wait between independent PG backends');
 }
-async function race(f,name,sql,argsA,argsB,{uidA=null,uidB=null,role,release='commit'}={}){
+async function race(f,name,sql,argsA,argsB,{uidA=f.clientA,uidB=f.clientB,role,release='commit'}={}){
   const a=await f.db.connection('agende_race_a'),b=await f.db.connection('agende_race_b');let pending;
   try{
     const pidA=(await a.query('select pg_backend_pid() pid')).rows[0].pid,pidB=(await b.query('select pg_backend_pid() pid')).rows[0].pid;assert.notEqual(pidA,pidB);
@@ -78,8 +78,8 @@ test('PG17 a rolled-back reservation frees the waiting client to book',{timeout:
 
 test('PG17 concurrent client reschedules cannot converge on one occupied slot',{timeout:30000},async t=>{
   const f=await fixture(t,'reschedule');
-  const a=(await as(f.db,null,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
-  const b=(await as(f.db,null,bookSql,bookArgs(f,'14:00','b'))).rows[0].data.appointment_id;
+  const a=(await as(f.db,f.clientA,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
+  const b=(await as(f.db,f.clientB,bookSql,bookArgs(f,'14:00','b'))).rows[0].data.appointment_id;
   const target=(await f.db.query("select ($1::date+time '12:00') at time zone 'America/Sao_Paulo' t",[f.date])).rows[0].t;
   const result=await race(f,'reschedule collision','select public.reschedule_my_appointment($1,$2,$3) data',[a,target,f.member],[b,target,f.member],{uidA:f.clientA,uidB:f.clientB});
   assert.equal(result.second.ok,false);assert.match(result.second.message,/overlap|slot_taken/);
@@ -88,7 +88,7 @@ test('PG17 concurrent client reschedules cannot converge on one occupied slot',{
 });
 
 test('PG17 duplicate concurrent reviews persist exactly one immutable rating',{timeout:30000},async t=>{
-  const f=await fixture(t,'reviews');const id=(await as(f.db,null,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
+  const f=await fixture(t,'reviews');const id=(await as(f.db,f.clientA,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
   for(const status of ['confirmed','in_progress','completed'])await as(f.db,f.owner,'select public.set_appointment_status($1,$2::public.appointment_status)',[id,status]);
   const result=await race(f,'review uniqueness','select public.submit_appointment_review($1,$2,null) data',[id,5],[id,4],{uidA:f.clientA,uidB:f.clientA});
   assert.equal(result.second.ok,false);assert.match(result.second.message,/already_reviewed/);
@@ -124,4 +124,25 @@ test('PG17 concurrent checkout leases cannot both acquire the same workspace',{t
   const f=await fixture(t,'leases');
   const result=await race(f,'checkout lease','select public.acquire_stripe_checkout($1,$2) data',[f.workspace,randomUUID()],[f.workspace,randomUUID()],{role:'service_role'});
   assert.equal(result.first.rows[0].data,true);assert.equal(result.second.ok,true);assert.equal(result.second.result.rows[0].data,false);
+});
+test('PG17 double-click by the same client persists one booking', {timeout:30000}, async t=>{
+ const f=await fixture(t,'same-client');
+ const result=await race(f,'duplicate booking',bookSql,bookArgs(f,'10:00','a'),bookArgs(f,'10:00','a'),{uidA:f.clientA,uidB:f.clientA});
+ assert.equal(result.second.ok,false);assert.match(result.second.message,/overlap|slot_taken|duplicate/);
+ assert.equal((await f.db.query('select count(*)::int n from public.appointments where workspace_id=$1',[f.workspace])).rows[0].n,1);
+});
+
+test('PG17 professional photo concurrent replacements retain one live reference', {timeout:30000}, async t=>{
+ const f=await fixture(t,'photo-cas');
+ const paths=[0,1].map(()=>`${f.workspace}/professionals/${f.member}/${randomUUID()}.webp`);
+ for(const path of paths){
+   await as(f.db,null,'select public.queue_professional_photo($1,$2,$3)',[f.owner,f.member,path],'service_role');
+   await f.db.query("insert into storage.objects(bucket_id,name) values('professional-photos',$1)",[path]);
+ }
+ const sql='select public.swap_professional_photo($1,$2,null,$3) saved';
+ const result=await race(f,'photo compare and swap',sql,[f.owner,f.member,paths[0]],[f.owner,f.member,paths[1]],{uidA:null,uidB:null,role:'service_role'});
+ assert.equal(result.second.ok,true);assert.equal(result.second.result.rows[0].saved,false);
+ assert.equal((await f.db.query('select photo_path from public.professional_profiles where member_id=$1',[f.member])).rows[0].photo_path,paths[0]);
+ const claimed=(await as(f.db,null,'select public.claim_professional_photo_cleanup($1) path',[f.member],'service_role')).rows.map(row=>row.path);
+ assert.ok(!claimed.includes(paths[0]));
 });

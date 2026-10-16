@@ -231,7 +231,19 @@ BEGIN
   EXECUTE 'RESET ROLE';
   v_passed := array_append(v_passed, 'anon_cannot_read_private_tables');
 
+  -- Public browsing stays anonymous; committing a reservation requires Auth.
+  v_client_user := test_helpers.create_auth_user('guest-a@agende-public-booking.test', 'client', true);
   PERFORM test_helpers.become_anon();
+  BEGIN
+    EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
+      USING v_slug_a,v_service_a,v_member_pro,v_start,'Maria','32998880001','guest-a@agende-public-booking.test';
+    RAISE EXCEPTION 'FAIL: anonymous booking accepted';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  EXECUTE 'RESET ROLE';
+  v_passed := array_append(v_passed, 'anonymous_create_denied');
+
+  PERFORM test_helpers.login_as(v_client_user);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7,$8,$9)'
     INTO v_receipt
     USING v_slug_a, v_service_a, v_member_pro, v_start,
@@ -249,19 +261,20 @@ BEGIN
   PERFORM test_helpers.assert_eq(v_status, 'scheduled'::public.appointment_status, 'public status scheduled');
   PERFORM test_helpers.assert_eq(v_note, 'quero franja', 'customer_note stored');
   PERFORM test_helpers.assert_true(v_internal IS NULL, 'internal notes stay empty');
-  PERFORM test_helpers.assert_eq(v_receipt->>'guest', 'true', 'anon booking is guest');
+  PERFORM test_helpers.assert_eq(v_receipt->>'guest', 'false', 'authenticated booking is not a guest');
   SELECT count(*)::int INTO v_auth_users FROM auth.users WHERE email = 'guest-a@agende-public-booking.test';
-  PERFORM test_helpers.assert_eq(v_auth_users, 0, 'guest booking does not create auth.users');
-  v_passed := array_append(v_passed, 'guest_booking_snapshot');
+  PERFORM test_helpers.assert_eq(v_auth_users, 1, 'booking uses an existing authenticated account');
+  v_passed := array_append(v_passed, 'authenticated_booking_snapshot');
 
-  PERFORM test_helpers.become_anon();
+  PERFORM test_helpers.login_as(v_client_user);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
     INTO v_receipt2
     USING v_slug_a, v_service_a, v_member_pro, v_start2,
           'Maria S', '32998880001', 'guest-a@agende-public-booking.test';
   EXECUTE 'RESET ROLE';
   SELECT a.client_id INTO v_client_id2 FROM public.appointments a WHERE a.id = (v_receipt2->>'appointment_id')::uuid;
-  PERFORM test_helpers.assert_eq(v_client_id, v_client_id2, 'same email reuses unlinked guest client; phone alone is not identity');
+  PERFORM test_helpers.assert_eq(v_client_id, v_client_id2, 'same authenticated user reuses linked client');
   PERFORM test_helpers.assert_eq(
     (SELECT c.workspace_id FROM public.workspace_clients c WHERE c.id = v_client_id),
     v_ws_a,
@@ -361,7 +374,8 @@ BEGIN
   PERFORM test_helpers.assert_eq(v_count, 1, 'concurrent second booking does not duplicate');
   v_passed := array_append(v_passed, 'no_duplicate_slot');
 
-  PERFORM test_helpers.become_anon();
+  PERFORM test_helpers.login_as(v_client_user);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
     INTO v_receipt
     USING v_slug_a, v_service_a, v_member_a, v_start3,
@@ -377,7 +391,8 @@ BEGIN
   UPDATE public.workspace_settings SET timezone = 'America/Manaus' WHERE workspace_id = v_ws_a;
   PERFORM set_config('app.bypass_protected_columns', 'off', true);
   v_manaus := (v_monday::timestamp + time '14:00') AT TIME ZONE 'America/Manaus';
-  PERFORM test_helpers.become_anon();
+  PERFORM test_helpers.login_as(v_client_user);
+  EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_public_appointment($1,$2,$3,$4,$5,$6,$7)'
     INTO v_receipt
     USING v_slug_a, v_service_a, v_member_pro, v_manaus,
@@ -436,7 +451,7 @@ BEGIN
   );
   v_passed := array_append(v_passed, 'no_cross_tenant_leak');
 
-  v_client_user := test_helpers.create_auth_user('guest-a@agende-public-booking.test', 'client', true);
+
   PERFORM test_helpers.login_as(v_client_user);
   EXECUTE 'SET ROLE authenticated';
   EXECUTE 'SELECT public.create_client_profile()';
@@ -444,7 +459,7 @@ BEGIN
   EXECUTE 'RESET ROLE';
   PERFORM test_helpers.assert_true(
     v_mine @> jsonb_build_array(jsonb_build_object('id', v_appt::text)),
-    'confirmed email links previous guest appointments'
+    'authenticated client sees its bookings'
   );
   PERFORM test_helpers.assert_true(NOT (v_mine::text ILIKE '%nota interna%'), 'list_my_appointments hides internal notes');
   v_passed := array_append(v_passed, 'authenticated_client_reads_own');
@@ -536,8 +551,8 @@ BEGIN
     'anon cannot execute internal create_public_appointment'
   );
   PERFORM test_helpers.assert_true(
-    has_function_privilege('anon', 'public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text)', 'execute'),
-    'anon can execute public create wrapper'
+    NOT has_function_privilege('anon', 'public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text)', 'execute'),
+    'anon cannot execute public create wrapper'
   );
   PERFORM test_helpers.assert_true(
     NOT has_function_privilege('anon', 'public.list_my_appointments()', 'execute'),

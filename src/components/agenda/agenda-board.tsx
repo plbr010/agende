@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { AppointmentWhatsApp } from "./appointment-whatsapp";
+import { PersonPhoto } from "@/components/catalog/person-photo";
 import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
@@ -101,6 +103,7 @@ export function AgendaBoard({
 }) {
   const [creating, setCreating] = useState(startCreating);
   const [editing, setEditing] = useState<AgendaAppointment | null>(null);
+  const currentEditing = editing ? appointments.find(item => item.id === editing.id) ?? null : null;
   const bookable = professionals.filter((member) => member.hasProfessionalProfile && member.bookingEnabled);
 
   return (
@@ -196,10 +199,10 @@ export function AgendaBoard({
         defaultDate={date}
         defaultProfessionalId={selectedProfessionalId}
       />
-      {editing ? (
+      {currentEditing ? (
         <AppointmentDetailDialog
           timezone={timezone}
-          appointment={editing}
+          appointment={currentEditing}
           open
           onOpenChange={(open) => !open && setEditing(null)}
           professionals={bookable}
@@ -498,6 +501,8 @@ function AppointmentDetailDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-2 text-sm">
+            <PersonPhoto name={appointment.professionalName} src={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} />
+            <PersonPhoto name={appointment.clientName} src={`/api/clients/avatar?clientId=${appointment.clientId}`} />
             <p>Profissional: {appointment.professionalName}</p>
             <p>Duração: {appointment.durationMinutes} min</p>
             <p>Preço: {formatCentsToReais(appointment.priceCents)}</p>
@@ -506,6 +511,9 @@ function AppointmentDetailDialog({
               {STATUS_LABEL[appointment.status]}
             </span>
           </div>
+          {(appointment.status === "scheduled" || appointment.status === "confirmed") &&
+            (role === "owner" || role === "admin" || role === "receptionist" || (role === "professional" && currentMemberId === appointment.professionalMemberId)) ?
+            <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} /> : null}
           <div className="flex flex-wrap gap-2">
             {canEdit ? (
               <Button type="button" variant="outline" className="h-11" onClick={() => setRescheduling(true)} disabled={statusPending}>

@@ -15,7 +15,7 @@ test('workspace image lifecycle SQL: isolation, compare-and-swap, leases and ide
   });
   const wid=(await as(owner,"select public.create_workspace('Media SQL',null,'solo') result")).rows[0].result.workspace_id;
   const path=kind=>`${wid}/${kind}/${randomUUID()}.webp`;
-  const first=path('logo'),second=path('logo'),cover=path('cover');
+  const first=path('logo'),second=path('logo');let cover=path('cover');
   await t.test('owner queues; another user cannot mutate or prepare another tenant',async()=>{
     await assert.rejects(as(other,"select public.queue_workspace_image_upload($1,'logo',$2)",[wid,first]),/not_authorized/);
     await assert.rejects(as(other,"select public.swap_workspace_image($1,'logo',null,null)",[wid]),/not_authorized/);
@@ -45,6 +45,11 @@ test('workspace image lifecycle SQL: isolation, compare-and-swap, leases and ide
     assert.equal((await db.query("select public.get_public_workspace_cover((select slug from public.workspaces where id=$1)) cover",[wid])).rows[0].cover,cover);
     assert.equal(await swap('logo',second,null),true);
     assert.equal((await db.query('select cover_path from public.workspace_settings where workspace_id=$1',[wid])).rows[0].cover_path,cover);
+    assert.equal(await swap('cover',cover,null),true);
+    assert.equal((await db.query('select cover_path from public.workspace_settings where workspace_id=$1',[wid])).rows[0].cover_path,null);
+    const nextCover=path('cover');await queue('cover',nextCover);
+    await db.query("insert into storage.objects(bucket_id,name) values('workspace-logos',$1)",[nextCover]);
+    assert.equal(await swap('cover',null,nextCover),true);cover=nextCover;
   });
   await t.test('expired pending upload cannot become current while cleanup runs',async()=>{
     const expired=path('logo');await queue('logo',expired);

@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-16",
+  "node": "24.19.0",
+  "base_commit": "b937621",
+  "production_writes": 0,
+  "migration": {
+    "local_version": "20261016075244",
+    "staging_version": "20261016080427",
+    "name": "profiles_booking_whatsapp",
+    "sha256_lf": "f647bd497bb4af9a73b6e584da39e7d663bcda1c2a83993e70d0e58e2b44f31a"
+  },
+  "commands": {
+    "npm ci": 0,
+    "npm run lint": 0,
+    "npm run typecheck": 0,
+    "npm run test": 0,
+    "npm run build": 0,
+    "npm run test:postgres": 0
+  },
+  "tests": {
+    "standard_passed": 388,
+    "native_pg17_passed": 70,
+    "native_concurrency": 10,
+    "staging_professional_photo_whatsapp": 8,
+    "staging_booking_login_draft": 3,
+    "staging_account_avatar": 6
+  },
+  "npm_audit": {
+    "runtime_vulnerabilities": 0,
+    "development_high": 5
+  },
+  "decision": "GO review/homologation; NO-GO production without explicit migration/deploy authorization"
+}

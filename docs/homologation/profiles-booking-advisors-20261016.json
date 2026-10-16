@@ -1,0 +1,86 @@
+[
+  {
+    "name": "rls_enabled_no_policy",
+    "level": "INFO",
+    "count": 4,
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+    "new_scope_findings": [
+      {
+        "detail": "Table \\`app.professional_photo_cleanup\\` has RLS enabled, but no policies exist",
+        "metadata": {
+          "name": "professional_photo_cleanup",
+          "type": "table",
+          "schema": "app"
+        },
+        "observed_at": "2026-10-16T08:08:52.228Z"
+      }
+    ]
+  },
+  {
+    "name": "anon_security_definer_function_executable",
+    "level": "WARN",
+    "count": 8,
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable",
+    "new_scope_findings": [
+      {
+        "detail": "Function `public.get_professional_photo(p_member_id uuid, p_slug text)` can be executed by the `anon` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/get_professional_photo`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "metadata": {
+          "name": "get_professional_photo",
+          "schema": "public",
+          "language": "plpgsql",
+          "arguments": "p_member_id uuid, p_slug text",
+          "security_definer": true
+        },
+        "observed_at": "2026-10-16T08:08:52.228Z"
+      }
+    ]
+  },
+  {
+    "name": "authenticated_security_definer_function_executable",
+    "level": "WARN",
+    "count": 71,
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+    "new_scope_findings": [
+      {
+        "detail": "Function `public.get_appointment_whatsapp(p_appointment_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/get_appointment_whatsapp`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "metadata": {
+          "name": "get_appointment_whatsapp",
+          "schema": "public",
+          "language": "plpgsql",
+          "arguments": "p_appointment_id uuid",
+          "security_definer": true
+        },
+        "observed_at": "2026-10-16T08:08:52.228Z"
+      },
+      {
+        "detail": "Function `public.get_professional_photo(p_member_id uuid, p_slug text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/get_professional_photo`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "metadata": {
+          "name": "get_professional_photo",
+          "schema": "public",
+          "language": "plpgsql",
+          "arguments": "p_member_id uuid, p_slug text",
+          "security_definer": true
+        },
+        "observed_at": "2026-10-16T08:08:52.228Z"
+      },
+      {
+        "detail": "Function `public.get_related_client_avatar(p_client_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/get_related_client_avatar`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "metadata": {
+          "name": "get_related_client_avatar",
+          "schema": "public",
+          "language": "plpgsql",
+          "arguments": "p_client_id uuid",
+          "security_definer": true
+        },
+        "observed_at": "2026-10-16T08:08:52.228Z"
+      }
+    ]
+  },
+  {
+    "name": "auth_leaked_password_protection",
+    "level": "WARN",
+    "count": 1,
+    "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+    "new_scope_findings": []
+  }
+]

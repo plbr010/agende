@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfessionalPhotoEditor } from "./professional-photo-editor";
 import { useActionState } from "react";
 import type { ActionState } from "@/lib/auth/actions";
 import { saveProfessionalProfileAction } from "@/lib/catalog/actions";
@@ -37,6 +38,7 @@ export function OwnProfessionalProfile({
       <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
         Nome e frase que as clientes veem na hora de marcar. A confirmação só aparece depois que o salvamento terminar.
       </p>
+      <ProfessionalPhotoEditor memberId={member.memberId} name={member.displayName ?? member.fullName} />
       <form action={action} className="mt-6 grid max-w-xl gap-4">
         <input type="hidden" name="memberId" value={member.memberId} />
         <div className="grid gap-2">

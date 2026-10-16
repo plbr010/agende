@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T17:58:14.153Z",
+  "checked_at": "2026-10-16T08:21:36.305Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,12 +7,12 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 40,
+      "passed": 50,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 228,
+      "passed": 241,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 64,
+      "passed": 70,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 359,
+    "passed": 388,
     "failed": 0,
     "skipped": 0
   },
@@ -103,6 +103,12 @@
     {
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "service rollout refuses RLS or unique-key drift before creating the RPC or history",
       "category": "pglite_sql",
       "status": "passed"
     },
@@ -337,6 +343,60 @@
     {
       "file": "scripts/launch-readiness.test.mjs",
       "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "anonymous RPC revoked and unconfirmed account denied before any writes; public browsing remains open",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "authenticated booking uses verified identity, authoritative price; repeats and cross-tenant IDs cannot duplicate",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "WhatsApp returns latest data only to authorized team; clients and unrelated professionals/tenants cannot read",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo upload gate rechecks actor; direct SQL, foreign tenant, receptionist and another professional are denied",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo bytes private; public read only for the actual active linked bookable professional",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "inactive and removed professionals disappear publicly and lose self-edit permission",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo replace/remove use CAS, exclude live references from cleanup, and preserve fallback",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "one global private avatar is readable through legitimate appointments only, never writable by tenants",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "profiles booking WhatsApp SQL: authenticated booking, photos, tenant and role boundaries",
       "category": "pglite_sql",
       "status": "passed"
     },
@@ -701,6 +761,24 @@
       "status": "passed"
     },
     {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service filters keep active, hidden and unassigned services apart",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service catalog shows price, duration, people and does not replace an error with the empty state",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service search with no rows explains the query instead of inviting the first service",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/client/client-experience.test.ts",
       "name": "audience split uses the approved client and professional copy",
       "category": "unit_or_static_contract",
@@ -839,6 +917,24 @@
       "status": "passed"
     },
     {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "public salon page shows real fields and an elegant empty photo",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "public salon page shows a real rating, cover and gallery only when provided",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "closed public agenda keeps the profile and explains the pause",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/account/avatar-ui.test.ts",
       "name": "avatar messages hide technical codes and 503 is not treated as saved",
       "category": "unit_or_static_contract",
@@ -877,6 +973,42 @@
     {
       "file": "src/lib/agenda/period-rules.test.ts",
       "name": "copy fills only empty days and keeps every period",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-actions.test.ts",
+      "name": "WhatsApp preparation refuses invalid IDs, denied rows and server outages without leaking provider details",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-actions.test.ts",
+      "name": "manual WhatsApp redirect fetches current authorized data on every click; invalid phone offers guidance without redirect",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp.test.ts",
+      "name": "WhatsApp requires explicit international number and never infers country or DDD",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp.test.ts",
+      "name": "confirmed message contains current professional, service and local date/time with encoded accents and emoji",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp.test.ts",
+      "name": "pending request never claims confirmation; terminal and unknown statuses are refused",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp.test.ts",
+      "name": "rescheduled message uses new instant and timezone; names cannot inject message lines",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1643,6 +1775,36 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/media/http.test.ts",
+      "name": "bounded image stream rejects excess with or without declared Content-Length",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/media/professional-photo-route.test.ts",
+      "name": "photo HTTP denies CSRF, unconfirmed users and foreign professional before privileged storage",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/media/professional-photo-route.test.ts",
+      "name": "photo HTTP uploads fully decoded metadata-free bytes; deletion swaps before cleaning Storage",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/media/professional-photo-route.test.ts",
+      "name": "photo HTTP rejects executable bytes and uncertain commits never delete potentially live bytes",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/media/professional-photo-route.test.ts",
+      "name": "photo HTTP GET checks visibility before service access and sends no transferable URL or cache",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/modules/actions.test.ts",
       "name": "server actions refuse professional/receptionist even if the outer guard is bypassed",
       "category": "platform_mocks",
@@ -1675,6 +1837,12 @@
     {
       "file": "src/lib/modules/management.test.ts",
       "name": "plan selection is limited to the catalog and remaining days never go negative",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
+      "name": "inventory forms respect persisted limits on create and edit",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -2179,6 +2347,12 @@
     {
       "file": "src/lib/workspace/validation.test.ts",
       "name": "public profile parser keeps only public fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "public profile keeps a real average and public photos, and drops the rest",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

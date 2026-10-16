@@ -15,7 +15,7 @@ async function command(program,args,env=childEnv,inherit=false){return new Promi
 async function freePort(){const socket=createServer();await new Promise((resolve,reject)=>{socket.once('error',reject);socket.listen(0,'127.0.0.1',resolve);});const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));return port;}
 const version=await command(binary('postgres'),['--version']);if(!/PostgreSQL\) 17\./.test(version))throw new Error('Native test runner requires PostgreSQL 17 binaries');
 mkdirSync('.test-postgres',{recursive:true});const run=mkdtempSync(resolve('.test-postgres/run-')),data=join(run,'data'),port=await freePort();
-const suites=process.argv.slice(2).length?process.argv.slice(2):['scripts/database.test.mjs','scripts/launch-readiness.test.mjs','scripts/final-hardening.test.mjs','scripts/atomic-service-sql.test.mjs','scripts/action-sql-integration.test.mjs','scripts/pg17-concurrency.test.mjs'];
+const suites=process.argv.slice(2).length?process.argv.slice(2):['scripts/database.test.mjs','scripts/launch-readiness.test.mjs','scripts/final-hardening.test.mjs','scripts/atomic-service-sql.test.mjs','scripts/action-sql-integration.test.mjs','scripts/pg17-concurrency.test.mjs','scripts/profiles-booking-whatsapp-sql.test.mjs','scripts/workspace-media-sql.test.mjs'];
 let started=false,stopped=false,failure;
 if (!suites.includes('scripts/discovery-sql.test.mjs')) suites.push('scripts/discovery-sql.test.mjs');
 try{

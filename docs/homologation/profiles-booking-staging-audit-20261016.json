@@ -1,0 +1,57 @@
+{
+  "rls": [
+    {
+      "rls": true,
+      "force": true,
+      "table": "appointments"
+    },
+    {
+      "rls": true,
+      "force": true,
+      "table": "professional_profiles"
+    },
+    {
+      "rls": true,
+      "force": true,
+      "table": "profiles"
+    },
+    {
+      "rls": true,
+      "force": true,
+      "table": "workspace_clients"
+    },
+    {
+      "rls": true,
+      "force": true,
+      "table": "workspace_settings"
+    }
+  ],
+  "buckets": [
+    {
+      "id": "workspace-logos",
+      "mime": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ],
+      "public": true,
+      "file_size_limit": 2097152
+    },
+    {
+      "id": "account-avatars",
+      "mime": [
+        "image/webp"
+      ],
+      "public": false,
+      "file_size_limit": 2097152
+    }
+  ],
+  "columns": [
+    "profiles.avatar_path",
+    "workspace_settings.cover_path"
+  ],
+  "anonymous_booking_grant": true,
+  "booking_requires_confirmed_identity": false,
+  "phase": "before_changes",
+  "environment": "staging"
+}

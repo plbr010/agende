@@ -1,5 +1,7 @@
 "use client";
 
+import { PersonPhoto } from "@/components/catalog/person-photo";
+
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BrandLogo } from "@/components/brand/logo";
@@ -401,6 +403,7 @@ export function PublicBookingFlow({
 
         {step === "professional" ? (
           <ProfessionalStep
+            slug={catalog.slug}
             people={professionalsForService}
             service={service}
             onSelect={selectProfessional}
@@ -626,10 +629,12 @@ export function PublicBookingFlow({
 }
 
 function ProfessionalStep({
+  slug,
   people,
   service,
   onSelect,
 }: {
+  slug: string;
   people: PublicBookingProfessional[];
   service: PublicBookingService | null;
   onSelect: (id: string | typeof ANY_PROFESSIONAL) => void;
@@ -661,18 +666,10 @@ function ProfessionalStep({
         const offering = service
           ? person.offerings.find((item) => item.serviceId === service.id)
           : undefined;
-        const initials = person.displayName
-          .split(/\s+/)
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((part) => part[0]?.toUpperCase() ?? "")
-          .join("");
         return (
           <button key={person.id} type="button" onClick={() => onSelect(person.id)} className={PICKER_BUTTON}>
             <span className="flex items-center gap-4">
-              <span className="grid size-14 shrink-0 place-items-center rounded-full bg-metric-blush font-serif text-lg text-wine-deep" aria-hidden="true">
-                {initials || "•"}
-              </span>
+              <PersonPhoto name={person.displayName} src={`/api/professionals/photo?memberId=${person.id}&slug=${encodeURIComponent(slug)}`} />
               <span className="min-w-0 text-left">
                 <h2 className="font-serif text-2xl">{person.displayName}</h2>
                 {person.bio ? <p className="mt-1 truncate text-sm text-muted-foreground">{person.bio}</p> : null}
