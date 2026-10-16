@@ -1,11 +1,9 @@
+import { internationalPhoneDigits } from "@/lib/validation/international-phone";
 import { formatTimeInTimeZone } from "@/lib/time/timezone";
 
 export function buildWhatsAppLink(phoneE164: string | null | undefined, text: string): string | null {
-  if (!phoneE164) {
-    return null;
-  }
-  const digits = phoneE164.replace(/\D/g, "");
-  if (digits.length < 12) {
+  const digits = internationalPhoneDigits(phoneE164);
+  if (!digits) {
     return null;
   }
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;

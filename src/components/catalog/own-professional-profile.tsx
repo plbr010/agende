@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfessionalPhotoEditor } from "./professional-photo-editor";
 import { useActionState } from "react";
 import Link from "next/link";
 import type { ActionState } from "@/lib/auth/actions";
@@ -43,9 +44,9 @@ export function OwnProfessionalProfile({
       </p>
       {accountPhoto ? (
         <div className="mt-6 grid max-w-xl gap-3 rounded-[1.4rem] bg-[var(--cream)] p-4 ring-1 ring-[#f0e4de]">
-          <h3 className="font-serif text-xl text-wine-deep">Sua foto</h3>
+          <h3 className="font-serif text-xl text-wine-deep">Sua foto pessoal</h3>
           <p className="text-sm leading-6 text-muted-foreground">
-            Esta foto é só da sua conta. Você pode adicionar, trocar ou remover. Sem foto, as clientes veem as iniciais. A página do salão ainda não publica a foto da equipe.
+            Esta foto é só da sua conta. Você pode adicionar, trocar ou remover. Para aparecer na escolha de profissional, use a foto pública de atendimento abaixo.
           </p>
           <AccountPhotoEditor name={accountPhoto.name} hasAvatar={accountPhoto.hasAvatar} version={accountPhoto.version} />
           <Link href="/app/configuracoes/geral#foto-da-conta" className="inline-flex min-h-11 items-center text-sm text-wine-deep underline underline-offset-4">
@@ -53,6 +54,10 @@ export function OwnProfessionalProfile({
           </Link>
         </div>
       ) : null}
+      <div className="mt-6 grid gap-3">
+        <h3 className="font-serif text-xl text-wine-deep">Foto pública de atendimento</h3>
+      <ProfessionalPhotoEditor memberId={member.memberId} name={member.displayName ?? member.fullName} />
+      </div>
       <form action={action} className="mt-6 grid max-w-xl gap-4">
         <input type="hidden" name="memberId" value={member.memberId} />
         <div className="grid gap-2">

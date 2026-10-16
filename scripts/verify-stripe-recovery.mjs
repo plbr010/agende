@@ -30,7 +30,7 @@ const remote = history.map(({ version, name }) => `${version}_${name}.sql`);
 const missing = remote.filter((file) => !local.includes(file));
 const extra = local.filter((file) => !remote.includes(file));
 assert.equal(remote.length, 63);
-assert.equal(local.length, 72);
+assert.equal(local.length, 73);
 assert.deepEqual(missing, ["20260919201138_hardening_snapshot_owner_timezone.sql"]);
 assert.deepEqual(
   extra.sort(),
@@ -45,6 +45,7 @@ assert.deepEqual(
     "20261014173903_client_phase2_avatar_upload_cleanup.sql",
     "20261015054116_workspace_media_and_settings_contract.sql",
     "20261015054818_workspace_settings_validation.sql",
+    "20261016075244_profiles_booking_whatsapp.sql",
   ].sort(),
   "Only reviewed launch-readiness migrations may remain local-only versus the 2026-09-27 snapshot",
 );

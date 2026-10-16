@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AppointmentWhatsApp } from "./appointment-whatsapp";
 import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
@@ -24,8 +25,6 @@ import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/ti
 import { WEEKDAYS } from "@/lib/validation/agenda";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { STATUS_CHIP_CLASS } from "@/lib/agenda/status-style";
-import { buildWhatsAppConfirmation } from "@/lib/agenda/whatsapp-confirmation";
-import { WhatsAppConfirm } from "@/components/agenda/whatsapp-confirm";
 import { PersonMark } from "@/components/people/person-mark";
 import { Button } from "@/components/ui/button";
 import {
@@ -106,6 +105,7 @@ export function AgendaBoard({
 }) {
   const [creating, setCreating] = useState(startCreating);
   const [editing, setEditing] = useState<AgendaAppointment | null>(null);
+  const currentEditing = editing ? appointments.find(item => item.id === editing.id) ?? null : null;
   const bookable = professionals.filter((member) => member.hasProfessionalProfile && member.bookingEnabled);
 
   return (
@@ -201,11 +201,11 @@ export function AgendaBoard({
         defaultDate={date}
         defaultProfessionalId={selectedProfessionalId}
       />
-      {editing ? (
+      {currentEditing ? (
         <AppointmentDetailDialog
           workspaceName={workspaceName}
           timezone={timezone}
-          appointment={editing}
+          appointment={currentEditing}
           open
           onOpenChange={(open) => !open && setEditing(null)}
           professionals={bookable}
@@ -494,16 +494,6 @@ function AppointmentDetailDialog({
   const [rescheduling, setRescheduling] = useState(false);
   const [statusPending, startStatus] = useTransition();
   const actions = statusActions(appointment.status, role);
-  const whatsappPlan = buildWhatsAppConfirmation({
-    status: appointment.status,
-    phone: appointment.clientPhone,
-    clientName: appointment.clientName,
-    workspaceName,
-    serviceName: appointment.serviceName,
-    professionalName: appointment.professionalName,
-    localDate: appointment.localDate,
-    localTime: appointment.localStart,
-  });
   const canEdit =
     canRescheduleStatus(appointment.status) &&
     (role === "owner" || role === "admin" || role === "receptionist" || currentMemberId === appointment.professionalMemberId);
@@ -514,11 +504,11 @@ function AppointmentDetailDialog({
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3 pr-10">
-              <PersonMark name={appointment.clientName} size="sm" />
+              <PersonMark name={appointment.clientName} photoUrl={`/api/clients/avatar?clientId=${appointment.clientId}`} size="sm" />
               <span className="min-w-0">{appointment.clientName}</span>
             </DialogTitle>
             <DialogDescription>
-              {appointment.serviceName} · {appointment.localStart}–{appointment.localEnd}
+              {workspaceName} · {appointment.serviceName} · {appointment.localStart}–{appointment.localEnd}
             </DialogDescription>
           </DialogHeader>
           <dl className="grid gap-2 text-sm">
@@ -528,7 +518,7 @@ function AppointmentDetailDialog({
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">Profissional</dt>
-              <dd className="text-right font-medium">{appointment.professionalName}</dd>
+              <dd className="flex items-center gap-2 text-right font-medium"><PersonMark name={appointment.professionalName} photoUrl={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} size="sm" />{appointment.professionalName}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">Data</dt>
@@ -561,10 +551,13 @@ function AppointmentDetailDialog({
               </dd>
             </div>
           </dl>
-          <div className="grid gap-2">
-            <p className="text-sm font-medium text-wine-deep">Avisar a cliente</p>
-            <WhatsAppConfirm plan={whatsappPlan} />
-          </div>
+          {(appointment.status === "scheduled" || appointment.status === "confirmed") &&
+            (role === "owner" || role === "admin" || role === "receptionist" || (role === "professional" && currentMemberId === appointment.professionalMemberId)) ? (
+            <div className="grid gap-2">
+              <p className="text-sm font-medium text-wine-deep">Avisar a cliente</p>
+              <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} />
+            </div>
+          ) : null}
           {canEdit || actions.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             <p className="w-full text-sm font-medium text-wine-deep">Atualizar o horário</p>

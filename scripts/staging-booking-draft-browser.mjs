@@ -66,7 +66,7 @@ try{
   blocker=await ok(blockerOwner.rpc('create_appointment',{p_workspace_id:w.id,p_client_id:customer.id,p_professional_member_id:professional.id,p_service_id:service.id,p_starts_at:selection.startsAt,p_notes:'Synthetic phase2 login revalidation test'}));
   await page2.locator('input[name=email]').fill('client@agende-staging.invalid');await page2.locator('input[name=password]').fill(config.fixture_password);
   await page2.getByRole('button',{name:'Entrar',exact:true}).click();await page2.waitForURL(`**/p/${slug}/agendar`);
-  await page2.getByText('Seu horário ficou indisponível enquanto você entrava. Escolha outro horário.',{exact:true}).waitFor();
+  await page2.getByText('Esse horário foi ocupado enquanto você entrava. Escolha outro.',{exact:true}).waitFor();
   assert.ok((await page2.locator('[aria-current=step]').locator('..').innerText()).includes('Horário'));
   const preserved=JSON.parse(decodeURIComponent((await fresh.cookies()).find(c=>c.name==='agende_booking_draft').value)).selection;
   assert.equal(preserved.serviceId,selection.serviceId);assert.equal(preserved.professionalMemberId,selection.professionalMemberId);assert.equal(preserved.localDate,selection.localDate);

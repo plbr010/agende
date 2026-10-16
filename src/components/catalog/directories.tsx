@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { ProfessionalPhotoEditor } from "./professional-photo-editor";
+import { AvatarImage } from "@/components/ui/avatar";
 import { useActionState, useState, useTransition, type ReactNode } from "react";
 import { toast } from "sonner";
 import { CalendarDays, Clock3, Mail, NotebookText, Phone, Sparkles, UserRound, WandSparkles } from "lucide-react";
@@ -159,6 +161,7 @@ export function TeamDirectory({
               <Card key={member.memberId} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
                 <CardHeader className="grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3">
                   <Avatar size="lg" className="row-span-2">
+                    <AvatarImage src={`/api/professionals/photo?memberId=${member.memberId}`} alt={`Foto de ${member.displayName ?? member.fullName}`} loading="lazy" />
                     <AvatarFallback className="bg-secondary text-primary">
                       {initials(member.displayName ?? member.fullName)}
                     </AvatarFallback>
@@ -214,6 +217,7 @@ export function TeamDirectory({
             <DialogTitle>Perfil de atendimento</DialogTitle>
             <DialogDescription>Nome e frase que as clientes veem. O aviso de salvo só aparece depois da gravação.</DialogDescription>
           </DialogHeader>
+          {editing ? <ProfessionalPhotoEditor key={editing.memberId} memberId={editing.memberId} name={editing.displayName ?? editing.fullName} /> : null}
           {editing ? (
             <form key={editing.memberId} action={action} className="grid gap-4">
               <input type="hidden" name="memberId" value={editing.memberId} />

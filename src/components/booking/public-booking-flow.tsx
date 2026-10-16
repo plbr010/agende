@@ -434,6 +434,7 @@ export function PublicBookingFlow({
 
         {step === "professional" ? (
           <ProfessionalStep
+            slug={catalog.slug}
             people={professionalsForService}
             service={service}
             onSelect={selectProfessional}
@@ -664,10 +665,12 @@ export function PublicBookingFlow({
 }
 
 function ProfessionalStep({
+  slug,
   people,
   service,
   onSelect,
 }: {
+  slug: string;
   people: PublicBookingProfessional[];
   service: PublicBookingService | null;
   onSelect: (id: string | typeof ANY_PROFESSIONAL) => void;
@@ -709,7 +712,7 @@ function ProfessionalStep({
             className={`${PICKER_BUTTON} focus-visible:ring-primary`}
           >
             <span className="flex items-center gap-4">
-              <PersonMark name={person.displayName} photoUrl={person.photoUrl} />
+              <PersonMark name={person.displayName} photoUrl={`/api/professionals/photo?memberId=${person.id}&slug=${encodeURIComponent(slug)}`} />
               <span className="min-w-0 text-left">
                 <h2 className="font-serif text-2xl">{person.displayName}</h2>
                 {person.bio ? <p className="mt-1 text-sm leading-6 text-muted-foreground">{person.bio}</p> : null}

@@ -733,6 +733,7 @@ export type Database = {
       };
       professional_profiles: {
         Row: {
+          photo_path: string | null;
           member_id: string;
           workspace_id: string;
           display_name: string;
@@ -1373,6 +1374,14 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
+      get_professional_photo: { Args: { p_member_id: string; p_slug?: string }; Returns: string | null };
+      get_related_client_avatar: { Args: { p_client_id: string }; Returns: string | null };
+      get_appointment_whatsapp: { Args: { p_appointment_id: string }; Returns: Json };
+      queue_professional_photo: { Args: { p_actor_id: string; p_member_id: string; p_path: string }; Returns: undefined };
+      swap_professional_photo: { Args: { p_actor_id: string; p_member_id: string; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
+      claim_professional_photo_cleanup: { Args: { p_member_id: string }; Returns: string[] };
+      finish_professional_photo_cleanup: { Args: { p_path: string }; Returns: undefined };
+
       queue_workspace_image_upload: { Args: { p_workspace_id: string; p_kind: string; p_path: string }; Returns: undefined };
       swap_workspace_image: { Args: { p_workspace_id: string; p_kind: string; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
       claim_workspace_image_cleanup: { Args: { p_workspace_id: string }; Returns: string[] };

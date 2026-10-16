@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T04:15:24.102Z",
+  "checked_at": "2026-10-16T08:21:51.584Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
       "passed": 11,
@@ -7,18 +7,18 @@
       "skipped": 0
     },
     "native_pg17_sql": {
-      "passed": 30,
+      "passed": 49,
       "failed": 0,
       "skipped": 0
     },
     "native_pg17_concurrency": {
-      "passed": 8,
+      "passed": 10,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 49,
+    "passed": 70,
     "failed": 0,
     "skipped": 0
   },
@@ -93,6 +93,12 @@
     {
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "service rollout refuses RLS or unique-key drift before creating the RPC or history",
       "category": "native_pg17_sql",
       "status": "passed"
     },
@@ -316,6 +322,126 @@
       "file": "scripts/pg17-concurrency.test.mjs",
       "name": "PG17 concurrent checkout leases cannot both acquire the same workspace",
       "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 double-click by the same client persists one booking",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 professional photo concurrent replacements retain one live reference",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "anonymous RPC revoked and unconfirmed account denied before any writes; public browsing remains open",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "authenticated booking uses verified identity, authoritative price; repeats and cross-tenant IDs cannot duplicate",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "WhatsApp returns latest data only to authorized team; clients and unrelated professionals/tenants cannot read",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo upload gate rechecks actor; direct SQL, foreign tenant, receptionist and another professional are denied",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo bytes private; public read only for the actual active linked bookable professional",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "inactive and removed professionals disappear publicly and lose self-edit permission",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "photo replace/remove use CAS, exclude live references from cleanup, and preserve fallback",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "one global private avatar is readable through legitimate appointments only, never writable by tenants",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/profiles-booking-whatsapp-sql.test.mjs",
+      "name": "profiles booking WhatsApp SQL: authenticated booking, photos, tenant and role boundaries",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "owner queues; another user cannot mutate or prepare another tenant",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "missing bytes cannot be referenced and normalized server bytes can",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "replacement is atomic; stale writes lose and referenced bytes are not claimed",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "cover independent of logo; removal clears reference and queues cleanup",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "expired pending upload cannot become current while cleanup runs",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "migration reapplies without removing references or queued work",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "optional commercial fields save; invalid UF, timezone and CEP reject atomically",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "inactive subscription still blocks commercial writes and uploads without mutating profile or billing",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/workspace-media-sql.test.mjs",
+      "name": "workspace image lifecycle SQL: isolation, compare-and-swap, leases and idempotent DDL",
+      "category": "native_pg17_sql",
       "status": "passed"
     }
   ]
