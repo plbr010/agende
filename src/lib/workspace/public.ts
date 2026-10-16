@@ -16,6 +16,7 @@ export type PublicProfessional = {
   display_name: string;
   bio: string | null;
   services: string[];
+  photoUrl: string | null;
 };
 
 export type PublicPhoto = {
@@ -58,6 +59,20 @@ export function publicLogoUrl(logoPath: string | null | undefined): string | nul
 }
 
 const STORAGE_IMAGE_PATH = /^[0-9a-f-]{36}\/(?:logo|cover|gallery)\/[0-9a-f-]{36}\.webp$/i;
+
+/**
+ * Public portrait from a catalog row. Accepts an https URL or a public storage path.
+ * Private account avatars (`avatars/...`) are never turned into a public image.
+ */
+export function readPublicPersonPhoto(row: Record<string, unknown>): string | null {
+  const candidates = [row.photo_url, row.avatar_url, row.photo_path];
+  for (const candidate of candidates) {
+    if (typeof candidate !== "string" || candidate.length === 0 || candidate.startsWith("avatars/")) continue;
+    const url = publicImageUrl(candidate);
+    if (url) return url;
+  }
+  return null;
+}
 
 /** Accepts an already-public https URL or an owned storage path. Drops anything else. */
 export function publicImageUrl(value: string | null | undefined): string | null {
@@ -161,6 +176,7 @@ export function parsePublicWorkspaceProfile(raw: unknown): PublicWorkspaceProfil
             id: asString(row.id),
             display_name: displayName,
             bio: asString(row.bio),
+            photoUrl: readPublicPersonPhoto(row),
             services: Array.isArray(row.services)
               ? row.services.filter((value): value is string => typeof value === "string")
               : [],

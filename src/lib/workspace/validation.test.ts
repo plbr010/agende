@@ -104,6 +104,22 @@ test("public profile parser keeps only public fields", () => {
   assert.equal(parsed?.services[0]?.min_price_cents, 7000);
   assert.equal(parsed?.address, "Rua das Flores, 10");
   assert.equal(parsed?.services[0]?.id, null);
+  assert.equal(parsed?.professionals[0]?.photoUrl, null);
+});
+
+test("public people photos accept a public url and drop private avatars", () => {
+  const parsed = parsePublicWorkspaceProfile({
+    name: "Luna",
+    slug: "luna",
+    professionals: [
+      { display_name: "Ana", photo_url: "https://cdn.example.com/ana.webp", photo_path: "avatars/user/secret.webp" },
+      { display_name: "Bia", photo_path: "avatars/private/photo.webp" },
+      { display_name: "Eva", avatar_url: "javascript:alert(1)" },
+    ],
+  });
+  assert.equal(parsed?.professionals[0]?.photoUrl, "https://cdn.example.com/ana.webp");
+  assert.equal(parsed?.professionals[1]?.photoUrl, null);
+  assert.equal(parsed?.professionals[2]?.photoUrl, null);
 });
 
 test("public profile keeps a real average and public photos, and drops the rest", () => {

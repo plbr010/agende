@@ -49,6 +49,11 @@ export default async function TeamPage() {
         members={team}
         currentUserId={session.user.id}
         canManage={canManage}
+        accountPhoto={{
+          name: session.profile.fullName,
+          hasAvatar: session.profile.hasAvatar,
+          version: session.profile.avatarVersion,
+        }}
       />
     </>
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BrandLogo } from "@/components/brand/logo";
+import { PersonMark } from "@/components/people/person-mark";
 import { FloralBranch, FloralCorner, FloralSprig } from "@/components/brand/floral";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -367,6 +368,38 @@ export function PublicBookingFlow({
           {bookingStepCaption(step, Math.max(stepIndex, 0), visibleSteps.length)}
         </p>
 
+        {service && step !== "service" ? (
+          <section className="rounded-[1.25rem] bg-white p-4 ring-1 ring-[#f0e4de]" aria-label="Escolhas feitas">
+            <p className="text-xs font-semibold tracking-[0.16em] text-[var(--rose-ink)] uppercase">Você escolheu</p>
+            <ul className="mt-2 grid gap-1 text-sm leading-6">
+              <li>
+                <span className="text-muted-foreground">Serviço: </span>
+                <span className="font-medium text-wine-deep">{service.name}</span>
+                {" · "}
+                {offering?.durationMinutes ?? service.durationMinutes} min
+                {" · "}
+                {professionalId === ANY_PROFESSIONAL && service.minPriceCents !== service.maxPriceCents
+                  ? `a partir de ${formatCentsToReais(service.minPriceCents)}`
+                  : formatCentsToReais(offering?.priceCents ?? service.priceCents)}
+              </li>
+              {professionalId !== null ? (
+                <li>
+                  <span className="text-muted-foreground">Profissional: </span>
+                  <span className="font-medium">
+                    {professionalId === ANY_PROFESSIONAL ? "Qualquer profissional disponível" : (professional?.displayName ?? "—")}
+                  </span>
+                </li>
+              ) : null}
+              {localDate && step !== "professional" && step !== "date" ? (
+                <li>
+                  <span className="text-muted-foreground">Dia: </span>
+                  <span className="font-medium">{formatIsoDateLabel(localDate)}</span>
+                </li>
+              ) : null}
+            </ul>
+          </section>
+        ) : null}
+
         {step === "service" ? (
           <section className="grid gap-3" aria-label="Escolher serviço">
             {catalog.services.length === 0 ? (
@@ -428,9 +461,14 @@ export function PublicBookingFlow({
               </p>
             )}
             {slotsLoading ? (
-              <p className="text-sm text-muted-foreground" role="status">
-                Buscando horários…
-              </p>
+              <div className="grid gap-3" role="status">
+                <p className="text-sm text-muted-foreground">Buscando horários…</p>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" aria-hidden="true">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <span key={index} className="h-12 animate-pulse rounded-2xl bg-secondary motion-reduce:animate-none" />
+                  ))}
+                </div>
+              </div>
             ) : null}
             {slotsError ? (
               <p className="text-sm text-destructive" role="alert">
@@ -650,32 +688,31 @@ function ProfessionalStep({
       <button
         type="button"
         onClick={() => onSelect(ANY_PROFESSIONAL)}
+        aria-label="Escolher qualquer profissional disponível"
         className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <h2 className="font-serif text-2xl">Tanto faz (quem estiver livre)</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Escolhemos quem estiver livre naquele horário.
+        <h2 className="font-serif text-2xl">Qualquer profissional disponível</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          Mostramos um horário livre, com quem puder atender.
         </p>
       </button>
       {people.map((person) => {
         const offering = service
           ? person.offerings.find((item) => item.serviceId === service.id)
           : undefined;
-        const initials = person.displayName
-          .split(/\s+/)
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((part) => part[0]?.toUpperCase() ?? "")
-          .join("");
         return (
-          <button key={person.id} type="button" onClick={() => onSelect(person.id)} className={PICKER_BUTTON}>
+          <button
+            key={person.id}
+            type="button"
+            onClick={() => onSelect(person.id)}
+            aria-label={`Escolher ${person.displayName}`}
+            className={`${PICKER_BUTTON} focus-visible:ring-primary`}
+          >
             <span className="flex items-center gap-4">
-              <span className="grid size-14 shrink-0 place-items-center rounded-full bg-metric-blush font-serif text-lg text-wine-deep" aria-hidden="true">
-                {initials || "•"}
-              </span>
+              <PersonMark name={person.displayName} photoUrl={person.photoUrl} />
               <span className="min-w-0 text-left">
                 <h2 className="font-serif text-2xl">{person.displayName}</h2>
-                {person.bio ? <p className="mt-1 truncate text-sm text-muted-foreground">{person.bio}</p> : null}
+                {person.bio ? <p className="mt-1 text-sm leading-6 text-muted-foreground">{person.bio}</p> : null}
                 {service ? (
                   <p className="mt-2 text-sm">
                     {formatCentsToReais(offering?.priceCents ?? service.priceCents)}

@@ -19,7 +19,7 @@ function harness(data: unknown, readError=false) {
       assert.equal(name,"list_my_appointments");
       return {data,error:readError?{message:"synthetic transport failure"}:null};
     }})},
-    "@/lib/workspace/public":{publicLogoUrl:()=>null},
+    "@/lib/workspace/public":{publicLogoUrl:()=>null, readPublicPersonPhoto:()=>null},
     "@/lib/time/timezone":timezone,
     "@/lib/workspace/timezone":workspaceTimezone,
     "@/lib/booking/validation":validation,

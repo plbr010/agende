@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { publicLogoUrl } from "@/lib/workspace/public";
+import { publicLogoUrl, readPublicPersonPhoto } from "@/lib/workspace/public";
 import { DEFAULT_TIMEZONE, resolveWorkspaceTimezone } from "@/lib/workspace/timezone";
 
 export type PublicBookingService = {
@@ -22,6 +22,7 @@ export type PublicBookingProfessional = {
   id: string;
   displayName: string;
   bio: string | null;
+  photoUrl: string | null;
   serviceIds: string[];
   offerings: PublicBookingOffering[];
 };
@@ -87,6 +88,7 @@ export function parsePublicBookingCatalog(raw: unknown): PublicBookingCatalog | 
             id,
             displayName,
             bio: asString(row.bio),
+            photoUrl: readPublicPersonPhoto(row),
             serviceIds: Array.isArray(row.service_ids)
               ? row.service_ids.filter((value): value is string => typeof value === "string")
               : [],

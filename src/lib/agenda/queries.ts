@@ -14,6 +14,7 @@ export type AgendaAppointment = {
   workspaceId: string;
   clientId: string;
   clientName: string;
+  clientPhone: string | null;
   professionalMemberId: string;
   professionalName: string;
   serviceId: string;
@@ -108,7 +109,7 @@ export async function loadAgendaRange(
   const serviceIds = [...new Set(appointments.map((row) => row.service_id))];
 
   const [{ data: clients }, { data: profiles }, { data: services }] = await Promise.all([
-    supabase.from("workspace_clients").select("id, full_name").eq("workspace_id", workspaceId).in("id", clientIds),
+    supabase.from("workspace_clients").select("id, full_name, phone").eq("workspace_id", workspaceId).in("id", clientIds),
     supabase
       .from("professional_profiles")
       .select("member_id, display_name")
@@ -117,7 +118,7 @@ export async function loadAgendaRange(
     supabase.from("services").select("id, name").eq("workspace_id", workspaceId).in("id", serviceIds),
   ]);
 
-  const clientById = new Map((clients ?? []).map((row) => [row.id, row.full_name]));
+  const clientById = new Map((clients ?? []).map((row) => [row.id, row]));
   const professionalById = new Map((profiles ?? []).map((row) => [row.member_id, row.display_name]));
   const serviceById = new Map((services ?? []).map((row) => [row.id, row.name]));
 
@@ -125,7 +126,8 @@ export async function loadAgendaRange(
     id: row.id,
     workspaceId: row.workspace_id,
     clientId: row.client_id,
-    clientName: clientById.get(row.client_id) ?? "Cliente",
+    clientName: clientById.get(row.client_id)?.full_name ?? "Cliente",
+    clientPhone: clientById.get(row.client_id)?.phone ?? null,
     professionalMemberId: row.professional_member_id,
     professionalName: professionalById.get(row.professional_member_id) ?? "Profissional",
     serviceId: row.service_id,
