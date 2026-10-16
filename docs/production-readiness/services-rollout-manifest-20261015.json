@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-15T20:18:58.666Z",
+  "project": "wohimauqgywshbbejjcl",
+  "approved": false,
+  "production_writes": 0,
+  "files": [
+    {
+      "path": "supabase/migrations/20261010232248_atomic_service_professional_links.sql",
+      "sha256_lf": "d13be7931bf92be45ef754858d4642881186f5bd8f9ce8a0d5f919419e5c0b37"
+    },
+    {
+      "path": "docs/production-readiness/apply-service-rpc-only.sql",
+      "sha256_lf": "34dd00ec629af369ec77ebcff01b9c5fa645ede569642fb0967f3d94575e0709"
+    }
+  ]
+}

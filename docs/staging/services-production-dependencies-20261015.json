@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-15T20:18:32.186Z",
+  "project": "wohimauqgywshbbejjcl",
+  "production_writes": 0,
+  "triggers": [
+    {
+      "name": "professional_services_entitlement_gate",
+      "table": "professional_services",
+      "enabled": "O"
+    },
+    {
+      "name": "professional_services_protect_columns",
+      "table": "professional_services",
+      "enabled": "O"
+    },
+    {
+      "name": "professional_services_set_updated_at",
+      "table": "professional_services",
+      "enabled": "O"
+    },
+    {
+      "name": "services_audit",
+      "table": "services",
+      "enabled": "O"
+    },
+    {
+      "name": "services_entitlement_gate",
+      "table": "services",
+      "enabled": "O"
+    },
+    {
+      "name": "services_protect_columns",
+      "table": "services",
+      "enabled": "O"
+    },
+    {
+      "name": "services_set_updated_at",
+      "table": "services",
+      "enabled": "O"
+    }
+  ],
+  "fk_constraints": [
+    "FOREIGN KEY (professional_member_id, workspace_id) REFERENCES professional_profiles(member_id, workspace_id) ON DELETE CASCADE",
+    "FOREIGN KEY (service_id, workspace_id) REFERENCES services(id, workspace_id) ON DELETE CASCADE",
+    "FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE"
+  ],
+  "table_security": [
+    {
+      "rls": true,
+      "table": "professional_profiles",
+      "force_rls": true
+    },
+    {
+      "rls": true,
+      "table": "professional_services",
+      "force_rls": true
+    },
+    {
+      "rls": true,
+      "table": "services",
+      "force_rls": true
+    },
+    {
+      "rls": true,
+      "table": "workspace_members",
+      "force_rls": true
+    }
+  ],
+  "link_unique_key": [
+    "UNIQUE (professional_member_id, service_id)"
+  ]
+}

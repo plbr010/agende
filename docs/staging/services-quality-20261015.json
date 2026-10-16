@@ -1,0 +1,13 @@
+{
+  "runtime":"Node 24.19.0",
+  "base_main":"126b6c8",
+  "lint":"PASS: eslint .",
+  "typecheck":"PASS: next typegen and tsc --noEmit",
+  "build":"PASS: Next 16.3.8 optimized build with staging public bindings",
+  "standard_tests":{"passed":361,"failed":0,"skipped":0},
+  "native_pg17":{"version":"17.6","passed_cases":7,"failed_cases":0,"additional_sql_suites":5},
+  "real_staging_contract_groups":7,
+  "production_migrations_executed":false,
+  "production_business_writes":0,
+  "deployment_executed":false
+}

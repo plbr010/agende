@@ -35,6 +35,23 @@ test('prepared one-migration transaction preserves existing catalog and other hi
   assert.deepEqual(await catalog(),before);
 });
 
+test('service rollout refuses RLS or unique-key drift before creating the RPC or history',async t=>{
+  const db=await createLocalDatabase();t.after(()=>db.close());
+  await db.exec("create schema if not exists supabase_migrations; create table if not exists supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); drop function public.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[]); drop function app.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[])");
+  const payload=readFileSync('docs/production-readiness/apply-service-rpc-only.sql','utf8');
+  const unchanged=async()=>{
+    assert.equal((await db.query("select to_regprocedure('public.save_service_with_professionals(uuid,uuid,text,text,integer,integer,boolean,uuid[])') as rpc")).rows[0].rpc,null);
+    assert.equal((await db.query('select count(*)::int n from supabase_migrations.schema_migrations')).rows[0].n,0);
+  };
+  await db.exec('alter table public.services no force row level security');
+  await assert.rejects(db.transaction(async tx=>tx.exec(payload)),/service_migration_table_security_drift/);await unchanged();
+  await db.exec('alter table public.services force row level security; alter table public.professional_services drop constraint professional_services_unique');
+  await assert.rejects(db.transaction(async tx=>tx.exec(payload)),/service_migration_link_unique_key_missing/);await unchanged();
+  await db.exec('alter table public.professional_services add constraint professional_services_unique unique (professional_member_id,service_id)');
+  await db.transaction(async tx=>tx.exec(payload));
+  assert.equal((await db.query('select count(*)::int n from supabase_migrations.schema_migrations')).rows[0].n,1);
+});
+
 test('missing production service contract is restored by the exact additive migration',async t=>{
   const db=await createLocalDatabase();t.after(()=>db.close());
   await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
