@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const sections = [
   { href: "/app/configuracoes/geral", label: "Dados do salão", billing: false },
-  { href: "/app/configuracoes/perfil", label: "Logo, capa e página", billing: false },
+  { href: "/app/configuracoes/perfil", label: "Identidade", billing: false },
   { href: "/app/configuracoes/equipe", label: "Equipe", billing: false },
   { href: "/app/configuracoes/assinatura", label: "Assinatura", billing: true },
 ];

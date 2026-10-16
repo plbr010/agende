@@ -77,6 +77,7 @@ export default async function AgendaPage({
         />
       </section>
       <AgendaBoard
+        workspaceName={workspace.name}
         timezone={timezone}
         view={view}
         date={date}

@@ -120,10 +120,12 @@ export function TeamDirectory({
   members,
   currentUserId,
   canManage,
+  accountPhoto = null,
 }: {
   members: TeamMember[];
   currentUserId: string;
   canManage: boolean;
+  accountPhoto?: { name: string; hasAvatar: boolean; version: string | null } | null;
 }) {
   const [editing, setEditing] = useState<TeamMember | null>(null);
   const [state, action, pending] = useCatalogAction(saveProfessionalProfileAction, () => {
@@ -134,7 +136,7 @@ export function TeamDirectory({
 
   return (
     <div className="grid gap-4">
-      {mine ? <OwnProfessionalProfile member={mine} canManage={canManage} /> : null}
+      {mine ? <OwnProfessionalProfile member={mine} canManage={canManage} accountPhoto={accountPhoto} /> : null}
       {members.length === 0 ? (
         <Card className="border-none ring-1 ring-[#f0e4de]">
           <CardContent>
@@ -156,7 +158,7 @@ export function TeamDirectory({
             const canEdit =
               member.hasProfessionalProfile && (canManage || member.userId === currentUserId);
             return (
-              <Card key={member.memberId} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <Card key={member.memberId} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
                 <CardHeader className="grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3">
                   <Avatar size="lg" className="row-span-2">
                     <AvatarImage src={`/api/professionals/photo?memberId=${member.memberId}`} alt={`Foto de ${member.displayName ?? member.fullName}`} loading="lazy" />
@@ -189,6 +191,11 @@ export function TeamDirectory({
                     <Badge variant="outline">Não atende clientes (só recepção)</Badge>
                   )}
                   <Badge variant="ghost">{member.serviceCount} serviços</Badge>
+                  {member.userId === currentUserId ? null : (
+                    <p className="w-full text-sm leading-6 text-muted-foreground">
+                      Sem foto pública, as clientes veem as iniciais de {member.displayName ?? member.fullName}.
+                    </p>
+                  )}
                   {member.hasProfessionalProfile ? (
                     <Button
                       variant="outline"

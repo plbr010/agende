@@ -37,6 +37,7 @@ export function LogoCropField({
   const [draft, setDraft] = useState<Draft | null>(null);
   const [preparedUrl, setPreparedUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [over, setOver] = useState(false);
 
   function clearPrepared() {
     setPreparedUrl((current) => {
@@ -49,6 +50,15 @@ export function LogoCropField({
   function openFile(file: File | undefined) {
     if (!file || disabled) return;
     setError(null);
+    const allowed = /image\/(jpeg|png|webp)/.test(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name);
+    if (!allowed) {
+      setError("Escolha uma foto JPG, PNG ou WebP.");
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setError("A imagem pode ter no máximo 4 MB.");
+      return;
+    }
     clearPrepared();
     const url = URL.createObjectURL(file);
     const image = new Image();
@@ -113,7 +123,20 @@ export function LogoCropField({
     : 1;
 
   return (
-    <div className="grid justify-items-center gap-3 rounded-[1.4rem] bg-[var(--cream)] px-4 py-5">
+    <div
+      className={cn("grid justify-items-center gap-3 rounded-[1.4rem] bg-[var(--cream)] px-4 py-5", over && "ring-2 ring-primary")}
+      data-framing={draft ? "open" : "ready"}
+      onDragOver={(event) => {
+        event.preventDefault();
+        if (!disabled) setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(event) => {
+        event.preventDefault();
+        setOver(false);
+        openFile(event.dataTransfer.files?.[0]);
+      }}
+    >
       <input ref={inputRef} id={inputId} name={inputName} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} disabled={disabled} />
       {draft ? (
         <div
@@ -235,7 +258,7 @@ export function LogoCropField({
       <p className="max-w-sm text-center text-xs leading-5 text-muted-foreground">
         {preparedUrl
           ? "Enquadramento pronto. A logo só troca depois que você salvar e o envio terminar."
-          : "JPG, PNG ou WebP. A logo é preparada com até 2 MB; a capa fica na seção própria."}
+          : "JPG, PNG ou WebP, até 4 MB. Arraste a foto ou toque em Escolher logo. A capa fica na seção própria."}
       </p>
       {currentUrl && allowRemoval ? (
         <label className="flex items-center gap-2 text-sm">

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { AppointmentWhatsApp } from "./appointment-whatsapp";
-import { PersonPhoto } from "@/components/catalog/person-photo";
 import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
@@ -26,6 +25,7 @@ import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/ti
 import { WEEKDAYS } from "@/lib/validation/agenda";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { STATUS_CHIP_CLASS } from "@/lib/agenda/status-style";
+import { PersonMark } from "@/components/people/person-mark";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -75,6 +75,7 @@ async function runFormAction(action: (formData: FormData) => Promise<ActionState
 }
 
 export function AgendaBoard({
+  workspaceName,
   timezone,
   view,
   date,
@@ -88,6 +89,7 @@ export function AgendaBoard({
   currentMemberId,
   startCreating = false,
 }: {
+  workspaceName: string;
   timezone: string;
   view: "day" | "week";
   date: string;
@@ -201,6 +203,7 @@ export function AgendaBoard({
       />
       {currentEditing ? (
         <AppointmentDetailDialog
+          workspaceName={workspaceName}
           timezone={timezone}
           appointment={currentEditing}
           open
@@ -261,7 +264,10 @@ function DayColumn({
               <p className="font-serif text-lg leading-none text-wine-deep">
                 {item.localStart}–{item.localEnd}
               </p>
-              <p className="mt-2 truncate font-medium">{item.clientName}</p>
+              <p className="mt-2 flex min-w-0 items-center gap-2">
+                {compact ? null : <PersonMark name={item.clientName} size="sm" />}
+                <span className="truncate font-medium">{item.clientName}</span>
+              </p>
               <p className="truncate text-sm text-muted-foreground">{item.serviceName} · {item.professionalName}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[item.status])}>
@@ -465,6 +471,7 @@ function AppointmentFormDialog({
 }
 
 function AppointmentDetailDialog({
+  workspaceName,
   timezone,
   appointment,
   open,
@@ -474,6 +481,7 @@ function AppointmentDetailDialog({
   role,
   currentMemberId,
 }: {
+  workspaceName: string;
   timezone: string;
   appointment: AgendaAppointment;
   open: boolean;
@@ -495,26 +503,64 @@ function AppointmentDetailDialog({
       <Dialog open={open && !rescheduling} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{appointment.clientName}</DialogTitle>
+            <DialogTitle className="flex items-center gap-3 pr-10">
+              <PersonMark name={appointment.clientName} photoUrl={`/api/clients/avatar?clientId=${appointment.clientId}`} size="sm" />
+              <span className="min-w-0">{appointment.clientName}</span>
+            </DialogTitle>
             <DialogDescription>
-              {appointment.localStart}–{appointment.localEnd} · {appointment.serviceName}
+              {workspaceName} · {appointment.serviceName} · {appointment.localStart}–{appointment.localEnd}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-2 text-sm">
-            <PersonPhoto name={appointment.professionalName} src={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} />
-            <PersonPhoto name={appointment.clientName} src={`/api/clients/avatar?clientId=${appointment.clientId}`} />
-            <p>Profissional: {appointment.professionalName}</p>
-            <p>Duração: {appointment.durationMinutes} min</p>
-            <p>Preço: {formatCentsToReais(appointment.priceCents)}</p>
-            {appointment.notes ? <p>Obs.: {appointment.notes}</p> : null}
-            <span className={cn("w-fit rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[appointment.status])}>
-              {STATUS_LABEL[appointment.status]}
-            </span>
-          </div>
+          <dl className="grid gap-2 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Serviço</dt>
+              <dd className="text-right font-medium">{appointment.serviceName}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Profissional</dt>
+              <dd className="flex items-center gap-2 text-right font-medium"><PersonMark name={appointment.professionalName} photoUrl={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} size="sm" />{appointment.professionalName}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Data</dt>
+              <dd className="text-right font-medium">{appointment.localDate.split("-").reverse().join("/")}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Horário</dt>
+              <dd className="text-right font-medium">{appointment.localStart}–{appointment.localEnd}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Duração</dt>
+              <dd className="text-right font-medium">{appointment.durationMinutes} min</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Preço</dt>
+              <dd className="text-right font-medium">{formatCentsToReais(appointment.priceCents)}</dd>
+            </div>
+            {appointment.notes ? (
+              <div className="grid gap-1">
+                <dt className="text-muted-foreground">Observação</dt>
+                <dd>{appointment.notes}</dd>
+              </div>
+            ) : null}
+            <div className="flex items-center justify-between gap-3">
+              <dt className="text-muted-foreground">Status</dt>
+              <dd>
+                <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[appointment.status])}>
+                  {STATUS_LABEL[appointment.status]}
+                </span>
+              </dd>
+            </div>
+          </dl>
           {(appointment.status === "scheduled" || appointment.status === "confirmed") &&
-            (role === "owner" || role === "admin" || role === "receptionist" || (role === "professional" && currentMemberId === appointment.professionalMemberId)) ?
-            <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} /> : null}
+            (role === "owner" || role === "admin" || role === "receptionist" || (role === "professional" && currentMemberId === appointment.professionalMemberId)) ? (
+            <div className="grid gap-2">
+              <p className="text-sm font-medium text-wine-deep">Avisar a cliente</p>
+              <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} />
+            </div>
+          ) : null}
+          {canEdit || actions.length > 0 ? (
           <div className="flex flex-wrap gap-2">
+            <p className="w-full text-sm font-medium text-wine-deep">Atualizar o horário</p>
             {canEdit ? (
               <Button type="button" variant="outline" className="h-11" onClick={() => setRescheduling(true)} disabled={statusPending}>
                 Trocar horário
@@ -538,6 +584,7 @@ function AppointmentDetailDialog({
               </form>
             ))}
           </div>
+          ) : null}
         </DialogContent>
       </Dialog>
       <AppointmentFormDialog

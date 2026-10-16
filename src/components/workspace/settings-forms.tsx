@@ -220,9 +220,9 @@ export function PublicProfileSettingsForm({
   return (
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle>Como clientes te veem na internet</CardTitle>
+        <CardTitle className="font-serif text-2xl text-wine-deep">Identidade do estabelecimento</CardTitle>
         <CardDescription>
-          Link, foto, texto e Instagram. Com horários cadastrados, as clientes marcam sozinhas.
+          Endereço do link, descrição e Instagram. A logo e a capa ficam logo abaixo, com prévia da página.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -252,8 +252,10 @@ export function PublicProfileSettingsForm({
               name="description"
               defaultValue={settings.description ?? ""}
               disabled={!canEdit}
+              maxLength={1000}
               placeholder="Conte em poucas linhas o clima do seu espaço."
             />
+            <p className="text-sm text-muted-foreground">Até 1000 caracteres. As clientes leem este texto abaixo do nome.</p>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="instagram">Instagram</Label>
@@ -280,7 +282,7 @@ export function PublicProfileSettingsForm({
                 {settings.name.slice(0, 1)}
               </div>
             )}
-            <p className="text-xs text-muted-foreground">Envie, troque ou remova logo e capa na seção de imagens públicas abaixo.</p>
+            <p className="text-sm leading-6 text-muted-foreground">Para trocar ou remover a logo e a capa, use os quadros abaixo. A logo aparece sobre a capa.</p>
           </div>
           {state.error ? <p role="alert" className="text-sm text-destructive">{state.error}</p> : null}
           {state.subscriptionInactive ? <Link href="/app/configuracoes/assinatura" className="text-sm underline">Conferir assinatura</Link> : null}
@@ -291,12 +293,13 @@ export function PublicProfileSettingsForm({
                 {pending ? "Salvando..." : "Salvar"}
               </Button>
             ) : null}
-            <Link
-              href={`/p/${slugifyPreview(slug) || settings.slug}`}
-              className="inline-flex h-12 items-center rounded-lg px-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
+            <Button
+              variant="outline"
+              className="h-12 rounded-full"
+              render={<Link href={`/p/${slugifyPreview(slug) || settings.slug}`} />}
             >
-              Ver como clientes te veem
-            </Link>
+              Abrir página pública
+            </Button>
           </div>
         </form>
       </CardContent>

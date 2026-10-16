@@ -2,9 +2,11 @@
 
 import { ProfessionalPhotoEditor } from "./professional-photo-editor";
 import { useActionState } from "react";
+import Link from "next/link";
 import type { ActionState } from "@/lib/auth/actions";
 import { saveProfessionalProfileAction } from "@/lib/catalog/actions";
 import type { TeamMember } from "@/lib/catalog/queries";
+import { AccountPhotoEditor } from "@/components/account/account-photo-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,9 +17,11 @@ const initial: ActionState = {};
 export function OwnProfessionalProfile({
   member,
   canManage,
+  accountPhoto,
 }: {
   member: TeamMember;
   canManage: boolean;
+  accountPhoto?: { name: string; hasAvatar: boolean; version: string | null } | null;
 }) {
   const [state, action, pending] = useActionState(saveProfessionalProfileAction, initial);
 
@@ -38,7 +42,22 @@ export function OwnProfessionalProfile({
       <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
         Nome e frase que as clientes veem na hora de marcar. A confirmação só aparece depois que o salvamento terminar.
       </p>
+      {accountPhoto ? (
+        <div className="mt-6 grid max-w-xl gap-3 rounded-[1.4rem] bg-[var(--cream)] p-4 ring-1 ring-[#f0e4de]">
+          <h3 className="font-serif text-xl text-wine-deep">Sua foto pessoal</h3>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Esta foto é só da sua conta. Você pode adicionar, trocar ou remover. Para aparecer na escolha de profissional, use a foto pública de atendimento abaixo.
+          </p>
+          <AccountPhotoEditor name={accountPhoto.name} hasAvatar={accountPhoto.hasAvatar} version={accountPhoto.version} />
+          <Link href="/app/configuracoes/geral#foto-da-conta" className="inline-flex min-h-11 items-center text-sm text-wine-deep underline underline-offset-4">
+            Abrir a foto nas configurações
+          </Link>
+        </div>
+      ) : null}
+      <div className="mt-6 grid gap-3">
+        <h3 className="font-serif text-xl text-wine-deep">Foto pública de atendimento</h3>
       <ProfessionalPhotoEditor memberId={member.memberId} name={member.displayName ?? member.fullName} />
+      </div>
       <form action={action} className="mt-6 grid max-w-xl gap-4">
         <input type="hidden" name="memberId" value={member.memberId} />
         <div className="grid gap-2">

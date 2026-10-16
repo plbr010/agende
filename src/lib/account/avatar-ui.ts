@@ -24,9 +24,19 @@ export function avatarCacheVersion(path: string | null | undefined): string | nu
 }
 
 export function coverScale(imageWidth: number, imageHeight: number, frame: number, zoom: number): number {
-  if (imageWidth <= 0 || imageHeight <= 0 || frame <= 0) return 1;
+  return coverScaleRect(imageWidth, imageHeight, frame, frame, zoom);
+}
+
+export function coverScaleRect(
+  imageWidth: number,
+  imageHeight: number,
+  frameWidth: number,
+  frameHeight: number,
+  zoom: number,
+): number {
+  if (imageWidth <= 0 || imageHeight <= 0 || frameWidth <= 0 || frameHeight <= 0) return 1;
   const safeZoom = Number.isFinite(zoom) ? Math.min(3, Math.max(1, zoom)) : 1;
-  return Math.max(frame / imageWidth, frame / imageHeight) * safeZoom;
+  return Math.max(frameWidth / imageWidth, frameHeight / imageHeight) * safeZoom;
 }
 
 export function clampOffset(offset: number, imageSize: number, scale: number, frame: number): number {

@@ -25,6 +25,7 @@ import {
   type InviteRole,
 } from "@/lib/workspace/labels";
 import { formatDate } from "@/lib/workspace/timezone";
+import { PersonMark } from "@/components/people/person-mark";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -235,7 +236,10 @@ function MemberManageCard({
   return (
     <Card className="border-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle className="truncate">{member.displayName ?? member.fullName}</CardTitle>
+        <CardTitle className="flex items-center gap-3">
+          <PersonMark name={member.displayName ?? member.fullName} size="sm" />
+          <span className="truncate">{member.displayName ?? member.fullName}</span>
+        </CardTitle>
         <CardDescription className="truncate">
           Entrou em {formatDate(member.joinedAt, timezone)}
         </CardDescription>

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-16T08:21:36.305Z",
+  "checked_at": "2026-10-16T16:47:26.515Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 241,
+      "passed": 246,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 388,
+    "passed": 393,
     "failed": 0,
     "skipped": 0
   },
@@ -623,6 +623,12 @@
       "status": "passed"
     },
     {
+      "file": "src/components/agenda/whatsapp-confirm.test.ts",
+      "name": "whatsapp confirmation never changes the appointment status",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/app/launch-frontend.test.ts",
       "name": "approved dashboard identity stays on the launch screens",
       "category": "unit_or_static_contract",
@@ -917,6 +923,12 @@
       "status": "passed"
     },
     {
+      "file": "src/components/workspace/identity-preview.test.ts",
+      "name": "identity preview shows the published cover, logo and an empty fallback",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/workspace/public-profile.test.ts",
       "name": "public salon page shows real fields and an elegant empty photo",
       "category": "unit_or_static_contract",
@@ -986,6 +998,18 @@
       "file": "src/lib/agenda/whatsapp-actions.test.ts",
       "name": "manual WhatsApp redirect fetches current authorized data on every click; invalid phone offers guidance without redirect",
       "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-confirmation.test.ts",
+      "name": "confirmation message follows the salon template",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-confirmation.test.ts",
+      "name": "whatsapp opens only for a real phone and never for a cancelled visit",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -2347,6 +2371,12 @@
     {
       "file": "src/lib/workspace/validation.test.ts",
       "name": "public profile parser keeps only public fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "public people photos accept a public url and drop private avatars",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

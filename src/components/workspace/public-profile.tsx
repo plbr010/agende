@@ -3,6 +3,7 @@ import { Clock3, MapPin, Star } from "lucide-react";
 import { FloralSprig, FloralWreath } from "@/components/brand/floral";
 import { BrandLogo, BrandMark } from "@/components/brand/logo";
 import { FavoriteButton } from "@/components/client/favorite-button";
+import { PersonMark } from "@/components/people/person-mark";
 import { Button } from "@/components/ui/button";
 import { formatRatingPt } from "@/lib/dashboard/summary";
 import { formatCentsToReais } from "@/lib/validation/money";
@@ -20,15 +21,6 @@ function serviceBookingHref(slug: string, serviceId: string | null) {
     return `/p/${slug}/agendar`;
   }
   return `/p/${slug}/agendar?servico=${encodeURIComponent(serviceId)}`;
-}
-
-function personInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 function ratingLabel(count: number) {
@@ -244,12 +236,7 @@ export function PublicWorkspacePage({
                       className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de]"
                     >
                       <div className="flex items-center gap-3">
-                        <div
-                          className="grid size-14 shrink-0 place-items-center rounded-full bg-metric-blush font-serif text-xl text-wine-deep"
-                          aria-hidden="true"
-                        >
-                          {personInitials(person.display_name)}
-                        </div>
+                        <PersonMark name={person.display_name} photoUrl={person.photoUrl} />
                         <h3 className="font-serif text-2xl text-wine-deep">{person.display_name}</h3>
                       </div>
                       {person.bio ? <p className="mt-3 text-sm leading-6 text-muted-foreground">{person.bio}</p> : null}
