@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-15T17:58:14.153Z",
+  "checked_at": "2026-10-16T08:06:14.278Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,12 +7,12 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 40,
+      "passed": 41,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 228,
+      "passed": 241,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 359,
+    "passed": 373,
     "failed": 0,
     "skipped": 0
   },
@@ -103,6 +103,12 @@
     {
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "prepared one-migration transaction preserves existing catalog and other history",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/atomic-service-sql.test.mjs",
+      "name": "service rollout refuses RLS or unique-key drift before creating the RPC or history",
       "category": "pglite_sql",
       "status": "passed"
     },
@@ -563,6 +569,12 @@
       "status": "passed"
     },
     {
+      "file": "src/components/agenda/whatsapp-confirm.test.ts",
+      "name": "whatsapp confirmation never changes the appointment status",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/app/launch-frontend.test.ts",
       "name": "approved dashboard identity stays on the launch screens",
       "category": "unit_or_static_contract",
@@ -697,6 +709,24 @@
     {
       "file": "src/components/brand/identity.test.ts",
       "name": "client chrome does not advertise Solo, Equipe or checkout SaaS",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service filters keep active, hidden and unassigned services apart",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service catalog shows price, duration, people and does not replace an error with the empty state",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/catalog/service-catalog.test.ts",
+      "name": "service search with no rows explains the query instead of inviting the first service",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -839,6 +869,30 @@
       "status": "passed"
     },
     {
+      "file": "src/components/workspace/identity-preview.test.ts",
+      "name": "identity preview shows the published cover, logo and an empty fallback",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "public salon page shows real fields and an elegant empty photo",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "public salon page shows a real rating, cover and gallery only when provided",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/workspace/public-profile.test.ts",
+      "name": "closed public agenda keeps the profile and explains the pause",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/account/avatar-ui.test.ts",
       "name": "avatar messages hide technical codes and 503 is not treated as saved",
       "category": "unit_or_static_contract",
@@ -877,6 +931,18 @@
     {
       "file": "src/lib/agenda/period-rules.test.ts",
       "name": "copy fills only empty days and keeps every period",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-confirmation.test.ts",
+      "name": "confirmation message follows the salon template",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-confirmation.test.ts",
+      "name": "whatsapp opens only for a real phone and never for a cancelled visit",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1680,6 +1746,12 @@
     },
     {
       "file": "src/lib/modules/management.test.ts",
+      "name": "inventory forms respect persisted limits on create and edit",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/modules/management.test.ts",
       "name": "stock requires meaningful quantities, but adjustment may set zero",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -2179,6 +2251,18 @@
     {
       "file": "src/lib/workspace/validation.test.ts",
       "name": "public profile parser keeps only public fields",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "public people photos accept a public url and drop private avatars",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/validation.test.ts",
+      "name": "public profile keeps a real average and public photos, and drops the rest",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

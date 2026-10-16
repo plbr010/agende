@@ -92,7 +92,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     '@/lib/validation/catalog':catalogValidation,'@/lib/validation/money':money,'@/lib/validation/phone':phone,
     '@/lib/validation/agenda':agendaValidation,'@/lib/agenda/status':agendaStatus,'@/lib/agenda/period-rules':periodRules,'@/lib/time/timezone':timezone,
     '@/lib/workspace/queries':{loadWorkspaceSettings:async()=>({timezone:'America/Sao_Paulo'})},
-    '@/lib/workspace/public':{publicLogoUrl:()=>null}, '@/lib/workspace/timezone':workspaceTimezone,
+    '@/lib/workspace/public':{publicLogoUrl:()=>null, readPublicPersonPhoto:()=>null}, '@/lib/workspace/timezone':workspaceTimezone,
     '@/lib/booking/ip':{hashClientIp:async()=>'local-fixture-only'}, '@/lib/booking/validation':bookingValidation,
     '@/lib/reviews/validation':reviewValidation,'./mutations':mutationValidation,
   };

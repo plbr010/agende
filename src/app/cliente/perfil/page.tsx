@@ -42,11 +42,14 @@ export default async function ClientePerfilPage({
       <PageHeader
         eyebrow="Sua conta"
         title="Perfil"
-        description="Nome, celular, cidade e foto. Nada disso aparece na página pública de um salão."
+        description="Nome, celular, cidade e foto. A foto é opcional e não aparece na página pública de um salão."
         icon={UserRound}
       />
+      <Button variant="outline" className="h-12 w-full rounded-full sm:w-fit" render={<Link href="/cliente/agendamentos" />}>
+        Ver meus agendamentos
+      </Button>
 
-      <section className="relative overflow-hidden rounded-[1.8rem] bg-white p-6 ring-1 ring-[#f0e4de] sm:p-8">
+      <section id="foto-da-conta" className="relative overflow-hidden rounded-[1.8rem] bg-white p-6 ring-1 ring-[#f0e4de] sm:p-8">
         <h2 className="font-serif text-2xl text-wine-deep">Sua foto</h2>
         <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
           Escolha uma imagem da galeria ou tire uma foto. Você pode ajustar, trocar ou remover. Sem foto, mostramos as suas iniciais.

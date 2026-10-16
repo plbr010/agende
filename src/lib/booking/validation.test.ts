@@ -127,6 +127,14 @@ test("catalog parser drops private fields", () => {
   assert.equal("business_email" in (parsed ?? {}), false);
   assert.equal(parsed?.services[0]?.minPriceCents, 7000);
   assert.equal(parsed?.professionals[0]?.offerings[0]?.priceCents, 7000);
+  assert.equal(parsed?.professionals[0]?.photoUrl, null);
+
+  const withPhoto = parsePublicBookingCatalog({
+    name: "Luna",
+    slug: "luna",
+    professionals: [{ id: "p1", display_name: "Ana", photo_url: "https://cdn.example.com/ana.webp", photo_path: "avatars/secret.webp" }],
+  });
+  assert.equal(withPhoto?.professionals[0]?.photoUrl, "https://cdn.example.com/ana.webp");
 });
 
 test("my appointments parser keeps only safe fields", () => {

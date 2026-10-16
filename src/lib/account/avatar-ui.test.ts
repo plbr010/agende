@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { avatarCacheVersion, avatarUploadMessage, clampOffset, coverScale } from "./avatar-ui";
+import { avatarCacheVersion, avatarUploadMessage, clampOffset, coverScale, coverScaleRect } from "./avatar-ui";
 
 test("avatar messages hide technical codes and 503 is not treated as saved", () => {
   assert.match(avatarUploadMessage(422, "image_invalid"), /JPG, PNG ou WebP/);
@@ -21,6 +21,7 @@ test("avatar cache version does not reveal the storage path", () => {
 
 test("crop keeps the photo covering the frame", () => {
   assert.equal(coverScale(1000, 500, 200, 1), 0.4);
+  assert.equal(coverScaleRect(1000, 500, 250, 100, 1), 0.25);
   assert.equal(clampOffset(999, 1000, 0.4, 200), 100);
   assert.equal(clampOffset(-999, 1000, 0.4, 200), -100);
 });
