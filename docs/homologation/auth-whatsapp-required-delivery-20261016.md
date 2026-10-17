@@ -26,6 +26,8 @@ Runner reproduzível: `scripts/staging-auth-whatsapp-required.mjs`, com opt-in d
 
 PR de interface: https://github.com/plbr010/agende/pull/64, commit examinado `dccb7b7842643bb7807f23fb640edaef75c16ed2`. Não foi modificado. Esta branch evita componentes e helpers de apresentação que o Cursor está editando. A alteração de uma linha do emoji do template é idêntica à proposta no #64.
 
+Integração estrutural verificada com `git merge-tree --write-tree`: a branch de backend e o commit examinado do #64 combinam sem conflitos. Isso não substitui a homologação da interface integrada nem autoriza merge/deploy.
+
 O #64 já propõe telefone visível e botões/status próprios. Ainda há um problema de aceite na versão examinada: o comprovante de `scheduled` continua dizendo “Agendamento confirmado!”. O contrato aponta a correção necessária para `Solicitação recebida`/`Aguardando confirmação`. O campo de telefone é uma lacuna do main atual já tratada no candidato #64; validar depois da integração. Não declarar ponta a ponta concluído antes disso.
 
 O #64 também prepara `20261016235000_require_confirmed_public_booking.sql`, sem execução: reforça que a reserva não pode degradar para convidado se a confirmação de e-mail desaparecer durante a operação. Essa migration deve ter revisão e autorização próprias; não foi duplicada nesta branch.
