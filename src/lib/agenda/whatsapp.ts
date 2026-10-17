@@ -1,3 +1,4 @@
+import { internationalPhoneDigits } from "@/lib/validation/international-phone";
 export { internationalPhoneDigits } from "@/lib/validation/international-phone";
 import { z } from "zod";
 
@@ -19,5 +20,23 @@ export function appointmentWhatsAppMessage(input: WhatsAppAppointment): string {
   const intro = value.status === "confirmed"
     ? `Seu agendamento no *${name(value.workspaceName)}* está confirmado!`
     : `Recebemos sua solicitação de agendamento no *${name(value.workspaceName)}*. Ela ainda aguarda confirmação.`;
-  return `Olá, ${first}! 💗\n\n${intro}\n\n✨ Serviço: ${name(value.serviceName)}\n👤 Profissional: ${name(value.professionalName)}\n📅 Data: ${date}\n🕒 Horário: ${time}\n\n${value.status === "confirmed" ? "Estamos te esperando! 💕" : "Avisaremos assim que for confirmada. 💕"}`;
+  return `Olá, ${first}! 💗\n\n${intro}\n\n✨ Serviço: ${name(value.serviceName)}\n👩 Profissional: ${name(value.professionalName)}\n📅 Data: ${date}\n🕒 Horário: ${time}\n\n${value.status === "confirmed" ? "Estamos te esperando! 💕" : "Avisaremos assim que for confirmada. 💕"}`;
+}
+
+/** Authorized read model for Cursor; returned only after the request-user RPC. */
+export type AppointmentWhatsAppDetails = WhatsAppAppointment & {
+  phoneE164: string | null;
+  localDate: string;
+  localTime: string;
+};
+export function appointmentWhatsAppDetails(input: WhatsAppAppointment): AppointmentWhatsAppDetails {
+  const value = whatsappAppointmentSchema.parse(input);
+  const digits = internationalPhoneDigits(value.phone);
+  const instant = new Date(value.startsAt);
+  const parts = new Intl.DateTimeFormat("en", { timeZone: value.timezone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(instant);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find(value => value.type === type)?.value;
+  return { ...value, phoneE164: digits ? `+${digits}` : null,
+    localDate: `${part("year")}-${part("month")}-${part("day")}`,
+    localTime: new Intl.DateTimeFormat("pt-BR", { timeZone: value.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(instant),
+  };
 }

@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import { z } from "zod";
-import { appointmentWhatsAppMessage, whatsappAppointmentSchema } from "./whatsapp";
+import { appointmentWhatsAppMessage, appointmentWhatsAppDetails, whatsappAppointmentSchema } from "./whatsapp";
 import { buildWhatsAppLink } from "@/lib/booking/calendar";
 const id = "11111111-1111-4111-8111-111111111111";
 function moduleFrom<T>(path: string, dependencies: Record<string, unknown>) {
@@ -17,7 +17,7 @@ test("WhatsApp preparation refuses invalid IDs, denied rows and server outages w
   for (const scenario of ["invalid", "denied", "network"]) {
     let reads = 0;
     const action = moduleFrom<{ prepareAppointmentWhatsApp: (id: string) => Promise<{ error?: string; url?: string }> }>("src/lib/agenda/whatsapp-actions.ts", {
-      "zod": { z }, "./whatsapp": { appointmentWhatsAppMessage, whatsappAppointmentSchema }, "@/lib/booking/calendar": { buildWhatsAppLink },
+      "zod": { z }, "./whatsapp": { appointmentWhatsAppMessage, appointmentWhatsAppDetails, whatsappAppointmentSchema }, "@/lib/booking/calendar": { buildWhatsAppLink },
       "@/lib/supabase/server": { createClient: async () => {
         reads++; if (scenario === "network") throw Error("private provider payload");
         return { rpc: async (name: string) => { assert.equal(name, "get_appointment_whatsapp"); return { data: null, error: { message: "private data" } }; } };
