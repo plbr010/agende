@@ -1,3 +1,4 @@
+import { internationalPhoneDigits } from "@/lib/validation/international-phone";
 export { internationalPhoneDigits } from "@/lib/validation/international-phone";
 import { z } from "zod";
 
@@ -7,6 +8,24 @@ export const whatsappAppointmentSchema = z.object({
   timezone: z.string(), status: z.enum(["scheduled", "confirmed"]),
 });
 export type WhatsAppAppointment = z.infer<typeof whatsappAppointmentSchema>;
+
+/** Authorized read model for Cursor; returned only after the request-user RPC. */
+export type AppointmentWhatsAppDetails = WhatsAppAppointment & {
+  phoneE164: string | null;
+  localDate: string;
+  localTime: string;
+};
+export function appointmentWhatsAppDetails(input: WhatsAppAppointment): AppointmentWhatsAppDetails {
+  const value = whatsappAppointmentSchema.parse(input);
+  const digits = internationalPhoneDigits(value.phone);
+  const instant = new Date(value.startsAt);
+  const parts = new Intl.DateTimeFormat("en", { timeZone: value.timezone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(instant);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find(value => value.type === type)?.value;
+  return { ...value, phoneE164: digits ? `+${digits}` : null,
+    localDate: `${part("year")}-${part("month")}-${part("day")}`,
+    localTime: new Intl.DateTimeFormat("pt-BR", { timeZone: value.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(instant),
+  };
+}
 
 export function appointmentWhatsAppMessage(input: WhatsAppAppointment): string {
   const value = whatsappAppointmentSchema.parse(input);

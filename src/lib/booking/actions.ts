@@ -55,20 +55,32 @@ export async function createPublicAppointmentAction(
     customerNote: string | null;
   },
 ): Promise<BookingActionState> {
+  // Server Actions are public endpoints. Fail closed before reading caller data
+  // or computing rate-limit signals, even when a caller bypasses the UI.
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user?.email_confirmed_at || !user.email || user.is_anonymous) {
+    return { error: "Entre na sua conta para confirmar o agendamento." };
+  }
+  const selection = z.object({
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(100),
+    serviceId: z.string().uuid(), professionalMemberId: z.string().uuid().nullable(),
+    startsAt: z.string().datetime({ offset: true }),
+    fullName: z.string(), phone: z.string(), email: z.string(), customerNote: z.string().nullable(),
+  }).strict().safeParse(input);
+  if (!selection.success) return { error: "Revise o serviço, o profissional e o horário escolhidos." };
+  input = selection.data;
   const parsed = parsePublicBookingDetails({
     fullName: input.fullName,
     phone: input.phone,
-    email: input.email,
+    email: user.email,
     customerNote: input.customerNote,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Revise seus dados." };
   }
 
-  const supabase = await createClient();
   const ipHash = await hashClientIp();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email_confirmed_at) return { error: "Entre na sua conta para confirmar o agendamento." };
   const { data, error } = await supabase.rpc("create_public_appointment", {
     p_slug: input.slug,
     p_service_id: input.serviceId,
@@ -76,7 +88,7 @@ export async function createPublicAppointmentAction(
     p_starts_at: input.startsAt,
     p_full_name: parsed.data.fullName,
     p_phone: parsed.data.phone,
-    p_email: user.email ?? parsed.data.email,
+    p_email: user.email,
     p_customer_note: parsed.data.customerNote,
     p_ip_hash: ipHash,
   });
