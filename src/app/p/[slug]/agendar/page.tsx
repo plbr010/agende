@@ -44,6 +44,7 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
   const resumedServiceId = draft?.serviceId ?? null;
   let draftSlotUnavailable = false;
   let professionalUnavailable = false;
+  let availabilityError: string | null = null;
   if (draft) {
     const selection = draft;
     const serviceExists = catalog.services.some(s => s.id === selection.serviceId);
@@ -53,7 +54,8 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
     else if (!professionalExists) professionalUnavailable = true;
     else {
       const slots = await fetchPublicSlotsAction(selection);
-      draftSlotUnavailable = !slots.slots.some(s => Date.parse(s) === Date.parse(selection.startsAt));
+      if (slots.error) availabilityError = slots.error;
+      else draftSlotUnavailable = !slots.slots.some(s => Date.parse(s) === Date.parse(selection.startsAt));
     }
   }
   const initialServiceId =
@@ -67,6 +69,7 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
       initialServiceId={initialServiceId}
       initialDraft={draft}
       initialDraftSlotUnavailable={draftSlotUnavailable}
+      initialAvailabilityError={availabilityError}
       initialProfessionalUnavailable={professionalUnavailable}
       authenticated={session?.user.emailConfirmed ?? false}
       hasClientProfile={session?.context.hasClientProfile ?? false}

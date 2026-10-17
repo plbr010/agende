@@ -11,6 +11,11 @@ export default async function LoginPage({
 }) {
   const { next, password } = await searchParams;
   const safeNext = sanitizeNextPath(next);
+  const signupHref = safeNext?.includes("/agendar")
+    ? `/cadastro?intent=cliente&next=${encodeURIComponent(safeNext)}`
+    : safeNext
+      ? `/cadastro?next=${encodeURIComponent(safeNext)}`
+      : "/cadastro";
   await requireAnonymous(safeNext);
 
   return (
@@ -22,7 +27,7 @@ export default async function LoginPage({
         <p className="text-sm text-muted-foreground">
           Ainda não tem conta?{" "}
           <Link
-            href={safeNext ? `/cadastro?next=${encodeURIComponent(safeNext)}` : "/cadastro"}
+            href={signupHref}
             className="inline-flex min-h-11 items-center text-foreground underline underline-offset-4"
           >
             Criar conta grátis

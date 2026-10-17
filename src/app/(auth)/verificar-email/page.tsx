@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ResendEmailButton } from "@/components/auth/resend-email-button";
 import { CLIENT_JOURNEY, JourneySteps, OWNER_JOURNEY, TEAM_JOURNEY } from "@/components/onboarding/progress-steps";
-import { getPendingEmail, getPendingIntent, getPendingJourney } from "@/lib/auth/actions";
+import { getPendingEmail, getPendingIntent, getPendingJourney, getPendingNext } from "@/lib/auth/actions";
 import { loadAppSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { getDefaultDestination } from "@/lib/auth/redirects";
@@ -50,6 +50,8 @@ export default async function VerificarEmailPage({
 
   const { status } = await searchParams;
   const pendingEmail = await getPendingEmail();
+  const pendingNext = await getPendingNext();
+  const loginHref = pendingNext ? `/login?next=${encodeURIComponent(pendingNext)}` : "/login";
   const pendingIntent = session?.context.intendedUse ?? (await getPendingIntent());
   const journey = await getPendingJourney();
   const teamJourney = journey === "team";
@@ -84,15 +86,17 @@ export default async function VerificarEmailPage({
       <ResendEmailButton />
       {showLoginCta ? (
         <div className="grid gap-3">
-          <Button className="h-11" render={<Link href="/login" />}>
+          <Button className="h-11" render={<Link href={loginHref} />}>
             Já confirmei — entrar
           </Button>
           <p className="text-center text-sm text-muted-foreground">
-            {teamJourney
-              ? "Depois de entrar, você volta ao convite e aceita para abrir o painel. Sem mensalidade."
-              : clientJourney
-                ? "Depois de entrar, você confere o perfil e pode buscar estabelecimentos."
-                : "Depois de entrar, você escolhe o plano, começa os 7 dias grátis e cadastra o salão."}
+            {pendingNext?.includes("/agendar")
+              ? "Depois de entrar, você volta ao horário escolhido. A conta de cliente é grátis e não tem mensalidade."
+              : teamJourney
+                ? "Depois de entrar, você volta ao convite e aceita para abrir o painel. Sem mensalidade."
+                : clientJourney
+                  ? "Depois de entrar, você confere o perfil e pode buscar estabelecimentos."
+                  : "Depois de entrar, você escolhe o plano, começa os 7 dias grátis e cadastra o salão."}
           </p>
         </div>
       ) : null}

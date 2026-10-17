@@ -18,7 +18,7 @@ test("confirmed message contains current professional, service and local date/ti
   assert.match(message, /está confirmado!/);
   assert.match(message, /16 de outubro de 2026/);
   assert.match(message, /22:30/);
-  assert.match(message, /Ana/);
+  assert.match(message, /👩 Profissional: Ana/);
   assert.match(message, /Corte \+ escova/);
   const url = buildWhatsAppLink(appointment.phone, message)!;
   assert.ok(url.startsWith("https://wa.me/5532999999999?text="));
@@ -28,6 +28,7 @@ test("confirmed message contains current professional, service and local date/ti
 });
 test("pending request never claims confirmation; terminal and unknown statuses are refused", () => {
   assert.match(appointmentWhatsAppMessage({ ...appointment, status: "scheduled" }), /ainda aguarda confirmação/);
+  assert.match(appointmentWhatsAppMessage({ ...appointment, status: "scheduled" }), /👩 Profissional: Ana/);
   assert.doesNotMatch(appointmentWhatsAppMessage({ ...appointment, status: "scheduled" }), /está confirmado!/);
   for (const status of ["cancelled", "completed", "no_show", "in_progress", "pending"]) {
     assert.throws(() => appointmentWhatsAppMessage({ ...appointment, status } as WhatsAppAppointment));

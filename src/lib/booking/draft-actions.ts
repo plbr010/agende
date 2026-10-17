@@ -8,6 +8,7 @@ export async function continueBookingAfterLogin(input: BookingDraft): Promise<{ 
   const parsed = bookingDraftSchema.safeParse(input);
   if (!parsed.success) return { error: "Escolha um horário válido." };
   const result = await fetchPublicSlotsAction(parsed.data);
+  if (result.error) return { error: result.error };
   if (!result.slots.some(slot => Date.parse(slot) === Date.parse(parsed.data.startsAt)))
     return { error: "Este horário não está mais disponível. Escolha outro." };
   const store = await cookies();

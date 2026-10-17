@@ -24,6 +24,7 @@ import {
 import { addDaysIso, formatTimeInTimeZone, todayInTimeZone } from "@/lib/time/timezone";
 import { WEEKDAYS } from "@/lib/validation/agenda";
 import { formatCentsToReais } from "@/lib/validation/money";
+import { extractBrNationalDigits, formatPhoneBr } from "@/lib/validation/phone";
 import { STATUS_CHIP_CLASS } from "@/lib/agenda/status-style";
 import { PersonMark } from "@/components/people/person-mark";
 import { Button } from "@/components/ui/button";
@@ -470,7 +471,20 @@ function AppointmentFormDialog({
   );
 }
 
-function AppointmentDetailDialog({
+function displayClientPhone(phone: string | null): string {
+  if (!phone?.trim()) return "Telefone não informado";
+  if (extractBrNationalDigits(phone)) return formatPhoneBr(phone);
+  return phone.trim();
+}
+
+const WHATSAPP_UNAVAILABLE: Partial<Record<AgendaAppointment["status"], string>> = {
+  cancelled: "Este horário foi cancelado. Não há confirmação pelo WhatsApp.",
+  no_show: "Este horário foi marcado como falta. Não há confirmação pelo WhatsApp.",
+  completed: "Este atendimento já foi concluído. Não há confirmação pelo WhatsApp.",
+  in_progress: "Este atendimento já começou. Não há confirmação pelo WhatsApp.",
+};
+
+export function AppointmentDetailDialog({
   workspaceName,
   timezone,
   appointment,
@@ -497,6 +511,12 @@ function AppointmentDetailDialog({
   const canEdit =
     canRescheduleStatus(appointment.status) &&
     (role === "owner" || role === "admin" || role === "receptionist" || currentMemberId === appointment.professionalMemberId);
+  const canNotify =
+    role === "owner" ||
+    role === "admin" ||
+    role === "receptionist" ||
+    (role === "professional" && currentMemberId === appointment.professionalMemberId);
+  const whatsAppUnavailable = WHATSAPP_UNAVAILABLE[appointment.status];
 
   return (
     <>
@@ -512,6 +532,14 @@ function AppointmentDetailDialog({
             </DialogDescription>
           </DialogHeader>
           <dl className="grid gap-2 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Cliente</dt>
+              <dd className="text-right font-medium">{appointment.clientName}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">WhatsApp</dt>
+              <dd className="text-right font-medium break-all">{displayClientPhone(appointment.clientPhone)}</dd>
+            </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">Serviço</dt>
               <dd className="text-right font-medium">{appointment.serviceName}</dd>
@@ -551,12 +579,16 @@ function AppointmentDetailDialog({
               </dd>
             </div>
           </dl>
-          {(appointment.status === "scheduled" || appointment.status === "confirmed") &&
-            (role === "owner" || role === "admin" || role === "receptionist" || (role === "professional" && currentMemberId === appointment.professionalMemberId)) ? (
+          {canNotify && (appointment.status === "scheduled" || appointment.status === "confirmed") ? (
             <div className="grid gap-2">
               <p className="text-sm font-medium text-wine-deep">Avisar a cliente</p>
               <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} />
             </div>
+          ) : null}
+          {canNotify && whatsAppUnavailable ? (
+            <p role="status" className="rounded-2xl bg-secondary/70 px-4 py-3 text-sm leading-6">
+              {whatsAppUnavailable}
+            </p>
           ) : null}
           {canEdit || actions.length > 0 ? (
           <div className="flex flex-wrap gap-2">

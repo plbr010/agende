@@ -69,6 +69,11 @@ export async function getPendingEmail(): Promise<string | null> {
   return store.get(PENDING_EMAIL_COOKIE)?.value ?? null;
 }
 
+export async function getPendingNext(): Promise<string | null> {
+  const store = await cookies();
+  return sanitizeNextPath(store.get(PENDING_NEXT_COOKIE)?.value);
+}
+
 export async function getSelectedPlan(): Promise<PlanId | null> {
   const store = await cookies();
   return parsePlanId(store.get(SELECTED_PLAN_COOKIE)?.value);
