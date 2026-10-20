@@ -1,0 +1,773 @@
+{
+  "buckets": [
+    {
+      "id": "workspace-logos",
+      "mime": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ],
+      "limit": 2097152,
+      "public": true
+    },
+    {
+      "id": "account-avatars",
+      "mime": [
+        "image/webp"
+      ],
+      "limit": 2097152,
+      "public": false
+    }
+  ],
+  "columns": [
+    {
+      "table": "workspace_settings",
+      "column": "discovery_enabled",
+      "nullable": "NO"
+    },
+    {
+      "table": "profiles",
+      "column": "residence_city",
+      "nullable": "YES"
+    },
+    {
+      "table": "profiles",
+      "column": "avatar_path",
+      "nullable": "YES"
+    },
+    {
+      "table": "workspace_settings",
+      "column": "logo_path",
+      "nullable": "YES"
+    }
+  ],
+  "functions": [
+    {
+      "anon": false,
+      "name": "create_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text",
+      "definition": "CREATE OR REPLACE FUNCTION public.create_appointment(p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text DEFAULT NULL::text)\n RETURNS uuid\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  SELECT app.create_appointment(\n    p_workspace_id,\n    p_client_id,\n    p_professional_member_id,\n    p_service_id,\n    p_starts_at,\n    p_notes\n  );\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "3c064658ffc49e9d8c83825a9f65fc85"
+    },
+    {
+      "anon": true,
+      "name": "create_public_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text, p_ip_hash text",
+      "definition": "CREATE OR REPLACE FUNCTION public.create_public_appointment(p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text DEFAULT NULL::text, p_ip_hash text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  SELECT app.create_public_appointment(\n    p_slug,\n    p_service_id,\n    p_professional_member_id,\n    p_starts_at,\n    p_full_name,\n    p_phone,\n    p_email,\n    p_customer_note,\n    p_ip_hash\n  );\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "72f5343579994c3290ddeff9606ab844"
+    },
+    {
+      "anon": true,
+      "name": "search_public_workspaces",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_city text, p_state text, p_query text, p_postal_code text, p_limit integer, p_offset integer",
+      "definition": "CREATE OR REPLACE FUNCTION public.search_public_workspaces(p_city text DEFAULT NULL::text, p_state text DEFAULT NULL::text, p_query text DEFAULT NULL::text, p_postal_code text DEFAULT NULL::text, p_limit integer DEFAULT 20, p_offset integer DEFAULT 0)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_city text:=nullif(app.discovery_text(p_city),'');\n  v_query text:=nullif(app.discovery_text(p_query),''); v_state text:=nullif(upper(btrim(p_state)),'');\nBEGIN\n  IF (v_city IS NULL AND v_query IS NULL)\n    OR (v_city IS NOT NULL AND char_length(v_city) NOT BETWEEN 2 AND 80)\n    OR (v_query IS NOT NULL AND char_length(v_query) NOT BETWEEN 2 AND 100)\n    OR (v_state IS NOT NULL AND v_state !~ '^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)$')\n    OR p_postal_code IS NOT NULL OR p_limit IS NULL OR p_limit NOT BETWEEN 1 AND 50\n    OR p_offset IS NULL OR p_offset NOT BETWEEN 0 AND 10000 THEN\n    RAISE EXCEPTION 'invalid_discovery_input' USING ERRCODE='22023';\n  END IF;\n  RETURN (\n    WITH eligible AS MATERIALIZED (\n      SELECT w.name,w.slug,s.description,s.city,s.state,s.logo_path,\n        EXISTS(SELECT 1 FROM public.services svc\n          JOIN public.professional_services ps ON ps.service_id=svc.id AND ps.workspace_id=svc.workspace_id\n          JOIN public.professional_profiles pp ON pp.member_id=ps.professional_member_id AND pp.workspace_id=ps.workspace_id\n          JOIN public.workspace_members m ON m.id=pp.member_id AND m.workspace_id=pp.workspace_id\n          WHERE svc.workspace_id=w.id AND svc.active AND svc.archived_at IS NULL AND ps.active\n            AND pp.booking_enabled AND m.status='active' AND m.role IN ('owner','admin','professional')) AS booking_open\n      FROM public.workspace_settings s JOIN public.workspaces w ON w.id=s.workspace_id\n      WHERE s.discovery_enabled AND app.workspace_has_entitlement(w.id)\n        AND s.city IS NOT NULL AND s.state IS NOT NULL\n        AND (v_city IS NULL OR app.discovery_text(s.city)=v_city)\n        AND (v_state IS NULL OR s.state=v_state)\n        AND (v_query IS NULL OR strpos(app.discovery_text(w.name),v_query)>0 OR EXISTS (\n          SELECT 1 FROM public.professional_profiles pp JOIN public.workspace_members m ON m.id=pp.member_id\n          WHERE pp.workspace_id=w.id AND pp.booking_enabled AND m.status='active'\n            AND m.role IN ('owner','admin','professional') AND strpos(app.discovery_text(pp.display_name),v_query)>0))\n    ), page AS (SELECT * FROM eligible ORDER BY name COLLATE \"C\",slug LIMIT p_limit OFFSET p_offset)\n    SELECT jsonb_build_object('items',coalesce((SELECT jsonb_agg(to_jsonb(page) ORDER BY name COLLATE \"C\",slug) FROM page),'[]'::jsonb),\n      'total',(SELECT count(*) FROM eligible))\n  );\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "7db59b408f4b7df51856ea98868adcb7"
+    },
+    {
+      "anon": false,
+      "name": "update_workspace_settings",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text, p_clear_logo boolean",
+      "definition": "CREATE OR REPLACE FUNCTION public.update_workspace_settings(p_workspace_id uuid, p_name text, p_slug text, p_business_phone text DEFAULT NULL::text, p_business_email text DEFAULT NULL::text, p_description text DEFAULT NULL::text, p_address text DEFAULT NULL::text, p_city text DEFAULT NULL::text, p_state text DEFAULT NULL::text, p_postal_code text DEFAULT NULL::text, p_instagram text DEFAULT NULL::text, p_timezone text DEFAULT NULL::text, p_logo_path text DEFAULT NULL::text, p_clear_logo boolean DEFAULT false)\n RETURNS jsonb\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  SELECT app.update_workspace_settings(\n    p_workspace_id, p_name, p_slug, p_business_phone, p_business_email,\n    p_description, p_address, p_city, p_state, p_postal_code, p_instagram,\n    p_timezone, p_logo_path, p_clear_logo\n  );\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "a63ac2102625ec7eb9ce2b8faa4b29e3"
+    },
+    {
+      "anon": false,
+      "name": "can_write_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_workspace_id uuid, p_professional_member_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION app.can_write_appointment(p_workspace_id uuid, p_professional_member_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_actor public.workspace_members;\nBEGIN\n  SELECT m.* INTO v_actor\n  FROM public.workspace_members m\n  WHERE m.workspace_id = p_workspace_id\n    AND m.user_id = auth.uid()\n    AND m.status = 'active';\n  IF v_actor.id IS NULL THEN\n    RETURN false;\n  END IF;\n  IF v_actor.role IN (\n    'owner'::public.member_role,\n    'admin'::public.member_role,\n    'receptionist'::public.member_role\n  ) THEN\n    RETURN true;\n  END IF;\n  RETURN v_actor.role = 'professional'::public.member_role\n    AND v_actor.id = p_professional_member_id;\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "cdfb82dbc8eea3fa3472c687852f37ca"
+    },
+    {
+      "anon": false,
+      "name": "create_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text",
+      "definition": "CREATE OR REPLACE FUNCTION app.create_appointment(p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text DEFAULT NULL::text)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_actor public.workspace_members;\n  v_snapshot record;\n  v_ends timestamptz;\n  v_notes text;\n  v_id uuid;\n  v_client_archived timestamptz;\nBEGIN\n  PERFORM app.require_confirmed_email();\n  v_actor := app.actor_member(p_workspace_id);\n\n  IF NOT app.can_write_appointment(p_workspace_id, p_professional_member_id) THEN\n    RAISE EXCEPTION 'appointment_write_denied' USING ERRCODE = '42501';\n  END IF;\n\n  SELECT c.archived_at INTO v_client_archived\n  FROM public.workspace_clients c\n  WHERE c.id = p_client_id\n    AND c.workspace_id = p_workspace_id;\n\n  IF NOT FOUND THEN\n    RAISE EXCEPTION 'client_not_found' USING ERRCODE = '22023';\n  END IF;\n  IF v_client_archived IS NOT NULL THEN\n    RAISE EXCEPTION 'client_archived' USING ERRCODE = '22023';\n  END IF;\n\n  PERFORM app.lock_professional_agenda(p_professional_member_id);\n\n  SELECT s.price_cents, s.duration_minutes\n    INTO v_snapshot\n  FROM app.resolve_service_snapshot(p_workspace_id, p_professional_member_id, p_service_id) s;\n\n  v_ends := p_starts_at + make_interval(mins => v_snapshot.duration_minutes);\n  v_notes := nullif(btrim(COALESCE(p_notes, '')), '');\n\n  PERFORM app.assert_slot_available(\n    p_workspace_id,\n    p_professional_member_id,\n    p_starts_at,\n    v_ends,\n    NULL\n  );\n\n  INSERT INTO public.appointments (\n    workspace_id,\n    client_id,\n    professional_member_id,\n    service_id,\n    starts_at,\n    ends_at,\n    status,\n    price_cents,\n    duration_minutes,\n    notes,\n    created_by\n  ) VALUES (\n    p_workspace_id,\n    p_client_id,\n    p_professional_member_id,\n    p_service_id,\n    p_starts_at,\n    v_ends,\n    'scheduled'::public.appointment_status,\n    v_snapshot.price_cents,\n    v_snapshot.duration_minutes,\n    v_notes,\n    auth.uid()\n  )\n  RETURNING id INTO v_id;\n\n  RETURN v_id;\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "a23730baacb1130488e5bf593ec6810a"
+    },
+    {
+      "anon": false,
+      "name": "create_public_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text, p_ip_hash text",
+      "definition": "CREATE OR REPLACE FUNCTION app.create_public_appointment(p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text DEFAULT NULL::text, p_ip_hash text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_ws uuid;\n  v_pro uuid;\n  v_client uuid;\n  v_snapshot record;\n  v_ends timestamptz;\n  v_note text;\n  v_id uuid;\n  v_uid uuid := auth.uid();\n  v_email text := nullif(lower(btrim(COALESCE(p_email, ''))), '');\n  v_phone text;\n  v_confirmed boolean := false;\n  v_ws_name text;\n  v_slug text;\n  v_service_name text;\n  v_pro_name text;\n  v_phone_biz text;\n  v_tz text;\nBEGIN\n  v_ws := app.resolve_public_workspace(p_slug);\n  v_tz := app.workspace_timezone(v_ws);\n  v_phone := app.normalize_phone(p_phone);\n  IF v_phone IS NULL THEN\n    RAISE EXCEPTION 'invalid_phone' USING ERRCODE = '22023';\n  END IF;\n  IF v_email IS NULL THEN\n    RAISE EXCEPTION 'invalid_email' USING ERRCODE = '22023';\n  END IF;\n\n  IF v_uid IS NOT NULL THEN\n    SELECT u.email_confirmed_at IS NOT NULL INTO v_confirmed\n    FROM auth.users u WHERE u.id = v_uid;\n    IF NOT COALESCE(v_confirmed, false) THEN\n      v_uid := NULL;\n    END IF;\n  END IF;\n\n  PERFORM app.assert_public_booking_rate(v_ws, v_email, v_phone, nullif(btrim(COALESCE(p_ip_hash, '')), ''));\n  PERFORM app.assert_public_booking_window(v_ws, p_starts_at);\n\n  v_pro := app.pick_professional_for_slot(v_ws, p_service_id, p_starts_at, p_professional_member_id);\n\n  SELECT s.price_cents, s.duration_minutes\n    INTO v_snapshot\n  FROM app.resolve_service_snapshot(v_ws, v_pro, p_service_id) s;\n\n  v_ends := p_starts_at + make_interval(mins => v_snapshot.duration_minutes);\n  v_note := nullif(btrim(COALESCE(p_customer_note, '')), '');\n  IF v_note IS NOT NULL AND char_length(v_note) > 500 THEN\n    RAISE EXCEPTION 'customer_note_too_long' USING ERRCODE = '22023';\n  END IF;\n\n  v_client := app.find_or_create_public_client(\n    v_ws,\n    p_full_name,\n    v_email,\n    v_phone,\n    v_uid\n  );\n\n  PERFORM app.lock_professional_agenda(v_pro);\n\n  BEGIN\n    PERFORM app.assert_slot_available(v_ws, v_pro, p_starts_at, v_ends, NULL);\n  EXCEPTION\n    WHEN SQLSTATE '23P01' THEN\n      RAISE EXCEPTION 'slot_taken' USING ERRCODE = '23P01';\n  END;\n\n  BEGIN\n    INSERT INTO public.appointments (\n      workspace_id,\n      client_id,\n      professional_member_id,\n      service_id,\n      starts_at,\n      ends_at,\n      status,\n      price_cents,\n      duration_minutes,\n      customer_note,\n      created_by\n    ) VALUES (\n      v_ws,\n      v_client,\n      v_pro,\n      p_service_id,\n      p_starts_at,\n      v_ends,\n      'scheduled'::public.appointment_status,\n      v_snapshot.price_cents,\n      v_snapshot.duration_minutes,\n      v_note,\n      v_uid\n    )\n    RETURNING id INTO v_id;\n  EXCEPTION\n    WHEN exclusion_violation OR SQLSTATE '23P01' THEN\n      RAISE EXCEPTION 'slot_taken' USING ERRCODE = '23P01';\n  END;\n\n  INSERT INTO public.public_booking_rate_events (workspace_id, email, phone, ip_hash)\n  VALUES (v_ws, v_email, v_phone, nullif(btrim(COALESCE(p_ip_hash, '')), ''));\n\n  SELECT w.name, w.slug INTO v_ws_name, v_slug FROM public.workspaces w WHERE w.id = v_ws;\n  SELECT s.name INTO v_service_name FROM public.services s WHERE s.id = p_service_id;\n  SELECT p.display_name INTO v_pro_name FROM public.professional_profiles p WHERE p.member_id = v_pro;\n  SELECT st.business_phone INTO v_phone_biz FROM public.workspace_settings st WHERE st.workspace_id = v_ws;\n\n  RETURN jsonb_build_object(\n    'appointment_id', v_id,\n    'workspace_name', v_ws_name,\n    'slug', v_slug,\n    'service_name', v_service_name,\n    'professional_name', v_pro_name,\n    'starts_at', p_starts_at,\n    'ends_at', v_ends,\n    'duration_minutes', v_snapshot.duration_minutes,\n    'price_cents', v_snapshot.price_cents,\n    'timezone', v_tz,\n    'status', 'scheduled',\n    'business_phone', v_phone_biz,\n    'guest', v_uid IS NULL\n  );\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "bde06d1be94d29fbadf2f1fd49f16140"
+    },
+    {
+      "anon": false,
+      "name": "discovery_text",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_text text",
+      "definition": "CREATE OR REPLACE FUNCTION app.discovery_text(p_text text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE\n SET search_path TO ''\nAS $function$\n  SELECT translate(lower(btrim(coalesce(p_text,''))),\n    'áàâãäéèêëíìîïóòôõöúùûüç', 'aaaaaeeeeiiiiooooouuuuc');\n$function$\n",
+      "service_role": false,
+      "authenticated": false,
+      "definition_md5": "303eafd036ff860e715003ba4aab1863"
+    },
+    {
+      "anon": false,
+      "name": "require_confirmed_email",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION app.require_confirmed_email()\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_uid uuid;\n  v_confirmed timestamptz;\nBEGIN\n  v_uid := app.require_authenticated_user();\n  SELECT u.email_confirmed_at\n    INTO v_confirmed\n  FROM auth.users u\n  WHERE u.id = v_uid;\n\n  IF v_confirmed IS NULL THEN\n    RAISE EXCEPTION 'email_not_confirmed'\n      USING ERRCODE = '42501';\n  END IF;\n\n  RETURN v_uid;\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "2d182ab86953caededd31e92aaf9ebcc"
+    },
+    {
+      "anon": false,
+      "name": "require_workspace_manager",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION app.require_workspace_manager(p_workspace_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_uid uuid;\nbegin\n  v_uid := app.require_confirmed_email();\n  perform app.assert_workspace_entitled(p_workspace_id);\n\n  if not app.has_workspace_role(\n    p_workspace_id,\n    variadic array['owner'::public.member_role, 'admin'::public.member_role]\n  ) then\n    raise exception 'not_authorized' using errcode = '42501';\n  end if;\n\n  return v_uid;\nend;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "3073a7ef6e3270d4f27668a34c1fad6c"
+    },
+    {
+      "anon": false,
+      "name": "resolve_public_workspace",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_slug text",
+      "definition": "CREATE OR REPLACE FUNCTION app.resolve_public_workspace(p_slug text)\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\ndeclare\n  v_id uuid;\n  v_slug text := lower(btrim(coalesce(p_slug, '')));\nbegin\n  if v_slug = '' then\n    raise exception 'workspace_not_found' using errcode = '22023';\n  end if;\n\n  select w.id into v_id\n  from public.workspaces w\n  where w.slug = v_slug;\n\n  if v_id is null then\n    raise exception 'workspace_not_found' using errcode = '22023';\n  end if;\n\n  if not app.workspace_has_entitlement(v_id) then\n    raise exception 'workspace_unavailable' using errcode = '22023';\n  end if;\n\n  return v_id;\nend;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "bd0b25675549d3f94c4a8a2cbf54e555"
+    },
+    {
+      "anon": false,
+      "name": "update_workspace_settings",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text, p_clear_logo boolean",
+      "definition": "CREATE OR REPLACE FUNCTION app.update_workspace_settings(p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text DEFAULT NULL::text, p_clear_logo boolean DEFAULT false)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_name text;\n  v_slug text;\n  v_phone text;\n  v_email text;\n  v_instagram text;\n  v_postal text;\n  v_state text;\n  v_workspace public.workspaces;\n  v_settings public.workspace_settings;\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n\n  v_name := btrim(p_name);\n  IF char_length(v_name) < 2 OR char_length(v_name) > 80 THEN\n    RAISE EXCEPTION 'invalid_workspace_name' USING ERRCODE = '22023';\n  END IF;\n\n  v_slug := app.slugify(p_slug);\n  IF v_slug IS NULL OR char_length(v_slug) < 3 OR char_length(v_slug) > 60 THEN\n    RAISE EXCEPTION 'invalid_slug' USING ERRCODE = '22023';\n  END IF;\n  IF v_slug !~ '^[a-z0-9]+(?:-[a-z0-9]+)*$' THEN\n    RAISE EXCEPTION 'invalid_slug' USING ERRCODE = '22023';\n  END IF;\n  IF app.is_reserved_workspace_slug(v_slug) THEN\n    RAISE EXCEPTION 'reserved_slug' USING ERRCODE = '22023';\n  END IF;\n  IF EXISTS (\n    SELECT 1 FROM public.workspaces w\n    WHERE w.slug = v_slug AND w.id IS DISTINCT FROM p_workspace_id\n  ) THEN\n    RAISE EXCEPTION 'slug_taken' USING ERRCODE = '23505';\n  END IF;\n\n  v_phone := app.normalize_phone(p_business_phone);\n  IF p_business_phone IS NOT NULL AND btrim(p_business_phone) <> '' AND v_phone IS NULL THEN\n    RAISE EXCEPTION 'invalid_phone' USING ERRCODE = '22023';\n  END IF;\n\n  v_email := nullif(lower(btrim(coalesce(p_business_email, ''))), '');\n  v_instagram := nullif(btrim(regexp_replace(coalesce(p_instagram, ''), '^@+', '')), '');\n  v_postal := regexp_replace(coalesce(p_postal_code, ''), '\\D', '', 'g');\n  IF v_postal = '' THEN\n    v_postal := NULL;\n  END IF;\n  v_state := nullif(upper(btrim(coalesce(p_state, ''))), '');\n\n  IF p_logo_path IS NOT NULL AND split_part(p_logo_path, '/', 1) IS DISTINCT FROM p_workspace_id::text THEN\n    RAISE EXCEPTION 'invalid_logo_path' USING ERRCODE = '22023';\n  END IF;\n\n  PERFORM set_config('app.bypass_protected_columns', 'on', true);\n\n  UPDATE public.workspaces\n  SET name = v_name,\n      slug = v_slug,\n      updated_at = clock_timestamp()\n  WHERE id = p_workspace_id\n  RETURNING * INTO v_workspace;\n\n  UPDATE public.workspace_settings\n  SET business_phone = v_phone,\n      business_email = v_email,\n      description = nullif(btrim(coalesce(p_description, '')), ''),\n      address = nullif(btrim(coalesce(p_address, '')), ''),\n      city = nullif(btrim(coalesce(p_city, '')), ''),\n      state = v_state,\n      postal_code = v_postal,\n      instagram = v_instagram,\n      timezone = coalesce(nullif(btrim(coalesce(p_timezone, '')), ''), 'America/Sao_Paulo'),\n      logo_path = CASE\n        WHEN p_clear_logo THEN NULL\n        WHEN p_logo_path IS NOT NULL THEN p_logo_path\n        ELSE logo_path\n      END,\n      updated_at = clock_timestamp()\n  WHERE workspace_id = p_workspace_id\n  RETURNING * INTO v_settings;\n\n  RETURN jsonb_build_object(\n    'workspace_id', v_workspace.id,\n    'name', v_workspace.name,\n    'slug', v_workspace.slug,\n    'timezone', v_settings.timezone\n  );\nEND;\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "9ef7f86205ec451e6a60a0bc4b5d27cb"
+    }
+  ],
+  "relations": [
+    {
+      "rls": true,
+      "name": "service_packages",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "service_package_items",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_packages",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_package_items",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "audit_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_trial_claims",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_invites",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspaces",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_members",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "plans",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "subscriptions",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "services",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_services",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_clients",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_working_hours",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_breaks",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_refunds",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_time_blocks",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "appointments",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "public_booking_rate_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "inventory_products",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "inventory_movements",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_entries",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "package_redemptions",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_categories",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "privacy_requests",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "billing_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "avatar_cleanup_queue",
+      "forced": true,
+      "schema": "app"
+    },
+    {
+      "rls": true,
+      "name": "stripe_checkout_leases",
+      "forced": false,
+      "schema": "app"
+    },
+    {
+      "rls": true,
+      "name": "workspace_settings",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_workspace_favorites",
+      "forced": true,
+      "schema": "public"
+    }
+  ],
+  "migrations": [
+    {
+      "name": "foundation_types_and_tables",
+      "version": "20260918150334"
+    },
+    {
+      "name": "foundation_functions",
+      "version": "20260918150401"
+    },
+    {
+      "name": "foundation_guards",
+      "version": "20260918150422"
+    },
+    {
+      "name": "foundation_auth_sync",
+      "version": "20260918150434"
+    },
+    {
+      "name": "foundation_workspace_rpc",
+      "version": "20260918150443"
+    },
+    {
+      "name": "foundation_invites",
+      "version": "20260918150456"
+    },
+    {
+      "name": "foundation_rpc_wrappers_and_triggers",
+      "version": "20260918150505"
+    },
+    {
+      "name": "foundation_rls",
+      "version": "20260918150516"
+    },
+    {
+      "name": "foundation_fk_indexes",
+      "version": "20260918150607"
+    },
+    {
+      "name": "foundation_hardening",
+      "version": "20260918183729"
+    },
+    {
+      "name": "foundation_hardening_seats_invites",
+      "version": "20260918183827"
+    },
+    {
+      "name": "foundation_hardening_invites_grants",
+      "version": "20260918183848"
+    },
+    {
+      "name": "catalog_professionals_services_clients",
+      "version": "20260918191634"
+    },
+    {
+      "name": "catalog_professionals_services_clients_rls",
+      "version": "20260918191706"
+    },
+    {
+      "name": "catalog_indexes_and_policy_merge",
+      "version": "20260918192038"
+    },
+    {
+      "name": "workspace_settings_schema",
+      "version": "20260918194255"
+    },
+    {
+      "name": "agenda_types_and_tables",
+      "version": "20260918194304"
+    },
+    {
+      "name": "agenda_functions",
+      "version": "20260918194355"
+    },
+    {
+      "name": "workspace_settings_rpcs",
+      "version": "20260918194427"
+    },
+    {
+      "name": "agenda_availability_helpers",
+      "version": "20260918194437"
+    },
+    {
+      "name": "workspace_settings_rls_storage",
+      "version": "20260918194446"
+    },
+    {
+      "name": "agenda_list_available_slots",
+      "version": "20260918194454"
+    },
+    {
+      "name": "agenda_appointment_rpcs",
+      "version": "20260918194510"
+    },
+    {
+      "name": "agenda_triggers",
+      "version": "20260918194527"
+    },
+    {
+      "name": "agenda_rls",
+      "version": "20260918194551"
+    },
+    {
+      "name": "agenda_indexes_and_policy_split",
+      "version": "20260918194708"
+    },
+    {
+      "name": "agenda_write_policies",
+      "version": "20260918194722"
+    },
+    {
+      "name": "agenda_snapshot_professional_and_select",
+      "version": "20260918195354"
+    },
+    {
+      "name": "public_booking_schema",
+      "version": "20260918203839"
+    },
+    {
+      "name": "public_booking_functions",
+      "version": "20260918203840"
+    },
+    {
+      "name": "public_booking_rpcs_rls",
+      "version": "20260918203841"
+    },
+    {
+      "name": "hardening_snapshot_owner_timezone",
+      "version": "20260919201138"
+    },
+    {
+      "name": "inventory_schema",
+      "version": "20260919201409"
+    },
+    {
+      "name": "inventory_rpcs",
+      "version": "20260919201432"
+    },
+    {
+      "name": "inventory_rls",
+      "version": "20260919201509"
+    },
+    {
+      "name": "inventory_fk_indexes",
+      "version": "20260921165035"
+    },
+    {
+      "name": "packages_core",
+      "version": "20260921171533"
+    },
+    {
+      "name": "finance_core",
+      "version": "20260921171751"
+    },
+    {
+      "name": "reports_core",
+      "version": "20260921171949"
+    },
+    {
+      "name": "packages_finance_fk_indexes",
+      "version": "20260921172021"
+    },
+    {
+      "name": "secure_public_default_privileges",
+      "version": "20260921172331"
+    },
+    {
+      "name": "subscription_entitlement_enforcement",
+      "version": "20260921174123"
+    },
+    {
+      "name": "audit_events",
+      "version": "20260921174239"
+    },
+    {
+      "name": "finance_refunds_package_hardening",
+      "version": "20260921174332"
+    },
+    {
+      "name": "billing_intervals_annual_ready",
+      "version": "20260921174537"
+    },
+    {
+      "name": "database_maintenance_cron",
+      "version": "20260921174547"
+    },
+    {
+      "name": "package_lifecycle_hardening",
+      "version": "20260921175259"
+    },
+    {
+      "name": "finance_categories_idempotency",
+      "version": "20260921175525"
+    },
+    {
+      "name": "agenda_client_reschedule_deadlock_hardening",
+      "version": "20260921175704"
+    },
+    {
+      "name": "advanced_reports",
+      "version": "20260921175824"
+    },
+    {
+      "name": "privacy_requests_export_audit_expansion",
+      "version": "20260921175927"
+    },
+    {
+      "name": "public_booking_duplicate_concurrency_guard",
+      "version": "20260921180139"
+    },
+    {
+      "name": "client_packages_and_billing_foundation",
+      "version": "20260921180256"
+    },
+    {
+      "name": "frontend_read_models",
+      "version": "20260921181255"
+    },
+    {
+      "name": "frontend_read_models_inventory_fix",
+      "version": "20260921181317"
+    },
+    {
+      "name": "stripe_billing_sync_foundation",
+      "version": "20260926062411"
+    },
+    {
+      "name": "stripe_webhook_hardening",
+      "version": "20260926062835"
+    },
+    {
+      "name": "stripe_billing_resubscribe_hardening",
+      "version": "20260926063106"
+    },
+    {
+      "name": "stripe_billing_sync_reconcile",
+      "version": "20260926063212"
+    },
+    {
+      "name": "stripe_checkout_resubscribe_hardening",
+      "version": "20260926063514"
+    },
+    {
+      "name": "stripe_api_key_vault_access",
+      "version": "20260926063534"
+    },
+    {
+      "name": "trial_selected_plan",
+      "version": "20260926194038"
+    },
+    {
+      "name": "stripe_checkout_guards",
+      "version": "20260927005815"
+    },
+    {
+      "name": "atomic_service_professional_links",
+      "version": "20261010232248"
+    },
+    {
+      "name": "public_workspace_discovery",
+      "version": "20261014030220"
+    },
+    {
+      "name": "client_phase2_profiles_favorites",
+      "version": "20261014172158"
+    },
+    {
+      "name": "client_phase2_avatar_upload_cleanup",
+      "version": "20261014173903"
+    }
+  ],
+  "captured_at": "2026-10-20T19:28:06.778558+00:00",
+  "compatibility": {
+    "workspaces": 4,
+    "appointments": 6,
+    "linked_clients": 1,
+    "future_bookings": 0,
+    "legacy_logo_paths": 0,
+    "invalid_logo_ownership": 0
+  },
+  "object_counts": [
+    {
+      "objects": 2,
+      "bucket_id": "workspace-logos"
+    },
+    {
+      "objects": 1,
+      "bucket_id": "account-avatars"
+    }
+  ],
+  "discovery_index": "CREATE INDEX workspace_settings_discovery_city ON public.workspace_settings USING btree (app.discovery_text(city), state, workspace_id) WHERE discovery_enabled",
+  "storage_policies": [
+    {
+      "cmd": "ALL",
+      "qual": "(bucket_id <> 'account-avatars'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "account_avatars_server_only",
+      "schemaname": "storage",
+      "with_check": "(bucket_id <> 'account-avatars'::text)"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_delete",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_insert",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'workspace-logos'::text) AND ((storage.foldername(name))[1] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'workspace-logos'::text)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_select",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_update",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))"
+    }
+  ]
+}
