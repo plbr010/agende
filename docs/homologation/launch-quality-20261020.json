@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-10-20",
+  "runtime_for_checks": "Node 24.19.0",
+  "checks": {
+    "npm ci": {
+      "status": "PASS",
+      "runtime": "system npm used Node 20.17.0; engine warnings retained in private logs"
+    },
+    "npm run lint": {
+      "status": "PASS"
+    },
+    "npm run typecheck": {
+      "status": "PASS"
+    },
+    "npm run test": {
+      "status": "PASS",
+      "passed": 402,
+      "failed": 0
+    },
+    "npm run build": {
+      "status": "PASS"
+    },
+    "npm run test:smoke": {
+      "status": "PASS"
+    },
+    "native PostgreSQL 17": {
+      "status": "PASS",
+      "passed": 70,
+      "failed": 0,
+      "concurrency_cases": 10
+    },
+    "npm audit --omit=dev --audit-level=high": {
+      "status": "PASS",
+      "vulnerabilities": 0
+    },
+    "npm audit (including dev)": {
+      "status": "WARN",
+      "high": 5,
+      "affected_chain": "eslint-config-next / fast-glob / micromatch / braces"
+    }
+  },
+  "production_writes": 0,
+  "fresh_smtp_signup_acceptance": false,
+  "natural_jwt_expiry_rerun": false
+}

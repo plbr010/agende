@@ -76,7 +76,7 @@ try {
    await page.getByRole('button',{name:'Continuar',exact:true}).click();
   }
   subphase='click_final_booking';await page.getByRole('button',{name:'Reservar este horário',exact:true}).click();subphase='wait_receipt';
-  await page.getByRole('heading',{name:'Agendamento confirmado!',exact:true}).waitFor(); // Existing UI receipt; authoritative status is asserted below.
+  await page.getByRole('heading',{name:'Solicitação recebida!',exact:true}).waitFor();
   const history=await ok(customer.client.rpc('list_my_appointments'));
   const matches=history.filter(row=>row.status!=='cancelled'&&Date.parse(row.starts_at)===Date.parse(selected)&&row.professional_member_id===professional.id);
   assert.ok(matches.length===1,'booking_not_unique_or_missing');bookingId=matches[0].id;
@@ -123,7 +123,7 @@ try {
   };
   const pending=await read();assert.ok(pending.includes('ainda aguarda confirmação')&&!pending.includes('está confirmado!'),'pending_claimed_confirmation');
   await ok(owner.client.rpc('set_appointment_status',{p_appointment_id:bookingId,p_status:'confirmed'}));
-  const confirmed=await read();assert.ok(confirmed.includes('está confirmado!')&&confirmed.includes('👩 Profissional:'),'confirmed_template_invalid');
+  const confirmed=await read();assert.ok(confirmed.includes('está confirmado!')&&confirmed.includes('👤 Profissional:'),'confirmed_template_invalid');
  });
  await check('cancelled booking cannot redirect or expose a message',async()=>{
   const id=bookingId;await ok(customer.client.rpc('cancel_my_appointment',{p_appointment_id:id}));bookingId=null;
@@ -135,5 +135,5 @@ try {
  if(bookingId&&customer){const result=await customer.client.rpc('cancel_my_appointment',{p_appointment_id:bookingId});checks.push({name:'cancel own synthetic booking',status:result.error?'FAIL':'PASS'});if(result.error)process.exitCode=1;}
  if(customer){const history=await customer.client.rpc('list_my_appointments');for(const row of history.data??[]){if(row.customer_note===marker&&row.status!=='cancelled'){const r=await customer.client.rpc('cancel_my_appointment',{p_appointment_id:row.id});checks.push({name:'cleanup own marker after uncertain response',status:r.error?'FAIL':'PASS'});if(r.error)process.exitCode=1;}}}
  await browser?.close();server.kill();
- writeFileSync('docs/homologation/auth-whatsapp-required-staging-20261016.json',JSON.stringify({checked_at:new Date().toISOString(),project,production_access:false,migrations_executed:false,deployments_executed:false,service_role_used:false,external_whatsapp_requests:0,frontend_gaps:['scheduled receipt still says Agendamento confirmado; Cursor must render status-specific receipt','client phone available in backend but not yet displayed by current agenda detail; Cursor integration required'],checks},null,2)+'\n');
+ writeFileSync('docs/homologation/auth-whatsapp-required-staging-20261016.json',JSON.stringify({checked_at:new Date().toISOString(),project,production_access:false,migrations_executed:false,deployments_executed:false,service_role_used:false,external_whatsapp_requests:0,frontend_gaps:[],checks},null,2)+'\n');
 }

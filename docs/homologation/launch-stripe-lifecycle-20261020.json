@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-20T16:47:03.314Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "livemode": false,
+  "production_changed": false,
+  "checks": [
+    {
+      "name": "real hosted Customer Portal scheduled cancellation confirmed",
+      "status": "PASS"
+    },
+    {
+      "name": "scheduled cancellation preserves paid period access",
+      "status": "PASS"
+    },
+    {
+      "name": "real TEST provider declines designated test card",
+      "status": "PASS"
+    },
+    {
+      "name": "declined checkout cannot grant an active subscription",
+      "status": "PASS"
+    }
+  ]
+}

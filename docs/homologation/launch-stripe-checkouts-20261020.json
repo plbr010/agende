@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-10-20T16:41:29.321Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "livemode": false,
+  "status": "PARTIAL_ACCEPTANCE",
+  "checks": [
+    {
+      "plan": "solo",
+      "interval": "monthly",
+      "session_id": "cs_test_a1y5PiUEVdSL8e5DoQYpzQjoY1IYIUCp2QZQk1K47oupXnWVUPzI2jMaX2",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    },
+    {
+      "plan": "solo",
+      "interval": "annual",
+      "session_id": "cs_test_a13DybQXr73OBz0LO3aF7V4kXH3qZWLeEbT45JvZnHf8vBHOOCIwWqZgjD",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    },
+    {
+      "plan": "equipe",
+      "interval": "monthly",
+      "session_id": "cs_test_a1lxBIt6SMbeIYC2FduyRuubaAmqntr5vUwRIqZhmuZDFBnFEGt6xphxcs",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    },
+    {
+      "plan": "equipe",
+      "interval": "annual",
+      "session_id": "cs_test_a1bR9tspTlr37ifP2FubJLJy0R9fnOP9TPpM2x4k1kwrnO5Fdd3qN4bP6S",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    },
+    {
+      "plan": "salao",
+      "interval": "monthly",
+      "session_id": "cs_test_a19sjt05RRrzZoVk7nWRPyiP7owB86jTK9L07hSguuWcT32tijawoCwNpm",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    },
+    {
+      "plan": "salao",
+      "interval": "annual",
+      "session_id": "cs_test_a140M4xuuVjNpGBQQuyYgr8a7LZtpjgqSWydqHCxMPFJ4KlbDb9urY8Poc",
+      "checkout_through_application": true,
+      "duplicate_reused": true,
+      "customer_bound": true,
+      "portal_created": true,
+      "status": "PASS",
+      "scope": "real TEST API; not payment/webhook acceptance"
+    }
+  ],
+  "synthetic_workspace_ids": [
+    "ba097499-9ee2-4f10-a2bc-e4818c2dc04c",
+    "4c6b911d-be57-47ea-8762-0fd1cf2cc544",
+    "6a39b374-b760-44a4-bd8b-15f010e397a9",
+    "ebefcf1e-2e24-45a6-b9ce-ddcb78991863",
+    "618d7931-5171-47c0-802a-a84f88a60b7b",
+    "0837c87d-ab1a-4bea-85e6-a977418f2927"
+  ],
+  "payment_completed": false,
+  "provider_webhook_delivery_verified": false,
+  "subscription_activation_verified": false,
+  "commercial_acceptance": false,
+  "production_connections": 0,
+  "secrets_in_report": false
+}

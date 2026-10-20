@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-20T16:41:16.972Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "mode": "real GoTrue, PostgREST, Storage, local Next and Edge browser",
+  "checks": [
+    {
+      "name": "real PostgREST rejects anonymous booking and direct privileged photo mutations",
+      "status": "PASS"
+    },
+    {
+      "name": "HTTP rejects foreign professional edit, anonymous private read, CSRF and dangerous bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "browser upload, actual Storage bytes and reload render the persisted professional photo",
+      "status": "PASS"
+    },
+    {
+      "name": "browser replacement reaps old bytes, remains private and survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "public chooser serves the correct professional photo with the same normalized bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "manual WhatsApp reads pending, confirmed, rescheduled and cancelled state through real HTTP without sending or mutating it",
+      "status": "PASS"
+    },
+    {
+      "name": "manual WhatsApp endpoint refuses foreign or missing appointment without navigating to WhatsApp",
+      "status": "PASS"
+    },
+    {
+      "name": "browser removal restores initials and deletes only the newly created synthetic photo",
+      "status": "PASS"
+    }
+  ]
+}

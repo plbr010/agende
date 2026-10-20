@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-20T16:32:42.029Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "read_only": true,
+  "audit": {
+    "rls": [
+      {
+        "name": "appointments",
+        "forced": true,
+        "enabled": true
+      },
+      {
+        "name": "professional_profiles",
+        "forced": true,
+        "enabled": true
+      },
+      {
+        "name": "profiles",
+        "forced": true,
+        "enabled": true
+      },
+      {
+        "name": "workspace_clients",
+        "forced": true,
+        "enabled": true
+      },
+      {
+        "name": "workspace_settings",
+        "forced": true,
+        "enabled": true
+      }
+    ],
+    "rpcs": [
+      "search_public_workspaces",
+      "swap_professional_photo"
+    ],
+    "booking": {
+      "anon_execute": false,
+      "anonymous_guard": false,
+      "confirmed_guard": false
+    },
+    "buckets": [
+      {
+        "id": "workspace-logos",
+        "mime": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "size": 2097152,
+        "public": true
+      },
+      {
+        "id": "account-avatars",
+        "mime": [
+          "image/webp"
+        ],
+        "size": 2097152,
+        "public": false
+      },
+      {
+        "id": "professional-photos",
+        "mime": [
+          "image/webp"
+        ],
+        "size": 2097152,
+        "public": false
+      }
+    ],
+    "migrations": [
+      {
+        "name": "public_workspace_discovery",
+        "version": "20261014031601"
+      },
+      {
+        "name": "client_phase2_profiles_favorites",
+        "version": "20261014173144"
+      },
+      {
+        "name": "client_phase2_avatar_upload_cleanup",
+        "version": "20261014173933"
+      },
+      {
+        "name": "workspace_media_and_settings_contract",
+        "version": "20261015054655"
+      },
+      {
+        "name": "workspace_settings_validation",
+        "version": "20261015054832"
+      },
+      {
+        "name": "profiles_booking_whatsapp",
+        "version": "20261016080427"
+      }
+    ]
+  }
+}

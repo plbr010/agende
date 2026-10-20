@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-10-20T16:44:51.045Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "livemode": false,
+  "direct_replay_performed": false,
+  "provider_payments_executed_in_browser": true,
+  "checks": [
+    {
+      "plan": "solo",
+      "interval": "monthly",
+      "checkout_completed": true,
+      "paid_invoice": true,
+      "event_count": 3
+    },
+    {
+      "plan": "solo",
+      "interval": "annual",
+      "checkout_completed": true,
+      "paid_invoice": false,
+      "event_count": 1
+    },
+    {
+      "plan": "equipe",
+      "interval": "monthly",
+      "checkout_completed": true,
+      "paid_invoice": false,
+      "event_count": 2
+    },
+    {
+      "plan": "equipe",
+      "interval": "annual",
+      "checkout_completed": true,
+      "paid_invoice": false,
+      "event_count": 1
+    },
+    {
+      "plan": "salao",
+      "interval": "monthly",
+      "checkout_completed": true,
+      "paid_invoice": false,
+      "event_count": 2
+    },
+    {
+      "plan": "salao",
+      "interval": "annual",
+      "checkout_completed": true,
+      "paid_invoice": false,
+      "event_count": 1
+    }
+  ],
+  "limitation": "All six checkout.session.completed persisted after browser TEST payments and six subscriptions became active. Only one invoice.paid observed at snapshot; full invoice event delivery across all six remains unverified."
+}

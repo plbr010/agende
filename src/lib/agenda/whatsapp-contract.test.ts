@@ -11,7 +11,7 @@ const row = { clientName: "Maria da Silva", phone: "+55 (32) 99999-9999", worksp
 test("authorized WhatsApp read model exposes full identity, validated E164, real status and salon-local time", () => {
   assert.deepEqual(appointmentWhatsAppDetails(row), { ...row, phoneE164: "+5532999999999", localDate: "2026-10-16", localTime: "22:30" });
   assert.equal(appointmentWhatsAppDetails({ ...row, phone: "32999999999" }).phoneE164, null);
-  assert.equal(appointmentWhatsAppMessage(row), "Olá, Maria! 💗\n\nSeu agendamento no *Salão Real* está confirmado!\n\n✨ Serviço: Corte\n👩 Profissional: Ana\n📅 Data: 16 de outubro de 2026\n🕒 Horário: 22:30\n\nEstamos te esperando! 💕");
+  assert.equal(appointmentWhatsAppMessage(row), "Olá, Maria! 💗\n\nSeu agendamento no *Salão Real* está confirmado!\n\n✨ Serviço: Corte\n👤 Profissional: Ana\n📅 Data: 16 de outubro de 2026\n🕒 Horário: 22:30\n\nEstamos te esperando! 💕");
 });
 test("Cursor contract comes from exactly one authorized RPC and returns no personal data after denial", async () => {
   for (const denied of [false, true]) {

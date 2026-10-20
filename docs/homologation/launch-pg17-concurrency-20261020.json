@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-10-20T16:38:05.195Z",
+  "engine": "native PostgreSQL 17",
+  "authentication": "SQL identity fixture, not Auth service",
+  "cases": [
+    {
+      "name": "same slot",
+      "pid_a": 3948,
+      "pid_b": 21188,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23P01"
+    },
+    {
+      "name": "booking rollback",
+      "pid_a": 23628,
+      "pid_b": 11572,
+      "verified_wait": "Lock",
+      "release_a": "rollback",
+      "b_success": true,
+      "b_sqlstate": null
+    },
+    {
+      "name": "reschedule collision",
+      "pid_a": 8308,
+      "pid_b": 5164,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23P01"
+    },
+    {
+      "name": "review uniqueness",
+      "pid_a": 16020,
+      "pid_b": 2412,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23505"
+    },
+    {
+      "name": "last owner",
+      "pid_a": 21484,
+      "pid_b": 21732,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "P0001"
+    },
+    {
+      "name": "seat limit",
+      "pid_a": 23328,
+      "pid_b": 15860,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "P0001"
+    },
+    {
+      "name": "billing replay",
+      "pid_a": 5856,
+      "pid_b": 25848,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": true,
+      "b_sqlstate": null
+    },
+    {
+      "name": "checkout lease",
+      "pid_a": 22764,
+      "pid_b": 24524,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": true,
+      "b_sqlstate": null
+    },
+    {
+      "name": "duplicate booking",
+      "pid_a": 9172,
+      "pid_b": 16640,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": false,
+      "b_sqlstate": "23P01"
+    },
+    {
+      "name": "photo compare and swap",
+      "pid_a": 22756,
+      "pid_b": 25788,
+      "verified_wait": "Lock",
+      "release_a": "commit",
+      "b_success": true,
+      "b_sqlstate": null
+    }
+  ]
+}

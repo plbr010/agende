@@ -25,7 +25,7 @@ test("confirmation message follows the salon template", () => {
       "Seu agendamento no *Luna* está confirmado!",
       "",
       "✨ Serviço: Manicure",
-      "👩 Profissional: Ana",
+      "👤 Profissional: Ana",
       "📅 Data: 16 de outubro de 2026",
       "🕒 Horário: 14:30",
       "",

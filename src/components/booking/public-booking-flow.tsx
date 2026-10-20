@@ -898,12 +898,15 @@ function BookingSuccess({
           <span className="mx-auto grid size-16 place-items-center rounded-full bg-metric-blush text-[var(--rose-ink)]" aria-hidden="true">
             ✓
           </span>
-          <h1 className="mt-4 font-serif text-4xl text-wine-deep">Agendamento confirmado!</h1>
+          <h1 className="mt-4 font-serif text-4xl text-wine-deep">{confirmation.status === "confirmed" ? "Agendamento confirmado!" : "Solicitação recebida!"}</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Seu horário no {confirmation.workspaceName} está reservado. Confira os detalhes abaixo.
+            {confirmation.status === "confirmed"
+              ? `Seu horário no ${confirmation.workspaceName} está confirmado. Confira os detalhes abaixo.`
+              : `Sua solicitação no ${confirmation.workspaceName} aguarda confirmação do estabelecimento.`}
           </p>
         </section>
         <article className="rounded-[2rem] bg-card p-5 ring-1 ring-border">
+          <SummaryRow label="Status" value={confirmation.status === "confirmed" ? "Confirmado" : "Aguardando confirmação"} />
           <SummaryRow label="Salão" value={confirmation.workspaceName} />
           <SummaryRow label="Serviço" value={confirmation.serviceName} />
           <SummaryRow label="Profissional" value={confirmation.professionalName} />

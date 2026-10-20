@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-20T16:44:23.315Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "real public RPC handles city establishment professional combined accents case and extra spaces; only public contract",
+      "status": "PASS"
+    },
+    {
+      "name": "actual mobile browser finds professional in a freely chosen city via Server Action",
+      "status": "PASS"
+    }
+  ]
+}

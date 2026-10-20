@@ -1,0 +1,49 @@
+{
+  "checked_at": "2026-10-20T16:43:00.931Z",
+  "livemode": false,
+  "production_changed": false,
+  "checks": [
+    {
+      "workspace_id": "ba097499-9ee2-4f10-a2bc-e4818c2dc04c",
+      "session_id": "cs_test_a1y5PiUEVdSL8e5DoQYpzQjoY1IYIUCp2QZQk1K47oupXnWVUPzI2jMaX2",
+      "plan": "solo",
+      "interval": "monthly",
+      "hosted_test_payment": "PASS"
+    },
+    {
+      "workspace_id": "4c6b911d-be57-47ea-8762-0fd1cf2cc544",
+      "session_id": "cs_test_a13DybQXr73OBz0LO3aF7V4kXH3qZWLeEbT45JvZnHf8vBHOOCIwWqZgjD",
+      "plan": "solo",
+      "interval": "annual",
+      "hosted_test_payment": "PASS"
+    },
+    {
+      "workspace_id": "6a39b374-b760-44a4-bd8b-15f010e397a9",
+      "session_id": "cs_test_a1lxBIt6SMbeIYC2FduyRuubaAmqntr5vUwRIqZhmuZDFBnFEGt6xphxcs",
+      "plan": "equipe",
+      "interval": "monthly",
+      "hosted_test_payment": "PASS"
+    },
+    {
+      "workspace_id": "ebefcf1e-2e24-45a6-b9ce-ddcb78991863",
+      "session_id": "cs_test_a1bR9tspTlr37ifP2FubJLJy0R9fnOP9TPpM2x4k1kwrnO5Fdd3qN4bP6S",
+      "plan": "equipe",
+      "interval": "annual",
+      "hosted_test_payment": "PASS"
+    },
+    {
+      "workspace_id": "618d7931-5171-47c0-802a-a84f88a60b7b",
+      "session_id": "cs_test_a19sjt05RRrzZoVk7nWRPyiP7owB86jTK9L07hSguuWcT32tijawoCwNpm",
+      "plan": "salao",
+      "interval": "monthly",
+      "hosted_test_payment": "PASS"
+    },
+    {
+      "workspace_id": "0837c87d-ab1a-4bea-85e6-a977418f2927",
+      "session_id": "cs_test_a140M4xuuVjNpGBQQuyYgr8a7LZtpjgqSWydqHCxMPFJ4KlbDb9urY8Poc",
+      "plan": "salao",
+      "interval": "annual",
+      "hosted_test_payment": "PASS"
+    }
+  ]
+}

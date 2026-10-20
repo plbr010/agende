@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-20T16:40:20.086Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_access": false,
+  "migrations_executed": false,
+  "deployments_executed": false,
+  "service_role_used": false,
+  "external_whatsapp_requests": 0,
+  "frontend_gaps": [],
+  "checks": [
+    {
+      "name": "anonymous REST and RPC deny actual available booking without creating an appointment",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile visitor keeps all selections through real login; no booking is created during login",
+      "status": "PASS"
+    },
+    {
+      "name": "actual authenticated Server Action creates one booking and publishes it in the free client area",
+      "status": "PASS"
+    },
+    {
+      "name": "current real WhatsApp contract denies foreign tenant and client sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "real Server Action supplies current authorized contact model and copy-only manual message",
+      "status": "PASS"
+    },
+    {
+      "name": "manual redirect reflects pending and confirmed messages without sending or changing status",
+      "status": "PASS"
+    },
+    {
+      "name": "cancelled booking cannot redirect or expose a message",
+      "status": "PASS"
+    }
+  ]
+}
