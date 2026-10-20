@@ -1,0 +1,115 @@
+{
+  "checked_at": "2026-10-20T19:36:28.534797+00:00",
+  "production_functions": 243,
+  "staging_functions": 258,
+  "staging_only": [
+    {
+      "schema": "app",
+      "name": "require_professional_photo_editor",
+      "arguments": "p_member_id uuid"
+    },
+    {
+      "schema": "public",
+      "name": "claim_professional_photo_cleanup",
+      "arguments": "p_member_id uuid"
+    },
+    {
+      "schema": "public",
+      "name": "claim_workspace_image_cleanup",
+      "arguments": "p_workspace_id uuid"
+    },
+    {
+      "schema": "public",
+      "name": "finish_professional_photo_cleanup",
+      "arguments": "p_path text"
+    },
+    {
+      "schema": "public",
+      "name": "finish_workspace_image_cleanup",
+      "arguments": "p_workspace_id uuid, p_path text"
+    },
+    {
+      "schema": "public",
+      "name": "get_appointment_whatsapp",
+      "arguments": "p_appointment_id uuid"
+    },
+    {
+      "schema": "public",
+      "name": "get_professional_photo",
+      "arguments": "p_member_id uuid, p_slug text"
+    },
+    {
+      "schema": "public",
+      "name": "get_public_workspace_cover",
+      "arguments": "p_slug text"
+    },
+    {
+      "schema": "public",
+      "name": "get_related_client_avatar",
+      "arguments": "p_client_id uuid"
+    },
+    {
+      "schema": "public",
+      "name": "list_my_reschedule_slots",
+      "arguments": "p_appointment_id uuid, p_professional_member_id uuid, p_local_date date"
+    },
+    {
+      "schema": "public",
+      "name": "queue_professional_photo",
+      "arguments": "p_actor_id uuid, p_member_id uuid, p_path text"
+    },
+    {
+      "schema": "public",
+      "name": "queue_workspace_image_upload",
+      "arguments": "p_workspace_id uuid, p_kind text, p_path text"
+    },
+    {
+      "schema": "public",
+      "name": "submit_appointment_review",
+      "arguments": "p_appointment_id uuid, p_rating integer, p_comment text"
+    },
+    {
+      "schema": "public",
+      "name": "swap_professional_photo",
+      "arguments": "p_actor_id uuid, p_member_id uuid, p_expected_path text, p_new_path text"
+    },
+    {
+      "schema": "public",
+      "name": "swap_workspace_image",
+      "arguments": "p_workspace_id uuid, p_kind text, p_expected_path text, p_new_path text"
+    }
+  ],
+  "different_definition": [
+    {
+      "schema": "app",
+      "name": "create_public_appointment",
+      "arguments": "p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text, p_ip_hash text"
+    },
+    {
+      "schema": "app",
+      "name": "discovery_text",
+      "arguments": "p_text text"
+    },
+    {
+      "schema": "app",
+      "name": "list_my_appointments",
+      "arguments": ""
+    },
+    {
+      "schema": "app",
+      "name": "sync_billing_subscription",
+      "arguments": "p_workspace_id uuid, p_provider text, p_external_customer_id text, p_external_subscription_id text, p_plan subscription_plan, p_billing_interval billing_interval, p_status subscription_status, p_current_period_start timestamp with time zone, p_current_period_end timestamp with time zone, p_canceled_at timestamp with time zone"
+    },
+    {
+      "schema": "app",
+      "name": "update_workspace_settings",
+      "arguments": "p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text, p_clear_logo boolean"
+    },
+    {
+      "schema": "public",
+      "name": "search_public_workspaces",
+      "arguments": "p_city text, p_state text, p_query text, p_postal_code text, p_limit integer, p_offset integer"
+    }
+  ],
+  "note": "Definitions normalized CRLF; all differences require interpretation, provisioning history counts are not deployment equality."
+}

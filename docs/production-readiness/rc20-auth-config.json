@@ -1,0 +1,26 @@
+{
+  "checked_date": "2026-10-20",
+  "source": "authenticated Supabase dashboard, read-only",
+  "production": {
+    "project": "wohimauqgywshbbejjcl",
+    "site_url": "http://localhost:3000",
+    "redirect_urls": [],
+    "custom_smtp": false,
+    "allow_signup": true,
+    "anonymous_signin": false,
+    "confirm_email": true,
+    "email_provider": true
+  },
+  "staging": {
+    "project": "fkpdudnnperufnmdwdlv",
+    "site_url": "http://localhost:3000",
+    "redirect_urls": [
+      "http://localhost:3000/auth/callback",
+      "http://localhost:3000/auth/recovery",
+      "http://127.0.0.1:3000/auth/callback",
+      "http://127.0.0.1:3000/auth/recovery"
+    ]
+  },
+  "production_mutations": 0,
+  "secret_values_read": false
+}

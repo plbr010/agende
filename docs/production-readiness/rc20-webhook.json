@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-20T19:30:45.414077+00:00",
+  "version": 4,
+  "verify_jwt": false,
+  "production_source_sha256": "6cff0c7ce3e18d99ef80f2b6baf4a9f10b28c7e99dbaeefe5f0bd5453b1b8417",
+  "candidate_source_sha256": "085025da7cbd3a51c8be45d462bb11227afa3d9cf04fc7f324cf3e19f28206b8",
+  "source_equal": false,
+  "production_writes": 0,
+  "source_contains_secrets": false
+}

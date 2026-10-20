@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-20T19:39:12.126692+00:00",
+  "base_main_sha": "9a8625ae2182e06716f47de3bc8da9051f898e3a",
+  "production_deployment": "dpl_84raZVv15LKrLDMDu8D6ZPtRSXqW",
+  "production_writes": 0,
+  "clean_install": {
+    "status": "PASS",
+    "packages": 407,
+    "node": "24",
+    "lockfile_changed": false
+  },
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "staging_build": "PASS",
+    "built_smoke": "PASS",
+    "offline_migration_generation_unchanged": "PASS",
+    "stripe_contract_verifier_historical_snapshot": "PASS",
+    "schema_drift_verifier_historical_snapshot": "PASS",
+    "production_dependencies_audit_zero_vulnerabilities": "PASS",
+    "readonly_production_http": "PASS"
+  },
+  "standard": {
+    "passed": 412,
+    "failed": 0,
+    "skipped": 0
+  },
+  "native_pg17": {
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0,
+    "concurrency_included": 10,
+    "server_stopped": true
+  },
+  "isolated_e2e": {
+    "passed": 11,
+    "failed": 0,
+    "blocked": 0
+  },
+  "staging_readonly_e2e": {
+    "groups_passed": 5,
+    "business_writes": 0,
+    "owned_confirmed_identities": 3
+  },
+  "failed_readiness_gates": [
+    "production_schema_and_booking_acl",
+    "production_auth_urls_and_smtp",
+    "webhook_source_drift",
+    "recent_recoverable_backup_with_storage"
+  ],
+  "blocked": [
+    "production_mutations_require_specific_authorization",
+    "restore_prohibited_in_this_mission"
+  ],
+  "decision": "NO-GO production"
+}

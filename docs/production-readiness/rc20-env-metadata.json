@@ -1,0 +1,191 @@
+{
+  "checked_at": "2026-10-20T19:29:42.690Z",
+  "decrypt": false,
+  "envs": [
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ]
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/profiles-media-p0-20261015"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/profiles-media-p0-20261015"
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/profiles-media-p0-20261015"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/hotfix-auth-p0-20261015"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/hotfix-auth-p0-20261015"
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/final-homologation-2026-10-15"
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stabilization-post49-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_AGENDE_DEPLOYMENT_ENV",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stabilization-post49-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stabilization-post49-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stabilization-post49-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SITE_URL",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/stripe-test-homologation-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/p0-launch-unblocking-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/p0-launch-unblocking-2026-10-14"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/functional-completion-2026-10-13"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/functional-completion-2026-10-13"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "type": "encrypted",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ]
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "type": "encrypted",
+      "target": [
+        "production",
+        "preview",
+        "development"
+      ]
+    }
+  ]
+}

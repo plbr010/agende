@@ -1,0 +1,73 @@
+{
+  "checked_at": "2026-10-20T19:35:44.014904+00:00",
+  "production_writes": 0,
+  "restore_executed": false,
+  "decryption_or_manifest_authentication_verified": false,
+  "storage_bytes_covered": false,
+  "archives": [
+    {
+      "snapshot_at": "2026-10-16T03:18:05.692Z",
+      "completed_at": "2026-10-16T03:22:16.483Z",
+      "restore_verified": false,
+      "full_platform_restore_verified": false,
+      "files": [
+        {
+          "file": "database.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "core.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "roles.sql.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "snapshot.json.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        }
+      ]
+    },
+    {
+      "snapshot_at": "2026-10-16T04:01:42.635Z",
+      "completed_at": "2026-10-16T04:05:57.257Z",
+      "restore_verified": false,
+      "full_platform_restore_verified": false,
+      "files": [
+        {
+          "file": "database.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "core.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "roles.sql.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "snapshot.json.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        }
+      ]
+    }
+  ]
+}

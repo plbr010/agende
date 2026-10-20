@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-10-20T19:35:00.847Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "application_base_sha": "9a8625ae2182e06716f47de3bc8da9051f898e3a",
+  "business_writes": 0,
+  "production_writes": 0,
+  "auth_operations": "owned fixture sign-in/getUser/local sign-out only",
+  "limits": "No fresh signup SMTP upload booking reschedule cancellation checkout or natural one-hour expiry in this run; prior FINAL20 evidence remains separately dated.",
+  "checks": [
+    {
+      "name": "three existing SMTP-confirmed owner professional and client identities verified by GoTrue",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous booking RPC permission denied before any business write",
+      "status": "PASS"
+    },
+    {
+      "name": "existing client reads own preserved cancelled booking history",
+      "status": "PASS"
+    },
+    {
+      "name": "current mobile owner team professional agenda and client history render with real staging sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "current public discovery pages render against real staging without publishing fixtures",
+      "status": "PASS"
+    }
+  ]
+}
