@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-20T17:51:29.650Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "read_only": true,
+  "production_writes": 0,
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "all own journey services archived",
+      "status": "PASS"
+    },
+    {
+      "name": "only own recorded journey hours removed",
+      "status": "PASS"
+    },
+    {
+      "name": "both legitimate establishments settings and publication restored",
+      "status": "PASS"
+    },
+    {
+      "name": "own journey appointments cancelled with history retained",
+      "status": "PASS"
+    }
+  ]
+}
