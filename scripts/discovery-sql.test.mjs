@@ -56,6 +56,25 @@ test('public discovery: consent, any city, global name, pagination, privacy and 
   const member=(await db.query('select id from public.workspace_members where workspace_id=$1',[a.wid])).rows[0].id;
   await as(a.uid,"select public.save_service_with_professionals($1,null,'Corte',null,30,5000,true,$2) data",[a.wid,[member]]);
   assert.equal((await search(null,'Alpha')).items[0].booking_open,true);
+  // Both stored values and caller input must normalize spacing and accents.
+  await db.query("update public.professional_profiles set display_name='Ána  Maria' where member_id=$1",[member]);
+  assert.equal((await search('  SAO   PAULO  ','  ANA   MARIA ')).items[0].slug,(await search(null,'Alpha')).items[0].slug);
+  assert.equal((await search('Salvador','Ana Maria')).total,0);
+  const svc=(await db.query('select id from public.services where workspace_id=$1',[a.wid])).rows[0].id;
+  await db.query('update public.services set active=false where id=$1',[svc]);
+  assert.equal((await search(null,'Ana Maria')).total,0);
+  await db.query('update public.services set active=true where id=$1',[svc]);
+  await db.query('update public.professional_services set active=false where service_id=$1',[svc]);
+  assert.equal((await search(null,'Ana Maria')).total,0);
+  await db.query('update public.professional_services set active=true where service_id=$1',[svc]);
+  await as(a.uid,'update public.professional_profiles set booking_enabled=false where member_id=$1',[member]);
+  assert.equal((await search(null,'Ana Maria')).total,0);
+  await as(a.uid,'update public.professional_profiles set booking_enabled=true where member_id=$1',[member]);
+  assert.equal((await search(null,'ANA MARIA')).total,1);
+  await db.query("update public.services set archived_at=now() where id=$1",[svc]);
+  assert.equal((await search(null,'Ana Maria')).total,0);
+  await db.query('update public.services set archived_at=null where id=$1',[svc]);
+
   await db.transaction(async tx=>{
     await tx.exec("select set_config('app.bypass_protected_columns','on',true)");
     await tx.query("update public.subscriptions set status='expired' where workspace_id=$1",[a.wid]);

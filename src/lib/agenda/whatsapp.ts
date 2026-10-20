@@ -38,5 +38,5 @@ export function appointmentWhatsAppMessage(input: WhatsAppAppointment): string {
   const intro = value.status === "confirmed"
     ? `Seu agendamento no *${name(value.workspaceName)}* está confirmado!`
     : `Recebemos sua solicitação de agendamento no *${name(value.workspaceName)}*. Ela ainda aguarda confirmação.`;
-  return `Olá, ${first}! 💗\n\n${intro}\n\n✨ Serviço: ${name(value.serviceName)}\n👩 Profissional: ${name(value.professionalName)}\n📅 Data: ${date}\n🕒 Horário: ${time}\n\n${value.status === "confirmed" ? "Estamos te esperando! 💕" : "Avisaremos assim que for confirmada. 💕"}`;
+  return `Olá, ${first}! 💗\n\n${intro}\n\n✨ Serviço: ${name(value.serviceName)}\n👤 Profissional: ${name(value.professionalName)}\n📅 Data: ${date}\n🕒 Horário: ${time}\n\n${value.status === "confirmed" ? "Estamos te esperando! 💕" : "Avisaremos assim que for confirmada. 💕"}`;
 }

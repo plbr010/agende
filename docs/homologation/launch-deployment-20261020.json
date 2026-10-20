@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-20",
+  "site": "https://agendeapp.online",
+  "deployment_id": "dpl_2dLSrjrqVTD4dCb6Akwn9HSNG2TU",
+  "state": "READY",
+  "commit": "36693e343d634c6af126ebf78554fe851b91e194",
+  "target": "production",
+  "branch": "main",
+  "source": "Vercel get_deployment, read only",
+  "production_changes": false
+}

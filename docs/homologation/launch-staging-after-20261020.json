@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-10-20T16:47:06.717Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "audit": {
+    "booking": {
+      "anon_execute": false,
+      "confirmed_gate": true,
+      "guest_fallback": false
+    },
+    "whatsapp": true,
+    "migrations": [
+      {
+        "name": "public_workspace_discovery",
+        "version": "20261014031601"
+      },
+      {
+        "name": "client_phase2_profiles_favorites",
+        "version": "20261014173144"
+      },
+      {
+        "name": "client_phase2_avatar_upload_cleanup",
+        "version": "20261014173933"
+      },
+      {
+        "name": "workspace_media_and_settings_contract",
+        "version": "20261015054655"
+      },
+      {
+        "name": "workspace_settings_validation",
+        "version": "20261015054832"
+      },
+      {
+        "name": "profiles_booking_whatsapp",
+        "version": "20261016080427"
+      },
+      {
+        "name": "require_confirmed_public_booking",
+        "version": "20261020163226"
+      },
+      {
+        "name": "launch_discovery_eligibility",
+        "version": "20261020163432"
+      }
+    ],
+    "normalized_uppercase": "sao paulo"
+  }
+}

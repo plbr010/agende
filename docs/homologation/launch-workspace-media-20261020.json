@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-10-20T16:44:50.723Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "mode": "real Storage/PostgREST, local Next, actual Edge browser",
+  "checks": [
+    {
+      "name": "private avatar upload replacement isolation and removal professional",
+      "status": "PASS"
+    },
+    {
+      "name": "real agenda detail renders linked client name and global avatar, foreign tenant image denied",
+      "status": "PASS"
+    },
+    {
+      "name": "private avatar upload replacement isolation and removal client",
+      "status": "PASS"
+    },
+    {
+      "name": "logo browser consent upload public render replacement and removal",
+      "status": "PASS"
+    },
+    {
+      "name": "cover browser consent upload public render replacement and removal",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign workspace image mutations and private settings denied",
+      "status": "PASS"
+    }
+  ]
+}
