@@ -25,6 +25,8 @@ test("public booking reduces steps and keeps undo actions visible", () => {
   assert.match(source, /Mudar horário/);
   assert.match(source, /Alterar meus dados/);
   assert.match(source, /bookingStepCaption/);
+  assert.match(source, /bookingReceiptCopy\(confirmation\.status\)/);
+  assert.doesNotMatch(source, /Agendamento confirmado!/);
   assert.doesNotMatch(source, /no fuso do estabelecimento/);
   assert.doesNotMatch(source, /ative a área de cliente no painel/);
 });

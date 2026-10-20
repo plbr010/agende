@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import {
+  DISCOVERY_COPY,
   DISCOVERY_RPCS,
   listPublicLocalitiesWithRpc,
   searchPublicWorkspacesWithRpc,
@@ -33,8 +34,12 @@ function rpcFromClient(supabase: Awaited<ReturnType<typeof createClient>>) {
 export async function searchPublicWorkspacesAction(
   input: DiscoverySearchInput,
 ): Promise<DiscoverySearchResult> {
-  const supabase = await createClient();
-  return searchPublicWorkspacesWithRpc(rpcFromClient(supabase), input);
+  try {
+    const supabase = await createClient();
+    return await searchPublicWorkspacesWithRpc(rpcFromClient(supabase), input);
+  } catch {
+    return { status: "error", message: DISCOVERY_COPY.searchError, items: [] };
+  }
 }
 
 export async function listPublicLocalitiesAction(

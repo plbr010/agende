@@ -231,7 +231,9 @@ function AppointmentCard({
           <p className="text-sm text-muted-foreground">com {item.professionalName}</p>
           <p className="mt-3 text-sm font-medium">{formatDateTimeInTimeZone(item.startsAt, item.timezone)}</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-secondary px-3 py-1 text-xs">{STATUS_LABEL[status]}</span>
+            <span className="rounded-full bg-secondary px-3 py-1 text-xs">
+              {status === "scheduled" ? "Aguardando confirmação" : STATUS_LABEL[status]}
+            </span>
             <span className="text-sm text-muted-foreground">{formatCentsToReais(item.priceCents)}</span>
           </div>
         </div>

@@ -76,6 +76,9 @@ test("discovery is honest and not limited to the city of residence", () => {
   assert.match(ui, /modeNearby/);
   assert.match(ui, /modeGlobal/);
   assert.match(ui, /loadMore/);
+  assert.match(ui, /discoveryHref/);
+  assert.match(ui, /Limpar filtros|DISCOVERY_COPY.clear/);
+  assert.match(ui, /publicImageUrl/);
   assert.match(ui, /scenarioHint/);
   assert.match(ui, /nextRadioIndex/);
   assert.match(ui, /\.catch\(/);

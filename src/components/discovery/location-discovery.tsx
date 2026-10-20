@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { MapPin, Navigation, Search } from "lucide-react";
 import { FavoriteButton } from "@/components/client/favorite-button";
 import { EmptyState } from "@/components/app/empty-state";
@@ -20,9 +21,12 @@ import {
   type DiscoveryMode,
   type DiscoverySearchInput,
   type DiscoverySearchResult,
+  type DiscoveryWorkspaceCard,
 } from "@/lib/discovery/contract";
+import { discoveryHref, discoveryInputFromUrl, type DiscoveryUrlState } from "@/lib/discovery/url";
 import { reverseGeocodeLocality } from "@/lib/discovery/geocode";
 import { nextRadioIndex } from "@/lib/usability/roving-radio";
+import { publicImageUrl } from "@/lib/workspace/public";
 import { BR_STATES, selectClassName } from "@/lib/workspace/labels";
 import { cn } from "@/lib/utils";
 
@@ -34,29 +38,84 @@ const MODES: { id: DiscoveryMode; label: string }[] = [
   { id: "global", label: DISCOVERY_COPY.modeGlobal },
 ];
 
+const EMPTY_QUERY: DiscoveryUrlState = { mode: "city", city: "", state: "", query: "" };
+
 export function LocationDiscovery({
   knownWorkspaces = [],
   savedFavorites = {},
   canSaveFavorites = false,
+  initialQuery = EMPTY_QUERY,
+  initialResult = null,
 }: {
   knownWorkspaces?: { slug: string; name: string }[];
   savedFavorites?: Record<string, string>;
   canSaveFavorites?: boolean;
+  initialQuery?: DiscoveryUrlState;
+  initialResult?: DiscoverySearchResult | null;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const modeGroupId = useId();
-  const [mode, setMode] = useState<DiscoveryMode>("city");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<DiscoveryMode>(initialQuery.mode);
+  const [city, setCity] = useState(initialQuery.city);
+  const [state, setState] = useState(initialQuery.state);
+  const [query, setQuery] = useState(initialQuery.query);
   const [coordinates, setCoordinates] = useState<DiscoveryCoordinates | undefined>();
   const [nearby, setNearby] = useState<NearbyStatus>("idle");
   const [formError, setFormError] = useState<string | null>(null);
-  const [result, setResult] = useState<DiscoverySearchResult | null>(null);
+  const [result, setResult] = useState<DiscoverySearchResult | null>(initialResult);
   const [pending, setPending] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastSearch, setLastSearch] = useState<DiscoverySearchInput | null>(null);
+  const [lastSearch, setLastSearch] = useState<DiscoverySearchInput | null>(
+    initialResult?.status === "ready" ? discoveryInputFromUrl(initialQuery) : null,
+  );
   const [suggestions, setSuggestions] = useState<DiscoveryLocality[]>([]);
   const searchLock = useRef(false);
+  const searchGeneration = useRef(0);
+
+  function rememberSearch(input: DiscoverySearchInput) {
+    router.replace(
+      discoveryHref(pathname, {
+        mode: input.mode ?? "city",
+        city: input.city ?? "",
+        state: input.state ?? "",
+        query: input.query ?? "",
+      }),
+      { scroll: false },
+    );
+  }
+
+  async function executeSearch(input: DiscoverySearchInput) {
+    if (searchLock.current) return;
+    const blocked = discoverySearchBlockedReason(input);
+    if (blocked) {
+      setFormError(blocked);
+      setResult(null);
+      setLastSearch(null);
+      return;
+    }
+    const generation = searchGeneration.current + 1;
+    searchGeneration.current = generation;
+    setFormError(null);
+    searchLock.current = true;
+    setPending(true);
+    try {
+      const next = await searchPublicWorkspacesAction(input);
+      if (generation !== searchGeneration.current) return;
+      setResult(next);
+      setLastSearch(input);
+      rememberSearch(input);
+    } catch {
+      if (generation !== searchGeneration.current) return;
+      setResult({ status: "error", message: DISCOVERY_COPY.searchError, items: [] });
+      setLastSearch(null);
+    } finally {
+      if (generation === searchGeneration.current) {
+        searchLock.current = false;
+        setPending(false);
+      }
+    }
+  }
 
   useEffect(() => {
     if (mode !== "city" || city.trim().length < 2) {
@@ -86,6 +145,24 @@ export function LocationDiscovery({
     if (next !== "nearby") {
       setCoordinates(undefined);
     }
+    router.replace(discoveryHref(pathname, { mode: next, city, state, query }), { scroll: false });
+  }
+
+  function clearFilters() {
+    searchGeneration.current += 1;
+    searchLock.current = false;
+    setPending(false);
+    setMode("city");
+    setCity("");
+    setState("");
+    setQuery("");
+    setCoordinates(undefined);
+    setNearby("idle");
+    setFormError(null);
+    setResult(null);
+    setLastSearch(null);
+    setSuggestions([]);
+    router.replace(pathname, { scroll: false });
   }
 
   function onModeKeyDown(event: React.KeyboardEvent<HTMLButtonElement>, current: DiscoveryMode) {
@@ -153,30 +230,24 @@ export function LocationDiscovery({
       setLastSearch(null);
       return;
     }
-    setFormError(null);
-    searchLock.current = true;
-    setPending(true);
-    try {
-      const next = await searchPublicWorkspacesAction(input);
-      setResult(next);
-      setLastSearch(input);
-    } catch {
-      setResult({ status: "error", message: DISCOVERY_COPY.searchError, items: [] });
-      setLastSearch(null);
-    } finally {
-      searchLock.current = false;
-      setPending(false);
-    }
+    await executeSearch(input);
+  }
+
+  function searchWholeCity() {
+    setQuery("");
+    void executeSearch({ mode, city, state, query: "", coordinates: mode === "nearby" ? coordinates : undefined, offset: 0 });
   }
 
   async function loadMore() {
     if (!lastSearch || !result || result.status !== "ready" || pending || loadingMore || searchLock.current) return;
     if (!discoveryHasMorePage(result.items.length, result.total)) return;
+    const generation = searchGeneration.current;
     setFormError(null);
     searchLock.current = true;
     setLoadingMore(true);
     try {
       const next = await searchPublicWorkspacesAction({ ...lastSearch, offset: result.items.length });
+      if (generation !== searchGeneration.current) return;
       if (next.status === "ready") {
         if (next.items.length === 0) {
           setResult({ status: "ready", items: result.items, total: result.items.length });
@@ -195,10 +266,13 @@ export function LocationDiscovery({
       }
       setFormError(DISCOVERY_COPY.searchError);
     } catch {
+      if (generation !== searchGeneration.current) return;
       setFormError(DISCOVERY_COPY.searchError);
     } finally {
-      searchLock.current = false;
-      setLoadingMore(false);
+      if (generation === searchGeneration.current) {
+        searchLock.current = false;
+        setLoadingMore(false);
+      }
     }
   }
 
@@ -286,7 +360,7 @@ export function LocationDiscovery({
                     setCity(event.target.value);
                     setFormError(null);
                   }}
-                  placeholder="Ex.: Recife, Curitiba, Juiz de Fora"
+                  placeholder="Ex.: Muriaé, Juiz de Fora, Recife"
                   autoComplete="address-level2"
                   className="h-11"
                   list="discovery-city-suggestions"
@@ -330,24 +404,35 @@ export function LocationDiscovery({
                 setQuery(event.target.value);
                 setFormError(null);
               }}
-              placeholder={mode === "global" ? "Ex.: Studio Aurora, Maria" : "Se souber o nome"}
+              placeholder={mode === "global" ? "Ex.: Studio Aurora ou Maria" : "Opcional. Ex.: Maria"}
               autoComplete="off"
               className="h-11"
             />
+            <p className="text-sm text-muted-foreground">{DISCOVERY_COPY.queryHint}</p>
           </div>
           {formError ? (
             <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {formError}
             </p>
           ) : null}
-          <Button type="submit" className="h-12 rounded-full" disabled={pending || loadingMore} aria-busy={pending}>
-            <Search className="size-4" aria-hidden="true" />
-            {pending ? "Procurando..." : DISCOVERY_COPY.submit}
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button type="submit" className="h-12 flex-1 rounded-full" disabled={pending || loadingMore} aria-busy={pending}>
+              <Search className="size-4" aria-hidden="true" />
+              {pending ? "Procurando..." : DISCOVERY_COPY.submit}
+            </Button>
+            <Button type="button" variant="outline" className="h-12 rounded-full" disabled={pending || loadingMore} onClick={clearFilters}>
+              {DISCOVERY_COPY.clear}
+            </Button>
+          </div>
         </form>
       </section>
 
       <div aria-live="polite">
+        {pending ? (
+          <p role="status" className="rounded-[1.5rem] bg-white px-4 py-3 text-sm text-muted-foreground ring-1 ring-[#f0e4de]">
+            Procurando estabelecimentos…
+          </p>
+        ) : null}
         {result?.status === "unavailable" ? (
           <section className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de]">
             <EmptyState
@@ -375,27 +460,20 @@ export function LocationDiscovery({
             <p className="text-sm text-muted-foreground">
               {formatDiscoveryShowingCount(result.items.length, result.total)}
             </p>
+            {lastSearch?.query && mode !== "global" && city.trim().length >= 2 ? (
+              <Button type="button" variant="outline" className="h-11 w-fit rounded-full" disabled={pending || loadingMore} onClick={searchWholeCity}>
+                {DISCOVERY_COPY.cityWide}
+              </Button>
+            ) : null}
             <ul className="grid gap-3">
               {result.items.map((item) => (
-                <li key={item.slug} className="agende-panel grid gap-3 rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de]">
-                  <a href={`/p/${item.slug}`} className="flex min-h-16 flex-col rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-                    <p className="font-serif text-xl text-wine-deep">{item.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {[item.city, item.state].filter(Boolean).join(" · ") || "Localidade cadastrada"}
-                    </p>
-                    <p className="mt-1 text-xs font-medium text-wine-deep">
-                      {item.bookingOpen ? DISCOVERY_COPY.bookingOpen : DISCOVERY_COPY.bookingClosed}
-                    </p>
-                  </a>
-                  {canSaveFavorites ? (
-                    <FavoriteButton
-                      slug={item.slug}
-                      workspaceId={item.workspaceId ?? savedFavorites[item.slug] ?? null}
-                      initialSaved={Boolean(savedFavorites[item.slug])}
-                      name={item.name}
-                    />
-                  ) : null}
-                </li>
+                <DiscoveryResult
+                  key={item.slug}
+                  item={item}
+                  canSaveFavorites={canSaveFavorites}
+                  savedWorkspaceId={item.workspaceId ?? savedFavorites[item.slug] ?? null}
+                  saved={Boolean(savedFavorites[item.slug])}
+                />
               ))}
             </ul>
             {discoveryHasMorePage(result.items.length, result.total) && result.items.length <= 10000 ? (
@@ -425,5 +503,61 @@ export function LocationDiscovery({
         <WorkspaceFinder knownWorkspaces={knownWorkspaces} />
       </section>
     </div>
+  );
+}
+
+function DiscoveryResult({
+  item,
+  canSaveFavorites,
+  savedWorkspaceId,
+  saved,
+}: {
+  item: DiscoveryWorkspaceCard;
+  canSaveFavorites: boolean;
+  savedWorkspaceId: string | null;
+  saved: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  const logo = publicImageUrl(item.logoPath);
+  const place = [item.city, item.state].filter(Boolean).join(" · ");
+  const initial = item.name.slice(0, 1).toUpperCase();
+
+  return (
+    <li className="agende-panel grid gap-3 rounded-[1.25rem] p-4 ring-1 ring-[#f0e4de]">
+      <a
+        href={`/p/${item.slug}`}
+        className="flex min-h-16 items-start gap-4 rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        {logo && !failed ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logo}
+            alt=""
+            onError={() => setFailed(true)}
+            className="size-16 shrink-0 rounded-2xl object-cover ring-1 ring-[#f0e4de]"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="grid size-16 shrink-0 place-items-center rounded-2xl bg-wine-deep font-serif text-2xl text-[var(--cream)]"
+          >
+            {initial}
+          </span>
+        )}
+        <span className="min-w-0">
+          <span className="block font-serif text-xl leading-tight text-wine-deep">{item.name}</span>
+          <span className="mt-1 block text-sm text-muted-foreground">{place || "Local informado pelo salão"}</span>
+          {item.description ? (
+            <span className="mt-1 line-clamp-2 block text-sm leading-6 text-foreground/80">{item.description}</span>
+          ) : null}
+          <span className="mt-2 inline-flex min-h-8 items-center text-sm font-medium text-wine-deep underline-offset-4">
+            {item.bookingOpen ? DISCOVERY_COPY.cardBook : DISCOVERY_COPY.cardProfile}
+          </span>
+        </span>
+      </a>
+      {canSaveFavorites ? (
+        <FavoriteButton slug={item.slug} workspaceId={savedWorkspaceId} initialSaved={saved} name={item.name} />
+      ) : null}
+    </li>
   );
 }
