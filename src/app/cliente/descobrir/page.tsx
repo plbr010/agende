@@ -6,10 +6,19 @@ import { loadMyAppointmentsResult } from "@/lib/booking/queries";
 import { uniqueClientWorkspaces } from "@/lib/booking/validation";
 import { loadWorkspaceFavorites } from "@/lib/client/favorite-actions";
 import { favoritesViewFromLoad } from "@/lib/client/favorites";
-import { DISCOVERY_COPY } from "@/lib/discovery/contract";
+import { searchPublicWorkspacesAction } from "@/lib/discovery/actions";
+import { DISCOVERY_COPY, discoverySearchBlockedReason } from "@/lib/discovery/contract";
+import { discoveryInputFromUrl, discoveryStateFromQuery } from "@/lib/discovery/url";
 
-export default async function ClienteDescobrirPage() {
+export default async function ClienteDescobrirPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ modo?: string | string[]; cidade?: string | string[]; uf?: string | string[]; q?: string | string[] }>;
+}) {
   await requireConfirmedSession("/cliente/descobrir");
+  const query = discoveryStateFromQuery(await searchParams);
+  const input = discoveryInputFromUrl(query);
+  const initialResult = discoverySearchBlockedReason(input) ? null : await searchPublicWorkspacesAction(input);
   const [appointmentsResult, favorites] = await Promise.all([
     loadMyAppointmentsResult(),
     loadWorkspaceFavorites().then(favoritesViewFromLoad),
@@ -25,7 +34,13 @@ export default async function ClienteDescobrirPage() {
         description={DISCOVERY_COPY.description}
         icon={MapPin}
       />
-      <LocationDiscovery knownWorkspaces={knownWorkspaces} canSaveFavorites savedFavorites={savedFavorites} />
+      <LocationDiscovery
+        knownWorkspaces={knownWorkspaces}
+        canSaveFavorites
+        savedFavorites={savedFavorites}
+        initialQuery={query}
+        initialResult={initialResult}
+      />
     </>
   );
 }

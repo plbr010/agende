@@ -4,28 +4,44 @@ import { MessageCircle } from "lucide-react";
 import { prepareAppointmentWhatsApp } from "@/lib/agenda/whatsapp-actions";
 import { Button } from "@/components/ui/button";
 
-export function AppointmentWhatsApp({ appointmentId, confirmed }: { appointmentId: string; confirmed: boolean }) {
+export function AppointmentWhatsApp({
+  appointmentId,
+  confirmed,
+  phoneNotice,
+}: {
+  appointmentId: string;
+  confirmed: boolean;
+  phoneNotice?: string | null;
+}) {
   const [feedback, setFeedback] = useState("");
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
   return (
     <div className="grid gap-2 rounded-2xl border p-3">
-      <Button
-        variant="outline"
-        className="h-12 w-full"
-        render={
-          <a
-            href={`/api/appointments/whatsapp?id=${encodeURIComponent(appointmentId)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          />
-        }
-      >
-        <MessageCircle aria-hidden="true" />
-        {confirmed ? "Confirmar pelo WhatsApp" : "Avisar pelo WhatsApp"}
-      </Button>
+      {phoneNotice ? (
+        <p role="status" className="rounded-2xl bg-metric-sand px-4 py-3 text-sm leading-6">
+          {phoneNotice}
+        </p>
+      ) : (
+        <Button
+          variant="outline"
+          className="h-12 w-full"
+          render={
+            <a
+              href={`/api/appointments/whatsapp?id=${encodeURIComponent(appointmentId)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          <MessageCircle aria-hidden="true" />
+          Confirmar pelo WhatsApp
+        </Button>
+      )}
       <p className="text-xs leading-5 text-muted-foreground">
-        O WhatsApp abre com a mensagem pronta. Você revisa e envia. Abrir o link não envia a mensagem e não altera o agendamento.
+        {confirmed
+          ? "O WhatsApp abre com a mensagem de confirmação. Você revisa e envia. Abrir o link não envia a mensagem e não altera o agendamento."
+          : "A mensagem avisa que a solicitação ainda aguarda confirmação. Ela não diz que o horário já está confirmado. Abrir ou copiar não altera o agendamento."}
       </p>
       <Button
         variant="ghost"

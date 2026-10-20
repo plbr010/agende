@@ -1,0 +1,132 @@
+{
+  "checked_at": "2026-10-20T17:47:54.835Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "livemode": false,
+  "provider_mutations": 0,
+  "production_writes": 0,
+  "status": "PASS",
+  "checks": [
+    {
+      "plan": "solo",
+      "interval": "monthly",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "plan": "solo",
+      "interval": "annual",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "plan": "equipe",
+      "interval": "monthly",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "plan": "equipe",
+      "interval": "annual",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "plan": "salao",
+      "interval": "monthly",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "plan": "salao",
+      "interval": "annual",
+      "provider_checkout_paid": true,
+      "provider_invoice_paid": true,
+      "provider_subscription_active": true,
+      "application_subscription_matches": true,
+      "cancel_at_period_end": false,
+      "application_invoice_paid_event": true,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "solo",
+      "interval": "monthly",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "solo",
+      "interval": "annual",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "equipe",
+      "interval": "monthly",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "equipe",
+      "interval": "annual",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "salao",
+      "interval": "monthly",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider invoice.paid delivery state",
+      "plan": "salao",
+      "interval": "annual",
+      "event_found": true,
+      "pending_webhooks": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "provider staging endpoint configuration",
+      "status": "PASS",
+      "enabled": true,
+      "all_events": false,
+      "invoice_paid_enabled": true,
+      "checkout_completed_enabled": true
+    }
+  ]
+}

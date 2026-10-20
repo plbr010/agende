@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-20T17:42:25.154Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "administrative_confirmation": false,
+  "only_own_new_fixture_password_changed": true,
+  "checks": [
+    {
+      "name": "recovery requested through actual form for own newly confirmed synthetic owner",
+      "status": "PASS"
+    },
+    {
+      "name": "recovery callback without original PKCE verifier refuses a different browser",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered recovery link changes password only in originating browser; old password rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "new password login persists after reload; explicit logout prevents dashboard access",
+      "status": "PASS"
+    },
+    {
+      "name": "consumed delivered recovery link cannot be reused",
+      "status": "PASS"
+    }
+  ],
+  "preexisting_before_task_user_passwords_changed": false
+}

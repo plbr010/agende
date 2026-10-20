@@ -1,0 +1,29 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real GoTrue; natural JWT expiry; no clock or token edits",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "confirmed real login creates session",
+      "status": "PASS"
+    },
+    {
+      "name": "unchanged original JWT rejected after actual expiry",
+      "status": "PASS"
+    },
+    {
+      "name": "real refresh renews expired access token and preserves identity",
+      "status": "PASS"
+    },
+    {
+      "name": "logout clears renewed session",
+      "status": "PASS"
+    }
+  ],
+  "issued_at": 1792515949,
+  "expires_at": 1792519549,
+  "lifetime_seconds": 3600,
+  "expired_access_http_status": 403,
+  "expired_access_error_code": "bad_jwt",
+  "checked_at": "2026-10-20T18:05:53.778Z"
+}

@@ -1,6 +1,6 @@
 export const MARKETING_NAV = [
   { href: "/profissionais", label: "Para profissionais" },
-  { href: "/descobrir", label: "Para clientes" },
+  { href: "/descobrir", label: "Encontrar salão" },
 ] as const;
 
 export const MARKETING_CTAS = {
@@ -191,7 +191,7 @@ export const HOW_IT_WORKS = [
 
 export const FOOTER_LINKS = [
   { href: "/profissionais", label: "Para profissionais" },
-  { href: "/descobrir", label: "Para clientes" },
+  { href: "/descobrir", label: "Encontrar salão" },
   { href: "/termos", label: "Termos" },
   { href: "/privacidade", label: "Privacidade" },
   { href: "/login", label: "Entrar" },

@@ -70,7 +70,7 @@ try {
   await page.getByRole('button',{name:'Continuar',exact:true}).click();
  }
  await page.getByRole('button',{name:'Reservar este horário',exact:true}).click();
- await page.getByRole('heading',{name:'Agendamento confirmado!',exact:true}).waitFor();
+ await page.getByRole('heading',{name:'Solicitação recebida',exact:true}).waitFor();
  assert.ok(!(await context.cookies()).some(c=>c.name==='agende_booking_draft'));record('reservation confirmed by UI after email callback; draft cleared');
  await ok(client.auth.signInWithPassword(fixtures.client));
  const rows=await ok(client.rpc('list_my_appointments'));

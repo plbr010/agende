@@ -7,6 +7,7 @@ import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
 import type { ClientRow, ServiceRow, TeamMember } from "@/lib/catalog/queries";
+import { clientPhoneNotice } from "@/lib/agenda/phone-notice";
 import type { AgendaAppointment } from "@/lib/agenda/queries";
 import type { MemberRole } from "@/lib/catalog/queries";
 import {
@@ -581,8 +582,13 @@ export function AppointmentDetailDialog({
           </dl>
           {canNotify && (appointment.status === "scheduled" || appointment.status === "confirmed") ? (
             <div className="grid gap-2">
-              <p className="text-sm font-medium text-wine-deep">Avisar a cliente</p>
-              <AppointmentWhatsApp key={`${appointment.id}-${appointment.status}-${appointment.startsAt}`} appointmentId={appointment.id} confirmed={appointment.status === "confirmed"} />
+              <p className="text-sm font-medium text-wine-deep">WhatsApp</p>
+              <AppointmentWhatsApp
+                key={`${appointment.id}-${appointment.status}-${appointment.startsAt}-${appointment.clientPhone ?? ""}`}
+                appointmentId={appointment.id}
+                confirmed={appointment.status === "confirmed"}
+                phoneNotice={clientPhoneNotice(appointment.clientPhone)}
+              />
             </div>
           ) : null}
           {canNotify && whatsAppUnavailable ? (

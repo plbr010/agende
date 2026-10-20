@@ -1,0 +1,104 @@
+{
+  "checked_at": "2026-10-20T17:59:31.963789+00:00",
+  "local": {
+    "node": 24,
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "staging_build": "PASS",
+    "build_smoke": "PASS",
+    "historical_migration_integrity": "PASS",
+    "local_flows": "PASS",
+    "schema_audit_against_historical_snapshot": "PASS",
+    "production_dependency_audit_vulnerabilities": 0
+  },
+  "initial_pr_ci": {
+    "url": "https://github.com/plbr010/agende/actions/runs/39469578838",
+    "head_sha": "1b04ca80ffdaf3a7526006aa5f91277cbe694ae1",
+    "conclusion": "success",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Checkout",
+        "conclusion": "success"
+      },
+      {
+        "name": "Setup Node",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm ci",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm audit --omit=dev --audit-level=high",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm test",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run node scripts/verify-stripe-recovery.mjs",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run node scripts/audit-local-flows.mjs",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run node scripts/audit-schema-drift.mjs",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run lint",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run typecheck",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run test:smoke",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install Playwright Chromium",
+        "conclusion": "success"
+      },
+      {
+        "name": "Isolated E2E",
+        "conclusion": "success"
+      },
+      {
+        "name": "Staging E2E (BLOQUEADO without opt-in)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload E2E evidence",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Setup Node",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Checkout",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "staging_e2e_ci_note": "No opt-in in CI; real cloud/browser evidence is in separate final20 reports.",
+  "candidate_vercel_deployments_observed": 0,
+  "production_writes": 0
+}

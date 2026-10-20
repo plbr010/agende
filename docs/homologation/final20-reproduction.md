@@ -1,0 +1,17 @@
+# Reproduzir a homologação final
+
+Não executar estes runners contra produção. Todos exigem `AGENDE_STAGING_ACCEPTANCE=fkpdudnnperufnmdwdlv` e validam o projeto antes das operações. Node >=22; nesta máquina foi usado Node 24. Credenciais, identidades sintéticas, links de confirmação e sessões são arquivos locais ignorados. Não anexá-los à PR, logs ou comandos públicos.
+
+Preparar build com URL/chave pública de staging, origem local confiável e credencial de servidor apenas no processo Next. O helper `staging-existing-server-key.mjs` usa a credencial já existente do projeto staging; não cria nem rotaciona secrets. Browser: Edge instalado via Playwright. Porta local 3000 livre. A caixa Gmail conectada só foi usada para ler mensagens exatas dos aliases sintéticos; não houve envio nem alteração de mensagens pela integração.
+
+Ordem da execução desta missão:
+
+1. `staging-final20-profiles-media.mjs`: prefixo privado `.env.profiles-media-final20`, mailbox em variável de ambiente, novas contas por formulário. Runner aguarda links reais entregues, gravados localmente pela leitura da caixa conectada. `--resume` continua a mesma fixture e preserva checks anteriores, sem substituir identidade.
+2. `staging-final20-employee-signup.mjs`: usa proprietário anterior e cria apenas profissional sintético novo; aguarda link entregue. Recusa sobrescrever manifesto existente. Convite feito por RPC autorizada; não envia mensagem a terceiros.
+3. `staging-final20-journey.mjs`: novo cliente por formulário após seleção. Links reais ficam no arquivo ignorado esperado. `--retry-before-signup` permite repetir preparação com a mesma identidade; `--reuse-confirmed` usa login real da identidade já confirmada e deve ser declarado no relatório. Fixtures antigas controladas fornecem o segundo estabelecimento para isolamento; settings e publicação são restaurados no finally.
+4. `staging-final20-modules.mjs`, `staging-final20-finance.mjs`, `staging-final20-concurrency.mjs`: operações cloud de contas sintéticas. Receita/PIX são registros contábeis locais; nenhum pagamento externo. Somente recursos recém-criados são limpos; contas e histórico preservados.
+5. `staging-final20-recovery.mjs`: muda exclusivamente a senha do proprietário novo desta missão. Manifesto privado recebe a nova senha; testes posteriores devem lê-lo novamente. O link deve ser consumido no navegador que iniciou a recuperação.
+6. `staging-session-lifecycle.mjs`: `AGENDE_AUTH_FIXTURE_FILE` aponta a fixture sintética confirmada; aguarda a expiração verdadeira do JWT. Este runner histórico escreve `docs/staging/final-session-20261015.json`: copiar resultado para `final20-session-lifecycle.json` e restaurar snapshot histórico, sem inventar a data ou declarar resultado antecipadamente.
+7. `staging-final20-billing-audit.mjs`: somente leitura de seis sessões TEST da primeira missão, usando manifesto privado. Recusa chave que não seja TEST. `staging-final20-billing-replay.mjs`: lê eventos reais TEST e envia duplicatas assinadas exclusivamente ao webhook staging; não solicita cobrança nem modifica Stripe. Seus resultados não devem ser confundidos com retry automático do provedor.
+
+Cada runner grava JSON sanitizado em `docs/homologation`. Um replay sobrescreve o resultado correspondente: preservar tentativas anteriores antes de repetir e distinguir FAIL de runner, PASS parcial e conclusão final. O opt-in não autoriza produção. Consulte o plano de publicação para operações que exigem autorização específica.

@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-20T17:19:28.113Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "actual Edge browser, local Next, staging GoTrue/PostgREST/Storage and delivered SMTP",
+  "production_writes": 0,
+  "external_whatsapp_requests": 0,
+  "checks": [
+    {
+      "name": "new invited professional photo saved by owner and rendered after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "actual service form saves authoritative price duration and invited professional link; new availability persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "public_search",
+      "status": "FAIL",
+      "code": "Error"
+    }
+  ]
+}
