@@ -24,7 +24,7 @@ export function AppointmentWhatsApp({
         </p>
       ) : (
         <Button
-          variant="outline"
+          size="lg"
           className="h-12 w-full"
           render={
             <a

@@ -29,6 +29,9 @@ test("public booking reduces steps and keeps undo actions visible", () => {
   assert.doesNotMatch(source, /Agendamento confirmado!/);
   assert.doesNotMatch(source, /no fuso do estabelecimento/);
   assert.doesNotMatch(source, /ative a área de cliente no painel/);
+  assert.match(source, /Escolha atual/);
+  assert.match(source, /aria-pressed=\{selected\}/);
+  assert.doesNotMatch(source, /truncate text-\[0\.7rem\]/);
 });
 
 test("public booking locks navigation while a reservation is in flight", () => {

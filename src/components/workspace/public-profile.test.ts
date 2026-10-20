@@ -41,6 +41,8 @@ test("public salon page shows real fields and an elegant empty photo", () => {
   assert.match(html, /a partir de/);
   assert.match(html, /Ana Carolina/);
   assert.match(html, /Agendar horário/);
+  assert.match(html, /A conta de cliente é grátis e só é pedida para confirmar/);
+  assert.doesNotMatch(html, /sem criar conta para a primeira reserva/);
   assert.match(html, /\/p\/luna\/agendar\?servico=/);
   assert.doesNotMatch(html, /Galeria/);
   assert.doesNotMatch(html, /Avaliação média/);
