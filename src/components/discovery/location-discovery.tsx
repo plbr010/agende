@@ -460,8 +460,11 @@ export function LocationDiscovery({
             <p className="text-sm text-muted-foreground">
               {formatDiscoveryShowingCount(result.items.length, result.total)}
             </p>
+            {lastSearch?.query ? (
+              <p className="text-sm leading-6 text-muted-foreground">{DISCOVERY_COPY.queryResults}</p>
+            ) : null}
             {lastSearch?.query && mode !== "global" && city.trim().length >= 2 ? (
-              <Button type="button" variant="outline" className="h-11 w-fit rounded-full" disabled={pending || loadingMore} onClick={searchWholeCity}>
+              <Button type="button" variant="outline" className="h-11 w-fit max-w-full rounded-full whitespace-normal" disabled={pending || loadingMore} onClick={searchWholeCity}>
                 {DISCOVERY_COPY.cityWide}
               </Button>
             ) : null}
@@ -547,6 +550,11 @@ function DiscoveryResult({
         <span className="min-w-0">
           <span className="block font-serif text-xl leading-tight text-wine-deep">{item.name}</span>
           <span className="mt-1 block text-sm text-muted-foreground">{place || "Local informado pelo salão"}</span>
+          {item.matchedNames.length > 0 ? (
+            <span className="mt-1 block text-sm leading-6 text-foreground">
+              {DISCOVERY_COPY.matchedPeople}: {item.matchedNames.join(", ")}
+            </span>
+          ) : null}
           {item.description ? (
             <span className="mt-1 line-clamp-2 block text-sm leading-6 text-foreground/80">{item.description}</span>
           ) : null}

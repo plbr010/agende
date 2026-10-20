@@ -370,7 +370,7 @@ export function PublicBookingFlow({
                 className={`h-1.5 rounded-full ${index <= stepIndex ? "bg-primary" : "bg-border"}`}
                 aria-current={item === step ? "step" : undefined}
               />
-              <span className={`mt-1 block truncate text-[0.7rem] font-medium ${item === step ? "text-wine-deep" : "text-muted-foreground"}`}>
+              <span className={`mt-1 block text-center text-[0.7rem] leading-tight font-medium ${item === step ? "text-wine-deep" : "text-muted-foreground"}`}>
                 {STEP_LABEL[item]}
                 <span className="sr-only">{item === step ? " (atual)" : ""}</span>
               </span>
@@ -459,6 +459,7 @@ export function PublicBookingFlow({
             slug={catalog.slug}
             people={professionalsForService}
             service={service}
+            selectedId={professionalId}
             onSelect={selectProfessional}
           />
         ) : null}
@@ -657,17 +658,17 @@ export function PublicBookingFlow({
                   : "Entrar para confirmar"}
             </Button>
             <div className="grid grid-cols-2 gap-2">
-              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("service")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("service")}>
                 Mudar serviço
               </Button>
-              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("date")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("date")}>
                 Mudar dia
               </Button>
-              <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("slot")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("slot")}>
                 Mudar horário
               </Button>
               {authenticated ? (
-                <Button type="button" variant="outline" className="h-11" disabled={pending} onClick={() => go("details")}>
+                <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("details")}>
                   Alterar meus dados
                 </Button>
               ) : null}
@@ -706,11 +707,13 @@ function ProfessionalStep({
   slug,
   people,
   service,
+  selectedId,
   onSelect,
 }: {
   slug: string;
   people: PublicBookingProfessional[];
   service: PublicBookingService | null;
+  selectedId: string | null | typeof ANY_PROFESSIONAL;
   onSelect: (id: string | typeof ANY_PROFESSIONAL) => void;
 }) {
   if (people.length === 0) {
@@ -729,31 +732,39 @@ function ProfessionalStep({
       <button
         type="button"
         onClick={() => onSelect(ANY_PROFESSIONAL)}
+        aria-pressed={selectedId === ANY_PROFESSIONAL}
         aria-label="Escolher qualquer profissional disponível"
-        className="min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 ring-border transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        className={`min-h-16 rounded-3xl bg-secondary/60 p-5 text-left ring-1 transition hover:ring-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
+          selectedId === ANY_PROFESSIONAL ? "ring-2 ring-primary" : "ring-border"
+        }`}
       >
         <h2 className="font-serif text-2xl">Qualquer profissional disponível</h2>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">
           Mostramos um horário livre, com quem puder atender.
+        </p>
+        <p className="mt-2 text-sm font-medium text-wine-deep">
+          {selectedId === ANY_PROFESSIONAL ? "Escolha atual" : "Toque para escolher"}
         </p>
       </button>
       {people.map((person) => {
         const offering = service
           ? person.offerings.find((item) => item.serviceId === service.id)
           : undefined;
+        const selected = selectedId === person.id;
         return (
           <button
             key={person.id}
             type="button"
             onClick={() => onSelect(person.id)}
+            aria-pressed={selected}
             aria-label={`Escolher ${person.displayName}`}
-            className={`${PICKER_BUTTON} focus-visible:ring-primary`}
+            className={`${PICKER_BUTTON} focus-visible:ring-primary ${selected ? "ring-2 ring-primary" : ""}`}
           >
             <span className="flex items-center gap-4">
               <PersonMark name={person.displayName} photoUrl={`/api/professionals/photo?memberId=${person.id}&slug=${encodeURIComponent(slug)}`} />
               <span className="min-w-0 text-left">
-                <h2 className="font-serif text-2xl">{person.displayName}</h2>
-                {person.bio ? <p className="mt-1 text-sm leading-6 text-muted-foreground">{person.bio}</p> : null}
+                <h2 className="font-serif text-2xl break-words text-wine-deep">{person.displayName}</h2>
+                {person.bio ? <p className="mt-1 text-sm leading-6 break-words text-muted-foreground">{person.bio}</p> : null}
                 {service ? (
                   <p className="mt-2 text-sm">
                     {formatCentsToReais(offering?.priceCents ?? service.priceCents)}
@@ -761,6 +772,7 @@ function ProfessionalStep({
                     {offering?.durationMinutes ?? service.durationMinutes} min
                   </p>
                 ) : null}
+                <p className="mt-2 text-sm font-medium text-wine-deep">{selected ? "Escolha atual" : "Toque para escolher"}</p>
               </span>
             </span>
           </button>
@@ -862,9 +874,9 @@ function DateStep({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-border/60 py-3 last:border-b-0">
+    <div className="grid gap-1 border-b border-border/60 py-3 last:border-b-0 sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-start">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-right text-sm font-medium">{value}</p>
+      <p className="min-w-0 text-sm font-medium break-words sm:text-right">{value}</p>
     </div>
   );
 }

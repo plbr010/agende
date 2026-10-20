@@ -162,7 +162,7 @@ export function PendingInvitesList({
         {invites.map((invite) => (
           <div key={invite.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-secondary/40 px-4 py-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">
+              <p className="text-sm font-medium break-all">
                 {invite.email ?? "Link secreto"} · {MEMBER_ROLE_LABEL[invite.role]}
               </p>
               <p className="text-xs text-muted-foreground">Expira em {formatDate(invite.expiresAt, timezone)}</p>
@@ -238,9 +238,9 @@ function MemberManageCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
           <PersonMark name={member.displayName ?? member.fullName} size="sm" />
-          <span className="truncate">{member.displayName ?? member.fullName}</span>
+          <span className="min-w-0 break-words">{member.displayName ?? member.fullName}</span>
         </CardTitle>
-        <CardDescription className="truncate">
+        <CardDescription className="break-words whitespace-normal">
           Entrou em {formatDate(member.joinedAt, timezone)}
         </CardDescription>
       </CardHeader>
