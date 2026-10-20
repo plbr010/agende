@@ -6,7 +6,7 @@ Estado inicial de todos os passos abaixo: **NOT RUN em produção**. O GET públ
 
 ## Gates e comandos
 
-1. Responsável aprova banco/Storage/backup/autenticação/webhook e a aplicação do SQL conforme runbook.
+1. Responsável aprova banco/Storage/backup/autenticação/webhook e SQL conforme runbook: A6b com três contratos legados antes de A6 com cinco. O reagendamento atual depende da RPC legada ausente; não tentar liberar somente com as cinco.
 2. Depois de restaurar os grants autenticados por autorização própria, executar `prelaunch20-postchecks.sql`: todos os gates devem retornar true e os grants seguir os comentários da consulta. Se ainda estiver em manutenção, os dois gates authenticated false são esperados; isso **não** autoriza liberar reservas.
 3. Executar `node scripts/prelaunch-readonly-http.mjs`: PASS de HTTPS, páginas públicas e amostra JS. Não chama Auth, POST de reserva ou webhook.
 4. Só então executar os passos browser/API abaixo. Antes do POST anônimo, comprovar grant anon revogado; nunca tentar criar uma reserva anônima na produção atual vulnerável.

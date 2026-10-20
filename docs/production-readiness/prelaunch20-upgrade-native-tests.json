@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T18:48:48.767Z",
+  "checked_at": "2026-10-20T19:01:49.196Z",
   "groups": {
     "native_pg17_sql": {
       "passed": 3,
@@ -28,7 +28,7 @@
     },
     {
       "file": "scripts/prelaunch-upgrade.test.mjs",
-      "name": "five-migration upgrade preserves existing tenants and bookings; emergency gate is reversible without anon",
+      "name": "reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon",
       "category": "native_pg17_sql",
       "status": "passed"
     }

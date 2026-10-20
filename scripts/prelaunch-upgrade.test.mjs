@@ -4,15 +4,22 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { createLocalDatabase } from './local-database.mjs';
 
-test('five-migration upgrade preserves existing tenants and bookings; emergency gate is reversible without anon', async t => {
+test('reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon', async t => {
   const manifest=JSON.parse(readFileSync('docs/production-readiness/prelaunch20-migration-manifest.json','utf8'));
   const canonical=file=>readFileSync(file,'utf8').replaceAll('\r\n','\n');
   const hash=source=>createHash('sha256').update(source).digest('hex');
   assert.equal(manifest.migrations.length,5);
   for(const source of manifest.migrations) assert.equal(hash(canonical('supabase/migrations/'+source.file)),source.sha256,'reviewed migration source changed');
   assert.equal(hash(canonical('docs/production-readiness/prelaunch20-apply-five.sql')),manifest.bundle_sha256,'reviewed bundle changed');
-  const db = await createLocalDatabase({ throughVersion: '20261014173903' });
+  const legacyManifest=JSON.parse(readFileSync('docs/production-readiness/prelaunch20-legacy-manifest.json','utf8'));
+  assert.equal(legacyManifest.migrations.length,3);
+  for(const source of legacyManifest.migrations) assert.equal(hash(canonical('supabase/migrations/'+source.file)),source.sha256);
+  assert.equal(hash(canonical('docs/production-readiness/prelaunch20-apply-legacy.sql')),legacyManifest.bundle_sha256);
+  const db = await createLocalDatabase({ throughVersion: '20260927005815' });
   t.after(() => db.close());
+  // Model the observed production schema: older guards already exist, review/
+  // reschedule and seat reconciliation contracts do not. No remote restore.
+  for(const file of ['20261009172028_launch_observed_owner_guard.sql','20261010232248_atomic_service_professional_links.sql','20261014030220_public_workspace_discovery.sql','20261014172158_client_phase2_profiles_favorites.sql','20261014173903_client_phase2_avatar_upload_cleanup.sql']) await db.exec(readFileSync('supabase/migrations/'+file,'utf8'));
   await db.exec(readFileSync('supabase/tests/helpers.sql', 'utf8'));
   const uid = (await db.query("select test_helpers.create_auth_user('upgrade@local.invalid','professional',true) id")).rows[0].id;
   const asOwner = (sql, args=[]) => db.transaction(async tx => {
@@ -34,8 +41,13 @@ test('five-migration upgrade preserves existing tenants and bookings; emergency 
   await db.exec("create schema if not exists supabase_migrations; create table if not exists supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); insert into supabase_migrations.schema_migrations(version,name) values('existing_fixture','preserve')");
   const bundle=readFileSync('docs/production-readiness/prelaunch20-apply-five.sql','utf8');
   await assert.rejects(db.transaction(tx=>tx.exec(bundle)),/explicit_project_authorization_required/);
+  const authorized=async sql=>db.transaction(async tx=>{await tx.query("select set_config('agende.authorized_project','wohimauqgywshbbejjcl',true)");await tx.exec(sql);});
+  await assert.rejects(authorized(bundle),/prelaunch_legacy_contracts_required/);
+  const legacyBundle=readFileSync('docs/production-readiness/prelaunch20-apply-legacy.sql','utf8');
+  await authorized(legacyBundle);
+  await assert.rejects(authorized(legacyBundle),/prelaunch_legacy_history_present_or_drift/);
   await db.transaction(async tx=>{await tx.query("select set_config('agende.authorized_project','wohimauqgywshbbejjcl',true)");await tx.exec(bundle);});
-  assert.equal((await db.query("select count(*)::int n from supabase_migrations.schema_migrations where version<>'existing_fixture'")).rows[0].n,5);
+  assert.equal((await db.query("select count(*)::int n from supabase_migrations.schema_migrations where version<>'existing_fixture'")).rows[0].n,8);
   await assert.rejects(db.transaction(async tx=>{await tx.query("select set_config('agende.authorized_project','wohimauqgywshbbejjcl',true)");await tx.exec(bundle);}),/prelaunch_history_present_or_drift/);
   assert.deepEqual(await snapshot(),before);
   // The apply bundle deliberately leaves creation paused until separately resumed.
@@ -43,6 +55,7 @@ test('five-migration upgrade preserves existing tenants and bookings; emergency 
   await db.exec(readFileSync('docs/production-readiness/prelaunch20-resume-bookings.sql','utf8'));
   const gates=await db.exec(readFileSync('docs/production-readiness/prelaunch20-postchecks.sql','utf8'));
   assert.ok(gates[1].rows.length>=10); assert.ok(gates[1].rows.every(x=>x.passed), 'catalog postchecks must all pass');
+  assert.ok(gates[2].rows.every(x=>x.passed), 'legacy contract postchecks must all pass');
   await db.exec(readFileSync('docs/production-readiness/prelaunch20-stop-bookings.sql','utf8'));
   const grants=async()=> (await db.query("select has_function_privilege('authenticated','public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text)','EXECUTE') client,has_function_privilege('authenticated','public.create_appointment(uuid,uuid,uuid,uuid,timestamptz,text)','EXECUTE') team,has_function_privilege('anon','public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text)','EXECUTE') anon")).rows[0];
   assert.deepEqual(await grants(),{client:false,team:false,anon:false});

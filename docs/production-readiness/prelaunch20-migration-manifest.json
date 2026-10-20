@@ -5,7 +5,7 @@
   "transaction": "psql --single-transaction; errors stop; no nested BEGIN/COMMIT",
   "leaves_bookings_paused": true,
   "history": "exactly five new names/versions and reviewed source; stop on name/version/object collision",
-  "bundle_sha256": "210500d32d70bbd94b8cfee7d65a76043bf063be1d1fb658d3ee3d33609f0720",
+  "bundle_sha256": "06fbff8c01f37211019aa0b29276b87065930173d27fee21925363d4a904be6b",
   "migrations": [
     {
       "file": "20261015054116_workspace_media_and_settings_contract.sql",

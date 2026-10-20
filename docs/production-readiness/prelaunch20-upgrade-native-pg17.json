@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-20T18:49:01.088Z",
+  "checked_at": "2026-10-20T19:02:12.599Z",
   "version": "postgres (PostgreSQL) 17.6",
   "host": "127.0.0.1",
-  "port": 62788,
+  "port": 65064,
   "suites": [
     "scripts/prelaunch-upgrade.test.mjs",
     "scripts/discovery-sql.test.mjs"

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T18:54:51.583Z",
+  "checked_at": "2026-10-20T19:02:48.209Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -36,7 +36,7 @@
   "new_case": [
     {
       "file": "scripts/prelaunch-upgrade.test.mjs",
-      "name": "five-migration upgrade preserves existing tenants and bookings; emergency gate is reversible without anon",
+      "name": "reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon",
       "category": "pglite_sql",
       "status": "passed"
     }

@@ -40,7 +40,7 @@
   "tests": {
     "main_local": 410,
     "main_native_pg17": 70,
-    "new_upgrade_bundle_native": "PASS; separate suite report",
+    "new_upgrade_bundle_native": "PASS; observed physical-schema model, three legacy contracts then five migrations; separate suite report",
     "lint": "PASS",
     "typecheck": "PASS",
     "build_staging": "PASS",
@@ -55,5 +55,11 @@
       "main_normalized_sha256": "085025da7cbd3a51c8be45d462bb11227afa3d9cf04fc7f324cf3e19f28206b8",
       "deployed_normalized_sha256": "6cff0c7ce3e18d99ef80f2b6baf4a9f10b28c7e99dbaeefe5f0bd5453b1b8417"
     }
-  }
+  },
+  "additional_legacy_authorization_required": [
+    "20260927014947_launch_readiness_reviews.sql",
+    "20261008131859_launch_hardening_reviews_force_rls.sql",
+    "20261009173042_billing_reconcile_excess_seats.sql"
+  ],
+  "owner_guard_history_repair_performed": false
 }

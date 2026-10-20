@@ -15,9 +15,20 @@
     "email_provider": true,
     "custom_smtp_enabled": false,
     "leaked_password_protection": false,
-    "edge_custom_secret_names": ["STRIPE_API_KEY"],
-    "vault_secret_names": ["stripe_webhook_secret"],
-    "secret_values_read": false
+    "edge_custom_secret_names": [
+      "STRIPE_API_KEY"
+    ],
+    "vault_secret_names": [
+      "stripe_webhook_secret"
+    ],
+    "secret_values_read": false,
+    "legacy_contracts": {
+      "reviews_table": false,
+      "reschedule_slots_rpc": false,
+      "client_list_includes_service_and_professional_ids": false,
+      "billing_seat_reconciliation_current": false,
+      "observed_owner_guards_equivalent": true
+    }
   },
   "vercel": {
     "production_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
@@ -44,14 +55,38 @@
     "deliveries_displayed": 0,
     "failed_deliveries_displayed": 0,
     "zero_deliveries_is_delivery_proof": false,
-    "events": ["checkout.session.async_payment_failed", "checkout.session.async_payment_succeeded", "checkout.session.completed", "customer.subscription.created", "customer.subscription.deleted", "customer.subscription.updated", "invoice.paid", "invoice.payment_failed"],
+    "events": [
+      "checkout.session.async_payment_failed",
+      "checkout.session.async_payment_succeeded",
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.deleted",
+      "customer.subscription.updated",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ],
     "signature_secret_revealed": false,
     "key_mode_and_endpoint_secret_match": "not verified from secret names or masked dashboard values",
     "live_api_mutations": 0,
     "live_payments": 0
   },
   "edge_sources": {
-    "stripe_billing": {"version": 5, "active": true, "verify_jwt": true, "normalized_matches_main": true},
-    "stripe_webhook": {"version": 4, "active": true, "verify_jwt": false, "normalized_matches_main": false, "missing_from_deployed_source": ["API key mode versus Supabase project guard", "event livemode versus production guard", "sanitized error logging"]}
+    "stripe_billing": {
+      "version": 5,
+      "active": true,
+      "verify_jwt": true,
+      "normalized_matches_main": true
+    },
+    "stripe_webhook": {
+      "version": 4,
+      "active": true,
+      "verify_jwt": false,
+      "normalized_matches_main": false,
+      "missing_from_deployed_source": [
+        "API key mode versus Supabase project guard",
+        "event livemode versus production guard",
+        "sanitized error logging"
+      ]
+    }
   }
 }

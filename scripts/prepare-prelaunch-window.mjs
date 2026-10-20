@@ -22,11 +22,13 @@ BEGIN
  OR EXISTS(SELECT 1 FROM storage.buckets WHERE id='professional-photos')
  OR EXISTS(SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname IN ('get_appointment_whatsapp','swap_workspace_image','swap_professional_photo','get_related_client_avatar','get_public_workspace_cover')) THEN RAISE EXCEPTION 'prelaunch_objects_present_or_drift'; END IF;
  IF to_regprocedure('app.require_confirmed_email()') IS NULL OR to_regprocedure('app.require_workspace_manager(uuid)') IS NULL OR to_regprocedure('app.can_write_appointment(uuid,uuid)') IS NULL OR to_regclass('public.workspace_settings_discovery_city') IS NULL THEN RAISE EXCEPTION 'prelaunch_dependency_missing'; END IF;
+ IF to_regclass('public.appointment_reviews') IS NULL OR to_regprocedure('public.list_my_reschedule_slots(uuid,uuid,date)') IS NULL
+ OR NOT EXISTS(SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='app' AND p.proname='sync_billing_subscription' AND p.prosrc LIKE '%v_effective_status%') THEN RAISE EXCEPTION 'prelaunch_legacy_contracts_required'; END IF;
 END;
 $prelaunch_guard$;
 `;
 let body=preflight;
-for(const row of rows){const delimiter='$source_'+row.version+'$';if(row.source.includes(delimiter))throw new Error('source_delimiter_collision');body+=`\n-- Source ${row.file}; SHA256 ${row.sha256}\n`+row.source+`\nINSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('${row.version}','${row.name}',ARRAY[${delimiter}${row.source}${delimiter}]);\n`;}
+for(const row of rows){const delimiter='$source_'+row.version+'$';if(row.source.includes(delimiter))throw new Error('source_delimiter_collision');body+=`\n-- Source ${row.file}; SHA256 ${row.sha256}\n`+row.source+`\n;\nINSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('${row.version}','${row.name}',ARRAY[${delimiter}${row.source}${delimiter}]);\n`;}
 body+=`
 -- Keep creation paused after migrations restore their normal grants.
 -- Separate authorization is required to run the reviewed resume script.

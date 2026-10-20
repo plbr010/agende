@@ -1,0 +1,198 @@
+{
+  "local_migration_count": 75,
+  "production_writes": 0,
+  "environments": {
+    "production": {
+      "history_count": 67,
+      "local_names_absent": [
+        "billing_reconcile_excess_seats",
+        "launch_discovery_eligibility",
+        "launch_hardening_reviews_force_rls",
+        "launch_observed_owner_guard",
+        "launch_readiness_reviews",
+        "profiles_booking_whatsapp",
+        "require_confirmed_public_booking",
+        "workspace_media_and_settings_contract",
+        "workspace_settings_validation"
+      ],
+      "remote_only_names": [
+        "hardening_snapshot_owner_timezone"
+      ],
+      "timestamp_differences": []
+    },
+    "staging": {
+      "history_count": 22,
+      "local_names_absent": [
+        "advanced_reports",
+        "agenda_appointment_rpcs",
+        "agenda_availability_helpers",
+        "agenda_client_reschedule_deadlock_hardening",
+        "agenda_functions",
+        "agenda_indexes_and_policy_split",
+        "agenda_list_available_slots",
+        "agenda_rls",
+        "agenda_snapshot_professional_and_select",
+        "agenda_triggers",
+        "agenda_types_and_tables",
+        "agenda_write_policies",
+        "atomic_service_professional_links",
+        "audit_events",
+        "billing_intervals_annual_ready",
+        "billing_reconcile_excess_seats",
+        "catalog_indexes_and_policy_merge",
+        "client_packages_and_billing_foundation",
+        "database_maintenance_cron",
+        "finance_categories_idempotency",
+        "finance_core",
+        "finance_refunds_package_hardening",
+        "frontend_read_models",
+        "frontend_read_models_inventory_fix",
+        "inventory_fk_indexes",
+        "inventory_rls",
+        "inventory_rpcs",
+        "inventory_schema",
+        "launch_hardening_reviews_force_rls",
+        "launch_observed_owner_guard",
+        "launch_readiness_reviews",
+        "package_lifecycle_hardening",
+        "packages_core",
+        "packages_finance_fk_indexes",
+        "privacy_requests_export_audit_expansion",
+        "public_booking_duplicate_concurrency_guard",
+        "public_booking_functions",
+        "public_booking_rpcs_rls",
+        "public_booking_schema",
+        "reports_core",
+        "secure_public_default_privileges",
+        "stripe_api_key_vault_access",
+        "stripe_billing_resubscribe_hardening",
+        "stripe_billing_sync_foundation",
+        "stripe_billing_sync_reconcile",
+        "stripe_checkout_guards",
+        "stripe_checkout_resubscribe_hardening",
+        "stripe_webhook_hardening",
+        "subscription_entitlement_enforcement",
+        "trial_selected_plan",
+        "workspace_settings_rls_storage",
+        "workspace_settings_rpcs",
+        "workspace_settings_schema"
+      ],
+      "remote_only_names": [],
+      "timestamp_differences": [
+        {
+          "name": "catalog_professionals_services_clients",
+          "local": "20260918191634",
+          "remote": "20261011135929"
+        },
+        {
+          "name": "catalog_professionals_services_clients_rls",
+          "local": "20260918191706",
+          "remote": "20261011135935"
+        },
+        {
+          "name": "client_phase2_avatar_upload_cleanup",
+          "local": "20261014173903",
+          "remote": "20261014173933"
+        },
+        {
+          "name": "client_phase2_profiles_favorites",
+          "local": "20261014172158",
+          "remote": "20261014173144"
+        },
+        {
+          "name": "foundation_auth_sync",
+          "local": "20260918150434",
+          "remote": "20261011135759"
+        },
+        {
+          "name": "foundation_fk_indexes",
+          "local": "20260918150607",
+          "remote": "20261011135833"
+        },
+        {
+          "name": "foundation_functions",
+          "local": "20260918150401",
+          "remote": "20261011135748"
+        },
+        {
+          "name": "foundation_guards",
+          "local": "20260918150422",
+          "remote": "20261011135753"
+        },
+        {
+          "name": "foundation_hardening",
+          "local": "20260918183729",
+          "remote": "20261011135840"
+        },
+        {
+          "name": "foundation_hardening_invites_grants",
+          "local": "20260918183848",
+          "remote": "20261011135922"
+        },
+        {
+          "name": "foundation_hardening_seats_invites",
+          "local": "20260918183827",
+          "remote": "20261011135917"
+        },
+        {
+          "name": "foundation_invites",
+          "local": "20260918150456",
+          "remote": "20261011135811"
+        },
+        {
+          "name": "foundation_rls",
+          "local": "20260918150516",
+          "remote": "20261011135826"
+        },
+        {
+          "name": "foundation_rpc_wrappers_and_triggers",
+          "local": "20260918150505",
+          "remote": "20261011135819"
+        },
+        {
+          "name": "foundation_types_and_tables",
+          "local": "20260918150334",
+          "remote": "20261011135742"
+        },
+        {
+          "name": "foundation_workspace_rpc",
+          "local": "20260918150443",
+          "remote": "20261011135806"
+        },
+        {
+          "name": "launch_discovery_eligibility",
+          "local": "20261020162935",
+          "remote": "20261020163432"
+        },
+        {
+          "name": "profiles_booking_whatsapp",
+          "local": "20261016075244",
+          "remote": "20261016080427"
+        },
+        {
+          "name": "public_workspace_discovery",
+          "local": "20261014030220",
+          "remote": "20261014031601"
+        },
+        {
+          "name": "require_confirmed_public_booking",
+          "local": "20261016235000",
+          "remote": "20261020163226"
+        },
+        {
+          "name": "workspace_media_and_settings_contract",
+          "local": "20261015054116",
+          "remote": "20261015054655"
+        },
+        {
+          "name": "workspace_settings_validation",
+          "local": "20261015054818",
+          "remote": "20261015054832"
+        }
+      ]
+    }
+  },
+  "observed_owner_guards_equivalent": true,
+  "billing_observed_production_hash": "ef99daf53b01ff7d7388c28ca2ec2aa6",
+  "billing_staging_hash": "01ee8d8dce2e38b4713a35ffafa5f026"
+}

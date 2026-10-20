@@ -14,6 +14,8 @@ BEGIN
  OR EXISTS(SELECT 1 FROM storage.buckets WHERE id='professional-photos')
  OR EXISTS(SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname IN ('get_appointment_whatsapp','swap_workspace_image','swap_professional_photo','get_related_client_avatar','get_public_workspace_cover')) THEN RAISE EXCEPTION 'prelaunch_objects_present_or_drift'; END IF;
  IF to_regprocedure('app.require_confirmed_email()') IS NULL OR to_regprocedure('app.require_workspace_manager(uuid)') IS NULL OR to_regprocedure('app.can_write_appointment(uuid,uuid)') IS NULL OR to_regclass('public.workspace_settings_discovery_city') IS NULL THEN RAISE EXCEPTION 'prelaunch_dependency_missing'; END IF;
+ IF to_regclass('public.appointment_reviews') IS NULL OR to_regprocedure('public.list_my_reschedule_slots(uuid,uuid,date)') IS NULL
+ OR NOT EXISTS(SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='app' AND p.proname='sync_billing_subscription' AND p.prosrc LIKE '%v_effective_status%') THEN RAISE EXCEPTION 'prelaunch_legacy_contracts_required'; END IF;
 END;
 $prelaunch_guard$;
 
@@ -121,6 +123,7 @@ GRANT EXECUTE ON FUNCTION public.queue_workspace_image_upload(uuid,text,text),pu
 GRANT EXECUTE ON FUNCTION public.get_public_workspace_cover(text) TO anon,authenticated;
 
 
+;
 INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('20261015054116','workspace_media_and_settings_contract',ARRAY[$source_20261015054116$-- Additive. Apply only to staging until production backup/rollout is approved.
 ALTER TABLE public.workspace_settings ADD COLUMN IF NOT EXISTS cover_path text;
 DO $$ BEGIN
@@ -264,6 +267,7 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION app.update_workspace_settings(uuid,text,text,text,text,text,text,text,text,text,text,text,text,boolean) FROM PUBLIC,anon,authenticated;
 
+;
 INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('20261015054818','workspace_settings_validation',ARRAY[$source_20261015054818$-- Preserve the existing RPC signature; validate optional fields and serialize
 -- with image swaps. Image references now have their own guarded lifecycle.
 CREATE OR REPLACE FUNCTION app.update_workspace_settings(
@@ -584,6 +588,7 @@ END $$;
 REVOKE ALL ON FUNCTION public.get_professional_photo(uuid,text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_professional_photo(uuid,text) TO anon,authenticated;
 
+;
 INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('20261016075244','profiles_booking_whatsapp',ARRAY[$source_20261016075244$-- Additive migration. No production execution authorized.
 -- Confirmed identity is required even through privileged wrappers.
 CREATE OR REPLACE FUNCTION app.create_public_appointment(
@@ -1021,6 +1026,7 @@ REVOKE ALL ON FUNCTION public.create_public_appointment(text,uuid,uuid,timestamp
 GRANT EXECUTE ON FUNCTION public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text) TO authenticated;
 COMMENT ON FUNCTION public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text) IS 'Authenticated client booking; verified email from Auth. Anonymous and unconfirmed sessions cannot insert. Atomic availability and authoritative pricing.';
 
+;
 INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('20261016235000','require_confirmed_public_booking',ARRAY[$source_20261016235000$-- Additive migration. No production execution authorized.
 -- A confirmed Agendê account is required to insert a public appointment.
 -- Losing e-mail confirmation mid-request must abort; it must not continue as a guest.
@@ -1235,6 +1241,7 @@ $$;
 
 NOTIFY pgrst, 'reload schema';
 
+;
 INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES('20261020162935','launch_discovery_eligibility',ARRAY[$source_20261020162935$-- Normalize whitespace in stored locality/name values and queries.
 -- Professional name matches require an active linked public service.
 CREATE OR REPLACE FUNCTION app.discovery_text(p_text text) RETURNS text

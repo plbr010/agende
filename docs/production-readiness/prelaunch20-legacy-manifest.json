@@ -1,0 +1,30 @@
+{
+  "prepared_only": true,
+  "separate_authorization_required": true,
+  "project": "wohimauqgywshbbejjcl",
+  "hash_normalization": "UTF-8 LF",
+  "leaves_bookings_paused": true,
+  "transaction": "psql --single-transaction; stop on error",
+  "excluded_already_equivalent": "20261009172028_launch_observed_owner_guard.sql; no history repair",
+  "bundle_sha256": "89c60bad3dfac048ac962dda2f9cf8bc3e75fac58791296d85d5a520f6010bc8",
+  "migrations": [
+    {
+      "file": "20260927014947_launch_readiness_reviews.sql",
+      "version": "20260927014947",
+      "name": "launch_readiness_reviews",
+      "sha256": "952a8f9e2e93c74bab851f9c8fa7c0a3abeeb568beedbccb4545f9407e5b1253"
+    },
+    {
+      "file": "20261008131859_launch_hardening_reviews_force_rls.sql",
+      "version": "20261008131859",
+      "name": "launch_hardening_reviews_force_rls",
+      "sha256": "39b4f8617d80ff0aa10619c684d0565fe75e3f6ad7f431440d7aded474408848"
+    },
+    {
+      "file": "20261009173042_billing_reconcile_excess_seats.sql",
+      "version": "20261009173042",
+      "name": "billing_reconcile_excess_seats",
+      "sha256": "f5ef371d3bb3f2a9f33d940d78ba94106e88da1a0306fe9fa48d9e767b02c7ab"
+    }
+  ]
+}
