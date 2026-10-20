@@ -21,6 +21,8 @@ export const DISCOVERY_PAGE_SIZE = 20;
 
 export type DiscoveryMode = "nearby" | "city" | "global";
 
+export type DiscoveryFilterKey = "city" | "state" | "query";
+
 export type DiscoveryCoordinates = {
   latitude: number;
   longitude: number;
@@ -122,6 +124,36 @@ export function normalizeDiscoverySearch(input: DiscoverySearchInput): Discovery
 export function discoverySearchNeedsLocality(input: DiscoverySearchInput): boolean {
   const normalized = normalizeDiscoverySearch(input);
   return normalized.mode === "city" && !normalized.city;
+}
+
+export function discoveryActiveFilters(
+  input: DiscoverySearchInput,
+): { key: DiscoveryFilterKey; label: string }[] {
+  const normalized = normalizeDiscoverySearch(input);
+  const filters: { key: DiscoveryFilterKey; label: string }[] = [];
+  if (normalized.city) filters.push({ key: "city", label: `Cidade: ${normalized.city}` });
+  if (normalized.state) filters.push({ key: "state", label: `Estado: ${normalized.state}` });
+  if (normalized.query) filters.push({ key: "query", label: `Nome: ${normalized.query}` });
+  return filters;
+}
+
+export function discoveryWithoutFilter(
+  input: DiscoverySearchInput,
+  key: DiscoveryFilterKey,
+): DiscoverySearchInput {
+  return {
+    ...input,
+    offset: 0,
+    city: key === "city" ? "" : input.city,
+    state: key === "state" ? "" : input.state,
+    query: key === "query" ? "" : input.query,
+  };
+}
+
+export function discoveryEmptyExplanation(input: DiscoverySearchInput): string {
+  const filters = discoveryActiveFilters(input);
+  if (filters.length === 0) return DISCOVERY_COPY.emptyBody;
+  return `Nada encontrado com ${filters.map((item) => item.label).join(", ")}. Remova um filtro, tente outro nome ou use o link do salão.`;
 }
 
 export function discoverySearchBlockedReason(input: DiscoverySearchInput): string | null {
@@ -304,7 +336,7 @@ export async function searchPublicWorkspaces(input: DiscoverySearchInput): Promi
 export const DISCOVERY_COPY = {
   title: "Encontrar um salão",
   description:
-    "Procure perto de onde você está agora, em qualquer cidade do Brasil, ou pelo nome do salão. Não precisa ser a cidade onde você mora. Se o salão já te mandou um link, use-o abaixo — é o jeito que já funciona hoje.",
+    "Escolha a cidade e, se quiser, o nome do salão ou da profissional. Vale qualquer cidade do Brasil. Se o salão já te mandou um link, use-o mais abaixo.",
   scenarioHint:
     "Exemplo: se você mora em Muriaé e está em Juiz de Fora, “Perto de mim” procura em Juiz de Fora. Para ver salões de Muriaé ou de qualquer outra cidade, escolha “Uma cidade” ou busque pelo nome.",
   modeNearby: "Perto de mim",

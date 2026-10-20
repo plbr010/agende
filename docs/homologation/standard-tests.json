@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T18:40:00.622Z",
+  "checked_at": "2026-10-20T19:38:50.437Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 50,
+      "passed": 51,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 411,
+    "passed": 412,
     "failed": 0,
     "skipped": 0
   },
@@ -343,6 +343,12 @@
     {
       "file": "scripts/launch-readiness.test.mjs",
       "name": "launch readiness SQL: reviews, rescheduling, roles and timezone",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/prelaunch-upgrade.test.mjs",
+      "name": "reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon",
       "category": "pglite_sql",
       "status": "passed"
     },

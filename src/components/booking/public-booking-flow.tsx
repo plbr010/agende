@@ -14,7 +14,6 @@ import { continueBookingAfterLogin } from "@/lib/booking/draft-actions";
 import type { BookingDraft } from "@/lib/booking/draft";
 import {
   ANY_PROFESSIONAL,
-  BOOKING_STEPS,
   CUSTOMER_NOTE_MAX,
   type BookingStep,
 } from "@/lib/booking/config";
@@ -33,7 +32,7 @@ import type {
   PublicBookingService,
 } from "@/lib/booking/queries";
 import { bookingReceiptCopy } from "@/lib/booking/receipt";
-import { parsePublicBookingDetails, previousBookingStep } from "@/lib/booking/validation";
+import { bookingBackStep, bookingJourneySteps, parsePublicBookingDetails } from "@/lib/booking/validation";
 import { bookingStepCaption, shouldSkipProfessionalStep } from "@/lib/usability/copy";
 import { addDaysIso, formatDateTimeInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
 import { formatPhoneBr } from "@/lib/validation/phone";
@@ -319,10 +318,12 @@ export function PublicBookingFlow({
     go("details");
   }
 
-  const visibleSteps: BookingStep[] =
-    shouldSkipProfessionalStep(professionalsForService.length) && step !== "professional"
-      ? BOOKING_STEPS.filter((item) => item !== "professional")
-      : [...BOOKING_STEPS];
+  const skipProfessional = shouldSkipProfessionalStep(professionalsForService.length);
+  const visibleSteps: BookingStep[] = bookingJourneySteps({
+    authenticated,
+    skipProfessional,
+    current: step,
+  });
   const stepIndex = visibleSteps.indexOf(step);
 
   if (confirmation) {
@@ -434,14 +435,14 @@ export function PublicBookingFlow({
                   onClick={() => selectService(item)}
                   className={PICKER_BUTTON}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-serif text-xl text-wine-deep">{item.name}</h2>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <h2 className="font-serif text-xl break-words text-wine-deep">{item.name}</h2>
                       {item.description ? (
                         <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
                       ) : null}
                     </div>
-                    <p className="text-sm whitespace-nowrap">
+                    <p className="shrink-0 text-sm font-medium text-wine-deep">
                       {item.minPriceCents !== item.maxPriceCents
                         ? `a partir de ${formatCentsToReais(item.minPriceCents)}`
                         : formatCentsToReais(item.minPriceCents)}
@@ -692,7 +693,7 @@ export function PublicBookingFlow({
               className="h-12 w-full rounded-full"
               disabled={pending}
               aria-busy={pending}
-              onClick={() => go(previousBookingStep(step))}
+              onClick={() => go(bookingBackStep(step, { authenticated, skipProfessional }))}
             >
               Voltar
             </Button>
@@ -918,8 +919,8 @@ function BookingSuccess({
       </header>
       <main className="relative mx-auto grid w-full max-w-lg gap-6 px-4 py-10">
         <section className="rounded-[2rem] bg-card p-6 text-center ring-1 ring-border">
-          <span className="mx-auto grid size-16 place-items-center rounded-full bg-metric-blush text-[var(--rose-ink)]" aria-hidden="true">
-            ✓
+          <span className="mx-auto grid size-16 place-items-center rounded-full bg-metric-blush font-serif text-2xl text-[var(--rose-ink)]" aria-hidden="true">
+            {confirmation.status === "confirmed" ? "✓" : "•"}
           </span>
           <h1 className="mt-4 font-serif text-4xl text-wine-deep">{receipt.title}</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{receipt.lead}</p>

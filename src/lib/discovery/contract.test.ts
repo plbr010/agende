@@ -5,7 +5,10 @@ import {
   DISCOVERY_COPY,
   DISCOVERY_PAGE_SIZE,
   DISCOVERY_RPCS,
+  discoveryActiveFilters,
+  discoveryEmptyExplanation,
   discoveryHasMorePage,
+  discoveryWithoutFilter,
   discoveryRpcArgs,
   discoverySearchBlockedReason,
   discoverySearchNeedsLocality,
@@ -196,6 +199,13 @@ test("a Muriaé resident physically in Juiz de Fora can search either city", () 
   assert.equal(cityArgs.p_city, "Muriaé");
   assert.equal("p_latitude" in nearbyArgs, false);
   assert.notEqual(nearbyArgs.p_city, cityArgs.p_city);
+  const filters = discoveryActiveFilters({ mode: "city", city: "Muriaé", state: "MG", query: "Maria" });
+  assert.deepEqual(filters.map((item) => item.key), ["city", "state", "query"]);
+  assert.match(discoveryEmptyExplanation({ city: "Juiz de Fora", query: "Maria" }), /Juiz de Fora/);
+  assert.match(discoveryEmptyExplanation({ city: "Juiz de Fora", query: "Maria" }), /Maria/);
+  const withoutName = discoveryWithoutFilter({ mode: "city", city: "Muriaé", state: "MG", query: "Maria" }, "query");
+  assert.equal(withoutName.query, "");
+  assert.equal(discoverySearchBlockedReason(discoveryWithoutFilter({ mode: "city", city: "Muriaé" }, "city")), DISCOVERY_COPY.missingCity);
   assert.match(DISCOVERY_COPY.scenarioHint, /Muriaé/);
   assert.match(DISCOVERY_COPY.scenarioHint, /Juiz de Fora/);
   assert.match(DISCOVERY_COPY.nearbyGranted, /residência/i);

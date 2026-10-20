@@ -459,14 +459,14 @@ export function ServiceCatalog({
                   const names = linkedProfessionalNames(service, professionals);
                   return (
                     <article key={service.id} className="agende-panel flex flex-col rounded-[1.6rem] p-5 ring-1 ring-[#f0e4de]">
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold tracking-[0.16em] text-[var(--rose-ink)] uppercase">
                             {service.active ? "Aparece na agenda" : "Oculto na agenda online"}
                           </p>
-                          <h3 className="mt-1 font-serif text-2xl text-wine-deep">{service.name}</h3>
+                          <h3 className="mt-1 font-serif text-2xl break-words text-wine-deep">{service.name}</h3>
                         </div>
-                        <p className="font-serif text-2xl whitespace-nowrap text-wine-deep">{formatCentsToReais(service.priceCents)}</p>
+                        <p className="font-serif text-2xl text-wine-deep sm:shrink-0">{formatCentsToReais(service.priceCents)}</p>
                       </div>
                       {service.description ? (
                         <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">{service.description}</p>
