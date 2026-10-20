@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "codex/auth-whatsapp-contract-20261016": false,
-      "codex/launch-p0-20261020": false
+      "codex/launch-p0-20261020": false,
+      "codex/final-launch-integration-20261020": false
     }
   }
 }

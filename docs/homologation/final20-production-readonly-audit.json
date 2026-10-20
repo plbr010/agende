@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-20T17:44:48.488Z",
+  "project": "wohimauqgywshbbejjcl",
+  "read_only": true,
+  "audit": {
+    "migrations": [
+      {
+        "name": "public_workspace_discovery",
+        "version": "20261014030220"
+      },
+      {
+        "name": "client_phase2_profiles_favorites",
+        "version": "20261014172158"
+      },
+      {
+        "name": "client_phase2_avatar_upload_cleanup",
+        "version": "20261014173903"
+      }
+    ],
+    "rls_forced": true,
+    "anon_booking": true,
+    "whatsapp_rpc": false,
+    "confirmed_gate": false,
+    "guest_fallback": true,
+    "private_professional_photos": false
+  }
+}

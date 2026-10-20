@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-20T17:33:16.385Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "checks": [
+    "inventory entry, exit and adjustment persist and negative stock is refused",
+    "another establishment cannot mutate inventory or read package administration",
+    "package catalog and sale produce actual remaining sessions for the linked client",
+    "public booking and package redemption link the same client and service exactly once",
+    "redemption reversal restores balance and cancellation persists through the real API"
+  ],
+  "passed": true,
+  "synthetic_catalog_archived_and_sale_cancelled": true,
+  "completed_synthetic_appointment_retained": true,
+  "production_connections": 0,
+  "external_payments": 0,
+  "secrets_in_report": false
+}

@@ -24,21 +24,22 @@ export function PersonMark({
   className?: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const [failed, setFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const sizeClass = size === "lg" ? "size-16 text-xl" : size === "sm" ? "size-10 text-sm" : "size-14 text-lg";
 
   function rememberImage(image: HTMLImageElement | null) {
-    if (image?.complete && image.naturalWidth === 0) setFailed(true);
+    if (image?.complete && image.naturalWidth === 0) setFailedUrl(photoUrl ?? null);
   }
 
-  if (photoUrl && !failed) {
+  if (photoUrl && failedUrl !== photoUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
+        key={photoUrl}
         ref={rememberImage}
         src={photoUrl}
         alt=""
-        onError={() => setFailed(true)}
+        onError={() => setFailedUrl(photoUrl ?? null)}
         className={cn("shrink-0 rounded-full object-cover ring-1 ring-[#f0e4de]", sizeClass, className)}
       />
     );

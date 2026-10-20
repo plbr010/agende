@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-20T17:23:56.479Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "actual Edge browser, local Next, staging GoTrue/PostgREST/Storage and delivered SMTP",
+  "production_writes": 0,
+  "external_whatsapp_requests": "not counted; popup followed real redirect before final interception correction",
+  "checks": [
+    {
+      "name": "new invited professional photo saved by owner and rendered after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "actual service form saves authoritative price duration and invited professional link; new availability persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "public professional search leads to exact selection and HttpOnly draft; available anonymous RPC denied",
+      "status": "PASS"
+    },
+    {
+      "name": "new client signs up from selected booking without losing draft",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered SMTP callback preserves exact booking selection in original PKCE browser and creates no appointment",
+      "status": "PASS"
+    },
+    {
+      "name": "double click creates one authenticated scheduled booking; receipt and free client list show real state",
+      "status": "PASS"
+    },
+    {
+      "name": "professional_whatsapp",
+      "status": "FAIL",
+      "code": "AssertionError"
+    }
+  ],
+  "automatic_message_sends": 0
+}

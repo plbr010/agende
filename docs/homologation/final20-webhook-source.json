@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-20T17:36:38.604Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "function": "stripe-webhook",
+  "version": 4,
+  "status": "ACTIVE",
+  "normalized_source_matches_repo": true,
+  "normalized_sha256": "085025da7cbd3a51c8be45d462bb11227afa3d9cf04fc7f324cf3e19f28206b8",
+  "production_changes": 0
+}

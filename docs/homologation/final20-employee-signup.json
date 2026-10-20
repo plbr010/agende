@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-20T17:15:08.171Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "passed": true,
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "employee signs up from secure invitation, preserving return path",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered email verifies PKCE and acceptance reaches professional dashboard",
+      "status": "PASS"
+    },
+    {
+      "name": "employee has only invited role, no own workspace or individual subscription, finance denied",
+      "status": "PASS"
+    }
+  ],
+  "synthetic_employee_retained": true,
+  "existing_data_deleted": false
+}

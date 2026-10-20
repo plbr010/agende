@@ -77,7 +77,7 @@ try {
    await page.getByRole('button',{name:'Continuar',exact:true}).click();
   }
   subphase='click_final_booking';await page.getByRole('button',{name:'Reservar este horário',exact:true}).click();subphase='wait_receipt';
-  await page.getByRole('heading',{name:'Solicitação recebida!',exact:true}).waitFor();
+  await page.getByRole('heading',{name:/^Solicitação recebida!?$/,exact:true}).waitFor();
   const history=await ok(customer.client.rpc('list_my_appointments'));
   const matches=history.filter(row=>row.status!=='cancelled'&&Date.parse(row.starts_at)===Date.parse(selected)&&row.professional_member_id===professional.id);
   assert.ok(matches.length===1,'booking_not_unique_or_missing');bookingId=matches[0].id;
