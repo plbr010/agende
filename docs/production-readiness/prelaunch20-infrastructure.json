@@ -31,8 +31,8 @@
     }
   },
   "vercel": {
-    "production_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
-    "deployment_id": "dpl_HexMies5ur68oeiu385fdFqXvQML",
+    "production_sha": "058de365d978b38ed7dc53730a5755a1e7c95ac5",
+    "deployment_id": "dpl_F6Gt5b8sN5mpTV42L6ybbKeHkAos",
     "status": "READY",
     "production_branch": "main",
     "source": "git",
@@ -44,7 +44,8 @@
     "site_url_fallback": "validated Vercel production origin",
     "deployment_class": "next.config.ts bakes VERCEL_ENV",
     "secret_values_decrypted": false,
-    "service_role_matches_project_at_runtime": "not exercised without authenticated productive smoke"
+    "service_role_matches_project_at_runtime": "not exercised without authenticated productive smoke",
+    "initial_production_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d"
   },
   "stripe_live": {
     "connection": "connector requires reauthentication; authenticated browser used read-only",

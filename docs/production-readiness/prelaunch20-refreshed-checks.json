@@ -1,0 +1,95 @@
+{
+  "checked_at": "2026-10-20T19:15:43.517759+00:00",
+  "main_sha": "058de365d978b38ed7dc53730a5755a1e7c95ac5",
+  "candidate_totals": {
+    "passed": 412,
+    "failed": 0,
+    "skipped": 0
+  },
+  "groups": {
+    "pglite_integration_with_mock_auth": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pglite_sql": {
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 253,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "platform_mocks": {
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "lint": "PASS",
+  "typecheck": "PASS",
+  "build_staging": "PASS",
+  "built_smoke": "PASS",
+  "isolated_browser": {
+    "browser": "installed Microsoft Edge",
+    "first_attempt": "BLOCKED: default Chromium executable unavailable; not a product failure",
+    "pass": 11,
+    "fail": 0,
+    "blocked": 0,
+    "cases": [
+      {
+        "name": "landing",
+        "result": "PASS"
+      },
+      {
+        "name": "cadastro-keyboard",
+        "result": "PASS"
+      },
+      {
+        "name": "login",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-empty-city",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-gps-jf",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-city-muriae",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-global-name",
+        "result": "PASS"
+      },
+      {
+        "name": "public-not-found",
+        "result": "PASS"
+      },
+      {
+        "name": "app-guard",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-gps-denied",
+        "result": "PASS"
+      },
+      {
+        "name": "discovery-mobile",
+        "result": "PASS"
+      }
+    ]
+  },
+  "remote_business_writes": 0,
+  "scope_limit": "Isolated public navigation; not new authenticated cloud signup/upload/booking acceptance for PR69."
+}

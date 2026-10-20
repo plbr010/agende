@@ -4,11 +4,11 @@ Auditoria em 20/10/2026. **NO-GO para piloto produtivo e lançamento comercial.*
 
 ## 1. Main, PRs, CI e publicação efetiva
 
-- Main: `bce96f65c673d0033eaaecfcceac38ac0f81740d`.
-- Vercel produtiva READY, domínio `agendeapp.online` atribuído: `dpl_HexMies5ur68oeiu385fdFqXvQML`, mesmo SHA, publicação Git de main. Isso foi disparado pelo merge anterior, não por esta auditoria.
-- #66 MERGED em `f8d02125f8c8edc7d67891e3c8a50a520d0bfacc`; #68 MERGED em `bce96f6`; #67 MERGED por seu commit de integração `64c1c92e1f961ce9c6feb3c086641c8574afafba`, já ancestral de #68. Seu head `3c25bb0` é ancestral de main. A árvore de main é **idêntica** à árvore do head homologado #68 `2751fc5`: não houve segunda aplicação/duplicação ao o GitHub reconhecer #67 como integrado.
-- [CI da main aprovado](https://github.com/plbr010/agende/actions/runs/39474516800), SHA `bce96f6`. [CI final anterior de #68 aprovado](https://github.com/plbr010/agende/actions/runs/39471831979).
-- Branch própria desta missão: `codex/prelaunch-main-audit-20261020`, criada limpa de origin/main. Deploy automático da branch explicitamente desabilitado em `vercel.json`. Não fazer merge desta PR como simples entrega documental: main aciona produção.
+- Main **atualizada durante a auditoria**: `058de365d978b38ed7dc53730a5755a1e7c95ac5` (PR #69); snapshot inicial era `bce96f65c673d0033eaaecfcceac38ac0f81740d`.
+- Vercel produtiva READY, domínio `agendeapp.online` atribuído: `dpl_F6Gt5b8sN5mpTV42L6ybbKeHkAos`, mesmo SHA `058de36`, publicação Git de main. A auditoria não fez esse merge/deploy.
+- #66 MERGED em `f8d02125f8c8edc7d67891e3c8a50a520d0bfacc`; #68 MERGED em `bce96f6`; #67 MERGED por `64c1c92e1f961ce9c6feb3c086641c8574afafba`, já ancestral de #68. O head `3c25bb0` é ancestral de main. A árvore de `bce96f6` era idêntica ao head #68 `2751fc5`: sem segunda aplicação/duplicação de #67. #69 acrescentou depois 16 arquivos de interface/testes, sem SQL/Edge/API. Revisão e limites em [prelaunch20-main-refresh.md](prelaunch20-main-refresh.md).
+- [CI da main atual aprovado](https://github.com/plbr010/agende/actions/runs/39479511993), SHA `058de36`. [CI inicial da main](https://github.com/plbr010/agende/actions/runs/39474516800) e [CI final de #68](https://github.com/plbr010/agende/actions/runs/39471831979) também aprovados.
+- Branch própria: `codex/prelaunch-main-audit-20261020`, criada limpa de main e atualizada por merge da nova main, preservando o Cursor. Deploy automático da branch desabilitado em `vercel.json`. Não fazer merge desta PR como simples entrega documental: main aciona produção.
 
 Registro: `prelaunch20-state.json`. O catálogo remoto foi consultado em transações READ ONLY, com metadados e contagens agregadas, sem nomes/telefones/e-mails de clientes nem valores de secrets.
 
@@ -26,7 +26,7 @@ Registro: `prelaunch20-state.json`. O catálogo remoto foi consultado em transa�
 | Sessão natural | PASS definitivo #68: 3.600 s reais, JWT original recebeu 403/bad_jwt, refresh preservou identidade, logout limpou | Não repetido com usuário produtivo | Evidência staging definitiva suficiente para código; smoke produtivo após autorização |
 | Stripe | Seis sessões TEST conciliadas, idempotência/portal/cancelamento e replay distinguidos no #68 | Endpoint LIVE ativo/8 eventos, zero entregas no período exibido; webhook fonte desatualizada | Publicar fonte revisada e validar gates; entrega positiva LIVE continua não comprovada |
 
-O resultado definitivo de sessão está em `docs/homologation/final20-session-lifecycle.json`. Não há mais pendência daquele teste de uma hora. Esta missão não repetiu cadastros/reservas cloud porque o escopo atual é somente leitura remota.
+O resultado definitivo de sessão está em `docs/homologation/final20-session-lifecycle.json`. Não há mais pendência daquele teste de uma hora. A matriz usa as provas cloud de #68 (`2751fc5`/`bce96f6`); os ajustes de UI de #69 foram revisados e receberam checks novos, mas não foram rehomologados por writes cloud. Esta missão não repetiu cadastros/reservas/uploads remotos porque o escopo atual é somente leitura remota.
 
 ## 3. Cinco migrations e diferenças históricas
 
@@ -76,10 +76,10 @@ Rollback antes do commit SQL: transação aborta sem aplicar parcialmente; pausa
 
 ## 6. Testes executados nesta missão
 
-- Main: **410/410 locais**, categorias preservadas (unidade/contratos/mocks/PGlite, não 410 E2E); **70/70 PostgreSQL 17.6 nativo**, incluindo dez de concorrência, com Auth/Storage simulados. Novos snapshots `prelaunch20-main-*`, sem sobrescrever os históricos de homologação.
+- Snapshot inicial bce96f6: **410/410 locais**, categorias preservadas (unidade/contratos/mocks/PGlite, não 410 E2E); **70/70 PostgreSQL 17.6 nativo**, incluindo dez de concorrência, com Auth/Storage simulados. Novos snapshots `prelaunch20-main-*`, sem sobrescrever os históricos. #69 não altera SQL, e esses 70 continuam pertinentes ao mesmo conjunto de migrations.
 - Lint, typecheck, build Node 24 com configuração pública staging e smoke de build: PASS. CI da main também verde; nenhum build local recebeu service role produtivo.
 - Novo teste incremental em PGlite e PostgreSQL 17.6 nativo modela o estado físico observado antes dos legados e das cinco, incluindo os guards já equivalentes. Cinco sozinhas recusadas; 3 + 5 aplicadas na ordem, dados preexistentes e histórico anterior mantidos, oito registros exatos, ausência de intenção/replay recusados, final em manutenção e retomada authenticated sem anon; grants/índice/bucket/RLS/slots/reviews/billing pós-apply passam. Modelo sintético, não restore produtivo. Evidência `prelaunch20-upgrade-native-*`. Duas suítes de descoberta foram repetidas pelo runner auxiliar; não somá-las aos 70 como testes novos independentes.
-- Teste incremental adicionado ao `npm test` e categorizado como SQL: **411/411 na candidata** e lint aprovado. Também valida hashes do bundle/fontes para impedir uso de pacote desatualizado. Gerador é offline; verificação de HTTPS usa exclusivamente GET. Nenhum smoke de escrita produtiva foi executado.
+- Teste incremental adicionado ao `npm test` e categorizado como SQL: 411/411 na primeira candidata; **412/412 após integrar a main #69**, com os checks afetados repetidos em `prelaunch20-refreshed-checks.json`. Valida hashes do bundle/fontes contra pacote desatualizado. Gerador offline; HTTPS usa exclusivamente GET. Nenhum smoke de escrita produtiva foi executado.
 - Pequena correção documental: duas linhas do relatório anterior #68 tinham bytes mistos de encoding; normalizadas para UTF-8 sem alterar os resultados. Nenhum bug de aplicação novo reproduzido, nenhuma alteração TSX ou migration histórica.
 
 ## 7. Plano, smoke e autorizações

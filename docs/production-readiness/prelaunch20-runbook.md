@@ -1,6 +1,6 @@
 # Janela controlada — execução somente após autorização
 
-Projeto Supabase `wohimauqgywshbbejjcl`; Vercel projeto Agendê; domínio `agendeapp.online`. Main e produção auditadas em `bce96f65c673d0033eaaecfcceac38ac0f81740d`. Atualizar esse snapshot na abertura da janela: nova main/configuração invalida uma aprovação baseada no SHA anterior. Não fazer merge desta PR de auditoria durante esta missão, pois main tem deploy automático. Nenhuma operação abaixo foi executada em produção.
+Projeto Supabase `wohimauqgywshbbejjcl`; Vercel projeto Agendê; domínio `agendeapp.online`. Main e produção atualizadas durante a auditoria para `058de365d978b38ed7dc53730a5755a1e7c95ac5` (#69), READY `dpl_F6Gt5b8sN5mpTV42L6ybbKeHkAos`. Snapshot inicial era bce96f6. Conferir novamente na abertura da janela: nova main/configuração invalida aprovação do SHA anterior. Não fazer merge desta PR de auditoria, pois main tem deploy automático. Nenhuma operação abaixo foi executada em produção.
 
 ## Autorizações exatas, separadas por operação
 
@@ -43,7 +43,7 @@ Estas são autorizações propostas, não pedidos para executar agora. Não bast
 
    Cada arquivo registra somente seu conjunto revisado (3 e 5). Qualquer nome/versão/objeto já presente aborta; timeout de lock 5s/statement 120s/idle 60s. Falha causa rollback **da transação daquele conjunto**, preservando a pausa; se A6 falhar após A6b, os três legados continuam aplicados. Não há atomicidade global entre as duas execuções. Não remover guards para “fazer passar”. Reexecutar catálogo e invariantes. Não usar o workspace sem confirmar o SHA aprovado.
 6. A7: publicar o webhook revisado mantendo credenciais existentes; verificar fonte normalizada/deployment/status e assinatura obrigatória. `verify_jwt=false` é necessário para Stripe, não significa aceitar requisições sem assinatura. Nenhuma cobrança, replay ou secret alterado nesta etapa.
-7. A8 somente se houver mudança de app/config: testar build/CI, publicar SHA autorizado, aguardar READY e conferir domínio/SHA. O frontend `bce96f6` já está ativo; não há novo deploy obrigatório para a revisão documental/testes desta PR.
+7. A8 somente se houver mudança de app/config: testar build/CI, publicar SHA autorizado, aguardar READY e conferir domínio/SHA. O frontend `058de36` já está ativo; não há novo deploy obrigatório para a revisão documental/testes desta PR.
 8. A9: reabrir apenas authenticated, executar `prelaunch20-postchecks.sql` e depois `prelaunch20-smoke.md`. A10 para negativos de webhook. Falha crítica: A11 mantém criação fechada, sem desfazer proteção de Auth/RLS. Sem falhas e após observação, decisão explícita de GO para piloto limitado; lançamento comercial depende também de aceite LIVE e recuperação demonstrada.
 
 ## Backup, RPO/RTO e rollback

@@ -1,10 +1,10 @@
 {
   "checked_at": "2026-10-20T18:51:50.815102+00:00",
-  "base_main_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
+  "base_main_sha": "058de365d978b38ed7dc53730a5755a1e7c95ac5",
   "main_ci": {
     "conclusion": "success",
-    "headSha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
-    "url": "https://github.com/plbr010/agende/actions/runs/39474516800"
+    "headSha": "058de365d978b38ed7dc53730a5755a1e7c95ac5",
+    "url": "https://github.com/plbr010/agende/actions/runs/39479511993"
   },
   "pull_requests": [
     {
@@ -33,9 +33,17 @@
       "mergedAt": "2026-10-20T18:24:54Z",
       "number": 68,
       "state": "MERGED"
+    },
+    {
+      "headRefOid": "1722c41b136f060e313eb62998525b1761d8ea36",
+      "mergeCommit": {
+        "oid": "058de365d978b38ed7dc53730a5755a1e7c95ac5"
+      },
+      "mergedAt": "2026-10-20T18:59:05Z",
+      "number": 69,
+      "state": "MERGED"
     }
   ],
-  "pr68_head_tree_equals_main": true,
   "production_mutations": 0,
   "tests": {
     "main_local": 410,
@@ -61,5 +69,14 @@
     "20261008131859_launch_hardening_reviews_force_rls.sql",
     "20261009173042_billing_reconcile_excess_seats.sql"
   ],
-  "owner_guard_history_repair_performed": false
+  "owner_guard_history_repair_performed": false,
+  "initial_main_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
+  "initial_main_ci": {
+    "conclusion": "success",
+    "headSha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
+    "url": "https://github.com/plbr010/agende/actions/runs/39474516800"
+  },
+  "initial_pr68_tree_equals_initial_main": true,
+  "current_main_adds_pr69": true,
+  "refreshed_at": "2026-10-20T19:13:45.266471+00:00"
 }
