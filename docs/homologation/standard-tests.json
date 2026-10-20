@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T16:48:46.207Z",
+  "checked_at": "2026-10-20T18:40:00.622Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 252,
+      "passed": 253,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 79,
+      "passed": 81,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 408,
+    "passed": 411,
     "failed": 0,
     "skipped": 0
   },
@@ -767,6 +767,12 @@
       "status": "passed"
     },
     {
+      "file": "src/components/catalog/professional-photo-editor.test.ts",
+      "name": "professional photo editor previews, replaces and removes without inventing a public file",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/components/catalog/service-catalog.test.ts",
       "name": "service filters keep active, hidden and unassigned services apart",
       "category": "unit_or_static_contract",
@@ -854,6 +860,18 @@
       "file": "src/components/marketing/pricing.test.ts",
       "name": "pricing cards keep monthly prices, annual prices and plan-specific signup links",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/people/person-mark.test.ts",
+      "name": "a missing photo does not hide the next client's valid photo in a reused dialog",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/people/person-mark.test.ts",
+      "name": "a previously completed broken image falls back, while a changed photo version can retry",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {

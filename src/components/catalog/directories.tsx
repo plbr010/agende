@@ -19,6 +19,7 @@ import {
 } from "@/lib/catalog/actions";
 import type { ClientRow, MemberRole, ServiceRow, TeamMember } from "@/lib/catalog/queries";
 import { Badge } from "@/components/ui/badge";
+import { PersonMark } from "@/components/people/person-mark";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -166,10 +167,10 @@ export function TeamDirectory({
                       {initials(member.displayName ?? member.fullName)}
                     </AvatarFallback>
                   </Avatar>
-                  <CardTitle className="col-start-2 truncate">
+                  <CardTitle className="col-start-2 min-w-0 font-serif text-xl break-words whitespace-normal text-wine-deep">
                     {member.displayName ?? member.fullName}
                   </CardTitle>
-                  <CardDescription className="col-start-2 flex items-center gap-1 truncate">
+                  <CardDescription className="col-start-2 flex min-w-0 items-center gap-1 break-all whitespace-normal">
                     <Mail className="size-3" /> {member.email}
                   </CardDescription>
                   {canEdit ? (
@@ -622,7 +623,7 @@ export function ServiceCatalog({
                           className="size-5 accent-[var(--wine)]"
                         />
                         <span className="min-w-0">
-                          <span className="block truncate font-medium text-wine-deep">{professionalLabel(member)}</span>
+                          <span className="block font-medium break-words text-wine-deep">{professionalLabel(member)}</span>
                           <span className="block text-xs text-muted-foreground">{roleLabel[member.role]}</span>
                         </span>
                       </label>
@@ -688,15 +689,11 @@ export function ClientDirectory({
         {clients.map((client) => (
           <Card key={client.id} className="rounded-3xl border-border/70 bg-card/85 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <CardHeader className="grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3">
-              <Avatar size="lg" className="row-span-2">
-                <AvatarFallback className="bg-secondary text-primary">
-                  {initials(client.fullName)}
-                </AvatarFallback>
-              </Avatar>
-              <CardTitle className="col-start-2 truncate">{client.fullName}</CardTitle>
-              <CardDescription className="col-start-2 flex flex-wrap gap-x-3 gap-y-1">
+              <PersonMark name={client.fullName} photoUrl={`/api/clients/avatar?clientId=${client.id}`} className="row-span-2" />
+              <CardTitle className="col-start-2 min-w-0 font-serif text-xl break-words whitespace-normal text-wine-deep">{client.fullName}</CardTitle>
+              <CardDescription className="col-start-2 flex min-w-0 flex-wrap gap-x-3 gap-y-1 whitespace-normal">
                 <span className="inline-flex items-center gap-1"><Phone className="size-3" /> {client.phone ? formatPhoneBr(client.phone) : "Sem telefone"}</span>
-                {client.email ? <span className="inline-flex items-center gap-1 truncate"><Mail className="size-3" /> {client.email}</span> : null}
+                {client.email ? <span className="inline-flex min-w-0 items-center gap-1 break-all"><Mail className="size-3" /> {client.email}</span> : null}
               </CardDescription>
               {canEdit ? (
                 <CardAction className="col-start-3">

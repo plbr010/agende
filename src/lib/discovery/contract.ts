@@ -44,6 +44,8 @@ export type DiscoveryWorkspaceCard = {
   state: string | null;
   logoPath: string | null;
   bookingOpen: boolean;
+  /** Public display names returned by the search contract. Empty when the RPC omits them. */
+  matchedNames: string[];
 };
 
 export type DiscoveryLocality = {
@@ -157,6 +159,27 @@ function asCount(value: unknown): number {
   return typeof value === "number" && Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
+function matchedNamesFrom(data: Record<string, unknown>): string[] {
+  const raw = data.matched_professionals ?? data.matchedProfessionals ?? data.matched_names ?? data.matchedNames;
+  if (!Array.isArray(raw)) return [];
+  const names: string[] = [];
+  for (const item of raw) {
+    const value =
+      typeof item === "string"
+        ? item
+        : item && typeof item === "object"
+          ? asString((item as Record<string, unknown>).display_name) ??
+            asString((item as Record<string, unknown>).displayName) ??
+            asString((item as Record<string, unknown>).name)
+          : null;
+    const name = value?.replace(/\s+/g, " ").trim().slice(0, 80);
+    if (!name || names.includes(name)) continue;
+    names.push(name);
+    if (names.length === 3) break;
+  }
+  return names;
+}
+
 export function parseDiscoveryWorkspaceCard(raw: unknown): DiscoveryWorkspaceCard | null {
   if (!raw || typeof raw !== "object") return null;
   const data = raw as Record<string, unknown>;
@@ -173,6 +196,7 @@ export function parseDiscoveryWorkspaceCard(raw: unknown): DiscoveryWorkspaceCar
     state: asString(data.state)?.toUpperCase() ?? null,
     logoPath: asString(data.logo_path) ?? asString(data.logoPath),
     bookingOpen: asBoolean(data.booking_open) || asBoolean(data.bookingOpen),
+    matchedNames: matchedNamesFrom(data),
   };
 }
 
@@ -302,6 +326,8 @@ export const DISCOVERY_COPY = {
   clear: "Limpar filtros",
   cityWide: "Ver todos nesta cidade",
   cardBook: "Ver salão e agendar",
+  matchedPeople: "Quem atende",
+  queryResults: "O nome pode ser do salão ou de quem atende.",
   cardProfile: "Ver o perfil",
   loadMore: "Ver mais estabelecimentos",
   loadingMore: "Carregando mais...",

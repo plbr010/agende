@@ -108,8 +108,8 @@ function VisitRow({
           {initials(visit.clientName)}
         </span>
         <span className="min-w-0">
-          <span className="block truncate font-medium text-foreground">{visit.clientName}</span>
-          <span className="block truncate text-sm text-muted-foreground">
+          <span className="block font-medium break-words text-foreground">{visit.clientName}</span>
+          <span className="block text-sm break-words text-muted-foreground">
             {visit.serviceName}
             {showProfessional ? ` · ${visit.professionalName}` : ""}
           </span>
@@ -406,8 +406,8 @@ export function ProfessionalDashboard({
                         {initials(visit.clientName)}
                       </span>
                       <span className="min-w-0">
-                        <span className="block truncate text-sm font-medium">{visit.clientName}</span>
-                        <span className="block truncate text-xs text-muted-foreground">{visit.serviceName}</span>
+                        <span className="block text-sm font-medium break-words">{visit.clientName}</span>
+                        <span className="block text-xs break-words text-muted-foreground">{visit.serviceName}</span>
                       </span>
                     </span>
                     <ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" />

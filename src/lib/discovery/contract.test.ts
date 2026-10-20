@@ -83,6 +83,7 @@ test("parser maps the Codex wire DTO and never invents a salon", () => {
     state: "MG",
     logoPath: "logo.png",
     bookingOpen: true,
+    matchedNames: [],
   });
   const parsed = parseDiscoverySearchPayload({
     items: [{ name: "Ok", slug: "ok-salon", booking_open: false }, { name: "drop-me" }],
@@ -91,6 +92,20 @@ test("parser maps the Codex wire DTO and never invents a salon", () => {
   assert.equal(parsed.items.length, 1);
   assert.equal(parsed.total, 9);
   assert.equal(parsed.items[0]?.bookingOpen, false);
+  assert.deepEqual(parsed.items[0]?.matchedNames, []);
+  const withPeople = parseDiscoveryWorkspaceCard({
+    name: "Studio Aurora",
+    slug: "studio-aurora",
+    matched_professionals: [
+      { display_name: "Maria Clara" },
+      { display_name: "Maria Clara" },
+      "João",
+      { name: "   " },
+      { display_name: "Ana Beatriz Souza" },
+      { display_name: "Quarta pessoa que não cabe" },
+    ],
+  });
+  assert.deepEqual(withPeople?.matchedNames, ["Maria Clara", "João", "Ana Beatriz Souza"]);
 });
 
 test("adapter probes the real RPC names and stays empty when the backend is missing", async () => {
@@ -224,6 +239,7 @@ test("search RPC paginates with offset and never invents extra salons", async ()
     state: "MG",
     logoPath: null,
     bookingOpen: true,
+    matchedNames: [],
   };
   const merged = mergeDiscoveryPages([first], [...page.items, first]);
   assert.equal(merged.length, 2);

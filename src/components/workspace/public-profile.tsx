@@ -267,7 +267,7 @@ export function PublicWorkspacePage({
               </h2>
               <p className="relative mt-2 text-sm leading-6 text-muted-foreground">
                 {bookingOpen
-                  ? "Serviço, profissional, dia e horário — sem criar conta para a primeira reserva."
+                  ? "Escolha serviço, profissional, dia e horário. A conta de cliente é grátis e só é pedida para confirmar."
                   : "O perfil continua público, mas as reservas online estão pausadas até o estabelecimento reativar a assinatura."}
               </p>
               {bookingOpen ? (

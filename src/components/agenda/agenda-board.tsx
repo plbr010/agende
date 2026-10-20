@@ -267,10 +267,10 @@ function DayColumn({
                 {item.localStart}–{item.localEnd}
               </p>
               <p className="mt-2 flex min-w-0 items-center gap-2">
-                {compact ? null : <PersonMark name={item.clientName} size="sm" />}
-                <span className="truncate font-medium">{item.clientName}</span>
+                <PersonMark name={item.clientName} photoUrl={`/api/clients/avatar?clientId=${item.clientId}`} size="sm" />
+                <span className="min-w-0 font-medium break-words">{item.clientName}</span>
               </p>
-              <p className="truncate text-sm text-muted-foreground">{item.serviceName} · {item.professionalName}</p>
+              <p className="text-sm break-words text-muted-foreground">{item.serviceName} · {item.professionalName}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", STATUS_CHIP_CLASS[item.status])}>
                   {STATUS_LABEL[item.status]}
@@ -472,6 +472,15 @@ function AppointmentFormDialog({
   );
 }
 
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid gap-1">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="min-w-0 font-medium break-words">{value}</dd>
+    </div>
+  );
+}
+
 function displayClientPhone(phone: string | null): string {
   if (!phone?.trim()) return "Telefone não informado";
   if (extractBrNationalDigits(phone)) return formatPhoneBr(phone);
@@ -526,45 +535,27 @@ export function AppointmentDetailDialog({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3 pr-10">
               <PersonMark name={appointment.clientName} photoUrl={`/api/clients/avatar?clientId=${appointment.clientId}`} size="sm" />
-              <span className="min-w-0">{appointment.clientName}</span>
+              <span className="min-w-0 break-words">{appointment.clientName}</span>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="break-words">
               {workspaceName} · {appointment.serviceName} · {appointment.localStart}–{appointment.localEnd}
             </DialogDescription>
           </DialogHeader>
-          <dl className="grid gap-2 text-sm">
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Cliente</dt>
-              <dd className="text-right font-medium">{appointment.clientName}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">WhatsApp</dt>
-              <dd className="text-right font-medium break-all">{displayClientPhone(appointment.clientPhone)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Serviço</dt>
-              <dd className="text-right font-medium">{appointment.serviceName}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
+          <dl className="grid gap-3 text-sm">
+            <DetailRow label="Cliente" value={appointment.clientName} />
+            <DetailRow label="WhatsApp" value={displayClientPhone(appointment.clientPhone)} />
+            <DetailRow label="Serviço" value={appointment.serviceName} />
+            <div className="grid gap-1">
               <dt className="text-muted-foreground">Profissional</dt>
-              <dd className="flex items-center gap-2 text-right font-medium"><PersonMark name={appointment.professionalName} photoUrl={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} size="sm" />{appointment.professionalName}</dd>
+              <dd className="flex min-w-0 items-center gap-2 font-medium">
+                <PersonMark name={appointment.professionalName} photoUrl={`/api/professionals/photo?memberId=${appointment.professionalMemberId}`} size="sm" />
+                <span className="min-w-0 break-words">{appointment.professionalName}</span>
+              </dd>
             </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Data</dt>
-              <dd className="text-right font-medium">{appointment.localDate.split("-").reverse().join("/")}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Horário</dt>
-              <dd className="text-right font-medium">{appointment.localStart}–{appointment.localEnd}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Duração</dt>
-              <dd className="text-right font-medium">{appointment.durationMinutes} min</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Preço</dt>
-              <dd className="text-right font-medium">{formatCentsToReais(appointment.priceCents)}</dd>
-            </div>
+            <DetailRow label="Data" value={appointment.localDate.split("-").reverse().join("/")} />
+            <DetailRow label="Horário" value={`${appointment.localStart}–${appointment.localEnd}`} />
+            <DetailRow label="Duração" value={`${appointment.durationMinutes} min`} />
+            <DetailRow label="Preço" value={formatCentsToReais(appointment.priceCents)} />
             {appointment.notes ? (
               <div className="grid gap-1">
                 <dt className="text-muted-foreground">Observação</dt>
@@ -581,7 +572,7 @@ export function AppointmentDetailDialog({
             </div>
           </dl>
           {canNotify && (appointment.status === "scheduled" || appointment.status === "confirmed") ? (
-            <div className="grid gap-2">
+            <div className="grid gap-2 rounded-[1.25rem] bg-metric-blush p-4 ring-1 ring-[#f0e4de]">
               <p className="text-sm font-medium text-wine-deep">WhatsApp</p>
               <AppointmentWhatsApp
                 key={`${appointment.id}-${appointment.status}-${appointment.startsAt}-${appointment.clientPhone ?? ""}`}
