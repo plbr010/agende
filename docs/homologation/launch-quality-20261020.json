@@ -37,6 +37,17 @@
       "status": "WARN",
       "high": 5,
       "affected_chain": "eslint-config-next / fast-glob / micromatch / braces"
+    },
+    "verify-stripe-recovery": {
+      "status": "PASS",
+      "reviewed_local_migration_count": 75
+    },
+    "audit-local-flows": {
+      "status": "PASS"
+    },
+    "audit-schema-drift": {
+      "status": "PASS",
+      "scope": "report generated against historical snapshot, not a no-drift claim"
     }
   },
   "production_writes": 0,
