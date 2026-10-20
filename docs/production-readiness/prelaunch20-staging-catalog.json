@@ -1,0 +1,856 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "read_only": true,
+  "buckets": [
+    {
+      "id": "workspace-logos",
+      "mime": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ],
+      "limit": 2097152,
+      "public": true
+    },
+    {
+      "id": "account-avatars",
+      "mime": [
+        "image/webp"
+      ],
+      "limit": 2097152,
+      "public": false
+    },
+    {
+      "id": "professional-photos",
+      "mime": [
+        "image/webp"
+      ],
+      "limit": 2097152,
+      "public": false
+    }
+  ],
+  "columns": [
+    {
+      "table": "workspace_settings",
+      "column": "discovery_enabled",
+      "nullable": "NO"
+    },
+    {
+      "table": "profiles",
+      "column": "residence_city",
+      "nullable": "YES"
+    },
+    {
+      "table": "profiles",
+      "column": "avatar_path",
+      "nullable": "YES"
+    },
+    {
+      "table": "professional_profiles",
+      "column": "photo_path",
+      "nullable": "YES"
+    },
+    {
+      "table": "workspace_settings",
+      "column": "logo_path",
+      "nullable": "YES"
+    },
+    {
+      "table": "workspace_settings",
+      "column": "cover_path",
+      "nullable": "YES"
+    }
+  ],
+  "functions": [
+    {
+      "anon": false,
+      "name": "claim_professional_photo_cleanup",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_member_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_professional_photo_cleanup(p_member_id uuid)\n RETURNS SETOF text\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n PERFORM 1 FROM public.professional_profiles WHERE member_id=p_member_id FOR UPDATE;\r\n RETURN QUERY UPDATE app.professional_photo_cleanup q SET claimed=true\r\n WHERE q.member_id=p_member_id AND q.available_at<=now()\r\n AND NOT EXISTS(SELECT 1 FROM public.professional_profiles p WHERE p.photo_path=q.path) RETURNING q.path;\r\nEND $function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "9f8f0e3f183c8943e0949ff56d5f67b5"
+    },
+    {
+      "anon": false,
+      "name": "claim_workspace_image_cleanup",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_workspace_image_cleanup(p_workspace_id uuid)\n RETURNS SETOF text\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  -- Same lock order as swap: references cannot change while claiming bytes.\n  PERFORM 1 FROM public.workspace_settings WHERE workspace_id=p_workspace_id FOR UPDATE;\n  RETURN QUERY UPDATE app.workspace_image_cleanup q SET claimed=true\n    WHERE q.workspace_id=p_workspace_id AND q.available_at<=now()\n    AND NOT EXISTS(SELECT 1 FROM public.workspace_settings s WHERE s.logo_path=q.path OR s.cover_path=q.path)\n    RETURNING q.path;\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "b3df83e1c3e401ce95be14abdcfbdd2a"
+    },
+    {
+      "anon": false,
+      "name": "create_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text",
+      "definition": "CREATE OR REPLACE FUNCTION public.create_appointment(p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text DEFAULT NULL::text)\n RETURNS uuid\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n  SELECT app.create_appointment(\r\n    p_workspace_id,\r\n    p_client_id,\r\n    p_professional_member_id,\r\n    p_service_id,\r\n    p_starts_at,\r\n    p_notes\r\n  );\r\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "aaba1b8851d876621ad4284f41f44bae"
+    },
+    {
+      "anon": false,
+      "name": "create_public_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text, p_ip_hash text",
+      "definition": "CREATE OR REPLACE FUNCTION public.create_public_appointment(p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text DEFAULT NULL::text, p_ip_hash text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n  SELECT app.create_public_appointment(\r\n    p_slug,\r\n    p_service_id,\r\n    p_professional_member_id,\r\n    p_starts_at,\r\n    p_full_name,\r\n    p_phone,\r\n    p_email,\r\n    p_customer_note,\r\n    p_ip_hash\r\n  );\r\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "58f708914949502f4fe5ef3304aa22e7"
+    },
+    {
+      "anon": false,
+      "name": "finish_professional_photo_cleanup",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.finish_professional_photo_cleanup(p_path text)\n RETURNS void\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n DELETE FROM app.professional_photo_cleanup WHERE path=p_path AND claimed;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "4d229409099c49f347dd7f2acc1a179a"
+    },
+    {
+      "anon": false,
+      "name": "finish_workspace_image_cleanup",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.finish_workspace_image_cleanup(p_workspace_id uuid, p_path text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  DELETE FROM app.workspace_image_cleanup WHERE workspace_id=p_workspace_id AND path=p_path AND claimed;\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "133b296dbbde9846ccaed49724eb2044"
+    },
+    {
+      "anon": false,
+      "name": "get_appointment_whatsapp",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_appointment_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_appointment_whatsapp(p_appointment_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_uid uuid:=app.require_confirmed_email(); v_result jsonb;\r\nBEGIN\r\n SELECT jsonb_build_object('clientName',c.full_name,'phone',c.phone,'workspaceName',w.name,\r\n 'professionalName',p.display_name,'serviceName',s.name,'startsAt',a.starts_at,'timezone',app.workspace_timezone(a.workspace_id),'status',a.status)\r\n INTO v_result FROM public.appointments a\r\n JOIN public.workspace_clients c ON c.id=a.client_id AND c.workspace_id=a.workspace_id\r\n JOIN public.workspaces w ON w.id=a.workspace_id\r\n JOIN public.professional_profiles p ON p.member_id=a.professional_member_id AND p.workspace_id=a.workspace_id\r\n JOIN public.services s ON s.id=a.service_id AND s.workspace_id=a.workspace_id\r\n WHERE a.id=p_appointment_id AND a.status IN ('scheduled','confirmed')\r\n AND app.can_write_appointment(a.workspace_id,a.professional_member_id);\r\n IF v_result IS NULL THEN RAISE EXCEPTION 'appointment_unavailable' USING ERRCODE='42501'; END IF;\r\n RETURN v_result;\r\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "4953476e8ab2c895086b64d248ec9382"
+    },
+    {
+      "anon": true,
+      "name": "get_professional_photo",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_member_id uuid, p_slug text",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_professional_photo(p_member_id uuid, p_slug text DEFAULT NULL::text)\n RETURNS text\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_path text; v_workspace uuid; v_catalog jsonb;\nBEGIN\n SELECT photo_path,workspace_id INTO v_path,v_workspace FROM public.professional_profiles WHERE member_id=p_member_id;\n IF v_path IS NULL THEN RETURN NULL; END IF;\n IF app.is_workspace_member(v_workspace) THEN RETURN v_path; END IF;\n IF p_slug IS NULL THEN RETURN NULL; END IF;\n IF NOT EXISTS(SELECT 1 FROM public.workspaces WHERE id=v_workspace AND slug=p_slug) THEN RETURN NULL; END IF;\n v_catalog:=app.list_public_booking_catalog(p_slug);\n IF EXISTS(SELECT 1 FROM jsonb_array_elements(v_catalog->'professionals') item WHERE item->>'id'=p_member_id::text) THEN RETURN v_path; END IF;\n RETURN NULL;\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "3939c3e31115d987d2116c4114e7ff51"
+    },
+    {
+      "anon": true,
+      "name": "get_public_workspace_cover",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_slug text",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_public_workspace_cover(p_slug text)\n RETURNS text\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  SELECT s.cover_path FROM public.workspace_settings s JOIN public.workspaces w ON w.id=s.workspace_id\n  WHERE w.slug=p_slug;\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "5c10af81c65a79c7fa0e3a852a137d27"
+    },
+    {
+      "anon": false,
+      "name": "get_related_client_avatar",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_client_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_related_client_avatar(p_client_id uuid)\n RETURNS text\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_uid uuid:=app.require_confirmed_email(); v_path text;\r\nBEGIN\r\n SELECT p.avatar_path INTO v_path FROM public.workspace_clients c\r\n JOIN public.profiles p ON p.user_id=c.linked_user_id\r\n WHERE c.id=p_client_id AND c.archived_at IS NULL AND EXISTS(\r\n SELECT 1 FROM public.appointments a WHERE a.workspace_id=c.workspace_id AND a.client_id=c.id\r\n AND app.can_write_appointment(a.workspace_id,a.professional_member_id));\r\n RETURN v_path;\r\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "0bb246137e624d2cbf7339d728fae58d"
+    },
+    {
+      "anon": false,
+      "name": "queue_professional_photo",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_actor_id uuid, p_member_id uuid, p_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.queue_professional_photo(p_actor_id uuid, p_member_id uuid, p_path text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_workspace uuid;\r\nBEGIN\r\n PERFORM set_config('request.jwt.claim.sub',p_actor_id::text,true);\r\n v_workspace:=app.require_professional_photo_editor(p_member_id);\r\n IF p_path IS NULL OR p_path !~ ('^'||v_workspace::text||'/professionals/'||p_member_id::text||'/[0-9a-f-]{36}[.]webp$') THEN\r\n RAISE EXCEPTION 'invalid_image_path'; END IF;\r\n INSERT INTO app.professional_photo_cleanup(path,member_id) VALUES(p_path,p_member_id);\r\nEND $function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "9d13823672d318341b866fdbd977249e"
+    },
+    {
+      "anon": false,
+      "name": "queue_workspace_image_upload",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_kind text, p_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.queue_workspace_image_upload(p_workspace_id uuid, p_kind text, p_path text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  IF p_kind IS NULL OR p_kind NOT IN ('logo','cover') OR p_path IS NULL OR\n    p_path !~ ('^'||p_workspace_id::text||'/'||p_kind||'/[0-9a-f-]{36}[.]webp$') THEN\n    RAISE EXCEPTION 'invalid_image_path' USING ERRCODE='22023';\n  END IF;\n  INSERT INTO app.workspace_image_cleanup(path,workspace_id) VALUES(p_path,p_workspace_id);\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "f79a4a56ff0338f8461f68431ca66d1b"
+    },
+    {
+      "anon": true,
+      "name": "search_public_workspaces",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_city text, p_state text, p_query text, p_postal_code text, p_limit integer, p_offset integer",
+      "definition": "CREATE OR REPLACE FUNCTION public.search_public_workspaces(p_city text DEFAULT NULL::text, p_state text DEFAULT NULL::text, p_query text DEFAULT NULL::text, p_postal_code text DEFAULT NULL::text, p_limit integer DEFAULT 20, p_offset integer DEFAULT 0)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_city text:=nullif(app.discovery_text(p_city),'');\r\n  v_query text:=nullif(app.discovery_text(p_query),''); v_state text:=nullif(upper(btrim(p_state)),'');\r\nBEGIN\r\n  IF (v_city IS NULL AND v_query IS NULL)\r\n    OR (v_city IS NOT NULL AND char_length(v_city) NOT BETWEEN 2 AND 80)\r\n    OR (v_query IS NOT NULL AND char_length(v_query) NOT BETWEEN 2 AND 100)\r\n    OR (v_state IS NOT NULL AND v_state !~ '^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)$')\r\n    OR p_postal_code IS NOT NULL OR p_limit IS NULL OR p_limit NOT BETWEEN 1 AND 50\r\n    OR p_offset IS NULL OR p_offset NOT BETWEEN 0 AND 10000 THEN\r\n    RAISE EXCEPTION 'invalid_discovery_input' USING ERRCODE='22023';\r\n  END IF;\r\n  RETURN (\r\n    WITH eligible AS MATERIALIZED (\r\n      SELECT w.name,w.slug,s.description,s.city,s.state,s.logo_path,\r\n        EXISTS(SELECT 1 FROM public.services svc\r\n          JOIN public.professional_services ps ON ps.service_id=svc.id AND ps.workspace_id=svc.workspace_id\r\n          JOIN public.professional_profiles pp ON pp.member_id=ps.professional_member_id AND pp.workspace_id=ps.workspace_id\r\n          JOIN public.workspace_members m ON m.id=pp.member_id AND m.workspace_id=pp.workspace_id\r\n          WHERE svc.workspace_id=w.id AND svc.active AND svc.archived_at IS NULL AND ps.active\r\n            AND pp.booking_enabled AND m.status='active' AND m.role IN ('owner','admin','professional')) AS booking_open\r\n      FROM public.workspace_settings s JOIN public.workspaces w ON w.id=s.workspace_id\r\n      WHERE s.discovery_enabled AND app.workspace_has_entitlement(w.id)\r\n        AND s.city IS NOT NULL AND s.state IS NOT NULL\r\n        AND (v_city IS NULL OR app.discovery_text(s.city)=v_city)\r\n        AND (v_state IS NULL OR s.state=v_state)\r\n        AND (v_query IS NULL OR strpos(app.discovery_text(w.name),v_query)>0 OR EXISTS (\r\n          SELECT 1 FROM public.professional_profiles pp JOIN public.workspace_members m ON m.id=pp.member_id AND m.workspace_id=pp.workspace_id\r\n          WHERE pp.workspace_id=w.id AND pp.booking_enabled AND m.status='active'\r\n            AND m.role IN ('owner','admin','professional')\r\n            AND EXISTS (SELECT 1 FROM public.professional_services ps\r\n              JOIN public.services svc ON svc.id=ps.service_id AND svc.workspace_id=ps.workspace_id\r\n              WHERE ps.workspace_id=pp.workspace_id AND ps.professional_member_id=pp.member_id\r\n                AND ps.active AND svc.active AND svc.archived_at IS NULL)\r\n            AND strpos(app.discovery_text(pp.display_name),v_query)>0))\r\n    ), page AS (SELECT * FROM eligible ORDER BY name COLLATE \"C\",slug LIMIT p_limit OFFSET p_offset)\r\n    SELECT jsonb_build_object('items',coalesce((SELECT jsonb_agg(to_jsonb(page) ORDER BY name COLLATE \"C\",slug) FROM page),'[]'::jsonb),\r\n      'total',(SELECT count(*) FROM eligible))\r\n  );\r\nEND;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "80556e2dfea7237aa4fa07d3ab64699b"
+    },
+    {
+      "anon": false,
+      "name": "swap_professional_photo",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_actor_id uuid, p_member_id uuid, p_expected_path text, p_new_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.swap_professional_photo(p_actor_id uuid, p_member_id uuid, p_expected_path text, p_new_path text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_workspace uuid; v_old text; v_lease app.professional_photo_cleanup;\r\nBEGIN\r\n PERFORM set_config('request.jwt.claim.sub',p_actor_id::text,true);\r\n v_workspace:=app.require_professional_photo_editor(p_member_id);\r\n SELECT photo_path INTO STRICT v_old FROM public.professional_profiles WHERE member_id=p_member_id FOR UPDATE;\r\n IF v_old IS DISTINCT FROM p_expected_path THEN RETURN false; END IF;\r\n IF p_new_path IS NOT NULL THEN\r\n SELECT * INTO v_lease FROM app.professional_photo_cleanup WHERE path=p_new_path AND member_id=p_member_id FOR UPDATE;\r\n IF NOT FOUND OR v_lease.claimed OR v_lease.available_at<=now() OR\r\n NOT EXISTS(SELECT 1 FROM storage.objects WHERE bucket_id='professional-photos' AND name=p_new_path) THEN\r\n RAISE EXCEPTION 'invalid_image_path'; END IF;\r\n END IF;\r\n UPDATE public.professional_profiles SET photo_path=p_new_path WHERE member_id=p_member_id;\r\n DELETE FROM app.professional_photo_cleanup WHERE path=p_new_path;\r\n IF v_old IS NOT NULL AND v_old IS DISTINCT FROM p_new_path THEN\r\n INSERT INTO app.professional_photo_cleanup(path,member_id,available_at) VALUES(v_old,p_member_id,now())\r\n ON CONFLICT(path) DO UPDATE SET available_at=now(),claimed=false; END IF;\r\n RETURN true;\r\nEND $function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "51e971a95ef74311d89a2295fe21dca9"
+    },
+    {
+      "anon": false,
+      "name": "swap_workspace_image",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_kind text, p_expected_path text, p_new_path text",
+      "definition": "CREATE OR REPLACE FUNCTION public.swap_workspace_image(p_workspace_id uuid, p_kind text, p_expected_path text, p_new_path text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_settings public.workspace_settings; v_old text; v_lease app.workspace_image_cleanup;\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  IF p_kind NOT IN ('logo','cover') OR p_kind IS NULL THEN RAISE EXCEPTION 'invalid_image_kind' USING ERRCODE='22023'; END IF;\n  SELECT * INTO STRICT v_settings FROM public.workspace_settings WHERE workspace_id=p_workspace_id FOR UPDATE;\n  v_old:=CASE WHEN p_kind='logo' THEN v_settings.logo_path ELSE v_settings.cover_path END;\n  IF v_old IS DISTINCT FROM p_expected_path THEN RETURN false; END IF;\n  IF p_new_path IS NOT NULL THEN\n    SELECT * INTO v_lease FROM app.workspace_image_cleanup WHERE path=p_new_path AND workspace_id=p_workspace_id FOR UPDATE;\n    IF NOT FOUND OR v_lease.claimed OR v_lease.available_at<=now() OR\n      p_new_path !~ ('^'||p_workspace_id::text||'/'||p_kind||'/[0-9a-f-]{36}[.]webp$') OR\n      NOT EXISTS(SELECT 1 FROM storage.objects WHERE bucket_id='workspace-logos' AND name=p_new_path) THEN\n      RAISE EXCEPTION 'invalid_image_path' USING ERRCODE='22023';\n    END IF;\n  END IF;\n  UPDATE public.workspace_settings SET\n    logo_path=CASE WHEN p_kind='logo' THEN p_new_path ELSE logo_path END,\n    cover_path=CASE WHEN p_kind='cover' THEN p_new_path ELSE cover_path END\n    WHERE workspace_id=p_workspace_id;\n  DELETE FROM app.workspace_image_cleanup WHERE path=p_new_path;\n  IF v_old IS NOT NULL AND v_old IS DISTINCT FROM p_new_path THEN\n    INSERT INTO app.workspace_image_cleanup(path,workspace_id,available_at) VALUES(v_old,p_workspace_id,now())\n      ON CONFLICT(path) DO UPDATE SET available_at=now(),claimed=false;\n  END IF;\n  RETURN true;\nEND $function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "7385334f70a4f8c1386615e12752bf8e"
+    },
+    {
+      "anon": false,
+      "name": "update_workspace_settings",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text, p_clear_logo boolean",
+      "definition": "CREATE OR REPLACE FUNCTION public.update_workspace_settings(p_workspace_id uuid, p_name text, p_slug text, p_business_phone text DEFAULT NULL::text, p_business_email text DEFAULT NULL::text, p_description text DEFAULT NULL::text, p_address text DEFAULT NULL::text, p_city text DEFAULT NULL::text, p_state text DEFAULT NULL::text, p_postal_code text DEFAULT NULL::text, p_instagram text DEFAULT NULL::text, p_timezone text DEFAULT NULL::text, p_logo_path text DEFAULT NULL::text, p_clear_logo boolean DEFAULT false)\n RETURNS jsonb\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n  SELECT app.update_workspace_settings(\r\n    p_workspace_id, p_name, p_slug, p_business_phone, p_business_email,\r\n    p_description, p_address, p_city, p_state, p_postal_code, p_instagram,\r\n    p_timezone, p_logo_path, p_clear_logo\r\n  );\r\n$function$\n",
+      "service_role": true,
+      "authenticated": true,
+      "definition_md5": "993cd139776bda7d42ebe115d34c007c"
+    },
+    {
+      "anon": false,
+      "name": "can_write_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_workspace_id uuid, p_professional_member_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION app.can_write_appointment(p_workspace_id uuid, p_professional_member_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_actor public.workspace_members;\r\nBEGIN\r\n  SELECT m.* INTO v_actor\r\n  FROM public.workspace_members m\r\n  WHERE m.workspace_id = p_workspace_id\r\n    AND m.user_id = auth.uid()\r\n    AND m.status = 'active';\r\n  IF v_actor.id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n  IF v_actor.role IN (\r\n    'owner'::public.member_role,\r\n    'admin'::public.member_role,\r\n    'receptionist'::public.member_role\r\n  ) THEN\r\n    RETURN true;\r\n  END IF;\r\n  RETURN v_actor.role = 'professional'::public.member_role\r\n    AND v_actor.id = p_professional_member_id;\r\nEND;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "95a67901daff055519fcd4225bba11b4"
+    },
+    {
+      "anon": false,
+      "name": "create_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text",
+      "definition": "CREATE OR REPLACE FUNCTION app.create_appointment(p_workspace_id uuid, p_client_id uuid, p_professional_member_id uuid, p_service_id uuid, p_starts_at timestamp with time zone, p_notes text DEFAULT NULL::text)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_actor public.workspace_members;\r\n  v_snapshot record;\r\n  v_ends timestamptz;\r\n  v_notes text;\r\n  v_id uuid;\r\n  v_client_archived timestamptz;\r\nBEGIN\r\n  PERFORM app.require_confirmed_email();\r\n  v_actor := app.actor_member(p_workspace_id);\r\n\r\n  IF NOT app.can_write_appointment(p_workspace_id, p_professional_member_id) THEN\r\n    RAISE EXCEPTION 'appointment_write_denied' USING ERRCODE = '42501';\r\n  END IF;\r\n\r\n  SELECT c.archived_at INTO v_client_archived\r\n  FROM public.workspace_clients c\r\n  WHERE c.id = p_client_id\r\n    AND c.workspace_id = p_workspace_id;\r\n\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'client_not_found' USING ERRCODE = '22023';\r\n  END IF;\r\n  IF v_client_archived IS NOT NULL THEN\r\n    RAISE EXCEPTION 'client_archived' USING ERRCODE = '22023';\r\n  END IF;\r\n\r\n  PERFORM app.lock_professional_agenda(p_professional_member_id);\r\n\r\n  SELECT s.price_cents, s.duration_minutes\r\n    INTO v_snapshot\r\n  FROM app.resolve_service_snapshot(p_workspace_id, p_professional_member_id, p_service_id) s;\r\n\r\n  v_ends := p_starts_at + make_interval(mins => v_snapshot.duration_minutes);\r\n  v_notes := nullif(btrim(COALESCE(p_notes, '')), '');\r\n\r\n  PERFORM app.assert_slot_available(\r\n    p_workspace_id,\r\n    p_professional_member_id,\r\n    p_starts_at,\r\n    v_ends,\r\n    NULL\r\n  );\r\n\r\n  INSERT INTO public.appointments (\r\n    workspace_id,\r\n    client_id,\r\n    professional_member_id,\r\n    service_id,\r\n    starts_at,\r\n    ends_at,\r\n    status,\r\n    price_cents,\r\n    duration_minutes,\r\n    notes,\r\n    created_by\r\n  ) VALUES (\r\n    p_workspace_id,\r\n    p_client_id,\r\n    p_professional_member_id,\r\n    p_service_id,\r\n    p_starts_at,\r\n    v_ends,\r\n    'scheduled'::public.appointment_status,\r\n    v_snapshot.price_cents,\r\n    v_snapshot.duration_minutes,\r\n    v_notes,\r\n    auth.uid()\r\n  )\r\n  RETURNING id INTO v_id;\r\n\r\n  RETURN v_id;\r\nEND;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "9bef282eac226c5f899fe4156aa9b28f"
+    },
+    {
+      "anon": false,
+      "name": "create_public_appointment",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text, p_ip_hash text",
+      "definition": "CREATE OR REPLACE FUNCTION app.create_public_appointment(p_slug text, p_service_id uuid, p_professional_member_id uuid, p_starts_at timestamp with time zone, p_full_name text, p_phone text, p_email text, p_customer_note text DEFAULT NULL::text, p_ip_hash text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_ws uuid;\r\n  v_pro uuid;\r\n  v_client uuid;\r\n  v_snapshot record;\r\n  v_ends timestamptz;\r\n  v_note text;\r\n  v_id uuid;\r\n  v_uid uuid := app.require_confirmed_email();\r\n  v_email text := nullif(lower(btrim(COALESCE(p_email, ''))), '');\r\n  v_phone text;\r\n  v_confirmed boolean := false;\r\n  v_ws_name text;\r\n  v_slug text;\r\n  v_service_name text;\r\n  v_pro_name text;\r\n  v_phone_biz text;\r\n  v_tz text;\r\nBEGIN\r\n  SELECT lower(email) INTO v_email FROM auth.users WHERE id=v_uid;\r\n  v_ws := app.resolve_public_workspace(p_slug);\r\n  v_tz := app.workspace_timezone(v_ws);\r\n  v_phone := app.normalize_phone(p_phone);\r\n  IF v_phone IS NULL THEN\r\n    RAISE EXCEPTION 'invalid_phone' USING ERRCODE = '22023';\r\n  END IF;\r\n  IF v_email IS NULL THEN\r\n    RAISE EXCEPTION 'invalid_email' USING ERRCODE = '22023';\r\n  END IF;\r\n\r\n  IF v_uid IS NULL THEN\r\n    RAISE EXCEPTION 'not_authenticated' USING ERRCODE = '42501';\r\n  END IF;\r\n\r\n  SELECT u.email_confirmed_at IS NOT NULL INTO v_confirmed\r\n  FROM auth.users u\r\n  WHERE u.id = v_uid;\r\n  IF NOT COALESCE(v_confirmed, false) THEN\r\n    RAISE EXCEPTION 'email_not_confirmed' USING ERRCODE = '42501';\r\n  END IF;\r\n\r\n  PERFORM app.assert_public_booking_rate(v_ws, v_email, v_phone, nullif(btrim(COALESCE(p_ip_hash, '')), ''));\r\n  PERFORM app.assert_public_booking_window(v_ws, p_starts_at);\r\n\r\n  v_pro := app.pick_professional_for_slot(v_ws, p_service_id, p_starts_at, p_professional_member_id);\r\n\r\n  SELECT s.price_cents, s.duration_minutes\r\n    INTO v_snapshot\r\n  FROM app.resolve_service_snapshot(v_ws, v_pro, p_service_id) s;\r\n\r\n  v_ends := p_starts_at + make_interval(mins => v_snapshot.duration_minutes);\r\n  v_note := nullif(btrim(COALESCE(p_customer_note, '')), '');\r\n  IF v_note IS NOT NULL AND char_length(v_note) > 500 THEN\r\n    RAISE EXCEPTION 'customer_note_too_long' USING ERRCODE = '22023';\r\n  END IF;\r\n\r\n  v_client := app.find_or_create_public_client(\r\n    v_ws,\r\n    p_full_name,\r\n    v_email,\r\n    v_phone,\r\n    v_uid\r\n  );\r\n\r\n  PERFORM app.lock_professional_agenda(v_pro);\r\n\r\n  BEGIN\r\n    PERFORM app.assert_slot_available(v_ws, v_pro, p_starts_at, v_ends, NULL);\r\n  EXCEPTION\r\n    WHEN SQLSTATE '23P01' THEN\r\n      RAISE EXCEPTION 'slot_taken' USING ERRCODE = '23P01';\r\n  END;\r\n\r\n  BEGIN\r\n    INSERT INTO public.appointments (\r\n      workspace_id,\r\n      client_id,\r\n      professional_member_id,\r\n      service_id,\r\n      starts_at,\r\n      ends_at,\r\n      status,\r\n      price_cents,\r\n      duration_minutes,\r\n      customer_note,\r\n      created_by\r\n    ) VALUES (\r\n      v_ws,\r\n      v_client,\r\n      v_pro,\r\n      p_service_id,\r\n      p_starts_at,\r\n      v_ends,\r\n      'scheduled'::public.appointment_status,\r\n      v_snapshot.price_cents,\r\n      v_snapshot.duration_minutes,\r\n      v_note,\r\n      v_uid\r\n    )\r\n    RETURNING id INTO v_id;\r\n  EXCEPTION\r\n    WHEN exclusion_violation OR SQLSTATE '23P01' THEN\r\n      RAISE EXCEPTION 'slot_taken' USING ERRCODE = '23P01';\r\n  END;\r\n\r\n  INSERT INTO public.public_booking_rate_events (workspace_id, email, phone, ip_hash)\r\n  VALUES (v_ws, v_email, v_phone, nullif(btrim(COALESCE(p_ip_hash, '')), ''));\r\n\r\n  SELECT w.name, w.slug INTO v_ws_name, v_slug FROM public.workspaces w WHERE w.id = v_ws;\r\n  SELECT s.name INTO v_service_name FROM public.services s WHERE s.id = p_service_id;\r\n  SELECT p.display_name INTO v_pro_name FROM public.professional_profiles p WHERE p.member_id = v_pro;\r\n  SELECT st.business_phone INTO v_phone_biz FROM public.workspace_settings st WHERE st.workspace_id = v_ws;\r\n\r\n  RETURN jsonb_build_object(\r\n    'appointment_id', v_id,\r\n    'workspace_name', v_ws_name,\r\n    'slug', v_slug,\r\n    'service_name', v_service_name,\r\n    'professional_name', v_pro_name,\r\n    'starts_at', p_starts_at,\r\n    'ends_at', v_ends,\r\n    'duration_minutes', v_snapshot.duration_minutes,\r\n    'price_cents', v_snapshot.price_cents,\r\n    'timezone', v_tz,\r\n    'status', 'scheduled',\r\n    'business_phone', v_phone_biz,\r\n    'guest', v_uid IS NULL\r\n  );\r\nEND;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "69a820e7daee17d17f8f9034091094b1"
+    },
+    {
+      "anon": false,
+      "name": "discovery_text",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_text text",
+      "definition": "CREATE OR REPLACE FUNCTION app.discovery_text(p_text text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE\n SET search_path TO ''\nAS $function$\r\n  SELECT translate(lower(btrim(regexp_replace(coalesce(p_text,''), '[[:space:]]+', ' ', 'g'))),\r\n    'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ', 'aaaaaeeeeiiiiooooouuuucaaaaaeeeeiiiiooooouuuuc');\r\n$function$\n",
+      "service_role": false,
+      "authenticated": false,
+      "definition_md5": "bd8e1f9f1841aab8c9366e2fa673d8a7"
+    },
+    {
+      "anon": false,
+      "name": "require_confirmed_email",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION app.require_confirmed_email()\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_uid uuid;\r\n  v_confirmed timestamptz;\r\nBEGIN\r\n  v_uid := app.require_authenticated_user();\r\n  SELECT u.email_confirmed_at\r\n    INTO v_confirmed\r\n  FROM auth.users u\r\n  WHERE u.id = v_uid;\r\n\r\n  IF v_confirmed IS NULL THEN\r\n    RAISE EXCEPTION 'email_not_confirmed'\r\n      USING ERRCODE = '42501';\r\n  END IF;\r\n\r\n  RETURN v_uid;\r\nEND;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "b8c45938d45795f6cf6415f5e52c7f41"
+    },
+    {
+      "anon": false,
+      "name": "require_professional_photo_editor",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_member_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION app.require_professional_photo_editor(p_member_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE v_uid uuid:=app.require_confirmed_email(); v_member public.workspace_members;\r\nBEGIN\r\n SELECT * INTO v_member FROM public.workspace_members WHERE id=p_member_id AND status='active';\r\n IF NOT FOUND OR NOT (app.has_workspace_role(v_member.workspace_id,VARIADIC ARRAY['owner','admin']::public.member_role[])\r\n OR (v_member.user_id=v_uid AND v_member.role IN ('owner','admin','professional'))) THEN\r\n RAISE EXCEPTION 'not_authorized' USING ERRCODE='42501'; END IF;\r\n RETURN v_member.workspace_id;\r\nEND $function$\n",
+      "service_role": false,
+      "authenticated": false,
+      "definition_md5": "563337844c9a0f3c8ff6b400e2e60846"
+    },
+    {
+      "anon": false,
+      "name": "require_workspace_manager",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION app.require_workspace_manager(p_workspace_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\ndeclare\r\n  v_uid uuid;\r\nbegin\r\n  v_uid := app.require_confirmed_email();\r\n  perform app.assert_workspace_entitled(p_workspace_id);\r\n\r\n  if not app.has_workspace_role(\r\n    p_workspace_id,\r\n    variadic array['owner'::public.member_role, 'admin'::public.member_role]\r\n  ) then\r\n    raise exception 'not_authorized' using errcode = '42501';\r\n  end if;\r\n\r\n  return v_uid;\r\nend;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "aabb1968efcd4f7ebda9a1851866b704"
+    },
+    {
+      "anon": false,
+      "name": "resolve_public_workspace",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": false,
+      "arguments": "p_slug text",
+      "definition": "CREATE OR REPLACE FUNCTION app.resolve_public_workspace(p_slug text)\n RETURNS uuid\n LANGUAGE plpgsql\n STABLE\n SET search_path TO ''\nAS $function$\r\ndeclare\r\n  v_id uuid;\r\n  v_slug text := lower(btrim(coalesce(p_slug, '')));\r\nbegin\r\n  if v_slug = '' then\r\n    raise exception 'workspace_not_found' using errcode = '22023';\r\n  end if;\r\n\r\n  select w.id into v_id\r\n  from public.workspaces w\r\n  where w.slug = v_slug;\r\n\r\n  if v_id is null then\r\n    raise exception 'workspace_not_found' using errcode = '22023';\r\n  end if;\r\n\r\n  if not app.workspace_has_entitlement(v_id) then\r\n    raise exception 'workspace_unavailable' using errcode = '22023';\r\n  end if;\r\n\r\n  return v_id;\r\nend;\r\n$function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "7efee22233acf99415eb5fd29177779a"
+    },
+    {
+      "anon": false,
+      "name": "update_workspace_settings",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "app",
+      "definer": true,
+      "arguments": "p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text, p_clear_logo boolean",
+      "definition": "CREATE OR REPLACE FUNCTION app.update_workspace_settings(p_workspace_id uuid, p_name text, p_slug text, p_business_phone text, p_business_email text, p_description text, p_address text, p_city text, p_state text, p_postal_code text, p_instagram text, p_timezone text, p_logo_path text DEFAULT NULL::text, p_clear_logo boolean DEFAULT false)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_name text:=btrim(p_name); v_slug text:=app.slugify(p_slug);\n  v_phone text:=app.normalize_phone(p_business_phone); v_email text:=nullif(lower(btrim(p_business_email)),'');\n  v_address text:=nullif(btrim(p_address),''); v_city text:=nullif(btrim(p_city),'');\n  v_state text:=nullif(upper(btrim(p_state)),''); v_postal text:=nullif(regexp_replace(coalesce(p_postal_code,''),'[^0-9]','','g'),'');\n  v_timezone text:=coalesce(nullif(btrim(p_timezone),''),'America/Sao_Paulo');\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  PERFORM 1 FROM public.workspace_settings WHERE workspace_id=p_workspace_id FOR UPDATE;\n  IF NOT FOUND THEN RAISE EXCEPTION 'workspace_settings_missing' USING ERRCODE='P0001'; END IF;\n  IF v_name IS NULL OR char_length(v_name) NOT BETWEEN 2 AND 80 THEN RAISE EXCEPTION 'invalid_workspace_name' USING ERRCODE='22023'; END IF;\n  IF v_slug IS NULL OR char_length(v_slug) NOT BETWEEN 3 AND 60 OR v_slug !~ '^[a-z0-9]+(-[a-z0-9]+)*$' THEN RAISE EXCEPTION 'invalid_slug' USING ERRCODE='22023'; END IF;\n  IF app.is_reserved_workspace_slug(v_slug) THEN RAISE EXCEPTION 'reserved_slug' USING ERRCODE='22023'; END IF;\n  IF EXISTS(SELECT 1 FROM public.workspaces WHERE slug=v_slug AND id<>p_workspace_id) THEN RAISE EXCEPTION 'slug_taken' USING ERRCODE='23505'; END IF;\n  IF nullif(btrim(p_business_phone),'') IS NOT NULL AND v_phone IS NULL THEN RAISE EXCEPTION 'invalid_phone' USING ERRCODE='22023'; END IF;\n  IF v_email IS NOT NULL AND v_email !~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$' THEN RAISE EXCEPTION 'invalid_business_email' USING ERRCODE='22023'; END IF;\n  IF v_address IS NOT NULL AND (char_length(v_address)>160 OR v_address ~ '[[:cntrl:]]') THEN RAISE EXCEPTION 'invalid_address' USING ERRCODE='22023'; END IF;\n  IF v_city IS NOT NULL AND (char_length(v_city) NOT BETWEEN 2 AND 80 OR v_city ~ '[[:cntrl:]]') THEN RAISE EXCEPTION 'invalid_city' USING ERRCODE='22023'; END IF;\n  IF v_state IS NOT NULL AND v_state NOT IN ('AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO') THEN RAISE EXCEPTION 'invalid_state' USING ERRCODE='22023'; END IF;\n  IF (nullif(btrim(p_postal_code),'') IS NOT NULL AND (p_postal_code ~ '[^0-9[:space:].-]' OR char_length(coalesce(v_postal,''))<>8)) THEN RAISE EXCEPTION 'invalid_postal_code' USING ERRCODE='22023'; END IF;\n  IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name=v_timezone) OR v_timezone NOT IN\n    ('America/Sao_Paulo','America/Fortaleza','America/Recife','America/Bahia','America/Belem','America/Manaus','America/Cuiaba','America/Porto_Velho','America/Boa_Vista','America/Rio_Branco','America/Noronha') THEN RAISE EXCEPTION 'invalid_timezone' USING ERRCODE='22023'; END IF;\n  IF p_logo_path IS NOT NULL OR p_clear_logo THEN RAISE EXCEPTION 'invalid_logo_path' USING ERRCODE='22023'; END IF;\n  UPDATE public.workspaces SET name=v_name,slug=v_slug WHERE id=p_workspace_id;\n  UPDATE public.workspace_settings SET business_phone=v_phone,business_email=v_email,\n    address=v_address,city=v_city,state=v_state,postal_code=v_postal,timezone=v_timezone,\n    description=nullif(btrim(p_description),''),instagram=nullif(btrim(regexp_replace(coalesce(p_instagram,''),'^@+','')),'')\n    WHERE workspace_id=p_workspace_id;\n  RETURN jsonb_build_object('workspace_id',p_workspace_id,'name',v_name,'slug',v_slug,'timezone',v_timezone);\nEND $function$\n",
+      "service_role": true,
+      "authenticated": false,
+      "definition_md5": "74c38208c942f8afe806f07aa581318d"
+    }
+  ],
+  "relations": [
+    {
+      "rls": true,
+      "name": "profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_members",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_trial_claims",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_invites",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspaces",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_profiles",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "plans",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "services",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "subscriptions",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_settings",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_services",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_clients",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_working_hours",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_breaks",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "professional_time_blocks",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "appointments",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "public_booking_rate_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "inventory_products",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "inventory_movements",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "service_packages",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "service_package_items",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_packages",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "client_package_items",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "package_redemptions",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_entries",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "audit_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_categories",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "financial_refunds",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "privacy_requests",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "billing_events",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "stripe_checkout_leases",
+      "forced": false,
+      "schema": "app"
+    },
+    {
+      "rls": true,
+      "name": "professional_photo_cleanup",
+      "forced": true,
+      "schema": "app"
+    },
+    {
+      "rls": true,
+      "name": "appointment_reviews",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "workspace_image_cleanup",
+      "forced": true,
+      "schema": "app"
+    },
+    {
+      "rls": true,
+      "name": "client_workspace_favorites",
+      "forced": true,
+      "schema": "public"
+    },
+    {
+      "rls": true,
+      "name": "avatar_cleanup_queue",
+      "forced": true,
+      "schema": "app"
+    }
+  ],
+  "migrations": [
+    {
+      "name": "foundation_types_and_tables",
+      "version": "20261011135742"
+    },
+    {
+      "name": "foundation_functions",
+      "version": "20261011135748"
+    },
+    {
+      "name": "foundation_guards",
+      "version": "20261011135753"
+    },
+    {
+      "name": "foundation_auth_sync",
+      "version": "20261011135759"
+    },
+    {
+      "name": "foundation_workspace_rpc",
+      "version": "20261011135806"
+    },
+    {
+      "name": "foundation_invites",
+      "version": "20261011135811"
+    },
+    {
+      "name": "foundation_rpc_wrappers_and_triggers",
+      "version": "20261011135819"
+    },
+    {
+      "name": "foundation_rls",
+      "version": "20261011135826"
+    },
+    {
+      "name": "foundation_fk_indexes",
+      "version": "20261011135833"
+    },
+    {
+      "name": "foundation_hardening",
+      "version": "20261011135840"
+    },
+    {
+      "name": "foundation_hardening_seats_invites",
+      "version": "20261011135917"
+    },
+    {
+      "name": "foundation_hardening_invites_grants",
+      "version": "20261011135922"
+    },
+    {
+      "name": "catalog_professionals_services_clients",
+      "version": "20261011135929"
+    },
+    {
+      "name": "catalog_professionals_services_clients_rls",
+      "version": "20261011135935"
+    },
+    {
+      "name": "public_workspace_discovery",
+      "version": "20261014031601"
+    },
+    {
+      "name": "client_phase2_profiles_favorites",
+      "version": "20261014173144"
+    },
+    {
+      "name": "client_phase2_avatar_upload_cleanup",
+      "version": "20261014173933"
+    },
+    {
+      "name": "workspace_media_and_settings_contract",
+      "version": "20261015054655"
+    },
+    {
+      "name": "workspace_settings_validation",
+      "version": "20261015054832"
+    },
+    {
+      "name": "profiles_booking_whatsapp",
+      "version": "20261016080427"
+    },
+    {
+      "name": "require_confirmed_public_booking",
+      "version": "20261020163226"
+    },
+    {
+      "name": "launch_discovery_eligibility",
+      "version": "20261020163432"
+    }
+  ],
+  "captured_at": "2026-10-20T18:33:51.53414+00:00",
+  "compatibility": {
+    "workspaces": 34,
+    "appointments": 58,
+    "linked_clients": 20,
+    "future_bookings": 0,
+    "legacy_logo_paths": 0,
+    "invalid_logo_ownership": 0
+  },
+  "object_counts": null,
+  "discovery_index": "CREATE INDEX workspace_settings_discovery_city ON public.workspace_settings USING btree (app.discovery_text(city), state, workspace_id) WHERE discovery_enabled",
+  "storage_policies": [
+    {
+      "cmd": "ALL",
+      "qual": "(bucket_id <> 'account-avatars'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "account_avatars_server_only",
+      "schemaname": "storage",
+      "with_check": "(bucket_id <> 'account-avatars'::text)"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(bucket_id <> 'professional-photos'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "professional_photos_server_only",
+      "schemaname": "storage",
+      "with_check": "(bucket_id <> 'professional-photos'::text)"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(bucket_id <> 'workspace-logos'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "workspace_images_server_delete",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "workspace_images_server_insert",
+      "schemaname": "storage",
+      "with_check": "(bucket_id <> 'workspace-logos'::text)"
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(bucket_id <> 'workspace-logos'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "RESTRICTIVE",
+      "policyname": "workspace_images_server_update",
+      "schemaname": "storage",
+      "with_check": "(bucket_id <> 'workspace-logos'::text)"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_delete",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_insert",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'workspace-logos'::text) AND ((storage.foldername(name))[1] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'workspace-logos'::text)",
+      "roles": [
+        "public"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_select",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "workspace_logos_update",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'workspace-logos'::text) AND ( SELECT app.has_workspace_role(((storage.foldername(objects.name))[1])::uuid, VARIADIC ARRAY['owner'::member_role, 'admin'::member_role]) AS has_workspace_role))"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "prepared_only": true,
+  "project": "wohimauqgywshbbejjcl",
+  "hash_normalization": "UTF-8 LF for sources and bundle",
+  "transaction": "psql --single-transaction; errors stop; no nested BEGIN/COMMIT",
+  "leaves_bookings_paused": true,
+  "history": "exactly five new names/versions and reviewed source; stop on name/version/object collision",
+  "bundle_sha256": "06fbff8c01f37211019aa0b29276b87065930173d27fee21925363d4a904be6b",
+  "migrations": [
+    {
+      "file": "20261015054116_workspace_media_and_settings_contract.sql",
+      "version": "20261015054116",
+      "name": "workspace_media_and_settings_contract",
+      "sha256": "6bdb4cf6bdd771bc8d0a97b4610e54a921a9c763bc768805d9bd6931280cdd4f"
+    },
+    {
+      "file": "20261015054818_workspace_settings_validation.sql",
+      "version": "20261015054818",
+      "name": "workspace_settings_validation",
+      "sha256": "739aee0dbcf842095d820ede5c78ead377ea22570990739f0b1795caa3530e5a"
+    },
+    {
+      "file": "20261016075244_profiles_booking_whatsapp.sql",
+      "version": "20261016075244",
+      "name": "profiles_booking_whatsapp",
+      "sha256": "f647bd497bb4af9a73b6e584da39e7d663bcda1c2a83993e70d0e58e2b44f31a"
+    },
+    {
+      "file": "20261016235000_require_confirmed_public_booking.sql",
+      "version": "20261016235000",
+      "name": "require_confirmed_public_booking",
+      "sha256": "86eefed61fb582aa02b559866848b4034e46241ff36455b9dee80169f7ce350c"
+    },
+    {
+      "file": "20261020162935_launch_discovery_eligibility.sql",
+      "version": "20261020162935",
+      "name": "launch_discovery_eligibility",
+      "sha256": "3f1ffbb0d1c2b6444fce81e49f9b1e02538a4c827f92f7c47b96bac055d26b79"
+    }
+  ]
+}

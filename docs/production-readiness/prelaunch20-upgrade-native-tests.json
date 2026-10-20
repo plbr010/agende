@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-20T19:01:49.196Z",
+  "groups": {
+    "native_pg17_sql": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "reviewed discovery rollout preserves rows and history, defaults to private and rejects replay",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/discovery-sql.test.mjs",
+      "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/prelaunch-upgrade.test.mjs",
+      "name": "reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    }
+  ]
+}

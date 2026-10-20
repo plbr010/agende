@@ -1,0 +1,93 @@
+{
+  "checked_date": "2026-10-20",
+  "production_writes": 0,
+  "sources": "authenticated Supabase and Stripe dashboards, Supabase catalog, Vercel metadata, public HTTPS GET",
+  "supabase": {
+    "project": "wohimauqgywshbbejjcl",
+    "status": "ACTIVE_HEALTHY",
+    "postgres": "17.6.1.166",
+    "plan": "FREE",
+    "site_url": "http://localhost:3000",
+    "redirect_allowlist": [],
+    "allow_signups": true,
+    "anonymous_signins": false,
+    "confirm_email": true,
+    "email_provider": true,
+    "custom_smtp_enabled": false,
+    "leaked_password_protection": false,
+    "edge_custom_secret_names": [
+      "STRIPE_API_KEY"
+    ],
+    "vault_secret_names": [
+      "stripe_webhook_secret"
+    ],
+    "secret_values_read": false,
+    "legacy_contracts": {
+      "reviews_table": false,
+      "reschedule_slots_rpc": false,
+      "client_list_includes_service_and_professional_ids": false,
+      "billing_seat_reconciliation_current": false,
+      "observed_owner_guards_equivalent": true
+    }
+  },
+  "vercel": {
+    "production_sha": "058de365d978b38ed7dc53730a5755a1e7c95ac5",
+    "deployment_id": "dpl_F6Gt5b8sN5mpTV42L6ybbKeHkAos",
+    "status": "READY",
+    "production_branch": "main",
+    "source": "git",
+    "domain_assigned": "agendeapp.online",
+    "server_service_role_present": true,
+    "public_supabase_url_present": true,
+    "public_supabase_key_present": true,
+    "global_site_url_present": false,
+    "site_url_fallback": "validated Vercel production origin",
+    "deployment_class": "next.config.ts bakes VERCEL_ENV",
+    "secret_values_decrypted": false,
+    "service_role_matches_project_at_runtime": "not exercised without authenticated productive smoke",
+    "initial_production_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d"
+  },
+  "stripe_live": {
+    "connection": "connector requires reauthentication; authenticated browser used read-only",
+    "webhook_active": true,
+    "endpoint": "https://wohimauqgywshbbejjcl.supabase.co/functions/v1/stripe-webhook",
+    "api_version": "2026-08-26.dahlia",
+    "observed_period": "This week, 14-20 October, dashboard displayed period",
+    "deliveries_displayed": 0,
+    "failed_deliveries_displayed": 0,
+    "zero_deliveries_is_delivery_proof": false,
+    "events": [
+      "checkout.session.async_payment_failed",
+      "checkout.session.async_payment_succeeded",
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.deleted",
+      "customer.subscription.updated",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ],
+    "signature_secret_revealed": false,
+    "key_mode_and_endpoint_secret_match": "not verified from secret names or masked dashboard values",
+    "live_api_mutations": 0,
+    "live_payments": 0
+  },
+  "edge_sources": {
+    "stripe_billing": {
+      "version": 5,
+      "active": true,
+      "verify_jwt": true,
+      "normalized_matches_main": true
+    },
+    "stripe_webhook": {
+      "version": 4,
+      "active": true,
+      "verify_jwt": false,
+      "normalized_matches_main": false,
+      "missing_from_deployed_source": [
+        "API key mode versus Supabase project guard",
+        "event livemode versus production guard",
+        "sanitized error logging"
+      ]
+    }
+  }
+}

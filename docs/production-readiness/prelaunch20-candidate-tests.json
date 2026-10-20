@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-20T19:02:48.209Z",
+  "groups": {
+    "pglite_integration_with_mock_auth": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pglite_sql": {
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 252,
+      "failed": 0,
+      "skipped": 0
+    },
+    "stripe_mocks": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "platform_mocks": {
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 411,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "new_case": [
+    {
+      "file": "scripts/prelaunch-upgrade.test.mjs",
+      "name": "reviewed legacy plus five-migration upgrade preserves existing tenants and bookings; emergency gate resumes without anon",
+      "category": "pglite_sql",
+      "status": "passed"
+    }
+  ]
+}
