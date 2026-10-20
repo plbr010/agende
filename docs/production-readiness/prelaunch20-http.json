@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-20T18:39:00.091Z",
+  "origin": "https://agendeapp.online",
+  "mode": "read-only public HTTPS GET; normal TLS verification",
+  "production_mutations": 0,
+  "scope_limit": "Only assets referenced by inspected pages; no universal secret-exposure guarantee, no authenticated business smoke.",
+  "status": "PASS",
+  "checks": [
+    {
+      "path": "/",
+      "http_status": 200,
+      "status": "PASS"
+    },
+    {
+      "path": "/login",
+      "http_status": 200,
+      "status": "PASS"
+    },
+    {
+      "path": "/descobrir?cidade=Muria%C3%A9&uf=MG",
+      "http_status": 200,
+      "status": "PASS"
+    },
+    {
+      "path": "/descobrir?cidade=Juiz+de+Fora&uf=MG",
+      "http_status": 200,
+      "status": "PASS"
+    },
+    {
+      "path": "/api/account/avatar",
+      "http_status": 401,
+      "status": "PASS"
+    },
+    {
+      "name": "sampled public JavaScript contains no privileged token or live private key literal",
+      "assets_scanned": 21,
+      "privileged_tokens_found": 0,
+      "private_key_literals_found": 0,
+      "status": "PASS"
+    }
+  ]
+}

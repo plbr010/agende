@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-10-20T18:51:50.815102+00:00",
+  "base_main_sha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
+  "main_ci": {
+    "conclusion": "success",
+    "headSha": "bce96f65c673d0033eaaecfcceac38ac0f81740d",
+    "url": "https://github.com/plbr010/agende/actions/runs/39474516800"
+  },
+  "pull_requests": [
+    {
+      "headRefOid": "330a7e3c86517bc01e883371e0041d457df258eb",
+      "mergeCommit": {
+        "oid": "f8d02125f8c8edc7d67891e3c8a50a520d0bfacc"
+      },
+      "mergedAt": "2026-10-20T17:02:59Z",
+      "number": 66,
+      "state": "MERGED"
+    },
+    {
+      "headRefOid": "3c25bb02dde44b1859be9e46e37474e3a3565f6a",
+      "mergeCommit": {
+        "oid": "64c1c92e1f961ce9c6feb3c086641c8574afafba"
+      },
+      "mergedAt": "2026-10-20T18:24:56Z",
+      "number": 67,
+      "state": "MERGED"
+    },
+    {
+      "headRefOid": "2751fc5583078fd9ec8fbe711246a1c983b97862",
+      "mergeCommit": {
+        "oid": "bce96f65c673d0033eaaecfcceac38ac0f81740d"
+      },
+      "mergedAt": "2026-10-20T18:24:54Z",
+      "number": 68,
+      "state": "MERGED"
+    }
+  ],
+  "pr68_head_tree_equals_main": true,
+  "production_mutations": 0,
+  "tests": {
+    "main_local": 410,
+    "main_native_pg17": 70,
+    "new_upgrade_bundle_native": "PASS; separate suite report",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "build_staging": "PASS",
+    "smoke_build": "PASS",
+    "natural_expiry": "previous actual final20 report PASS; 3600s, 403, refresh identity and logout"
+  },
+  "edge_hashes": {
+    "stripe-billing": {
+      "main_normalized_sha256": "512ce18232ddfbb39ebfa4e6d150563e22053e2faaf71bd3bbd7276ed86c965a"
+    },
+    "stripe-webhook": {
+      "main_normalized_sha256": "085025da7cbd3a51c8be45d462bb11227afa3d9cf04fc7f324cf3e19f28206b8",
+      "deployed_normalized_sha256": "6cff0c7ce3e18d99ef80f2b6baf4a9f10b28c7e99dbaeefe5f0bd5453b1b8417"
+    }
+  }
+}

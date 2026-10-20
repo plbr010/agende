@@ -1,6 +1,6 @@
 # Agendê — homologação integrada final, 20/10/2026
 
-**Prontidão estimada: 90/100 da preparação técnica. Produção: NO-GO para piloto e lançamento comercial.** Critério ponderado: quatro funcionalidades críticas 15 pontos cada (60/60), fluxos comerciais e operacionais (20/20), qualidade da candidata (10/10; CI da implementa��o aprovado, conferir checks do head final), publicação e validação produtivas (0/10). A porcentagem mede evidências entregues, não probabilidade de sucesso. O gate crítico de segurança prevalece sobre a pontuação.
+**Prontidão estimada: 90/100 da preparação técnica. Produção: NO-GO para piloto e lançamento comercial.** Critério ponderado: quatro funcionalidades críticas 15 pontos cada (60/60), fluxos comerciais e operacionais (20/20), qualidade da candidata (10/10; CI da implementação aprovado, conferir checks do head final), publicação e validação produtivas (0/10). A porcentagem mede evidências entregues, não probabilidade de sucesso. O gate crítico de segurança prevalece sobre a pontuação.
 
 ## Auditoria e integração
 
@@ -48,4 +48,4 @@ Precisa de autorização específica para aplicar as migrations revisadas em pro
 
 Dados preexistentes foram preservados. Novos agendamentos sintéticos foram cancelados quando permitido ou mantidos como histórico concluído; novos serviços/pacotes/produtos arquivados, somente horários e arquivos criados pelo runner removidos, settings anteriores restaurados. Contas sintéticas da missão foram mantidas para rastreabilidade. Nenhuma escrita em produção.
 
-Leitura autenticada final confirmou limpeza e restaura��o nos dois estabelecimentos: `final20-cleanup-readback.json`. Instru��es e limites de reprodu��o: `final20-reproduction.md`. PR criada como rascunho: https://github.com/plbr010/agende/pull/68. Nenhum merge produtivo autorizado ou realizado.
+Leitura autenticada final confirmou limpeza e restauração nos dois estabelecimentos: `final20-cleanup-readback.json`. Instruções e limites de reprodução: `final20-reproduction.md`. PR criada como rascunho: https://github.com/plbr010/agende/pull/68. Nenhum merge produtivo autorizado ou realizado.

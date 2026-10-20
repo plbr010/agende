@@ -1,0 +1,98 @@
+{
+  "checked_at": "2026-10-20T18:35:03.791728+00:00",
+  "production_writes": 0,
+  "restore_executed": false,
+  "provider_dashboard_plan": "FREE",
+  "scheduled_provider_backups_available": false,
+  "pitr_available": false,
+  "local_production_archives": [
+    {
+      "snapshot_at": "2026-10-16T03:18:05.692Z",
+      "completed_at": "2026-10-16T03:22:16.483Z",
+      "project": "wohimauqgywshbbejjcl",
+      "mode": "production_export",
+      "restore_scope": [
+        "app",
+        "public",
+        "auth",
+        "extensions",
+        "supabase_migrations"
+      ],
+      "restore_verified_recorded_in_manifest": false,
+      "full_platform_restore_verified": false,
+      "files": [
+        {
+          "file": "database.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "core.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "roles.sql.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "snapshot.json.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        }
+      ],
+      "manifest_authentication_rechecked": false,
+      "decryption_rechecked": false,
+      "storage_bytes_included": false
+    },
+    {
+      "snapshot_at": "2026-10-16T04:01:42.635Z",
+      "completed_at": "2026-10-16T04:05:57.257Z",
+      "project": "wohimauqgywshbbejjcl",
+      "mode": "production_export",
+      "restore_scope": [
+        "app",
+        "public",
+        "auth",
+        "extensions",
+        "supabase_migrations"
+      ],
+      "restore_verified_recorded_in_manifest": false,
+      "full_platform_restore_verified": false,
+      "files": [
+        {
+          "file": "database.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "core.dump.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "roles.sql.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        },
+        {
+          "file": "snapshot.json.enc",
+          "exists": true,
+          "checksum_matches": true,
+          "bytes_match": true
+        }
+      ],
+      "manifest_authentication_rechecked": false,
+      "decryption_rechecked": false,
+      "storage_bytes_included": false
+    }
+  ]
+}
