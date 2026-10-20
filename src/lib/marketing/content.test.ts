@@ -68,12 +68,12 @@ test("plans differentiate benefits and show annual prices", () => {
 test("header and footer expose the required public links", () => {
   assert.deepEqual(
     MARKETING_NAV.map((item) => item.label),
-    ["Para profissionais", "Para clientes"],
+    ["Para profissionais", "Encontrar salão"],
   );
   assert.equal(MARKETING_NAV.some((item) => item.label === "Planos"), false);
   assert.deepEqual(
     FOOTER_LINKS.map((item) => item.label),
-    ["Para profissionais", "Para clientes", "Termos", "Privacidade", "Entrar", "Cadastro"],
+    ["Para profissionais", "Encontrar salão", "Termos", "Privacidade", "Entrar", "Cadastro"],
   );
   assert.equal(FOOTER_LINKS.some((item) => /instagram|facebook|tiktok/i.test(item.href)), false);
 });

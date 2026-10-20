@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-16T23:49:40.649Z",
+  "checked_at": "2026-10-20T16:48:46.207Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 246,
+      "passed": 252,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 73,
+      "passed": 79,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 396,
+    "passed": 408,
     "failed": 0,
     "skipped": 0
   },
@@ -989,6 +989,12 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/agenda/phone-notice.test.ts",
+      "name": "missing and local phones explain the WhatsApp problem",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/agenda/whatsapp-actions.test.ts",
       "name": "WhatsApp preparation refuses invalid IDs, denied rows and server outages without leaking provider details",
       "category": "platform_mocks",
@@ -1010,6 +1016,18 @@
       "file": "src/lib/agenda/whatsapp-confirmation.test.ts",
       "name": "whatsapp opens only for a real phone and never for a cancelled visit",
       "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-contract.test.ts",
+      "name": "authorized WhatsApp read model exposes full identity, validated E164, real status and salon-local time",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/agenda/whatsapp-contract.test.ts",
+      "name": "Cursor contract comes from exactly one authorized RPC and returns no personal data after denial",
+      "category": "platform_mocks",
       "status": "passed"
     },
     {
@@ -1433,6 +1451,30 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/booking/authenticated-create.test.ts",
+      "name": "anonymous, unconfirmed, anonymous Auth sessions and failing authentication never reach booking RPC or side effects",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/authenticated-create.test.ts",
+      "name": "authenticated booking rejects malformed selections, caller-supplied prices and client IDs",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/authenticated-create.test.ts",
+      "name": "booking forwards verified Auth email and authoritative selection only; no SaaS operation is performed",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/authenticated-create.test.ts",
+      "name": "slot conflicts from the database keep the draft and never report successful confirmation",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/booking/cancel-revalidate.test.ts",
       "name": "cancelMyAppointmentAction revalidates client and agenda paths",
       "category": "unit_or_static_contract",
@@ -1478,6 +1520,18 @@
       "file": "src/lib/booking/read-after-write.test.ts",
       "name": "valid empty and populated lists remain successful after strict read validation",
       "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/receipt.test.ts",
+      "name": "a new public booking is a request until the salon confirms it",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/receipt.test.ts",
+      "name": "only a confirmed status uses the confirmation title",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -1735,6 +1789,24 @@
     {
       "file": "src/lib/discovery/contract.test.ts",
       "name": "search RPC paginates with offset and never invents extra salons",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/url.test.ts",
+      "name": "city and professional name stay in the public search URL",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/url.test.ts",
+      "name": "clearing filters returns the path without inventing a city",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/discovery/url.test.ts",
+      "name": "name-only search does not keep a leftover city in the URL",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

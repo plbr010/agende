@@ -32,6 +32,7 @@ import type {
   PublicBookingProfessional,
   PublicBookingService,
 } from "@/lib/booking/queries";
+import { bookingReceiptCopy } from "@/lib/booking/receipt";
 import { parsePublicBookingDetails, previousBookingStep } from "@/lib/booking/validation";
 import { bookingStepCaption, shouldSkipProfessionalStep } from "@/lib/usability/copy";
 import { addDaysIso, formatDateTimeInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
@@ -395,10 +396,19 @@ export function PublicBookingFlow({
                   : formatCentsToReais(offering?.priceCents ?? service.priceCents)}
               </li>
               {professionalId !== null ? (
-                <li>
-                  <span className="text-muted-foreground">Profissional: </span>
-                  <span className="font-medium">
-                    {professionalId === ANY_PROFESSIONAL ? "Qualquer profissional disponível" : (professional?.displayName ?? "—")}
+                <li className="flex items-center gap-2">
+                  {professional && professionalId !== ANY_PROFESSIONAL ? (
+                    <PersonMark
+                      name={professional.displayName}
+                      photoUrl={`/api/professionals/photo?memberId=${professional.id}&slug=${encodeURIComponent(catalog.slug)}`}
+                      size="sm"
+                    />
+                  ) : null}
+                  <span>
+                    <span className="text-muted-foreground">Profissional: </span>
+                    <span className="font-medium">
+                      {professionalId === ANY_PROFESSIONAL ? "Qualquer profissional disponível" : (professional?.displayName ?? "—")}
+                    </span>
                   </span>
                 </li>
               ) : null}
@@ -868,6 +878,7 @@ function BookingSuccess({
   guestHint: boolean;
   hasClientProfile: boolean;
 }) {
+  const receipt = bookingReceiptCopy(confirmation.status);
   const ics = buildIcs({
     title: `${confirmation.serviceName} · ${confirmation.workspaceName}`,
     description: `Agendamento com ${confirmation.professionalName} no ${confirmation.workspaceName}.`,
@@ -898,12 +909,14 @@ function BookingSuccess({
           <span className="mx-auto grid size-16 place-items-center rounded-full bg-metric-blush text-[var(--rose-ink)]" aria-hidden="true">
             ✓
           </span>
-          <h1 className="mt-4 font-serif text-4xl text-wine-deep">Agendamento confirmado!</h1>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Seu horário no {confirmation.workspaceName} está reservado. Confira os detalhes abaixo.
+          <h1 className="mt-4 font-serif text-4xl text-wine-deep">{receipt.title}</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{receipt.lead}</p>
+          <p className="mt-4 inline-flex rounded-full bg-metric-blush px-3 py-1 text-sm font-medium text-wine-deep">
+            {receipt.statusLabel}
           </p>
         </section>
         <article className="rounded-[2rem] bg-card p-5 ring-1 ring-border">
+          <SummaryRow label="Status" value={receipt.statusLabel} />
           <SummaryRow label="Salão" value={confirmation.workspaceName} />
           <SummaryRow label="Serviço" value={confirmation.serviceName} />
           <SummaryRow label="Profissional" value={confirmation.professionalName} />

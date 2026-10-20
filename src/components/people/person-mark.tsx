@@ -27,10 +27,15 @@ export function PersonMark({
   const [failed, setFailed] = useState(false);
   const sizeClass = size === "lg" ? "size-16 text-xl" : size === "sm" ? "size-10 text-sm" : "size-14 text-lg";
 
+  function rememberImage(image: HTMLImageElement | null) {
+    if (image?.complete && image.naturalWidth === 0) setFailed(true);
+  }
+
   if (photoUrl && !failed) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
+        ref={rememberImage}
         src={photoUrl}
         alt=""
         onError={() => setFailed(true)}

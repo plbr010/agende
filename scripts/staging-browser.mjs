@@ -77,7 +77,7 @@ try{
     await search.goto(base+'/descobrir');await search.getByLabel('Cidade',{exact:true}).fill('São Paulo');await search.getByLabel('Estado',{exact:true}).selectOption('SP');
     await search.getByRole('button',{name:'Procurar estabelecimentos'}).click();await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
     await search.screenshot({path:evidence+'/city-search-mobile.png',fullPage:true});
-    await search.getByLabel('Cidade',{exact:true}).fill('Salvador');await search.getByRole('radio',{name:'Nome do salão'}).click();
+    await search.getByLabel('Cidade',{exact:true}).fill('Salvador');await search.getByRole('radio',{name:'Nome do salão ou profissional'}).click();
     await search.getByLabel('Nome do salão ou profissional',{exact:true}).fill(w.name);await search.getByRole('button',{name:'Procurar estabelecimentos'}).click();
     await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
     assert.ok(await search.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
@@ -112,7 +112,7 @@ try{
       await search.getByRole('button',{name:'Continuar',exact:true}).click();
     }
     await search.getByRole('button',{name:'Reservar este horário',exact:true}).click();
-    await search.getByRole('heading',{name:'Agendamento confirmado!',exact:true}).waitFor();
+    await search.getByRole('heading',{name:'Solicitação recebida',exact:true}).waitFor();
     const appointment=(await ok(client.from('appointments').select('id,status').eq('workspace_id',w.id).eq('service_id',serviceId)))[0];
     appointmentId=appointment?.id;assert.ok(appointmentId);assert.equal(appointment.status,'scheduled');
     assert.equal((await ok(client.from('appointments').select('id').eq('workspace_id',w.id).eq('service_id',serviceId))).length,1);
@@ -120,7 +120,7 @@ try{
     lastPage=page;await page.goto(base+'/app/agenda?view=day&date='+day);
     await page.getByText(new RegExp(serviceName)).first().waitFor();
     await search.screenshot({path:evidence+'/booking-confirmed-mobile.png',fullPage:true});
-    await search.goto(base+'/descobrir');await search.getByRole('radio',{name:'Nome do salão'}).click();
+    await search.goto(base+'/descobrir');await search.getByRole('radio',{name:'Nome do salão ou profissional'}).click();
     await search.getByLabel('Nome do salão ou profissional',{exact:true}).fill(w.name);
     await search.getByRole('button',{name:'Procurar estabelecimentos'}).click();
     await search.getByRole('link',{name:new RegExp(w.name)}).waitFor();
