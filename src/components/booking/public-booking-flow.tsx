@@ -185,7 +185,7 @@ export function PublicBookingFlow({
   }, [step, serviceId, professionalId, localDate, catalog.slug, slotsAttempt]);
 
   function go(next: BookingStep) {
-    if (pending || reserving.current) return;
+    if (pending || reserving.current || confirmationUnknown) return;
     setFormError(null);
     if (next === "slot") {
       setStartsAt(null);
@@ -501,14 +501,14 @@ export function PublicBookingFlow({
               </div>
             ) : null}
             {slotsError ? (
-              <p className="text-sm text-destructive" role="alert">
-                {slotsError}
-              </p>
-            ) : null}
-            {slotsError ? (
-              <Button type="button" variant="outline" disabled={pending} onClick={() => {
-                setSlotsError(null); setSlotsLoading(true); setSlotsAttempt((attempt) => attempt + 1);
-              }}>Tentar carregar horários novamente</Button>
+              <div className="grid gap-3 rounded-3xl bg-secondary/50 p-4">
+                <p className="text-sm text-destructive" role="alert">
+                  {slotsError}
+                </p>
+                <Button type="button" variant="outline" className="h-auto min-h-12 w-full whitespace-normal rounded-full px-4 text-center" disabled={pending} onClick={() => {
+                  setSlotsError(null); setSlotsLoading(true); setSlotsAttempt((attempt) => attempt + 1);
+                }}>Tentar carregar horários novamente</Button>
+              </div>
             ) : null}
             {!slotsLoading && slots.length === 0 && !slotsError ? (
               <div className="grid gap-3 rounded-3xl bg-secondary/50 p-4">
@@ -669,17 +669,17 @@ export function PublicBookingFlow({
                   : "Entrar para confirmar"}
             </Button>
             <div className="grid grid-cols-2 gap-2">
-              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("service")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending || confirmationUnknown} onClick={() => go("service")}>
                 Mudar serviço
               </Button>
-              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("date")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending || confirmationUnknown} onClick={() => go("date")}>
                 Mudar dia
               </Button>
-              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("slot")}>
+              <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending || confirmationUnknown} onClick={() => go("slot")}>
                 Mudar horário
               </Button>
               {authenticated ? (
-                <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending} onClick={() => go("details")}>
+                <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending || confirmationUnknown} onClick={() => go("details")}>
                   Alterar meus dados
                 </Button>
               ) : null}
@@ -687,7 +687,11 @@ export function PublicBookingFlow({
           </section>
         ) : null}
 
-        {confirmationUnknown ? <Link href="/cliente/agendamentos" className="text-sm font-medium underline">Conferir meus agendamentos</Link> : null}
+        {confirmationUnknown ? (
+          <Link href="/cliente/agendamentos" className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-primary px-4 text-center text-sm font-medium whitespace-normal text-primary-foreground">
+            Conferir meus agendamentos
+          </Link>
+        ) : null}
         {formError ? (
           <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
             {formError}
@@ -702,7 +706,7 @@ export function PublicBookingFlow({
               type="button"
               variant="outline"
               className="h-12 w-full rounded-full"
-              disabled={pending}
+              disabled={pending || confirmationUnknown}
               aria-busy={pending}
               onClick={() => go(bookingBackStep(step, { authenticated, skipProfessional }))}
             >

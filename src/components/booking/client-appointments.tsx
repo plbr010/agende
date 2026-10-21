@@ -56,17 +56,22 @@ export function ClientAppointments({
   function cancel(id: string) {
     setPendingId(id);
     startTransition(async () => {
-      const result = await cancelMyAppointmentAction(id);
-      if (result.error) {
+      try {
+        const result = await cancelMyAppointmentAction(id);
+        if (result.error) {
+          setMessageTone("error");
+          setMessage(result.error);
+        } else {
+          setItems((current) =>
+            current.map((item) => (item.id === id ? { ...item, status: "cancelled" } : item)),
+          );
+          setMessageTone("success");
+          setMessage(result.success ?? "Cancelado.");
+          setCancelling(null);
+        }
+      } catch {
         setMessageTone("error");
-        setMessage(result.error);
-      } else {
-        setItems((current) =>
-          current.map((item) => (item.id === id ? { ...item, status: "cancelled" } : item)),
-        );
-        setMessageTone("success");
-        setMessage(result.success ?? "Cancelado.");
-        setCancelling(null);
+        setMessage("Não foi possível cancelar agora. O horário pode continuar marcado. Atualize a página antes de tentar de novo.");
       }
       setPendingId(null);
     });
@@ -238,14 +243,14 @@ function AppointmentCard({
           </div>
         </div>
       </div>
-      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">
+      <div className="mt-5 grid gap-2 border-t border-border/70 pt-4 sm:flex sm:flex-wrap sm:items-center">
         {canReschedule && onReschedule ? (
-          <Button type="button" disabled={pending} variant="outline" className="h-11 rounded-full" onClick={onReschedule}>
+          <Button type="button" disabled={pending} variant="outline" className="h-11 w-full rounded-full sm:w-auto" onClick={onReschedule}>
             Reagendar
           </Button>
         ) : null}
         {cancellable.ok && onCancel ? (
-          <Button type="button" variant="outline" className="h-11 rounded-full" disabled={pending} onClick={onCancel}>
+          <Button type="button" variant="outline" className="h-11 w-full rounded-full sm:w-auto" disabled={pending} onClick={onCancel}>
             {pending ? "Cancelando…" : "Desmarcar"}
           </Button>
         ) : null}
@@ -258,18 +263,18 @@ function AppointmentCard({
           </p>
         ) : null}
         {allowBookAgain ? (
-          <Button variant="outline" className="h-11 rounded-full" render={<Link href={bookAgainPath(item)} />}>
+          <Button variant="outline" className="h-11 w-full rounded-full whitespace-normal sm:w-auto" render={<Link href={bookAgainPath(item)} />}>
             <RefreshCcw className="size-4" /> Agendar novamente
           </Button>
         ) : null}
         {status === "completed" ? (
-          <Button variant="outline" className="h-11 rounded-full" render={<Link href="/cliente/avaliacoes" />}>
+          <Button variant="outline" className="h-11 w-full rounded-full whitespace-normal sm:w-auto" render={<Link href="/cliente/avaliacoes" />}>
             <Star className="size-4" /> Avaliar atendimento
           </Button>
         ) : null}
         <Link
           href={`/p/${item.slug}`}
-          className="ml-auto inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline sm:ml-auto sm:justify-start"
         >
           Ver o salão <ExternalLink className="size-3.5" />
         </Link>
