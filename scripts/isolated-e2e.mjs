@@ -233,6 +233,18 @@ try {
       }
 
       try {
+        const response=await page.goto(`${base}/verificar-email?status=session_unavailable`);
+        if(response.status()!==200)throw new Error("session recovery view unavailable");
+        await page.getByRole("heading",{name:"Tente entrar para continuar",exact:true}).waitFor();
+        if(await page.getByRole("heading",{name:"E-mail confirmado",exact:true}).count())throw new Error("recovery view claims confirmation");
+        await page.locator('a[href="/login"]').click();
+        await page.waitForURL(`${base}/login`);
+        record({name:"confirmation-session-recovery",result:"PASS"});
+      } catch(error) {
+        record({name:"confirmation-session-recovery",result:"FAIL",error:error.message});
+      }
+
+      try {
         const cold=await browser.newContext({javaScriptEnabled:false});
         try {
           const coldPage=await cold.newPage();await coldPage.goto(`${base}/descobrir`);

@@ -9,6 +9,9 @@ import {createWriteStream,readFileSync,writeFileSync,existsSync,rmSync,realpathS
 import {join,resolve,relative,isAbsolute} from 'node:path';
 import {pipeline} from 'node:stream/promises';
 import {Client} from 'pg';
+import {createClient} from '@supabase/supabase-js';
+import {exportEncryptedStorage,restoreEncryptedStorage} from './encrypted-storage-backup.mjs';
+import {normalizeDataRecoveryPart} from './backup-catalog-compare.mjs';
 
 const project='wohimauqgywshbbejjcl';
 const bin='C:/Users/PLBR/Documents/Codex/.agende-test-runtime/pg17/pgsql/bin';
@@ -122,20 +125,39 @@ async function exportBackup(source,path,phrase,synthetic=false){
   const snapshotAt=new Date().toISOString();
   try{
     const observed=await inventory(source.client);
+    const storageSnapshot=synthetic?null:await storageInventory(source.client);
     files.push(await encryptProcess(join(path,'database.dump.enc'),'pg_dump',['--format=custom','--lock-wait-timeout=5s','--snapshot='+snapshot,'--no-password'],source.env,key));
     // -n alone omits CREATE EXTENSION entries: include each compatible module explicitly.
     const coreArgs=[...core.map(s=>'--schema='+s),...observed.extensions.filter(e=>compatible.includes(e.extname)).map(e=>'--extension='+e.extname)];
     files.push(await encryptProcess(join(path,'core.dump.enc'),'pg_dump',['--format=custom','--lock-wait-timeout=5s','--snapshot='+snapshot,'--no-password',...coreArgs],source.env,key));
     files.push(await encryptProcess(join(path,'roles.sql.enc'),'pg_dumpall',['--roles-only','--no-role-passwords','--no-password'],source.env,key));
     files.push(encryptJson(join(path,'snapshot.json.enc'),observed,key));
+    let storage;
+    if(!synthetic){
+      const raw=await run(process.env.ComSpec??'cmd.exe',['/d','/s','/c','npx --yes supabase projects api-keys --project-ref '+project+' --output json']);
+      const storageKey=JSON.parse(raw).find(k=>k.name==='service_role')?.api_key;
+      assert.ok(storageKey,'production_storage_read_credential_unavailable');
+      const client=createClient('https://'+project+'.supabase.co',storageKey,{auth:{persistSession:false,autoRefreshToken:false}});
+      storage=await exportEncryptedStorage({directory:join(path,'storage'),key,inventory:storageSnapshot,download:async object=>{
+        assert.ok(Number(object.metadata?.size??0)<=64*1024*1024,'storage_object_exceeds_backup_limit');
+        const result=await client.storage.from(object.bucket_id).download(object.name,{}, {cache:'no-store',signal:AbortSignal.timeout(60000)});
+        assert.ok(!result.error&&result.data,'storage_download_failed');return Buffer.from(await result.data.arrayBuffer());
+      }});
+    }
     await source.client.query('commit');
-    const manifest={format:3,mode:synthetic?'synthetic_selftest':'production_export',project:synthetic?null:project,started_at:started,snapshot_at:snapshotAt,completed_at:new Date().toISOString(),encryption:'AES-256-GCM',kdf:{name:'scrypt',salt,N:32768,r:8,p:1},files,restore_scope:core,full_platform_restore_verified:false,role_passwords:'excluded; independent credentials required',restore_verified:false};
+    if(!synthetic)assert.deepEqual(await storageInventory(source.client),storageSnapshot,'storage_inventory_changed_during_backup');
+    const manifest={format:3,mode:synthetic?'synthetic_selftest':'production_export',project:synthetic?null:project,started_at:started,snapshot_at:snapshotAt,completed_at:new Date().toISOString(),encryption:'AES-256-GCM',kdf:{name:'scrypt',salt,N:32768,r:8,p:1},files,...(storage?{storage}:{}),restore_scope:core,full_platform_restore_verified:false,role_passwords:'excluded; independent credentials required',restore_verified:false};
     manifest.authentication=manifestMac(manifest,key);
     jsonFile(join(path,'manifest.json'),manifest);return manifest;
   }catch{await source.client.query('rollback');throw new Error('backup_export_failed')}
   finally{key.fill(0)}
 }
-async function restoreBackup(path,phrase){
+async function storageInventory(client){
+ const buckets=(await client.query('select to_jsonb(b) value from storage.buckets b order by id')).rows.map(r=>r.value);
+ const objects=(await client.query("select to_jsonb(o)-'last_accessed_at' value from storage.objects o order by bucket_id,name")).rows.map(r=>r.value);
+ return {buckets,objects};
+}
+async function restoreBackup(path,phrase,{dataOnly=false}={}){
   contained(path);const manifest=JSON.parse(readFileSync(join(path,'manifest.json'),'utf8'));
   assert.equal(manifest.format,3);assert.ok(manifest.mode==='synthetic_selftest'||manifest.project===project);
   const key=cipherKey(phrase,manifest.kdf.salt);authenticateManifest(manifest,key);
@@ -148,7 +170,14 @@ async function restoreBackup(path,phrase){
   try{
     await restoreProcess(path,manifest.files.find(x=>x.file==='database.dump.enc'),key,'pg_restore',['--list'],target.env);
     stage='restore_roles';
-    await restoreProcess(path,manifest.files.find(x=>x.file==='roles.sql.enc'),key,'psql',['-X','--set=ON_ERROR_STOP=1','--set=VERBOSITY=verbose','--single-transaction'],target.env);
+    if(dataOnly){
+      // Data-recovery exercise: inert local role names allow policy creation.
+      // No source role privileges/settings are asserted as recovered.
+      for(const role of source.roles){
+        assert.notEqual(role.rolname,target.user);
+        await target.client.query('create role '+quote(role.rolname)+' nologin');
+      }
+    }else await restoreProcess(path,manifest.files.find(x=>x.file==='roles.sql.enc'),key,'psql',['-X','--set=ON_ERROR_STOP=1','--set=VERBOSITY=verbose','--single-transaction'],target.env);
     // Fresh owned target only; no CASCADE, no business records, never a source.
     await target.client.query('drop schema public');
     stage='extension_availability';
@@ -157,7 +186,7 @@ async function restoreBackup(path,phrase){
       assert.equal(available,1,'extension_version_not_available');
     }
     stage='restore_core';
-    await restoreProcess(path,manifest.files.find(x=>x.file==='core.dump.enc'),key,'pg_restore',['--exit-on-error','--single-transaction','--dbname=postgres'],target.env);
+    await restoreProcess(path,manifest.files.find(x=>x.file==='core.dump.enc'),key,'pg_restore',['--exit-on-error','--single-transaction','--dbname=postgres',...(dataOnly?['--no-owner','--no-privileges']:[])],target.env);
     stage='verify_extensions';
     for(const e of source.extensions.filter(e=>compatible.includes(e.extname))){
       const actual=(await target.client.query('select extversion from pg_extension where extname=$1',[e.extname])).rows[0];
@@ -169,10 +198,26 @@ async function restoreBackup(path,phrase){
     stage='verify_table_content';
     assert.deepEqual(restored.data,source.data,'restored_table_content_mismatch');
     stage='verify_catalog';
-    assert.deepEqual(restored.catalog,source.catalog,'restored_catalog_mismatch');
+    if(dataOnly){
+      for(const part of ['columns','constraints','triggers','views','rls','policies']){
+        stage='verify_'+part;
+        const normalize=rows=>normalizeDataRecoveryPart(part,rows);
+        const actual=normalize(restored.catalog[part]),expected=normalize(source.catalog[part]);
+        try{assert.deepEqual(actual,expected,'restored_structure_mismatch');}catch(error){
+          const first=(expected??[]).findIndex((row,i)=>JSON.stringify(row)!==JSON.stringify(actual?.[i]));
+          const e=expected?.[first],a=actual?.[first];
+          jsonFile(join(path,'structure-difference-'+Date.now()+'.json'),{part,expected_count:expected?.length,actual_count:actual?.length,index:first,differing_fields:e&&typeof e==='object'?Object.keys(e).filter(k=>JSON.stringify(e[k])!==JSON.stringify(a?.[k])):[],raw_values_withheld:true});
+          throw error;
+        }
+      }
+      stage='verify_function_definitions';
+      assert.deepEqual(restored.catalog.functions?.map(x=>x.definition),source.catalog.functions?.map(x=>x.definition),'restored_function_definitions_mismatch');
+    }else assert.deepEqual(restored.catalog,source.catalog,'restored_catalog_mismatch');
     stage='verify_roles';
-    assert.deepEqual(restored.roles.filter(r=>r.rolname!==target.user),source.roles,'restored_role_attributes_mismatch');
-    assert.deepEqual(restored.grants,source.grants,'restored_role_grants_mismatch');
+    if(!dataOnly){
+      assert.deepEqual(restored.roles.filter(r=>r.rolname!==target.user),source.roles,'restored_role_attributes_mismatch');
+      assert.deepEqual(restored.grants,source.grants,'restored_role_grants_mismatch');
+    }
     stage='verify_sequences';
     const serials=(await target.client.query("select table_schema,table_name,column_name,pg_get_serial_sequence(format('%I.%I',table_schema,table_name),column_name) as sequence from information_schema.columns where table_schema=any($1) and pg_get_serial_sequence(format('%I.%I',table_schema,table_name),column_name) is not null",[core])).rows;
     for(const s of serials){
@@ -181,11 +226,13 @@ async function restoreBackup(path,phrase){
       const extrema=(await target.client.query(`select max(${quote(s.column_name)})::text as highest,min(${quote(s.column_name)})::text as lowest from ${quote(s.table_schema)}.${quote(s.table_name)}`)).rows[0];
       if(extrema.highest!==null){const next=BigInt(state.last_value)+(state.is_called?inc:0n);assert.ok(inc>0n?next>BigInt(extrema.highest):next<BigInt(extrema.lowest),'restored_sequence_collision');}
     }
+    stage='verify_storage_bytes';
+    const storageEvidence=manifest.storage?restoreEncryptedStorage({directory:join(path,'storage'),destination:join(target.root,'recovered-storage'),key,manifest:manifest.storage}):null;
     passed=true;
-    evidence={checked_at:new Date().toISOString(),passed:true,scope:core,all_encrypted_files_authenticated:true,full_archive_toc_readable:true,table_content_fingerprints_equal:true,catalog_equal:true,role_attributes_and_memberships_equal:true,sequences_checked:serials.length,auth_database_rows_verified:source.data.some(x=>x.schemaname==='auth'&&x.tablename==='users'),full_platform_restore_verified:false,restored_tables:source.data.length,production_writes:0,staging_connections:0};
+    evidence={checked_at:new Date().toISOString(),passed:true,mode:dataOnly?'data_recovery_only':'strict_core_recovery',scope:core,all_encrypted_files_authenticated:true,full_archive_toc_readable:true,table_content_fingerprints_equal:true,catalog_equal:!dataOnly,structural_contract_equal:true,role_attributes_and_memberships_equal:!dataOnly,source_security_metadata_restored:!dataOnly,sequences_checked:serials.length,auth_database_rows_verified:source.data.some(x=>x.schemaname==='auth'&&x.tablename==='users'),storage:storageEvidence,full_platform_restore_verified:false,restored_tables:source.data.length,production_writes:0,staging_connections:0};
   }finally{key.fill(0);await target.stop();if(!passed)jsonFile(join(path,'restore-failed-'+Date.now()+'.json'),{checked_at:new Date().toISOString(),passed:false,stage,all_encrypted_files_authenticated:true,table_content_fingerprints_equal:['verify_catalog','verify_roles','verify_sequences'].includes(stage),owned_cluster_stopped:true,temporary_plaintext_cluster_removed:true,raw_errors_withheld:true});}
   evidence.rto_seconds=(Date.now()-started)/1000;evidence.owned_cluster_stopped=true;evidence.temporary_plaintext_cluster_removed=true;
-  jsonFile(join(path,'restore-evidence.json'),evidence);return evidence;
+  jsonFile(join(path,dataOnly?'data-restore-evidence.json':'restore-evidence.json'),evidence);return evidence;
 }
 async function secrets(){let raw='';for await(const chunk of process.stdin)raw+=chunk;return JSON.parse(raw)}
 function validateSource(config){
@@ -214,8 +261,13 @@ async function productionSource(config,password){
   validateSource(config);assert.ok(password);
   const ca=readFileSync(config.caFile,'utf8');
   const client=new Client({host:config.host,port:config.port,user:config.user,password,database:'postgres',ssl:{ca,rejectUnauthorized:true},connectionTimeoutMillis:10000,options:'-c default_transaction_read_only=on -c statement_timeout=600000 -c lock_timeout=5000'});
-  await client.connect();
-  const tls=(await client.query('select ssl,version from pg_stat_ssl where pid=pg_backend_pid()')).rows[0];assert.equal(tls.ssl,true,'tls_required');
+  try{
+    await client.connect();
+    // pg_stat_ssl describes the pooler-to-database backend, not this socket.
+    // Validate TLS/CA on the actual client connection; never relax verify-full.
+    assert.equal(client.connection.stream.encrypted,true,'tls_required');
+    assert.equal(client.connection.stream.authorized,true,'tls_required');
+  }catch(error){await client.end().catch(()=>{});throw error;}
   return{client,env:{...cleanEnv(),PGHOST:config.host,PGPORT:String(config.port),PGUSER:config.user,PGDATABASE:'postgres',PGPASSWORD:password,PGSSLMODE:'verify-full',PGSSLROOTCERT:config.caFile,PGCONNECT_TIMEOUT:'10',PGOPTIONS:'-c default_transaction_read_only=on -c statement_timeout=600000 -c lock_timeout=5000'}};
 }
 
@@ -234,28 +286,34 @@ try{
     try{
       await source.client.query("create schema auth; create schema app; create schema extensions; create schema supabase_migrations; create extension pgcrypto with schema extensions; create role anon; create role authenticated; create role service_role bypassrls; create table auth.users(id uuid primary key,email text,encrypted_password text); create table public.services(id serial primary key,name text,user_id uuid references auth.users); alter table public.services enable row level security; alter table public.services force row level security; create policy owner_services on public.services to authenticated using (user_id::text=current_setting('request.jwt.claim.sub',true)); grant select on public.services to authenticated; create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$; insert into auth.users values('11111111-1111-4111-8111-111111111111','synthetic@example.invalid','SYNTHETIC_HASH'); insert into public.services(name,user_id) values('Synthetic Service','11111111-1111-4111-8111-111111111111')");
       await exportBackup(source,path,phrase,true);const evidence=await restoreBackup(path,phrase);
+      const dataEvidence=await restoreBackup(path,phrase,{dataOnly:true});
+      assert.equal(dataEvidence.source_security_metadata_restored,false);
+      assert.equal(dataEvidence.full_platform_restore_verified,false);
+      assert.equal(dataEvidence.table_content_fingerprints_equal,true);
       const manifest=JSON.parse(readFileSync(join(path,'manifest.json'),'utf8')),key=cipherKey(phrase,manifest.kdf.salt);
       const tampered={...manifest.files[0],sha256:'0'.repeat(64)};assert.throws(()=>decrypt(path,tampered,key));
       assert.throws(()=>authenticateManifest({...manifest,snapshot_at:'2099-01-01T00:00:00Z'},key));
       const wrong=cipherKey('wrong-synthetic-passphrase-2026',manifest.kdf.salt);assert.throws(()=>decrypt(path,manifest.files[0],wrong));wrong.fill(0);key.fill(0);
-      console.log(JSON.stringify({synthetic_selftest:true,...evidence,checksum_tampering_rejected:true,manifest_timestamp_tampering_rejected:true,wrong_passphrase_rejected:true,evidence_path:path}));
+      console.log(JSON.stringify({synthetic_selftest:true,...evidence,data_recovery_selftest:dataEvidence,checksum_tampering_rejected:true,manifest_timestamp_tampering_rejected:true,wrong_passphrase_rejected:true,evidence_path:path}));
     }finally{await source.stop();}
   }else if(mode==='export'){
     assert.equal(option('--authorized-project'),project,'specific_production_export_authorization_required');
     const input=await secrets(),configPath=contained(option('--config')),config=JSON.parse(readFileSync(configPath,'utf8'));
     const path=await privateDir(join(base,'production-'+Date.now()));const source=await productionSource(config,input.password);
     try{await exportBackup(source,path,input.passphrase);console.log(JSON.stringify({export_completed:true,private_run:path,restore_verified:false,production_writes:0}));}finally{await source.client.end();input.password='';input.passphrase='';}
-  }else if(mode==='restore'){
+  }else if(mode==='restore'||mode==='restore-data'){
     assert.ok(args.includes('--authorized-local-restore'),'specific_local_restore_authorization_required');
-    const input=await secrets(),path=contained(option('--run'));const evidence=await restoreBackup(path,input.passphrase);input.passphrase='';console.log(JSON.stringify(evidence));
+    const input=await secrets(),path=contained(option('--run'));const evidence=await restoreBackup(path,input.passphrase,{dataOnly:mode==='restore-data'});input.passphrase='';console.log(JSON.stringify(evidence));
   }else throw new Error('mode_required');
 }catch(error){
   if(mode==='prepare'||mode==='selftest')console.error(error);
   else {
     const allowedMessages=new Set(['backup_passphrase_too_short','production_endpoint_not_allowed','trusted_ca_required','tls_required','private_path_required']);
-    const code=allowedMessages.has(error.message)?error.message:
+    const safeMessage=error.message?.split('\n')[0];
+    const code=allowedMessages.has(safeMessage)?safeMessage:
       typeof error.code==='string'&&/^[A-Z0-9_]{1,64}$/.test(error.code)?error.code:'PREREQUISITE_OR_VERIFICATION_FAILED';
-    if(mode==='export'||mode==='restore') writeFileSync('docs/production-readiness/authorized-backup-error.json',JSON.stringify({checked_at:new Date().toISOString(),mode,code,secrets_in_report:false,raw_provider_errors_withheld:true},null,2)+'\n');
+    const source_line=Number(error.stack?.match(/production-backup[.]mjs:(\d+):/)?.[1])||null;
+    if(mode==='export'||mode==='restore'||mode==='restore-data') writeFileSync('docs/production-readiness/authorized-backup-error.json',JSON.stringify({checked_at:new Date().toISOString(),mode,code,source_line,secrets_in_report:false,raw_provider_errors_withheld:true},null,2)+'\n');
     console.error('BACKUP_RECOVERY_STOPPED: '+code+'; no raw provider/row errors emitted.');
   }
   process.exitCode=1;

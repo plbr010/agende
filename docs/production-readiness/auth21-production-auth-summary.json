@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-21T07:06:14.878Z",
+  "status": "PASS",
+  "deployed_sha": "947cd17af51e6d602accf27b9978379b12144949",
+  "same_final_fixture": true,
+  "execution": "signup/PKCE/recovery and separate resumed login/logout on the same owned QA fixture; not one uninterrupted runner",
+  "sender_verified": "Agendê <no-reply@agendeapp.online>",
+  "accounts_created": 3,
+  "accounts_deleted": 0,
+  "previously_existing_users_modified": false,
+  "bookings_created": 0,
+  "financial_operations": 0,
+  "earlier_callback_500_observed": true,
+  "harness_expectations_corrected": [
+    "client onboarding profile URL",
+    "logout in profile labelled Sair da conta"
+  ],
+  "checks": [
+    {
+      "name": "actual production signup requires confirmation and rejects password login before delivery",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered production SMTP confirmation completes original PKCE browser, onboarding profile and session survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "used confirmation token cannot be reused",
+      "status": "PASS"
+    },
+    {
+      "name": "production recovery delivered and old password rejected for newly created own QA fixture",
+      "status": "PASS"
+    },
+    {
+      "name": "same recovered QA fixture logs in with new password and session survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "actual profile logout clears session and client area requires login",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-21T07:06:14.875Z",
+  "snapshot_at": "2026-10-21T06:47:21.750Z",
+  "completed_at": "2026-10-21T06:52:06.010Z",
+  "mode": "fresh_production_read_only_backup",
+  "encryption": "AES-256-GCM",
+  "files": [
+    {
+      "file": "database.dump.enc",
+      "bytes": 1299041,
+      "sha256": "53df508047277ea02e0ae6c49ba00bbc6e9d1b5f79c8aac1942f58c43232f034"
+    },
+    {
+      "file": "core.dump.enc",
+      "bytes": 964289,
+      "sha256": "fdc8e65b5291bb7b4a25062f242106d2c4afbc3b1f6e20e1db2b70d321153176"
+    },
+    {
+      "file": "roles.sql.enc",
+      "bytes": 6327,
+      "sha256": "669209984e326151f5fe652953b0a2b357f4c9297d3842766c8f2f025fc1538b"
+    },
+    {
+      "file": "snapshot.json.enc",
+      "bytes": 538804,
+      "sha256": "0678a17a2e21b30aea947e30fe3bbae31f317847fe8f6eeb91815f51e252ce22"
+    }
+  ],
+  "storage_objects": 3,
+  "storage_buckets": 2,
+  "private_primary": "C:/Users/PLBR/AppData/Local/AgendePrivateRecovery/production-1792565239521",
+  "private_secondary": "D:/AgendePrivateRecovery/production-1792565239521",
+  "production_sql_writes": 0,
+  "full_platform_recovery_verified": false,
+  "restore_mode": "data_recovery_only",
+  "role_privileges_recovery_verified": false,
+  "offsite_copy": false
+}

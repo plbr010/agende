@@ -1,0 +1,25 @@
+{
+  "normalization": "UTF-8 LF",
+  "files": [
+    {
+      "file": "docs/production-readiness/prelaunch20-stop-bookings.sql",
+      "sha256": "0d45b42df7a24156b78feae8aab675aa64eae7c0097f2121ed0a2c4c9c8b58d1"
+    },
+    {
+      "file": "docs/production-readiness/prelaunch20-apply-legacy.sql",
+      "sha256": "89c60bad3dfac048ac962dda2f9cf8bc3e75fac58791296d85d5a520f6010bc8"
+    },
+    {
+      "file": "docs/production-readiness/prelaunch20-apply-five.sql",
+      "sha256": "06fbff8c01f37211019aa0b29276b87065930173d27fee21925363d4a904be6b"
+    },
+    {
+      "file": "docs/production-readiness/prelaunch20-resume-bookings.sql",
+      "sha256": "14de62603f6dc49fec6d6d2b20211483717e2fa59c6d09980e805db22ce4adb4"
+    },
+    {
+      "file": "supabase/functions/stripe-webhook/index.ts",
+      "sha256": "c8dcb6d5ea8321db3d73587772a8bf33819a3fe63d29522750855b48d3eccd73"
+    }
+  ]
+}

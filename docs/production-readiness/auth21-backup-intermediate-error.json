@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-21T06:54:27.086Z",
+  "mode": "restore-data",
+  "code": "ERR_ASSERTION",
+  "source_line": 205,
+  "secrets_in_report": false,
+  "raw_provider_errors_withheld": true
+}
