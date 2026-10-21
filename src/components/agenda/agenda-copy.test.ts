@@ -12,6 +12,9 @@ test("agenda dialogs tell the professional what to do next in plain language", (
   assert.match(source, /STATUS_ACTION_LABEL/);
   assert.match(source, /Os horários livres aparecem aqui/);
   assert.doesNotMatch(source, /calculados no servidor/);
+  assert.doesNotMatch(source, /min-w-\[56rem\]/);
+  assert.doesNotMatch(source, /Deslize para o lado/);
+  assert.match(source, /lg:grid-cols-7/);
   assert.doesNotMatch(source, /encaixar uma cliente/);
   assert.match(source, /loadedQueryKey !== slotQueryKey/);
   assert.match(source, /disabled=\{pending \|\| slotPending \|\| slots\.length === 0\}/);

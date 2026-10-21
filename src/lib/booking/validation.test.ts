@@ -12,6 +12,8 @@ import {
   nextBookingStep,
   parsePublicBookingDetails,
   partitionClientAppointments,
+  bookingBackStep,
+  bookingJourneySteps,
   previousBookingStep,
   sanitizeBookingError,
   uniqueClientWorkspaces,
@@ -80,6 +82,16 @@ test("step helpers move forward and back without wrapping past service", () => {
   assert.equal(nextBookingStep("confirm"), "success");
   assert.equal(previousBookingStep("service"), "service");
   assert.equal(previousBookingStep("slot"), "date");
+  assert.deepEqual(bookingJourneySteps({ authenticated: false, skipProfessional: false }), [
+    "service",
+    "professional",
+    "date",
+    "slot",
+    "confirm",
+  ]);
+  assert.equal(bookingBackStep("confirm", { authenticated: false, skipProfessional: true }), "slot");
+  assert.equal(bookingBackStep("date", { authenticated: true, skipProfessional: true }), "service");
+  assert.equal(bookingBackStep("confirm", { authenticated: true, skipProfessional: false }), "details");
   assert.deepEqual([...BOOKING_STEPS], ["service", "professional", "date", "slot", "details", "confirm"]);
 });
 

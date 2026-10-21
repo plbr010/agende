@@ -25,7 +25,7 @@ export function AppointmentWhatsApp({
       ) : (
         <Button
           size="lg"
-          className="h-12 w-full"
+          className="h-auto min-h-12 w-full whitespace-normal px-4 py-3 text-center leading-snug"
           render={
             <a
               href={`/api/appointments/whatsapp?id=${encodeURIComponent(appointmentId)}`}

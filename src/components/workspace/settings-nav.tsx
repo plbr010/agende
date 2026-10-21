@@ -16,7 +16,7 @@ export function SettingsNav({ showBilling = false }: { showBilling?: boolean }) 
   const visible = sections.filter((section) => showBilling || !section.billing);
 
   return (
-    <nav className="flex gap-1 overflow-x-auto pb-1">
+    <nav className="flex flex-wrap gap-2" aria-label="Seções das configurações">
       {visible.map((section) => {
         const current = pathname === section.href;
         return (

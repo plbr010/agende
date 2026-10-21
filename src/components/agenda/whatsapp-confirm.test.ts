@@ -11,6 +11,7 @@ test("whatsapp confirmation never changes the appointment status", () => {
   const board = readFileSync(join(root, "agenda-board.tsx"), "utf8");
   assert.doesNotMatch(button, /setAppointmentStatusAction/);
   assert.match(button, /Confirmar pelo WhatsApp/);
+  assert.match(button, /whitespace-normal/);
   assert.doesNotMatch(button, /Avisar pelo WhatsApp/);
   assert.match(button, /ainda aguarda confirmação/);
   assert.match(button, /phoneNotice/);

@@ -102,7 +102,7 @@ export function PublicWorkspacePage({
               {locality ? (
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--rose-ink)] uppercase">{locality}</p>
               ) : null}
-              <h1 className="font-serif text-4xl leading-[1.05] text-wine-deep sm:text-5xl">{profile.name}</h1>
+              <h1 className="font-serif text-4xl leading-[1.05] break-words text-wine-deep sm:text-5xl">{profile.name}</h1>
               {profile.address ? (
                 <p className="flex items-start gap-2 text-sm leading-6 text-muted-foreground">
                   <MapPin className="mt-0.5 size-4 shrink-0 text-wine-deep" aria-hidden="true" />
@@ -191,7 +191,7 @@ export function PublicWorkspacePage({
                       className="agende-panel grid gap-4 rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
                     >
                       <div className="min-w-0">
-                        <h3 className="font-serif text-2xl text-wine-deep">{service.name}</h3>
+                        <h3 className="font-serif text-2xl break-words text-wine-deep">{service.name}</h3>
                         {service.description ? (
                           <p className="mt-1 text-sm leading-6 text-muted-foreground">{service.description}</p>
                         ) : null}
@@ -200,11 +200,11 @@ export function PublicWorkspacePage({
                           {service.duration_minutes} minutos
                         </p>
                       </div>
-                      <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
-                        <p className="font-serif text-2xl text-wine-deep">{servicePriceLabel(service.min_price_cents, service.max_price_cents)}</p>
+                      <div className="flex flex-col items-stretch gap-3 sm:items-end">
+                        <p className="font-serif text-2xl break-words text-wine-deep">{servicePriceLabel(service.min_price_cents, service.max_price_cents)}</p>
                         {bookingOpen ? (
                           <Button
-                            className="h-11 rounded-full px-5"
+                            className="h-11 w-full rounded-full px-5 whitespace-normal sm:w-auto"
                             render={<Link href={serviceBookingHref(profile.slug, service.id)} />}
                           >
                             Agendar este serviço
@@ -237,7 +237,7 @@ export function PublicWorkspacePage({
                     >
                       <div className="flex items-center gap-3">
                         <PersonMark name={person.display_name} photoUrl={person.photoUrl} />
-                        <h3 className="font-serif text-2xl text-wine-deep">{person.display_name}</h3>
+                        <h3 className="min-w-0 font-serif text-2xl break-words text-wine-deep">{person.display_name}</h3>
                       </div>
                       {person.bio ? <p className="mt-3 text-sm leading-6 text-muted-foreground">{person.bio}</p> : null}
                       {person.services.length > 0 ? (

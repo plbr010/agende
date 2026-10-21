@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CUSTOMER_NOTE_MAX } from "@/lib/booking/config";
+import { BOOKING_STEPS, CUSTOMER_NOTE_MAX, type BookingStep } from "@/lib/booking/config";
 import { isValidEmail, normalizeEmail } from "@/lib/validation/email";
 import { isValidPhone, normalizePhone } from "@/lib/validation/phone";
 
@@ -129,6 +129,30 @@ export function previousBookingStep(
   const order = ["service", "professional", "date", "slot", "details", "confirm"] as const;
   const index = order.indexOf(current);
   return order[Math.max(0, index - 1)];
+}
+
+/** Steps the person actually sees. Anonymous guests skip the data form; a single professional skips that choice. */
+export function bookingJourneySteps(options: {
+  authenticated: boolean;
+  skipProfessional: boolean;
+  current?: BookingStep;
+}): BookingStep[] {
+  return BOOKING_STEPS.filter((step) => {
+    if (step === options.current) return true;
+    if (step === "professional" && options.skipProfessional) return false;
+    if (step === "details" && !options.authenticated) return false;
+    return true;
+  });
+}
+
+export function bookingBackStep(
+  current: BookingStep,
+  options: { authenticated: boolean; skipProfessional: boolean },
+): BookingStep {
+  const steps = bookingJourneySteps({ ...options, current });
+  const index = steps.indexOf(current);
+  if (index <= 0) return "service";
+  return steps[index - 1] ?? "service";
 }
 
 export function partitionClientAppointments<T extends { startsAt: string; status: string }>(

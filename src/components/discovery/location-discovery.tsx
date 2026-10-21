@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { MapPin, Navigation, Search } from "lucide-react";
+import { MapPin, Navigation, Search, X } from "lucide-react";
 import { FavoriteButton } from "@/components/client/favorite-button";
 import { EmptyState } from "@/components/app/empty-state";
 import { WorkspaceFinder } from "@/components/client/workspace-finder";
@@ -12,8 +12,12 @@ import { Label } from "@/components/ui/label";
 import { listPublicLocalitiesAction, searchPublicWorkspacesAction } from "@/lib/discovery/actions";
 import {
   DISCOVERY_COPY,
+  discoveryActiveFilters,
+  discoveryEmptyExplanation,
   discoveryHasMorePage,
   discoverySearchBlockedReason,
+  discoveryWithoutFilter,
+  type DiscoveryFilterKey,
   formatDiscoveryShowingCount,
   mergeDiscoveryPages,
   type DiscoveryCoordinates,
@@ -243,6 +247,27 @@ export function LocationDiscovery({
     void executeSearch({ mode, city, state, query: "", coordinates: mode === "nearby" ? coordinates : undefined, offset: 0 });
   }
 
+  function removeFilter(key: DiscoveryFilterKey) {
+    const base = lastSearch ?? currentSearchInput(0);
+    const next = discoveryWithoutFilter(base, key);
+    setMode(next.mode ?? "city");
+    setCity(next.city ?? "");
+    setState(next.state ?? "");
+    setQuery(next.query ?? "");
+    const blocked = discoverySearchBlockedReason(next);
+    if (blocked) {
+      searchGeneration.current += 1;
+      searchLock.current = false;
+      setPending(false);
+      setFormError(blocked);
+      setResult(null);
+      setLastSearch(null);
+      rememberSearch(next);
+      return;
+    }
+    void executeSearch(next);
+  }
+
   async function loadMore() {
     if (!lastSearch || !result || result.status !== "ready" || pending || loadingMore || searchLock.current) return;
     if (!discoveryHasMorePage(result.items.length, result.total)) return;
@@ -286,10 +311,13 @@ export function LocationDiscovery({
       <section className="agende-panel grid gap-5 rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de] sm:p-6">
         <div>
           <p className="text-xs font-semibold tracking-[0.16em] text-wine-deep uppercase">Onde procurar</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Perto de você, em qualquer cidade, ou pelo nome. A busca nunca fica presa à cidade de residência.
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Comece pela cidade. O nome do salão ou da profissional é opcional.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">{DISCOVERY_COPY.scenarioHint}</p>
+          <details className="mt-3 rounded-2xl bg-white/70 px-4 py-3 ring-1 ring-[#f0e4de]">
+            <summary className="cursor-pointer text-sm font-medium text-wine-deep">A cidade pode ser qualquer uma</summary>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{DISCOVERY_COPY.scenarioHint}</p>
+          </details>
         </div>
 
         <div role="radiogroup" aria-labelledby={modeGroupId} className="grid gap-2 sm:grid-cols-3">
@@ -432,6 +460,8 @@ export function LocationDiscovery({
         </form>
       </section>
 
+      {lastSearch ? <DiscoveryFilters search={lastSearch} pending={pending || loadingMore} onRemove={removeFilter} /> : null}
+
       <div aria-live="polite">
         {pending ? (
           <p role="status" className="rounded-[1.5rem] bg-white px-4 py-3 text-sm text-muted-foreground ring-1 ring-[#f0e4de]">
@@ -456,7 +486,23 @@ export function LocationDiscovery({
 
         {result?.status === "ready" && result.items.length === 0 ? (
           <section className="agende-panel rounded-[1.5rem] ring-1 ring-[#f0e4de]">
-            <EmptyState icon={MapPin} title={DISCOVERY_COPY.emptyTitle} description={DISCOVERY_COPY.emptyBody} />
+            <EmptyState
+              icon={MapPin}
+              title={DISCOVERY_COPY.emptyTitle}
+              description={lastSearch ? discoveryEmptyExplanation(lastSearch) : DISCOVERY_COPY.emptyBody}
+              action={
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  {lastSearch?.query && lastSearch.mode !== "global" && (lastSearch.city?.trim().length ?? 0) >= 2 ? (
+                    <Button type="button" variant="outline" className="h-11 rounded-full whitespace-normal" disabled={pending || loadingMore} onClick={searchWholeCity}>
+                      {DISCOVERY_COPY.cityWide}
+                    </Button>
+                  ) : null}
+                  <Button type="button" variant="outline" className="h-11 rounded-full" disabled={pending || loadingMore} onClick={clearFilters}>
+                    {DISCOVERY_COPY.clear}
+                  </Button>
+                </div>
+              }
+            />
           </section>
         ) : null}
 
@@ -510,6 +556,37 @@ export function LocationDiscovery({
         </div>
         <WorkspaceFinder knownWorkspaces={knownWorkspaces} />
       </section>
+    </div>
+  );
+}
+
+function DiscoveryFilters({
+  search,
+  pending,
+  onRemove,
+}: {
+  search: DiscoverySearchInput;
+  pending: boolean;
+  onRemove: (key: DiscoveryFilterKey) => void;
+}) {
+  const filters = discoveryActiveFilters(search);
+  if (filters.length === 0) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-2" aria-label="Filtros usados">
+      <p className="text-sm font-medium text-wine-deep">Filtros</p>
+      {filters.map((filter) => (
+        <button
+          key={filter.key}
+          type="button"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm text-wine-deep ring-1 ring-[#f0e4de]"
+          disabled={pending}
+          onClick={() => onRemove(filter.key)}
+        >
+          {filter.label}
+          <X className="size-4" aria-hidden="true" />
+          <span className="sr-only">Remover {filter.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
