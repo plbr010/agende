@@ -1,3 +1,4 @@
+import {homologationEvidence} from './homologation-evidence.mjs';
 // Two real GoTrue clients race via PostgREST, never a mock Auth identity.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -27,5 +28,5 @@ finally{
  if(service)await ok(owner.from('services').update({active:false,archived_at:new Date().toISOString()}).eq('id',service).eq('workspace_id',fixtures.professional.workspaceId));
  if(hours)await ok(owner.from('professional_working_hours').delete().eq('id',hours).eq('professional_member_id',member));
  for(const c of [owner,a,b])await c.auth.signOut({scope:'local'});
- writeFileSync('docs/homologation/final20-real-concurrency.json',JSON.stringify({checked_at:new Date().toISOString(),project,mode:'real GoTrue + PostgREST + staging PostgreSQL',production_writes:0,existing_data_deleted:false,checks},null,2)+'\n');console.log(JSON.stringify({checks}));
+ writeFileSync(homologationEvidence('real-concurrency.json'),JSON.stringify({checked_at:new Date().toISOString(),project,mode:'real GoTrue + PostgREST + staging PostgreSQL',production_writes:0,existing_data_deleted:false,checks},null,2)+'\n');console.log(JSON.stringify({checks}));
 }

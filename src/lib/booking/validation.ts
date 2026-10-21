@@ -182,6 +182,7 @@ export function bookAgainPath(item: { slug: string; serviceId?: string }): strin
 
 export function sanitizeBookingError(message: string | null | undefined): string {
   const value = (message ?? "").toLowerCase();
+  if (value.includes("appointments_client_service_start_active_unique")) return "Você já tem uma reserva para este serviço e horário. Confira Meus agendamentos.";
   if (value.includes("reschedule_too_late")) return "Faltam menos de 2 horas. Não é mais possível reagendar por aqui.";
   if (value.includes("appointment_not_reschedulable")) return "Este agendamento não pode ser reagendado.";
   if (value.includes("slot_taken") || value.includes("appointment_overlap") || value.includes("23p01")) {

@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-20T23:53:20.148Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "scope": "owned confirmed fixture duplicate signup and already-used token; no new business resource",
+  "checks": [
+    {
+      "name": "missing and invalid phone cannot progress signup or report confirmation",
+      "status": "PASS"
+    },
+    {
+      "name": "retain_fields_after_validation",
+      "status": "FAIL",
+      "code": "AssertionError"
+    }
+  ]
+}

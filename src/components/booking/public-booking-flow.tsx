@@ -120,6 +120,8 @@ export function PublicBookingFlow({
   const [email, setEmail] = useState(prefill.email);
   const [customerNote, setCustomerNote] = useState("");
   const [slots, setSlots] = useState<string[]>([]);
+  const [slotsAttempt, setSlotsAttempt] = useState(0);
+  const [confirmationUnknown, setConfirmationUnknown] = useState(false);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [slotsLoading, setSlotsLoading] = useState(initialDraftSlotUnavailable || Boolean(initialAvailabilityError));
   const [formError, setFormError] = useState<string | null>(
@@ -170,7 +172,7 @@ export function PublicBookingFlow({
         serviceId,
         professionalMemberId: memberId,
         localDate,
-      });
+      }).catch(() => ({ slots: [], error: "Não foi possível carregar os horários. Tente novamente." }));
       if (cancelled || requestId !== slotsRequestId.current) {
         return;
       }
@@ -181,7 +183,7 @@ export function PublicBookingFlow({
     return () => {
       cancelled = true;
     };
-  }, [step, serviceId, professionalId, localDate, catalog.slug]);
+  }, [step, serviceId, professionalId, localDate, catalog.slug, slotsAttempt]);
 
   function go(next: BookingStep) {
     if (pending || reserving.current) return;
@@ -256,7 +258,7 @@ export function PublicBookingFlow({
   }
 
   function confirm() {
-    if (pending || reserving.current) return;
+    if (pending || reserving.current || confirmationUnknown) return;
     if (!serviceId || professionalId === null || !startsAt || !localDate) {
       setFormError("Escolha serviço, profissional e horário.");
       return;
@@ -272,7 +274,7 @@ export function PublicBookingFlow({
             professionalMemberId,
             localDate,
             startsAt,
-          });
+          }).catch(() => ({ error: "Não foi possível continuar para entrar. Tente novamente." }));
           if (result?.error) setFormError(result.error);
           return;
         }
@@ -285,6 +287,9 @@ export function PublicBookingFlow({
           phone,
           email,
           customerNote: customerNote || null,
+        }).catch(() => {
+          setConfirmationUnknown(true);
+          return { error: "Não foi possível confirmar a resposta. Confira Meus agendamentos antes de tentar novamente.", confirmation: undefined };
         });
         if (result.error) {
           setFormError(result.error);
@@ -499,6 +504,11 @@ export function PublicBookingFlow({
                 {slotsError}
               </p>
             ) : null}
+            {slotsError ? (
+              <Button type="button" variant="outline" disabled={pending} onClick={() => {
+                setSlotsError(null); setSlotsLoading(true); setSlotsAttempt((attempt) => attempt + 1);
+              }}>Tentar carregar horários novamente</Button>
+            ) : null}
             {!slotsLoading && slots.length === 0 && !slotsError ? (
               <div className="grid gap-3 rounded-3xl bg-secondary/50 p-4">
                 <p className="text-sm text-muted-foreground">Não há horários livres neste dia. Toque em Voltar e escolha outro dia.</p>
@@ -646,7 +656,7 @@ export function PublicBookingFlow({
             <Button
               type="button"
               className="h-12 w-full rounded-full"
-              disabled={pending}
+              disabled={pending || confirmationUnknown}
               onClick={confirm}
             >
               {pending
@@ -676,6 +686,7 @@ export function PublicBookingFlow({
           </section>
         ) : null}
 
+        {confirmationUnknown ? <Link href="/cliente/agendamentos" className="text-sm font-medium underline">Conferir meus agendamentos</Link> : null}
         {formError ? (
           <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
             {formError}

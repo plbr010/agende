@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-20T19:49:32.155Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "external_payments": 0,
+  "production_writes": 0,
+  "existing_data_deleted": false,
+  "checks": [
+    {
+      "name": "income creation is idempotent; local payment and idempotent partial refund match real finance UI read model",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign tenant and professional cannot read or mutate finance; zero amount rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "own expense cancel and reopen persist; synthetic income fully refunded with history retained",
+      "status": "PASS"
+    }
+  ]
+}

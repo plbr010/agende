@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-21T00:05:16.284Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "business_writes": 0,
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "exactly two intended appointments, both cancelled, no refresh Back double-click or cleanup orphan",
+      "status": "PASS"
+    },
+    {
+      "name": "only generated services archived and generated working-hour rows absent",
+      "status": "PASS"
+    },
+    {
+      "name": "both establishments original settings/publication restored and new optional customer avatar removed",
+      "status": "PASS"
+    }
+  ]
+}

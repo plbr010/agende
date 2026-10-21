@@ -1,3 +1,4 @@
+import {homologationEvidence} from './homologation-evidence.mjs';
 // Real SMTP/PKCE forms, SSR, PostgREST and Storage. No production writes.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,existsSync,readdirSync} from 'node:fs';
@@ -21,9 +22,9 @@ const resume=process.argv.includes('--resume');assert.ok(resume||!existsSync(pre
 const mailbox=process.env.AGENDE_STAGING_MAILBOX;assert.match(mailbox??'',/^[^@+\s]+@gmail[.]com$/);
 const now=Date.now(),fixtures=resume?JSON.parse(readFileSync(prefix+'-fixtures.json','utf8')):Object.fromEntries(['client','professional'].map(role=>[role,{email:mailbox.replace('@',`+agende-media-${role}-${now}@`),password:randomUUID()+'aA2!',phone:'329'+randomInt(10000000,99999999)}]));
 const save=()=>writeFileSync(prefix+'-fixtures.json',JSON.stringify(fixtures));save();
-const checks=resume?JSON.parse(readFileSync('docs/homologation/final20-profiles-media.json','utf8')).checks.filter(x=>x.status==='PASS'):[];
+const checks=resume?JSON.parse(readFileSync(homologationEvidence('profiles-media.json'),'utf8')).checks.filter(x=>x.status==='PASS'):[];
 let completed=false;
-const report=()=>writeFileSync('docs/homologation/final20-profiles-media.json',JSON.stringify({project,checked_at:new Date().toISOString(),latest_run_passed:completed,earlier_attempts:resume?['final20-profiles-media-first-attempt.json']:[],checks:[...new Map(checks.map(x=>[x.name,x])).values()]},null,2)+'\n');
+const report=()=>writeFileSync(homologationEvidence('profiles-media.json'),JSON.stringify({project,checked_at:new Date().toISOString(),latest_run_passed:completed,earlier_attempts:resume?['final20-profiles-media-first-attempt.json']:[],checks:[...new Map(checks.map(x=>[x.name,x])).values()]},null,2)+'\n');
 const record=name=>{checks.push({name,status:'PASS',mode:'real staging Auth/SMTP/PostgREST/Storage and own Next server'});report();console.log('PASS '+name);};
 const ok=async promise=>{const r=await promise;assert.equal(r.error,null,r.error?.code);return r.data;};
 const socket=createServer();await new Promise((resolve,reject)=>{socket.once('error',reject);socket.listen(3000,'::1',resolve);});await new Promise(resolve=>socket.close(resolve));
@@ -45,7 +46,7 @@ try {
     for(const role of ['client','professional']){
       const path=prefix+'-'+role+'-link.txt',until=Date.now()+30*60*1000;
       while(!existsSync(path)){assert.ok(Date.now()<until,'Delivered email link unavailable');await new Promise(r=>setTimeout(r,1000));}
-      const url=new URL(readFileSync(path,'utf8').trim());assert.equal(url.origin,config.url);assert.equal(url.pathname,'/auth/v1/verify');
+      const url=new URL(readFileSync(path,'utf8').trim());assert.equal(url.origin,config.url);assert.equal(url.pathname,'/auth/v1/verify');assert.equal(new URL(url.searchParams.get('redirect_to')).href,origin+'/auth/callback');
       await pages[role].goto(url.href);await pages[role].waitForURL(role==='client'?'**/cliente/perfil?inicio=1':'**/onboarding');record(role+' actual delivered email confirms with original PKCE verifier');
     }
   }

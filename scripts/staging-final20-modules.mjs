@@ -1,3 +1,4 @@
+import {homologationEvidence} from './homologation-evidence.mjs';
 // Actual PostgREST operations with synthetic inventory, package and appointment.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -67,6 +68,6 @@ try{
   if(service)try{await ok(owner.from('services').update({active:false,archived_at:new Date().toISOString()}).eq('id',service).eq('workspace_id',wid));}catch{cleanup=false;}
   for(const id of hours)try{await ok(owner.from('professional_working_hours').delete().eq('id',id).eq('workspace_id',wid).eq('professional_member_id',member));}catch{cleanup=false;}
   for(const c of [owner,foreign,customer])await c.auth.signOut({scope:'local'});
-  writeFileSync('docs/homologation/final20-operational-modules.json',JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&cleanup,synthetic_catalog_archived_and_sale_cancelled:cleanup,completed_synthetic_appointment_retained:completed,production_connections:0,external_payments:0,error:failure?.name,secrets_in_report:false},null,2)+'\n');
+  writeFileSync(homologationEvidence('operational-modules.json'),JSON.stringify({checked_at:new Date().toISOString(),project:'fkpdudnnperufnmdwdlv',checks,passed:!failure&&cleanup,synthetic_catalog_archived_and_sale_cancelled:cleanup,completed_synthetic_appointment_retained:completed,production_connections:0,external_payments:0,error:failure?.name,secrets_in_report:false},null,2)+'\n');
 }
 if(failure)process.exitCode=1;assert.equal(cleanup,true,'Synthetic cleanup failed');

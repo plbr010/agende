@@ -1,7 +1,8 @@
 /**
  * Isolated public-journey browser tests.
  * Starts the already-built app with synthetic env. Never hits production.
- * Does not submit signup, login, booking or billing.
+ * Submits only invalid signup data rejected locally before Auth; no account/booking/billing writes.
+ * Requires a build with the documented CI placeholder URL/key, not a staging build.
  *
  * Usage:
  *   npm run build && npm run test:e2e
@@ -12,11 +13,13 @@
  *
  * Exit codes: 0 ok · 1 test FAIL · 2 browser missing · 3 server/backend missing
  */
+import {readFileSync,readdirSync} from "node:fs";
 import { spawn } from "node:child_process";
 import {
   assertSafeE2eOrigin,
   createEvidenceDir,
   createRecorder,
+  classifyLocalE2e,
   exitCodeFromResults,
   launchBrowser,
   loadPlaywright,
@@ -48,7 +51,7 @@ if (leaked.length) {
     pass: 0,
     fail: 1,
     blocked: 0,
-    classification: "PASS LOCAL — servidor sintético, sem backend real",
+    classification: classifyLocalE2e(results),
     results,
   };
   writeSummary(evidence.dir, summary);
@@ -70,7 +73,7 @@ function finish(extra = {}) {
     pass: results.filter((row) => row.result === "PASS").length,
     fail: results.filter((row) => row.result === "FAIL").length,
     blocked: results.filter((row) => row.result === "BLOQUEADO").length,
-    classification: "PASS LOCAL — servidor sintético, sem backend real",
+    classification: classifyLocalE2e(results),
     results,
   };
   writeSummary(evidence.dir, summary);
@@ -102,6 +105,9 @@ process.once("SIGTERM", () => {
 });
 
 try {
+  const chunks=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?chunks(`${dir}/${e.name}`):e.name.endsWith('.js')?[`${dir}/${e.name}`]:[]);
+  const built=[...chunks('.next/static'),...chunks('.next/server')].map(p=>readFileSync(p,'utf8'));
+  if(!built.some(s=>s.includes('https://example.supabase.co'))||!built.some(s=>s.includes('sb_publishable_ci_placeholder'))) throw new Error('Isolated build requires CI placeholder URL/key at build time; runtime overrides do not replace bundled NEXT_PUBLIC values. Rebuild before this runner.');
   server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
     env: {
       ...process.env,
@@ -204,6 +210,19 @@ try {
       }
 
       try {
+        await page.goto(`${base}/cadastro?intent=client`, { waitUntil: "domcontentloaded", timeout: 20000 });
+        for (const [name,value] of Object.entries({fullName:"Cliente Teste",email:"owned@example.invalid",phone:"123",password:"SyntheticAa9!",confirmPassword:"SyntheticAa9!"})) await page.locator(`input[name=${name}]`).fill(value);
+        await page.getByRole("checkbox").check();
+        await page.waitForFunction(() => document.querySelector('input[name=termsAccepted]')?.value === "true");
+        await page.getByRole("button", {name:"Criar conta de cliente",exact:true}).click();
+        await page.getByRole("alert").filter({hasText:"Confira os campos em vermelho."}).waitFor();
+        for (const [name,value] of Object.entries({fullName:"Cliente Teste",email:"owned@example.invalid",password:"SyntheticAa9!"})) if (await page.locator(`input[name=${name}]`).inputValue() !== value) throw new Error("validation reset signup fields");
+        record({name:"signup-validation-keeps-input",result:"PASS",evidence:await shot(page,"signup-validation-keeps-input")});
+      } catch (error) {
+        record({name:"signup-validation-keeps-input",result:"FAIL",error:error.message});
+      }
+
+      try {
         await page.goto(`${base}/login`, { waitUntil: "domcontentloaded", timeout: 20000 });
         await page.getByLabel(/e-mail/i).waitFor();
         await page.getByLabel(/^senha$/i).waitFor();
@@ -211,6 +230,17 @@ try {
         record({ name: "login", result: "PASS", evidence: await shot(page, "login") });
       } catch (error) {
         record({ name: "login", result: "FAIL", error: error.message });
+      }
+
+      try {
+        const cold=await browser.newContext({javaScriptEnabled:false});
+        try {
+          const coldPage=await cold.newPage();await coldPage.goto(`${base}/descobrir`);
+          if (!await coldPage.getByRole("button",{name:"Procurar estabelecimentos",exact:true}).isDisabled()) throw new Error("search submits natively before hydration");
+          record({name:"discovery-before-hydration",result:"PASS"});
+        } finally {await cold.close();}
+      } catch (error) {
+        record({name:"discovery-before-hydration",result:"FAIL",error:error.message});
       }
 
       try {

@@ -41,8 +41,10 @@ export function SignupForm({
   const selectedPlan = journey === "owner" && plan ? PLANS.find((item) => item.id === plan) : null;
   const canSubmit = !pending && terms;
 
+  // A resolved validation error also triggers React form reset. Keep this mounted
+  // form intact for corrections; successful signup redirects away.
   return (
-    <PortugueseForm action={action} className="space-y-5">
+    <PortugueseForm action={action} className="space-y-5" onReset={(event) => event.preventDefault()}>
       {next ? <input type="hidden" name="next" value={next} /> : null}
       {plan && intent === "professional" ? <input type="hidden" name="plan" value={plan} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />

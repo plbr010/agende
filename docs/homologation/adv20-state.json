@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-21T00:20:05.180400+00:00",
+  "base_main_sha": "2bdd3564a2ca2b24de9dd23bfd02de8aab3b3a86",
+  "base_main_ci": "https://github.com/plbr010/agende/actions/runs/39485824832",
+  "base_main_ci_conclusion": "success",
+  "production": {
+    "sha": "2bdd3564a2ca2b24de9dd23bfd02de8aab3b3a86",
+    "deployment": "dpl_AMpCwHFDDDS8C9WY4sft5Uw57mW4",
+    "status": "READY"
+  },
+  "branch": "codex/adversarial-launch-20261020",
+  "cursor_prs_preserved": [
+    71,
+    73
+  ],
+  "production_mutations": 0,
+  "notes": "Candidate head and CI are recorded in the draft PR; no automatic merge or deployment."
+}

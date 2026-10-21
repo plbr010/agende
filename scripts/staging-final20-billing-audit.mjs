@@ -1,3 +1,4 @@
+import {homologationEvidence} from './homologation-evidence.mjs';
 // Read-only Stripe TEST/provider and staging reconciliation. Never uses live keys.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -29,4 +30,4 @@ try{
  for(const endpoint of own){assert.equal(endpoint.livemode,false);checks.push({name:'provider staging endpoint configuration',status:endpoint.status==='enabled'?'PASS':'FAIL',enabled:endpoint.status==='enabled',all_events:endpoint.enabled_events.includes('*'),invoice_paid_enabled:endpoint.enabled_events.includes('*')||endpoint.enabled_events.includes('invoice.paid'),checkout_completed_enabled:endpoint.enabled_events.includes('*')||endpoint.enabled_events.includes('checkout.session.completed')});}
  console.log('PASS read-only reconciliation of six real TEST checkouts subscriptions invoices and webhook configuration');
 }catch(error){failure=error.name;checks.push({name:'TEST provider audit',status:'FAIL',code:error.name});process.exitCode=1;}
-finally{writeFileSync('docs/homologation/final20-stripe-provider-audit.json',JSON.stringify({checked_at:new Date().toISOString(),project,livemode:false,provider_mutations:0,production_writes:0,status:failure||checks.some(x=>x.status==='FAIL')?'FAIL':checks.some(x=>x.status==='BLOCKED')?'PARTIAL':'PASS',checks},null,2)+'\n');}
+finally{writeFileSync(homologationEvidence('stripe-provider-audit.json'),JSON.stringify({checked_at:new Date().toISOString(),project,livemode:false,provider_mutations:0,production_writes:0,status:failure||checks.some(x=>x.status==='FAIL')?'FAIL':checks.some(x=>x.status==='BLOCKED')?'PARTIAL':'PASS',checks},null,2)+'\n');}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { MapPin, Navigation, Search } from "lucide-react";
 import { FavoriteButton } from "@/components/client/favorite-button";
@@ -38,6 +38,10 @@ const MODES: { id: DiscoveryMode; label: string }[] = [
   { id: "global", label: DISCOVERY_COPY.modeGlobal },
 ];
 
+const subscribeHydration = () => () => {};
+const clientHydration = () => true;
+const serverHydration = () => false;
+
 const EMPTY_QUERY: DiscoveryUrlState = { mode: "city", city: "", state: "", query: "" };
 
 export function LocationDiscovery({
@@ -53,6 +57,7 @@ export function LocationDiscovery({
   initialQuery?: DiscoveryUrlState;
   initialResult?: DiscoverySearchResult | null;
 }) {
+  const hydrated = useSyncExternalStore(subscribeHydration, clientHydration, serverHydration);
   const router = useRouter();
   const pathname = usePathname();
   const modeGroupId = useId();
@@ -221,7 +226,7 @@ export function LocationDiscovery({
 
   async function runSearch(event: React.FormEvent) {
     event.preventDefault();
-    if (pending || loadingMore || searchLock.current) return;
+    if (!hydrated || pending || loadingMore || searchLock.current) return;
     const input = currentSearchInput(0);
     const blocked = discoverySearchBlockedReason(input);
     if (blocked) {
@@ -416,7 +421,7 @@ export function LocationDiscovery({
             </p>
           ) : null}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button type="submit" className="h-12 flex-1 rounded-full" disabled={pending || loadingMore} aria-busy={pending}>
+            <Button type="submit" className="h-12 flex-1 rounded-full" disabled={!hydrated || pending || loadingMore} aria-busy={!hydrated || pending}>
               <Search className="size-4" aria-hidden="true" />
               {pending ? "Procurando..." : DISCOVERY_COPY.submit}
             </Button>
