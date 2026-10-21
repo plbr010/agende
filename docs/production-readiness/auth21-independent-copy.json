@@ -1,0 +1,12 @@
+{
+  "different_physical_disk": true,
+  "passed": true,
+  "destination_disk": 0,
+  "checked_at": "2026-10-21T06:57:13.1223957Z",
+  "production_writes": 0,
+  "private_acl_verified": true,
+  "files_copied": 10,
+  "offsite_copy": false,
+  "encrypted_files_verified": true,
+  "source_disk": 1
+}

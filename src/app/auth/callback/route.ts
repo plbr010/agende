@@ -17,7 +17,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/verificar-email?status=browser_mismatch`);
     }
     if (!error) {
-      const session = await loadAppSession();
+      let session;
+      try {
+        session = await loadAppSession();
+      } catch {
+        // Code exchange has succeeded. Keep its cookies and pending journey;
+        // a temporary profile/session read failure must not strand a used link.
+        console.error("auth_session_after_confirmation_unavailable");
+        return NextResponse.redirect(`${origin}/verificar-email?status=session_unavailable`);
+      }
       const destination = session
         ? getDefaultDestination(session.context)
         : "/verificar-email?status=error";

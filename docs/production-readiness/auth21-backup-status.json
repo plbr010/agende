@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-21T06:55:49.6093556Z",
+  "passed": true,
+  "stage": "data_and_storage_recovery_complete",
+  "secrets_in_report": false,
+  "full_platform_recovery_verified": false,
+  "production_writes": 0
+}

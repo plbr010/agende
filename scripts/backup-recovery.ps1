@@ -1,5 +1,5 @@
 param(
-  [ValidateSet('prepare','check-tls','selftest','export','restore')][string]$Mode='prepare',
+  [ValidateSet('prepare','check-tls','selftest','export','restore','restore-data')][string]$Mode='prepare',
   [string]$ConfigPath,
   [string]$RunPath,
   [string]$AuthorizedProject,
@@ -11,7 +11,7 @@ $taskScript=Join-Path $PSScriptRoot 'production-backup.mjs'
 if($Mode -eq 'prepare' -or $Mode -eq 'selftest') { & $taskNode $taskScript $Mode; exit $LASTEXITCODE }
 if($Mode -eq 'check-tls') { & $taskNode $taskScript $Mode --config $ConfigPath; exit $LASTEXITCODE }
 if($Mode -eq 'export' -and $AuthorizedProject -ne 'wohimauqgywshbbejjcl') { throw 'specific_production_export_authorization_required' }
-if($Mode -eq 'restore' -and -not $AuthorizedLocalRestore) { throw 'specific_local_restore_authorization_required' }
+if($Mode -in @('restore','restore-data') -and -not $AuthorizedLocalRestore) { throw 'specific_local_restore_authorization_required' }
 function Reveal-InMemory([Security.SecureString]$Value) {
   $pointer=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($Value)
   try { [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) }

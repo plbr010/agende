@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-21T06:51:41.868Z",
+  "project": "wohimauqgywshbbejjcl",
+  "scope": "new owned QA customer; signup/confirmation/recovery/session only",
+  "production_auth_test_writes": true,
+  "existing_users_modified": false,
+  "users_deleted": 0,
+  "bookings_created": 0,
+  "financial_operations": 0,
+  "checks": [
+    {
+      "name": "actual production signup requires confirmation and rejects password login before delivery",
+      "status": "PASS"
+    },
+    {
+      "name": "delivered production SMTP confirmation completes original PKCE browser, onboarding profile and session survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "used confirmation token cannot be reused",
+      "status": "PASS"
+    },
+    {
+      "name": "production recovery delivered and old password rejected for newly created own QA fixture",
+      "status": "PASS"
+    },
+    {
+      "name": "new_login",
+      "status": "FAIL",
+      "code": "TimeoutError"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-10-21T07:06:59.889Z",
+  "kind": "isolated-e2e",
+  "base": "http://127.0.0.1:59847",
+  "evidenceDir": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203",
+  "pass": 14,
+  "fail": 0,
+  "blocked": 0,
+  "classification": "PASS LOCAL — servidor sintético, sem backend real",
+  "results": [
+    {
+      "name": "landing",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/landing.png"
+    },
+    {
+      "name": "cadastro-keyboard",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/cadastro.png"
+    },
+    {
+      "name": "signup-validation-keeps-input",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/signup-validation-keeps-input.png"
+    },
+    {
+      "name": "login",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/login.png"
+    },
+    {
+      "name": "confirmation-session-recovery",
+      "result": "PASS"
+    },
+    {
+      "name": "discovery-before-hydration",
+      "result": "PASS"
+    },
+    {
+      "name": "discovery-empty-city",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-empty-city.png"
+    },
+    {
+      "name": "discovery-gps-jf",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-gps-jf.png"
+    },
+    {
+      "name": "discovery-city-muriae",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-city-muriae.png"
+    },
+    {
+      "name": "discovery-global-name",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-global-name.png"
+    },
+    {
+      "name": "public-not-found",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/public-not-found.png"
+    },
+    {
+      "name": "app-guard",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/app-guard.png"
+    },
+    {
+      "name": "discovery-gps-denied",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-gps-denied.png"
+    },
+    {
+      "name": "discovery-mobile",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15752-1792566412203/discovery-mobile.png"
+    }
+  ]
+}

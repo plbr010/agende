@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-21T06:54:52.044Z",
+  "project": "wohimauqgywshbbejjcl",
+  "scope": "same new own fixture after successful SMTP/PKCE/recovery",
+  "users_created": 0,
+  "users_deleted": 0,
+  "passwords_changed": 0,
+  "bookings_created": 0,
+  "financial_operations": 0,
+  "checks": [
+    {
+      "name": "same recovered QA fixture logs in with new password and session survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "actual profile logout clears session and client area requires login",
+      "status": "PASS"
+    }
+  ]
+}

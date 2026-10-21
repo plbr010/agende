@@ -28,6 +28,10 @@ const copy: Record<string, { title: string; body: string }> = {
     title: "Continue no navegador do cadastro",
     body: "Este navegador não tem a verificação iniciada no cadastro. Volte ao navegador e dispositivo onde criou a conta. Se o e-mail já foi confirmado, entre com sua senha.",
   },
+  session_unavailable: {
+    title: "Tente entrar para continuar",
+    body: "Não foi possível abrir sua conta agora. Entre com sua senha para retomar o acesso. Você não precisa abrir o mesmo link outra vez.",
+  },
   success: {
     title: "E-mail confirmado",
     body: "Tudo certo. Agora você já pode entrar.",
@@ -43,12 +47,14 @@ export default async function VerificarEmailPage({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const session = await loadAppSession();
+  const { status } = await searchParams;
+  // This public recovery view must not repeat the failed session read.
+  // Protected pages still require the normal confirmed-session guard.
+  const session = status === "session_unavailable" ? null : await loadAppSession();
   if (session?.context.emailConfirmed) {
     redirect(getDefaultDestination(session.context));
   }
 
-  const { status } = await searchParams;
   const pendingEmail = await getPendingEmail();
   const pendingNext = await getPendingNext();
   const loginHref = pendingNext ? `/login?next=${encodeURIComponent(pendingNext)}` : "/login";
@@ -58,7 +64,7 @@ export default async function VerificarEmailPage({
   const clientJourney = !teamJourney && (journey === "client" || (journey === null && pendingIntent !== "professional"));
   const key = status && copy[status] ? status : "loading";
   const content = copy[key];
-  const showLoginCta = ["success", "loading", "sent", "error", "browser_mismatch"].includes(key);
+  const showLoginCta = ["success", "loading", "sent", "error", "browser_mismatch", "session_unavailable"].includes(key);
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
@@ -83,7 +89,7 @@ export default async function VerificarEmailPage({
           Não encontrou? Verifique spam, promoções e a pasta de lixo eletrônico.
         </p>
       </div>
-      <ResendEmailButton />
+      {key !== "session_unavailable" ? <ResendEmailButton /> : null}
       {showLoginCta ? (
         <div className="grid gap-3">
           <Button className="h-11" render={<Link href={loginHref} />}>
