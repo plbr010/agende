@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-10-21T06:03:14.731Z",
+  "passed": false,
+  "stage": "verify_catalog",
+  "all_encrypted_files_authenticated": true,
+  "owned_cluster_stopped": true,
+  "temporary_plaintext_cluster_removed": true,
+  "raw_errors_withheld": true
+}

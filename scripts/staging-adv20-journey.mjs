@@ -18,7 +18,9 @@ const old=JSON.parse(readFileSync('.env.profiles-media-fixtures.json','utf8')).p
 const staff=JSON.parse(readFileSync('.env.final20-employee-fixture.json','utf8'));
 const mailbox=JSON.parse(readFileSync('.env.final-mailbox.json','utf8')).mailbox;
 assert.match(mailbox,/^[^@+\s]+@gmail[.]com$/);
-const customerFile=process.argv.includes('--fresh-ui')?'.env.adv20-ui-booking-fixture.json':process.argv.includes('--fresh')?'.env.adv20-fresh-booking-fixture.json':'.env.adv20-booking-fixture.json';const reuseConfirmed=process.argv.includes('--reuse-confirmed');const retry=process.argv.includes('--retry-before-signup')||reuseConfirmed;assert.ok(!existsSync(customerFile)||retry,'Never replace an unfinished booking fixture');
+const customFixture=process.env.AGENDE_BOOKING_FIXTURE;
+if(customFixture){assert.match(customFixture,/^\.env\.[a-z0-9-]+\.json$/);assert.ok(process.argv.includes('--reuse-confirmed'));assert.ok(existsSync(customFixture));}
+const customerFile=customFixture??(process.argv.includes('--fresh-ui')?'.env.adv20-ui-booking-fixture.json':process.argv.includes('--fresh')?'.env.adv20-fresh-booking-fixture.json':'.env.adv20-booking-fixture.json');const reuseConfirmed=process.argv.includes('--reuse-confirmed');const retry=process.argv.includes('--retry-before-signup')||reuseConfirmed;assert.ok(!existsSync(customerFile)||retry,'Never replace an unfinished booking fixture');
 const customer=existsSync(customerFile)?JSON.parse(readFileSync(customerFile,'utf8')):{email:mailbox.replace('@',`+agende-adv20-booking-${Date.now()}@`),password:randomUUID()+'Aa2!',phone:'329'+randomInt(10000000,99999999)};
 writeFileSync(customerFile,JSON.stringify(customer));
 const customerE164='+55'+customer.phone.replace(/\D/g,'').replace(/^55(?=\d{11}$)/,'');
@@ -170,7 +172,9 @@ const time=new Intl.DateTimeFormat('pt-BR',{timeZone:catalog.timezone,hour:'2-di
 
  const denied=await fetch(origin+'/api/appointments/whatsapp?id='+booking.id,{headers:employee.headers(),redirect:'manual'});assert.equal(denied.status,422);assert.equal(denied.headers.get('location'),null);
  record('client cancellations preserve history and cancelled booking cannot expose a WhatsApp confirmation');
-}catch(error){writeFileSync('.env.adv20-journey-error.txt',String(error.stack));if(debugPage)await debugPage.screenshot({path:'.env.adv20-journey-failure.png',fullPage:true}).catch(()=>{});checks.push({name:phase,status:'FAIL',code:error.name});process.exitCode=1;}
+}catch(error){writeFileSync('.env.adv20-journey-error.txt',String(error.stack));if(debugPage)await debugPage.screenshot({path:'.env.adv20-journey-failure.png',fullPage:true}).catch(()=>{});
+ const rateLimited=phase==='confirm_booking'&&await debugPage?.getByRole('alert').filter({hasText:'Muitas tentativas seguidas. Espere um pouco e tente de novo.'}).isVisible().catch(()=>false);
+ checks.push({name:phase,status:rateLimited?'BLOCKED':'FAIL',code:rateLimited?'booking_rate_limited':error.name});process.exitCode=rateLimited?2:1;}
 finally{
  const cleanup=async(name,fn)=>{try{await fn();}catch{checks.push({name:'cleanup '+name,status:'FAIL'});process.exitCode=1;}};
  if(customerSession)for(const id of resources.appointments)await cleanup('appointment',async()=>{const row=(await ok(customerSession.client.rpc('list_my_appointments'))).find(x=>x.id===id);if(row&&row.status!=='cancelled')await ok(customerSession.client.rpc('cancel_my_appointment',{p_appointment_id:id}));});

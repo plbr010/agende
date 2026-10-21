@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-21T06:05:44.033Z",
+  "production": [
+    {
+      "captured_at": "2026-10-21 05:59:11.480504+00",
+      "migration_count": 67,
+      "no_anonymous_booking": false,
+      "confirmed_gate_no_guest_fallback": false
+    }
+  ],
+  "staging": [
+    {
+      "captured_at": "2026-10-21 05:59:12.169828+00",
+      "migration_count": 22,
+      "no_anonymous_booking": true,
+      "confirmed_gate_no_guest_fallback": true
+    }
+  ],
+  "auth_dashboard": {
+    "site_url": "http://localhost:3000",
+    "redirects": [],
+    "custom_smtp_enabled": false,
+    "confirm_email": true,
+    "anonymous_sign_in": false,
+    "email_provider_enabled": true,
+    "read_only": true
+  },
+  "vercel": {
+    "sha": "67848db03544d6675c3593260d08711178183df5",
+    "id": "dpl_HAFcxDMiDtDDDTqteidiyFbyPSkm",
+    "ready": true
+  },
+  "webhook": {
+    "version": 4,
+    "verify_jwt": false,
+    "contains_livemode_guard": false
+  },
+  "production_mutations": 0
+}
