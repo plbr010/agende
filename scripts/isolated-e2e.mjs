@@ -245,6 +245,7 @@ try {
 
       try {
         await page.goto(`${base}/descobrir`, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await page.getByText("A cidade pode ser qualquer uma", { exact: true }).click();
         const body = await page.locator("body").innerText();
         if (!/Muriaé/.test(body) || !/Juiz de Fora/.test(body)) {
           throw new Error("Muriaé/Juiz de Fora scenario copy missing");

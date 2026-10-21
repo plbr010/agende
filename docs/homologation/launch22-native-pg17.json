@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-21T05:34:19.924Z",
+  "version": "postgres (PostgreSQL) 17.6",
+  "host": "127.0.0.1",
+  "port": 58958,
+  "suites": [
+    "scripts/prelaunch-upgrade.test.mjs",
+    "scripts/booking-retry-sql.test.mjs",
+    "scripts/pg17-concurrency.test.mjs",
+    "scripts/discovery-sql.test.mjs"
+  ],
+  "passed": true,
+  "server_stopped_after_run": true,
+  "auth": "synthetic SQL fixture; no Auth/SMTP service",
+  "data_policy": "owned test databases retained locally, ignored by Git"
+}

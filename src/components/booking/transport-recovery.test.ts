@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {runInNewContext} from "node:vm";
 import ts from "typescript";
 import * as config from "../../lib/booking/config";
-import {bookingBackStep, bookingJourneySteps, parsePublicBookingDetails} from "../../lib/booking/validation";
+import * as validation from "../../lib/booking/validation";
 
 type Node = {props?: Record<string, unknown>};
 function harness(slotsFailure = false) {
@@ -20,7 +20,7 @@ function harness(slotsFailure = false) {
  const exports: Record<string, (props:unknown)=>Node> = {};
  const dependencies: Record<string,unknown>={
   react,"react/jsx-runtime":{jsx:(type:unknown,props:unknown)=>({type,props}),jsxs:(type:unknown,props:unknown)=>({type,props})},
-  "@/lib/booking/config":config,"@/lib/booking/validation":{parsePublicBookingDetails,bookingJourneySteps,bookingBackStep},
+  "@/lib/booking/config":config,"@/lib/booking/validation":validation,
   "@/lib/booking/actions":{createPublicAppointmentAction:async()=>{calls++;throw new Error("private provider/network details");},fetchPublicSlotsAction:async()=>{calls++;if(calls===1)throw new Error("network disconnected");return {slots:["2026-10-23T13:00:00Z"]};}},
   "@/lib/validation/money":{formatCentsToReais:()=>"R$ 50,00"},
  };

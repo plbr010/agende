@@ -1,0 +1,58 @@
+[
+  {
+    "archive": "production-1792120682973",
+    "snapshot_at": "2026-10-16T03:18:05.692Z",
+    "files": [
+      {
+        "file": "database.dump.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "core.dump.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "roles.sql.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "snapshot.json.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      }
+    ],
+    "restore_verified": false,
+    "full_platform_restore_verified": false
+  },
+  {
+    "archive": "production-1792123300015",
+    "snapshot_at": "2026-10-16T04:01:42.635Z",
+    "files": [
+      {
+        "file": "database.dump.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "core.dump.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "roles.sql.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      },
+      {
+        "file": "snapshot.json.enc",
+        "sha256_pass": true,
+        "size_pass": true
+      }
+    ],
+    "restore_verified": false,
+    "full_platform_restore_verified": false
+  }
+]

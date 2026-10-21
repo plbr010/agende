@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-21T05:38:52.130Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "scope": "owned confirmed fixture duplicate signup and already-used token; no new business resource",
+  "checks": [
+    {
+      "name": "missing and invalid phone cannot progress signup or report confirmation",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid phone preserves previously entered signup fields for a corrected resubmission",
+      "status": "PASS"
+    },
+    {
+      "name": "confirmed existing email with obfuscated GoTrue response shows sign-in/recovery guidance without claiming mail was sent",
+      "status": "PASS"
+    },
+    {
+      "name": "used real delivered confirmation link is rejected and renders expiry recovery",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed session cannot render protected app and returns to sign-in",
+      "status": "PASS"
+    }
+  ]
+}
