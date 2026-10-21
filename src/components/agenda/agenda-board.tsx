@@ -569,7 +569,7 @@ export function AppointmentDetailDialog({
             </div>
           </dl>
           {canNotify && (appointment.status === "scheduled" || appointment.status === "confirmed") ? (
-            <div className="grid gap-2 rounded-[1.25rem] bg-metric-blush p-4 ring-1 ring-[#f0e4de]">
+            <div className="grid min-w-0 gap-2 rounded-[1.25rem] bg-metric-blush p-4 ring-1 ring-[#f0e4de]">
               <p className="text-sm font-medium text-wine-deep">WhatsApp</p>
               <AppointmentWhatsApp
                 key={`${appointment.id}-${appointment.status}-${appointment.startsAt}-${appointment.clientPhone ?? ""}`}

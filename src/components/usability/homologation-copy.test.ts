@@ -50,6 +50,14 @@ test("stock, packages and reschedule speak in everyday words", () => {
   assert.doesNotMatch(reschedule, /Falha ao/);
 });
 
+test("dialogs keep their contents inside a narrow phone screen", () => {
+  const dialog = source("../ui/dialog.tsx");
+  assert.match(dialog, /grid-cols-\[minmax\(0,1fr\)\]/);
+  assert.match(dialog, /overflow-x-hidden/);
+  assert.match(dialog, /overflow-y-auto/);
+  assert.match(dialog, /max-h-\[min\(85svh,40rem\)\]/);
+});
+
 test("cancel errors stay inside the open dialog and primary taps are large", () => {
   const appointments = source("../booking/client-appointments.tsx");
   const title = appointments.indexOf("Cancelar horário?");

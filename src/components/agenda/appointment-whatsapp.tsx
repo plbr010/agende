@@ -17,7 +17,7 @@ export function AppointmentWhatsApp({
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
   return (
-    <div className="grid gap-2 rounded-2xl border p-3">
+    <div className="grid min-w-0 max-w-full gap-2 rounded-2xl border p-3">
       {phoneNotice ? (
         <p role="status" className="rounded-2xl bg-metric-sand px-4 py-3 text-sm leading-6">
           {phoneNotice}
@@ -25,7 +25,7 @@ export function AppointmentWhatsApp({
       ) : (
         <Button
           size="lg"
-          className="h-auto min-h-12 w-full whitespace-normal px-4 py-3 text-center leading-snug"
+          className="h-auto min-h-12 w-full min-w-0 max-w-full whitespace-normal px-4 py-3 text-center leading-snug"
           render={
             <a
               href={`/api/appointments/whatsapp?id=${encodeURIComponent(appointmentId)}`}
@@ -34,8 +34,8 @@ export function AppointmentWhatsApp({
             />
           }
         >
-          <MessageCircle aria-hidden="true" />
-          Confirmar pelo WhatsApp
+          <MessageCircle className="shrink-0" aria-hidden="true" />
+          <span className="min-w-0">Confirmar pelo WhatsApp</span>
         </Button>
       )}
       <p className="text-xs leading-5 text-muted-foreground">

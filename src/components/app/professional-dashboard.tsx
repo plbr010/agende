@@ -362,7 +362,7 @@ export function ProfessionalDashboard({
                     >
                       <span
                         className={cn(
-                          "relative grid size-9 place-items-center rounded-full",
+                          "relative grid size-8 place-items-center rounded-full sm:size-9",
                           day.isToday && "bg-wine-deep font-semibold text-white",
                           !day.isToday && day.inMonth && "text-foreground",
                           !day.inMonth && "text-muted-foreground/45",
