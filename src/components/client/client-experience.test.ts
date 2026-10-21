@@ -37,6 +37,9 @@ test("client chrome has a personal nav and no SaaS prices", () => {
   assert.match(shell, /Início/);
   assert.match(shell, /Explorar/);
   assert.match(shell, /Agendamentos/);
+  assert.match(shell, /Agenda/);
+  assert.match(shell, /minmax\(0,1fr\)/);
+  assert.match(shell, /max-\[389px\]:sr-only/);
   assert.match(shell, /Favoritos/);
   assert.match(shell, /Perfil/);
   assert.match(shell, /\/cliente\/favoritos/);

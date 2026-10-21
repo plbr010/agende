@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-21T05:33:26.176Z",
+  "checked_at": "2026-10-21T06:07:01.318Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 255,
+      "passed": 256,
       "failed": 0,
       "skipped": 0
     },
@@ -28,7 +28,7 @@
     }
   },
   "totals": {
-    "passed": 422,
+    "passed": 423,
     "failed": 0,
     "skipped": 0
   },
@@ -967,6 +967,12 @@
     {
       "file": "src/components/usability/homologation-copy.test.ts",
       "name": "stock, packages and reschedule speak in everyday words",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/usability/homologation-copy.test.ts",
+      "name": "dialogs keep their contents inside a narrow phone screen",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
