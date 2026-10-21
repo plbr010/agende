@@ -1,6 +1,6 @@
 # Janela 22/10 — operações específicas para autorização
 
-Complementa `LAUNCH22-PLAN.md`; mantém os mesmos IDs A1–A9. Esta missão autoriza ensaio **isolado**, código e staging. Não autoriza exportação produtiva nova, alterações de Auth/SMTP/secrets, SQL, Edge/deploy ou cobranças. Main/produção confirmadas em `67848db03544d6675c3593260d08711178183df5`, CI verde, deployment READY `dpl_HAFcxDMiDtDDDTqteidiyFbyPSkm`.
+Complementa `LAUNCH22-PLAN.md`; mantém os mesmos IDs A1–A9. Esta missão autoriza ensaio **isolado**, código e staging. Não autoriza exportação produtiva nova, alterações de Auth/SMTP/secrets, SQL, Edge/deploy ou cobranças. Main/produção finais confirmadas em `eb420d2cda3b20e3f146eb07b9a8ca829bf76b7d`, CI verde, deployment READY `dpl_EbJcSRVpnwN2naJnL7X4woqBU8S1`. #77 integrada na branch desta missão, preservando o Cursor.
 
 ## Ordem e autorização exata
 

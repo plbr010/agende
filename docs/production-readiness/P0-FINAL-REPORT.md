@@ -1,6 +1,6 @@
 # Missão final P0 — 21/10, preparação de 22/10
 
-**Piloto: NO-GO. Vendas: NO-GO.** Main `67848db03544d6675c3593260d08711178183df5`, PRs #75/#76 integradas, CI [PASS](https://github.com/plbr010/agende/actions/runs/39551405792). Domínio produtivo confirmado nesse SHA, Vercel READY `dpl_HAFcxDMiDtDDDTqteidiyFbyPSkm`. Não foi executada publicação nesta missão.
+**Piloto: NO-GO. Vendas: NO-GO.** Main final `eb420d2cda3b20e3f146eb07b9a8ca829bf76b7d`, PRs #75/#76/#77 integradas, CI [PASS](https://github.com/plbr010/agende/actions/runs/39553653402). Domínio produtivo confirmado nesse SHA, Vercel READY `dpl_EbJcSRVpnwN2naJnL7X4woqBU8S1`. O estado inicial era 67848db; #77 avançou durante a missão e foi incorporada sem sobrescrever o Cursor. Treze testes focados adicionais passaram; ambos os bloqueios de deploy foram preservados no único conflito de vercel.json. Não foi executada publicação nesta missão.
 
 ## 1. O que foi resolvido
 

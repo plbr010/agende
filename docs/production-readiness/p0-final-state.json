@@ -35,5 +35,10 @@
     "verify_jwt": false,
     "contains_livemode_guard": false
   },
-  "production_mutations": 0
+  "production_mutations": 0,
+  "final_vercel": {
+    "id": "dpl_EbJcSRVpnwN2naJnL7X4woqBU8S1",
+    "ready": true,
+    "sha": "eb420d2cda3b20e3f146eb07b9a8ca829bf76b7d"
+  }
 }
