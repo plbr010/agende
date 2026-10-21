@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-21T06:07:46.954Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "production_writes": 0,
+  "provider_mutations": 0,
+  "checks": [
+    {
+      "name": "invalid signature",
+      "status": "PASS",
+      "http": 400
+    },
+    {
+      "name": "invalid JSON",
+      "status": "PASS",
+      "http": 400
+    },
+    {
+      "name": "signed LIVE event rejected by TEST backend",
+      "status": "PASS",
+      "http": 400
+    },
+    {
+      "name": "negative requests create no event and preserve all six owned TEST subscriptions",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-21T06:09:07.322Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "business_writes": 0,
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "expected appointments cancelled, prior cancelled history preserved, no extra booking",
+      "status": "PASS",
+      "expected_current_appointments": 0,
+      "prior_cancelled_history": 0
+    },
+    {
+      "name": "only generated services archived and generated working-hour rows absent",
+      "status": "PASS"
+    },
+    {
+      "name": "both establishments original settings/publication restored and new optional customer avatar removed",
+      "status": "PASS"
+    }
+  ]
+}

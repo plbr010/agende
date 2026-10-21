@@ -81,10 +81,16 @@ function decrypt(path,entry,key){contained(path);assert.ok(/^[a-z]+\.(dump|sql|j
 async function restoreProcess(path,entry,key,name,argv,env){
   assert.equal(env.PGHOST,'127.0.0.1');
   let diagnostic='';
-  const child=spawn(exe(name),argv,{env,windowsHide:true,stdio:['pipe','pipe','pipe']});child.stdout.on('data',()=>{});child.stderr.on('data',chunk=>{if(mode==='selftest')diagnostic+=chunk});
+  const child=spawn(exe(name),argv,{env,windowsHide:true,stdio:['pipe','pipe','pipe']});child.stdout.on('data',()=>{});child.stderr.on('data',chunk=>{if(diagnostic.length<65536)diagnostic+=chunk});
   const done=new Promise((ok,fail)=>{child.once('error',()=>fail(new Error('restore_start_failed')));child.once('exit',code=>code===0?ok():fail(new Error('restore_failed_'+code)))});
   const writing=new Promise((ok,fail)=>{child.stdin.once('error',()=>fail(new Error('restore_input_failed')));child.stdin.end(decrypt(path,entry,key),ok)});
-  const result=await Promise.allSettled([done,writing]);if(result.some(x=>x.status==='rejected'))throw new Error('restore_failed'+(mode==='selftest'?': '+diagnostic:''));
+  const result=await Promise.allSettled([done,writing]);if(result.some(x=>x.status==='rejected')){
+    const error=new Error('restore_failed'+(mode==='selftest'?': '+diagnostic:''));
+    const sqlstate=diagnostic.match(/ERROR:\s+([0-9A-Z]{5})(?:\s|:|$)/)?.[1];
+    const category=[[/admin option|grantor must/i,'RESTORE_GRANTOR_ADMIN_REQUIRED'],[/permission denied to grant role/i,'RESTORE_GRANT_ROLE_DENIED'],[/permission denied to alter role/i,'RESTORE_ALTER_ROLE_DENIED'],[/permission denied to set parameter/i,'RESTORE_SET_PARAMETER_DENIED'],[/must be superuser/i,'RESTORE_SUPERUSER_REQUIRED']].find(([pattern])=>pattern.test(diagnostic));
+    error.code=category?.[1]??(sqlstate?'SQLSTATE_'+sqlstate:/already exists/i.test(diagnostic)?'RESTORE_OBJECT_EXISTS':/does not exist/i.test(diagnostic)?'RESTORE_MISSING_OBJECT':/permission denied/i.test(diagnostic)?'RESTORE_PERMISSION_DENIED':'RESTORE_PROCESS_FAILED');
+    throw error;
+  }
 }
 async function inventory(client){
   const tables=(await client.query('select schemaname,tablename from pg_tables where schemaname=ANY($1) order by schemaname,tablename',[core])).rows;
@@ -138,27 +144,36 @@ async function restoreBackup(path,phrase){
   for(const entry of manifest.files)assert.equal(sha(readFileSync(join(path,entry.file))),entry.sha256,'archive_checksum_mismatch');
   for(const entry of manifest.files){const clear=decrypt(path,entry,key);clear.fill(0);}
   // Only compatible extension definitions; no Cron/Vault jobs or remote services.
-  const started=Date.now(),target=await cluster(path,'restore');let passed=false,evidence;
+  const started=Date.now(),target=await cluster(path,'restore');let passed=false,evidence,stage='full_archive_toc';
   try{
     await restoreProcess(path,manifest.files.find(x=>x.file==='database.dump.enc'),key,'pg_restore',['--list'],target.env);
-    await restoreProcess(path,manifest.files.find(x=>x.file==='roles.sql.enc'),key,'psql',['-X','--set=ON_ERROR_STOP=1','--single-transaction'],target.env);
+    stage='restore_roles';
+    await restoreProcess(path,manifest.files.find(x=>x.file==='roles.sql.enc'),key,'psql',['-X','--set=ON_ERROR_STOP=1','--set=VERBOSITY=verbose','--single-transaction'],target.env);
     // Fresh owned target only; no CASCADE, no business records, never a source.
     await target.client.query('drop schema public');
+    stage='extension_availability';
     for(const e of source.extensions.filter(e=>compatible.includes(e.extname))){
       const available=(await target.client.query('select 1 from pg_available_extension_versions where name=$1 and version=$2',[e.extname,e.extversion])).rowCount;
       assert.equal(available,1,'extension_version_not_available');
     }
+    stage='restore_core';
     await restoreProcess(path,manifest.files.find(x=>x.file==='core.dump.enc'),key,'pg_restore',['--exit-on-error','--single-transaction','--dbname=postgres'],target.env);
+    stage='verify_extensions';
     for(const e of source.extensions.filter(e=>compatible.includes(e.extname))){
       const actual=(await target.client.query('select extversion from pg_extension where extname=$1',[e.extname])).rows[0];
       assert.equal(actual?.extversion,e.extversion,'restored_extension_version_mismatch');
     }
     await target.client.query("set timezone='UTC'; set search_path=pg_catalog; set row_security=off");
+    stage='inventory';
     const restored=await inventory(target.client);
+    stage='verify_table_content';
     assert.deepEqual(restored.data,source.data,'restored_table_content_mismatch');
+    stage='verify_catalog';
     assert.deepEqual(restored.catalog,source.catalog,'restored_catalog_mismatch');
+    stage='verify_roles';
     assert.deepEqual(restored.roles.filter(r=>r.rolname!==target.user),source.roles,'restored_role_attributes_mismatch');
     assert.deepEqual(restored.grants,source.grants,'restored_role_grants_mismatch');
+    stage='verify_sequences';
     const serials=(await target.client.query("select table_schema,table_name,column_name,pg_get_serial_sequence(format('%I.%I',table_schema,table_name),column_name) as sequence from information_schema.columns where table_schema=any($1) and pg_get_serial_sequence(format('%I.%I',table_schema,table_name),column_name) is not null",[core])).rows;
     for(const s of serials){
       const state=(await target.client.query(`select last_value::text,is_called from ${s.sequence}`)).rows[0];
@@ -168,7 +183,7 @@ async function restoreBackup(path,phrase){
     }
     passed=true;
     evidence={checked_at:new Date().toISOString(),passed:true,scope:core,all_encrypted_files_authenticated:true,full_archive_toc_readable:true,table_content_fingerprints_equal:true,catalog_equal:true,role_attributes_and_memberships_equal:true,sequences_checked:serials.length,auth_database_rows_verified:source.data.some(x=>x.schemaname==='auth'&&x.tablename==='users'),full_platform_restore_verified:false,restored_tables:source.data.length,production_writes:0,staging_connections:0};
-  }finally{key.fill(0);await target.stop();if(!passed)jsonFile(join(path,'restore-failed.json'),{checked_at:new Date().toISOString(),passed:false,raw_errors_withheld:true});}
+  }finally{key.fill(0);await target.stop();if(!passed)jsonFile(join(path,'restore-failed-'+Date.now()+'.json'),{checked_at:new Date().toISOString(),passed:false,stage,all_encrypted_files_authenticated:true,table_content_fingerprints_equal:['verify_catalog','verify_roles','verify_sequences'].includes(stage),owned_cluster_stopped:true,temporary_plaintext_cluster_removed:true,raw_errors_withheld:true});}
   evidence.rto_seconds=(Date.now()-started)/1000;evidence.owned_cluster_stopped=true;evidence.temporary_plaintext_cluster_removed=true;
   jsonFile(join(path,'restore-evidence.json'),evidence);return evidence;
 }
