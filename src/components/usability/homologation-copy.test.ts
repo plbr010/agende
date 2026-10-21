@@ -56,6 +56,7 @@ test("cancel errors stay inside the open dialog and primary taps are large", () 
   const confirm = appointments.indexOf("Confirmar cancelamento");
   const alert = appointments.indexOf('role="alert"', title);
   assert.ok(title >= 0 && alert > title && alert < confirm);
+  assert.match(appointments, /O horário pode continuar marcado/);
 
   const directories = source("../catalog/directories.tsx");
   assert.doesNotMatch(directories, /size="sm"/);

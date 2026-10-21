@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {runInNewContext} from "node:vm";
 import ts from "typescript";
 import * as config from "../../lib/booking/config";
-import {parsePublicBookingDetails} from "../../lib/booking/validation";
+import {bookingBackStep, bookingJourneySteps, parsePublicBookingDetails} from "../../lib/booking/validation";
 
 type Node = {props?: Record<string, unknown>};
 function harness(slotsFailure = false) {
@@ -20,7 +20,7 @@ function harness(slotsFailure = false) {
  const exports: Record<string, (props:unknown)=>Node> = {};
  const dependencies: Record<string,unknown>={
   react,"react/jsx-runtime":{jsx:(type:unknown,props:unknown)=>({type,props}),jsxs:(type:unknown,props:unknown)=>({type,props})},
-  "@/lib/booking/config":config,"@/lib/booking/validation":{parsePublicBookingDetails},
+  "@/lib/booking/config":config,"@/lib/booking/validation":{parsePublicBookingDetails,bookingJourneySteps,bookingBackStep},
   "@/lib/booking/actions":{createPublicAppointmentAction:async()=>{calls++;throw new Error("private provider/network details");},fetchPublicSlotsAction:async()=>{calls++;if(calls===1)throw new Error("network disconnected");return {slots:["2026-10-23T13:00:00Z"]};}},
   "@/lib/validation/money":{formatCentsToReais:()=>"R$ 50,00"},
  };
@@ -45,6 +45,8 @@ test("unknown confirmation outcome cannot show a receipt or dispatch a retry and
  const h=harness();let tree=h.render();click(tree,"Reservar este horário");await h.done();tree=h.render();
  assert.ok(nodes(tree).some(n=>n.props?.href==="/cliente/agendamentos"));
  const confirm=nodes(tree).find(n=>n.props?.children==="Reservar este horário");assert.equal(confirm?.props?.disabled,true);
+ const back=nodes(tree).find(n=>n.props?.children==="Voltar");assert.equal(back?.props?.disabled,true);
  assert.ok(!JSON.stringify(tree).includes("private provider/network details"));assert.ok(!JSON.stringify(tree).includes("Solicitação recebida"));
  click(tree,"Reservar este horário");assert.equal(h.count(),1);
+ click(tree,"Voltar");assert.equal(h.count(),1);
 });

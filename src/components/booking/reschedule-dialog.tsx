@@ -28,6 +28,7 @@ export function RescheduleDialog({
   const [slot, setSlot] = useState("");
   const [error, setError] = useState(canReschedule ? "" : MISSING_SERVICE_MESSAGE);
   const [loading, setLoading] = useState(canReschedule);
+  const [attempt, setAttempt] = useState(0);
   const [confirming, setConfirming] = useState(false);
   const [pending, start] = useTransition();
 
@@ -54,7 +55,7 @@ export function RescheduleDialog({
     return () => {
       active = false;
     };
-  }, [appointment.slug, appointment.serviceId]);
+  }, [appointment.slug, appointment.serviceId, attempt]);
 
   useEffect(() => {
     if (!catalog || !professional || !appointment.serviceId) {
@@ -81,7 +82,7 @@ export function RescheduleDialog({
     return () => {
       active = false;
     };
-  }, [catalog, professional, date, appointment.serviceId, appointment.id]);
+  }, [catalog, professional, date, appointment.serviceId, appointment.id, attempt]);
 
   function changeSelection() {
     setSlot("");
@@ -169,7 +170,7 @@ export function RescheduleDialog({
             <p role="status" className="text-sm text-muted-foreground">
               Buscando horários...
             </p>
-          ) : slots.length === 0 ? (
+          ) : error ? null : slots.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum horário disponível nesta data.</p>
           ) : (
             <div className="grid grid-cols-3 gap-2">
@@ -188,9 +189,26 @@ export function RescheduleDialog({
             </div>
           )}
           {error ? (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
+            <div className="grid gap-3">
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+              {canReschedule ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-11 w-full rounded-full"
+                  disabled={pending || loading}
+                  onClick={() => {
+                    setError("");
+                    setLoading(true);
+                    setAttempt((value) => value + 1);
+                  }}
+                >
+                  Tentar de novo
+                </Button>
+              ) : null}
+            </div>
           ) : null}
           {confirming ? (
             <>
