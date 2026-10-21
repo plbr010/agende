@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20T19:38:50.437Z",
+  "checked_at": "2026-10-21T05:33:26.176Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 11,
@@ -7,12 +7,12 @@
       "skipped": 0
     },
     "pglite_sql": {
-      "passed": 51,
+      "passed": 55,
       "failed": 0,
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 253,
+      "passed": 255,
       "failed": 0,
       "skipped": 0
     },
@@ -22,13 +22,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 81,
+      "passed": 85,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 412,
+    "passed": 422,
     "failed": 0,
     "skipped": 0
   },
@@ -127,6 +127,30 @@
     {
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "an error after service insertion rolls back the entire atomic RPC",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/booking-retry-sql.test.mjs",
+      "name": "archived service cannot be booked from a stale catalog",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/booking-retry-sql.test.mjs",
+      "name": "disabled professional cannot be booked from a stale catalog",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/booking-retry-sql.test.mjs",
+      "name": "changed working hours reject the previously offered slot",
+      "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/booking-retry-sql.test.mjs",
+      "name": "public booking cannot retry into a second professional after an ambiguous response",
       "category": "pglite_sql",
       "status": "passed"
     },
@@ -265,6 +289,12 @@
     {
       "file": "scripts/e2e-lib.test.mjs",
       "name": "exit codes distinguish test failure, missing browser and missing backend",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/e2e-lib.test.mjs",
+      "name": "isolated evidence never labels failed or blocked runs as PASS",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -743,6 +773,18 @@
       "status": "passed"
     },
     {
+      "file": "src/components/booking/transport-recovery.test.ts",
+      "name": "slot transport failure stays in the picker and explicit retry loads availability",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/booking/transport-recovery.test.ts",
+      "name": "unknown confirmation outcome cannot show a receipt or dispatch a retry and links to history",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/components/brand/identity.test.ts",
       "name": "approved mark, favicon and PWA icons exist without a padded white canvas",
       "category": "unit_or_static_contract",
@@ -1129,6 +1171,18 @@
     {
       "file": "src/lib/auth/launch-auth.test.ts",
       "name": "confirmation forwards recovery tokens to the recovery handler without accepting arbitrary OTP types",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "SMTP provider outage does not claim account confirmation or disclose provider details",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "obfuscated existing-account response never reports a new confirmation email or overwrites pending state",
       "category": "platform_mocks",
       "status": "passed"
     },
@@ -1645,6 +1699,12 @@
     {
       "file": "src/lib/booking/validation.test.ts",
       "name": "confirmation parser keeps receipt fields only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/booking/validation.test.ts",
+      "name": "retry conflict directs the client to persisted appointments without claiming another booking succeeded",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

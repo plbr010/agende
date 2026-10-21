@@ -45,6 +45,8 @@ test("unknown confirmation outcome cannot show a receipt or dispatch a retry and
  const h=harness();let tree=h.render();click(tree,"Reservar este horário");await h.done();tree=h.render();
  assert.ok(nodes(tree).some(n=>n.props?.href==="/cliente/agendamentos"));
  const confirm=nodes(tree).find(n=>n.props?.children==="Reservar este horário");assert.equal(confirm?.props?.disabled,true);
+ const back=nodes(tree).find(n=>n.props?.children==="Voltar");assert.equal(back?.props?.disabled,true);
  assert.ok(!JSON.stringify(tree).includes("private provider/network details"));assert.ok(!JSON.stringify(tree).includes("Solicitação recebida"));
  click(tree,"Reservar este horário");assert.equal(h.count(),1);
+ click(tree,"Voltar");assert.equal(h.count(),1);
 });
