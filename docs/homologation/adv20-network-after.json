@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-20T19:50:52.377Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "actual Edge browser, local Next, staging GoTrue/PostgREST/Storage and delivered SMTP",
+  "production_writes": 0,
+  "external_whatsapp_requests": 0,
+  "reused_confirmed_fixture": true,
+  "checks": [
+    {
+      "name": "new invited professional photo saved by owner and rendered after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "actual service form saves authoritative price duration and invited professional link; new availability persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "transport failure shows recoverable slot error without losing selection",
+      "status": "PASS"
+    },
+    {
+      "name": "public professional search leads to exact selection and HttpOnly draft; available anonymous RPC denied",
+      "status": "PASS"
+    },
+    {
+      "name": "previously SMTP-confirmed client login preserves new exact draft and creates no appointment",
+      "status": "PASS"
+    },
+    {
+      "name": "lost response after actual booking commit shows no false receipt blocks retry and links to persisted history",
+      "status": "PASS"
+    },
+    {
+      "name": "lost response still persists exactly one booking and client history shows real state",
+      "status": "PASS"
+    },
+    {
+      "name": "assigned professional actually opens manual WhatsApp link with authorized name phone and message; external navigation aborted and status unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "client reschedule persists current time and remains visible in personal appointments",
+      "status": "PASS"
+    },
+    {
+      "name": "one optional global avatar and replacement bytes are shared across two legitimately linked establishments; unrelated tenant and professional denied",
+      "status": "PASS"
+    },
+    {
+      "name": "actual controlled fixtures found in Muriaé and Juiz de Fora; establishment and professional query handles accents case spaces and combined city",
+      "status": "PASS"
+    },
+    {
+      "name": "client cancellations preserve history and cancelled booking cannot expose a WhatsApp confirmation",
+      "status": "PASS"
+    }
+  ]
+}

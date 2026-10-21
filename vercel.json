@@ -6,7 +6,8 @@
       "codex/launch-p0-20261020": false,
       "codex/final-launch-integration-20261020": false,
       "codex/prelaunch-main-audit-20261020": false,
-      "codex/release-candidate-20261020": false
+      "codex/release-candidate-20261020": false,
+      "codex/adversarial-launch-20261020": false
     }
   }
 }

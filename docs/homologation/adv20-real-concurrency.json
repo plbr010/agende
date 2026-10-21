@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-20T19:49:46.919Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real GoTrue + PostgREST + staging PostgreSQL",
+  "production_writes": 0,
+  "existing_data_deleted": false,
+  "checks": [
+    {
+      "name": "two authenticated users concurrently reserve one real cloud slot; exactly one commits and the other receives slot conflict",
+      "status": "PASS",
+      "successful_reservations": 1,
+      "rejected_reservations": 1,
+      "rejection_code": "23P01"
+    }
+  ]
+}

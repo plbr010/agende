@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-10-21T00:15:34.902879+00:00",
+  "base_main_sha": "2bdd3564a2ca2b24de9dd23bfd02de8aab3b3a86",
+  "production_deployment": "dpl_AMpCwHFDDDS8C9WY4sft5Uw57mW4",
+  "production_mutations": 0,
+  "provider_mutations": 0,
+  "checks": {
+    "lint_zero_errors_two_preexisting_warnings": "PASS",
+    "typecheck": "PASS",
+    "staging_build": "PASS",
+    "placeholder_build": "PASS",
+    "built_smoke": "PASS",
+    "full_fresh_client_ui_smtp": "PASS",
+    "fresh_owner_trial_and_media": "PASS",
+    "auth_edges": "PASS",
+    "finance_api": "PASS",
+    "inventory_packages_api": "PASS",
+    "real_cloud_concurrency": "PASS",
+    "stripe_provider_readback": "PASS",
+    "stripe_direct_replay": "PASS",
+    "stripe_negative_http": "PASS",
+    "staging_cleanup_readback": "PASS"
+  },
+  "standard": {
+    "pass": 422,
+    "fail": 0,
+    "skipped": 0
+  },
+  "native_pg17": {
+    "pass": 75,
+    "fail": 0,
+    "skipped": 0,
+    "concurrency_included": 10,
+    "cluster_stopped": true
+  },
+  "isolated": {
+    "pass": 13,
+    "fail": 0,
+    "blocked": 0
+  },
+  "negative_controls": [
+    "staging build correctly blocked by isolated runner",
+    "rate-limited reused fixture created no booking"
+  ],
+  "blocked": [
+    "production migrations Auth SMTP Edge app publication and smoke require explicit authorization",
+    "isolated restore prohibited by current mission"
+  ],
+  "technical_estimate": 90,
+  "pilot_production": "NO-GO",
+  "commercial": "NO-GO"
+}

@@ -1,0 +1,213 @@
+{
+  "captured_at": "2026-10-20T23:52:13.173872+00:00",
+  "booking_unique": "CREATE UNIQUE INDEX appointments_client_service_start_active_unique ON public.appointments USING btree (workspace_id, client_id, service_id, starts_at) WHERE (status = ANY (ARRAY['scheduled'::appointment_status, 'confirmed'::appointment_status, 'in_progress'::appointment_status]))",
+  "index_definitions": [
+    {
+      "name": "appointments_pkey",
+      "table": "appointments",
+      "definition": "CREATE UNIQUE INDEX appointments_pkey ON public.appointments USING btree (id)"
+    },
+    {
+      "name": "appointments_id_workspace_key",
+      "table": "appointments",
+      "definition": "CREATE UNIQUE INDEX appointments_id_workspace_key ON public.appointments USING btree (id, workspace_id)"
+    },
+    {
+      "name": "appointments_professional_time_excl",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_professional_time_excl ON public.appointments USING gist (professional_member_id, tstzrange(starts_at, ends_at, '[)'::text)) WHERE (status = ANY (ARRAY['scheduled'::appointment_status, 'confirmed'::appointment_status, 'in_progress'::appointment_status, 'completed'::appointment_status]))"
+    },
+    {
+      "name": "appointments_workspace_range_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_workspace_range_idx ON public.appointments USING btree (workspace_id, starts_at, ends_at)"
+    },
+    {
+      "name": "appointments_workspace_professional_range_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_workspace_professional_range_idx ON public.appointments USING btree (workspace_id, professional_member_id, starts_at)"
+    },
+    {
+      "name": "appointments_professional_blocking_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_professional_blocking_idx ON public.appointments USING btree (professional_member_id, starts_at, ends_at) WHERE (status = ANY (ARRAY['scheduled'::appointment_status, 'confirmed'::appointment_status, 'in_progress'::appointment_status, 'completed'::appointment_status]))"
+    },
+    {
+      "name": "appointments_workspace_status_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_workspace_status_idx ON public.appointments USING btree (workspace_id, status)"
+    },
+    {
+      "name": "appointments_client_id_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_client_id_idx ON public.appointments USING btree (client_id)"
+    },
+    {
+      "name": "appointments_service_id_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_service_id_idx ON public.appointments USING btree (service_id)"
+    },
+    {
+      "name": "appointments_created_by_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_created_by_idx ON public.appointments USING btree (created_by)"
+    },
+    {
+      "name": "appointments_client_workspace_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_client_workspace_idx ON public.appointments USING btree (client_id, workspace_id)"
+    },
+    {
+      "name": "appointments_professional_workspace_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_professional_workspace_idx ON public.appointments USING btree (professional_member_id, workspace_id)"
+    },
+    {
+      "name": "appointments_service_workspace_idx",
+      "table": "appointments",
+      "definition": "CREATE INDEX appointments_service_workspace_idx ON public.appointments USING btree (service_id, workspace_id)"
+    },
+    {
+      "name": "appointments_client_service_start_active_unique",
+      "table": "appointments",
+      "definition": "CREATE UNIQUE INDEX appointments_client_service_start_active_unique ON public.appointments USING btree (workspace_id, client_id, service_id, starts_at) WHERE (status = ANY (ARRAY['scheduled'::appointment_status, 'confirmed'::appointment_status, 'in_progress'::appointment_status]))"
+    },
+    {
+      "name": "professional_services_pkey",
+      "table": "professional_services",
+      "definition": "CREATE UNIQUE INDEX professional_services_pkey ON public.professional_services USING btree (id)"
+    },
+    {
+      "name": "professional_services_unique",
+      "table": "professional_services",
+      "definition": "CREATE UNIQUE INDEX professional_services_unique ON public.professional_services USING btree (professional_member_id, service_id)"
+    },
+    {
+      "name": "professional_services_workspace_id_idx",
+      "table": "professional_services",
+      "definition": "CREATE INDEX professional_services_workspace_id_idx ON public.professional_services USING btree (workspace_id)"
+    },
+    {
+      "name": "professional_services_service_id_idx",
+      "table": "professional_services",
+      "definition": "CREATE INDEX professional_services_service_id_idx ON public.professional_services USING btree (service_id)"
+    },
+    {
+      "name": "professional_services_professional_idx",
+      "table": "professional_services",
+      "definition": "CREATE INDEX professional_services_professional_idx ON public.professional_services USING btree (professional_member_id)"
+    },
+    {
+      "name": "professional_services_member_workspace_idx",
+      "table": "professional_services",
+      "definition": "CREATE INDEX professional_services_member_workspace_idx ON public.professional_services USING btree (professional_member_id, workspace_id)"
+    },
+    {
+      "name": "professional_services_service_workspace_idx",
+      "table": "professional_services",
+      "definition": "CREATE INDEX professional_services_service_workspace_idx ON public.professional_services USING btree (service_id, workspace_id)"
+    },
+    {
+      "name": "workspace_members_pkey",
+      "table": "workspace_members",
+      "definition": "CREATE UNIQUE INDEX workspace_members_pkey ON public.workspace_members USING btree (id)"
+    },
+    {
+      "name": "workspace_members_unique",
+      "table": "workspace_members",
+      "definition": "CREATE UNIQUE INDEX workspace_members_unique ON public.workspace_members USING btree (workspace_id, user_id)"
+    },
+    {
+      "name": "workspace_members_user_id_idx",
+      "table": "workspace_members",
+      "definition": "CREATE INDEX workspace_members_user_id_idx ON public.workspace_members USING btree (user_id)"
+    },
+    {
+      "name": "workspace_members_workspace_id_idx",
+      "table": "workspace_members",
+      "definition": "CREATE INDEX workspace_members_workspace_id_idx ON public.workspace_members USING btree (workspace_id)"
+    },
+    {
+      "name": "workspace_members_active_idx",
+      "table": "workspace_members",
+      "definition": "CREATE INDEX workspace_members_active_idx ON public.workspace_members USING btree (workspace_id, user_id) WHERE (status = 'active'::member_status)"
+    },
+    {
+      "name": "workspace_members_id_workspace_key",
+      "table": "workspace_members",
+      "definition": "CREATE UNIQUE INDEX workspace_members_id_workspace_key ON public.workspace_members USING btree (id, workspace_id)"
+    },
+    {
+      "name": "workspace_settings_pkey",
+      "table": "workspace_settings",
+      "definition": "CREATE UNIQUE INDEX workspace_settings_pkey ON public.workspace_settings USING btree (workspace_id)"
+    },
+    {
+      "name": "workspace_settings_discovery_city",
+      "table": "workspace_settings",
+      "definition": "CREATE INDEX workspace_settings_discovery_city ON public.workspace_settings USING btree (app.discovery_text(city), state, workspace_id) WHERE discovery_enabled"
+    }
+  ],
+  "slow_statement_aggregates": [
+    {
+      "rows": 1170,
+      "calls": 15,
+      "mean_ms": 452.94,
+      "queryid": -2647655532108368400
+    },
+    {
+      "rows": 52,
+      "calls": 52,
+      "mean_ms": 153.69,
+      "queryid": 574169721929565100
+    },
+    {
+      "rows": 11,
+      "calls": 11,
+      "mean_ms": 136.74,
+      "queryid": 4868794970434878000
+    },
+    {
+      "rows": 37674,
+      "calls": 63,
+      "mean_ms": 86.07,
+      "queryid": -7726440967385220000
+    },
+    {
+      "rows": 35,
+      "calls": 35,
+      "mean_ms": 67.82,
+      "queryid": 4417166407284330000
+    },
+    {
+      "rows": 226,
+      "calls": 226,
+      "mean_ms": 63.62,
+      "queryid": -7928979039381379000
+    },
+    {
+      "rows": 11,
+      "calls": 11,
+      "mean_ms": 50.8,
+      "queryid": -7636120669495855000
+    },
+    {
+      "rows": 31,
+      "calls": 31,
+      "mean_ms": 50.07,
+      "queryid": 2889977629422974000
+    },
+    {
+      "rows": 27,
+      "calls": 27,
+      "mean_ms": 42.6,
+      "queryid": 2138268477581435000
+    },
+    {
+      "rows": 0,
+      "calls": 10,
+      "mean_ms": 30.93,
+      "queryid": 3912751625198982700
+    }
+  ]
+}

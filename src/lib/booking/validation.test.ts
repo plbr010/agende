@@ -233,3 +233,7 @@ test("confirmation parser keeps receipt fields only", () => {
   assert.equal(parsed?.timezone, "America/Manaus");
   assert.equal("notes" in (parsed ?? {}), false);
 });
+
+test("retry conflict directs the client to persisted appointments without claiming another booking succeeded", () => {
+  assert.match(sanitizeBookingError('duplicate key value violates unique constraint "appointments_client_service_start_active_unique"'), /Você já tem uma reserva.*Confira Meus agendamentos/);
+});

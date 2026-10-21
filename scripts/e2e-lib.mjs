@@ -233,3 +233,8 @@ export function createRecorder(results) {
     return entry;
   };
 }
+
+export function classifyLocalE2e(results) {
+ const status=results.some(x=>x.result==='FAIL')?'FAIL':results.some(x=>x.result==='BLOQUEADO')?'BLOQUEADO':'PASS';
+ return `${status} LOCAL — servidor sintético, sem backend real`;
+}

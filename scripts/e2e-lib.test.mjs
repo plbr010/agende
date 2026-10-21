@@ -86,3 +86,10 @@ test("exit codes distinguish test failure, missing browser and missing backend",
     NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
   }), ["NEXT_PUBLIC_SITE_URL"]);
 });
+
+test('isolated evidence never labels failed or blocked runs as PASS',async()=>{
+ const {classifyLocalE2e}=await import('./e2e-lib.mjs');
+ assert.match(classifyLocalE2e([{result:'PASS'}]),/^PASS/);
+ assert.match(classifyLocalE2e([{result:'PASS'},{result:'FAIL'}]),/^FAIL/);
+ assert.match(classifyLocalE2e([{result:'BLOQUEADO'}]),/^BLOQUEADO/);
+});

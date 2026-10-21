@@ -157,7 +157,7 @@ export async function signUpAction(
     ? `${origin}/auth/callback?next=${encodeURIComponent(next)}`
     : `${origin}/auth/callback`;
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: input.email,
     password: input.password,
     options: {
@@ -177,6 +177,12 @@ export async function signUpAction(
       return { error: "Este e-mail já possui uma conta. Entre ou recupere o acesso." };
     }
     return { error: "Não foi possível criar sua conta. Tente novamente." };
+  }
+
+  // GoTrue can obscure an existing confirmed account with an empty-identity
+  // user and no error. That does not mean a new confirmation email was sent.
+  if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    return { error: "Não foi possível iniciar um novo cadastro. Se você já tem conta, entre ou recupere o acesso." };
   }
 
   await setPendingEmail(input.email, next);

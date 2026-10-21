@@ -1,0 +1,31 @@
+{
+  "five": [
+    {
+      "name": "workspace_media_and_settings_contract",
+      "applied": false
+    },
+    {
+      "name": "workspace_settings_validation",
+      "applied": false
+    },
+    {
+      "name": "profiles_booking_whatsapp",
+      "applied": false
+    },
+    {
+      "name": "require_confirmed_public_booking",
+      "applied": false
+    },
+    {
+      "name": "launch_discovery_eligibility",
+      "applied": false
+    }
+  ],
+  "billing_md5": "ef99daf53b01ff7d7388c28ca2ec2aa6",
+  "captured_at": "2026-10-20T23:59:24.131503+00:00",
+  "guest_fallback": true,
+  "reviews_present": false,
+  "anon_booking_execute": true,
+  "production_mutations": 0,
+  "scope": "targeted migration/auth gate recheck only, no customer rows"
+}

@@ -58,7 +58,7 @@ test("session data outages never masquerade as onboarding, missing client profil
   assert.equal((await sessionLoader()()).workspaces.length, 1);
 });
 
-function actions(error: { code?: string; message: string; status?: number } | null = null) {
+function actions(error: { code?: string; message: string; status?: number } | null = null, signupData?: unknown) {
   const calls: Array<{ name: string; value?: unknown }> = [];
   const cookies = new Map<string, string>();
   const mod = sourceModule<{
@@ -80,7 +80,7 @@ function actions(error: { code?: string; message: string; status?: number } | nu
     "@/lib/validation/email": email, "@/lib/validation/signup": signup,
     "@/lib/auth/signup-journey": signupJourney,
     "@/lib/supabase/server": { createClient: async () => ({ auth: {
-      signUp: async (value: unknown) => { calls.push({ name: "signup", value }); return { error }; },
+      signUp: async (value: unknown) => { calls.push({ name: "signup", value }); return { data: signupData, error }; },
       signInWithPassword: async (value: unknown) => { calls.push({ name: "login", value }); return { error }; },
       signOut: async () => { calls.push({ name: "logout" }); return { error }; },
       resend: async (value: unknown) => { calls.push({ name: "resend", value }); return { error }; },
@@ -218,4 +218,20 @@ test("confirmation forwards recovery tokens to the recovery handler without acce
     if (type === "recovery") assert.equal(destination.searchParams.get("token_hash"), "isolated-test");
   }
   assert.equal(calls, 0);
+});
+
+test("SMTP provider outage does not claim account confirmation or disclose provider details", async () => {
+ const h=actions({code:"unexpected_failure",message:"SMTP private host authentication failed",status:500});
+ const result=await h.signUpAction({},signupForm("client"));
+ assert.match(result.error!,/Não foi possível/);assert.doesNotMatch(result.error!,/SMTP|private|authentication/);
+ assert.equal(h.calls.some(call=>call.name==="redirect"),false);
+});
+
+test("obfuscated existing-account response never reports a new confirmation email or overwrites pending state", async () => {
+ const h=actions(null,{user:{identities:[]},session:null});
+ const result=await h.signUpAction({},signupForm("client"));
+ assert.match(result.error!,/Não foi possível iniciar.*entre ou recupere/);
+ assert.equal(h.calls.some(call=>call.name==="redirect"),false);assert.equal(h.cookies.size,0);
+ const fresh=actions(null,{user:{identities:[{provider:"email"}]},session:null});
+ await assert.rejects(fresh.signUpAction({},signupForm("client")),/redirect:\/verificar-email\?status=sent/);
 });

@@ -1,3 +1,4 @@
+import {homologationEvidence} from './homologation-evidence.mjs';
 // Only own synthetic ledger entries in explicit staging. No payment provider calls.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -32,5 +33,5 @@ try{
 finally{
  if(entry&&refunded<10000){try{await ok(owner.rpc('refund_financial_entry',{p_workspace_id:fixture.workspaceId,p_entry_id:entry,p_amount_cents:10000-refunded,p_reason:'Owned synthetic cleanup',p_payment_method:'pix',p_idempotency_key:randomUUID()}));}catch{checks.push({name:'refund own remaining synthetic amount',status:'FAIL'});process.exitCode=1;}}
  for(const c of [owner,foreign,employee])await c.auth.signOut({scope:'local'});
- writeFileSync('docs/homologation/final20-finance.json',JSON.stringify({checked_at:new Date().toISOString(),project,external_payments:0,production_writes:0,existing_data_deleted:false,checks},null,2)+'\n');console.log(JSON.stringify({checks}));
+ writeFileSync(homologationEvidence('finance.json'),JSON.stringify({checked_at:new Date().toISOString(),project,external_payments:0,production_writes:0,existing_data_deleted:false,checks},null,2)+'\n');console.log(JSON.stringify({checks}));
 }

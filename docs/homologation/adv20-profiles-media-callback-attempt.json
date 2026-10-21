@@ -1,0 +1,23 @@
+{
+  "project": "fkpdudnnperufnmdwdlv",
+  "checked_at": "2026-10-20T23:40:08.776Z",
+  "latest_run_passed": false,
+  "earlier_attempts": [],
+  "checks": [
+    {
+      "name": "client form signup preserves explicit intent",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "professional form signup preserves explicit intent",
+      "status": "PASS",
+      "mode": "real staging Auth/SMTP/PostgREST/Storage and own Next server"
+    },
+    {
+      "name": "remaining real profile/media journey",
+      "status": "FAIL",
+      "diagnostic": "private local file; no credentials published"
+    }
+  ]
+}
