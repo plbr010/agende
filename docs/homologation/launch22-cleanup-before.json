@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-21T05:39:04.668Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "business_writes": 0,
+  "production_writes": 0,
+  "checks": [
+    {
+      "name": "staging cleanup readback",
+      "status": "FAIL",
+      "code": "AssertionError"
+    }
+  ]
+}

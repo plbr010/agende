@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-10-21T05:36:16.285Z",
+  "kind": "isolated-e2e",
+  "base": "http://127.0.0.1:58745",
+  "evidenceDir": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755",
+  "pass": 12,
+  "fail": 1,
+  "blocked": 0,
+  "classification": "FAIL LOCAL — servidor sintético, sem backend real",
+  "results": [
+    {
+      "name": "landing",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/landing.png"
+    },
+    {
+      "name": "cadastro-keyboard",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/cadastro.png"
+    },
+    {
+      "name": "signup-validation-keeps-input",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/signup-validation-keeps-input.png"
+    },
+    {
+      "name": "login",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/login.png"
+    },
+    {
+      "name": "discovery-before-hydration",
+      "result": "PASS"
+    },
+    {
+      "name": "discovery-empty-city",
+      "result": "FAIL",
+      "error": "Muriaé/Juiz de Fora scenario copy missing"
+    },
+    {
+      "name": "discovery-gps-jf",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/discovery-gps-jf.png"
+    },
+    {
+      "name": "discovery-city-muriae",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/discovery-city-muriae.png"
+    },
+    {
+      "name": "discovery-global-name",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/discovery-global-name.png"
+    },
+    {
+      "name": "public-not-found",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/public-not-found.png"
+    },
+    {
+      "name": "app-guard",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/app-guard.png"
+    },
+    {
+      "name": "discovery-gps-denied",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/discovery-gps-denied.png"
+    },
+    {
+      "name": "discovery-mobile",
+      "result": "PASS",
+      "evidence": "C:\\Users\\PLBR\\Documents\\Codex\\agende-launch-p0-20261020\\artifacts\\e2e\\isolated-15000-1792560967755/discovery-mobile.png"
+    }
+  ]
+}

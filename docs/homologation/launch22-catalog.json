@@ -1,0 +1,65 @@
+{
+  "checked_at": "2026-10-21T05:32:37.705Z",
+  "scope": "targeted read-only catalog recheck; no customer rows",
+  "production": [
+    {
+      "captured_at": "2026-10-21 05:32:26.387832+00",
+      "history_count": 67,
+      "tables_without_rls": 0,
+      "planned_history": null,
+      "buckets": [
+        {
+          "id": "workspace-logos",
+          "public": true
+        },
+        {
+          "id": "account-avatars",
+          "public": false
+        }
+      ]
+    }
+  ],
+  "staging": [
+    {
+      "captured_at": "2026-10-21 05:32:27.007369+00",
+      "history_count": 22,
+      "tables_without_rls": 0,
+      "planned_history": [
+        {
+          "name": "workspace_media_and_settings_contract",
+          "version": "20261015054655"
+        },
+        {
+          "name": "workspace_settings_validation",
+          "version": "20261015054832"
+        },
+        {
+          "name": "profiles_booking_whatsapp",
+          "version": "20261016080427"
+        },
+        {
+          "name": "require_confirmed_public_booking",
+          "version": "20261020163226"
+        },
+        {
+          "name": "launch_discovery_eligibility",
+          "version": "20261020163432"
+        }
+      ],
+      "buckets": [
+        {
+          "id": "workspace-logos",
+          "public": true
+        },
+        {
+          "id": "account-avatars",
+          "public": false
+        },
+        {
+          "id": "professional-photos",
+          "public": false
+        }
+      ]
+    }
+  ]
+}

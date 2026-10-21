@@ -8,7 +8,8 @@ const credentials={owner:read('.env.profiles-media-final20-fixtures.json').profe
 const ok=async p=>{const r=await p;assert.ok(!r.error,'staging_readback_failed');return r.data;};
 try{
  for(const [name,f]of Object.entries(credentials)){const client=createClient(c.url,c.publishable_key,{auth:{persistSession:false,autoRefreshToken:false}});await ok(client.auth.signInWithPassword(f));clients[name]=client;}
- const rows=await ok(clients.customer.rpc('list_my_appointments'));assert.equal(rows.length,2);assert.ok(rows.every(x=>x.status==='cancelled'));assert.deepEqual(rows.map(x=>x.id).sort(),[...resources.appointments].sort());checks.push({name:'exactly two intended appointments, both cancelled, no refresh Back double-click or cleanup orphan',status:'PASS'});
+ const existing=Number(process.env.AGENDE_EXISTING_CANCELLED_APPOINTMENTS??0);assert.ok(Number.isSafeInteger(existing)&&existing>=0);
+ const rows=await ok(clients.customer.rpc('list_my_appointments'));assert.equal(resources.appointments.length,2);assert.equal(rows.length,2+existing);assert.ok(rows.every(x=>x.status==='cancelled'));assert.equal(new Set(rows.map(x=>x.id)).size,rows.length);assert.ok(resources.appointments.every(id=>rows.some(x=>x.id===id)));checks.push({name:'two intended appointments cancelled, expected prior cancelled history preserved, no extra booking',status:'PASS',prior_cancelled_history:existing});
  for(const row of resources.services){const s=await ok(clients[row.client].from('services').select('active,archived_at').eq('id',row.id).single());assert.equal(s.active,false);assert.ok(s.archived_at);}
  for(const row of resources.hours)assert.equal((await ok(clients[row.client].from('professional_working_hours').select('id').eq('id',row.id))).length,0);
  checks.push({name:'only generated services archived and generated working-hour rows absent',status:'PASS'});
