@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand/logo";
 import { PersonMark } from "@/components/people/person-mark";
 import { FloralBranch, FloralCorner, FloralSprig } from "@/components/brand/floral";
@@ -66,6 +66,33 @@ type Prefill = {
   email: string;
 };
 
+/**
+ * Optional in-memory booking runtime. Production pages omit it and keep the
+ * server actions. Only an explicit demo screen should pass this object.
+ */
+export type PublicBookingRuntime = {
+  fetchSlots: (input: {
+    slug: string;
+    serviceId: string;
+    professionalMemberId: string | null;
+    localDate: string;
+  }) => Promise<{ slots: string[]; error?: string | null }>;
+  confirm: (input: {
+    slug: string;
+    serviceId: string;
+    professionalMemberId: string | null;
+    localDate: string;
+    startsAt: string;
+    fullName: string;
+    phone: string;
+    email: string;
+    customerNote: string | null;
+  }) => Promise<{ error?: string; confirmation?: PublicBookingConfirmation }>;
+  profileHref: string;
+  photoUrl: (professionalId: string) => string | null;
+  successFooter?: (confirmation: PublicBookingConfirmation) => ReactNode;
+};
+
 export function PublicBookingFlow({
   catalog,
   prefill,
@@ -77,6 +104,7 @@ export function PublicBookingFlow({
   initialDraftSlotUnavailable = false,
   initialProfessionalUnavailable = false,
   initialAvailabilityError = null,
+  runtime = null,
 }: {
   catalog: PublicBookingCatalog;
   prefill: Prefill;
@@ -88,6 +116,7 @@ export function PublicBookingFlow({
   initialDraftSlotUnavailable?: boolean;
   initialProfessionalUnavailable?: boolean;
   initialAvailabilityError?: string | null;
+  runtime?: PublicBookingRuntime | null;
 }) {
   const initialService =
     initialServiceId && catalog.services.some((item) => item.id === initialServiceId)
@@ -166,12 +195,20 @@ export function PublicBookingFlow({
     const memberId = professionalId === ANY_PROFESSIONAL ? null : professionalId;
     let cancelled = false;
     startTransition(async () => {
-      const result = await fetchPublicSlotsAction({
-        slug: catalog.slug,
-        serviceId,
-        professionalMemberId: memberId,
-        localDate,
-      }).catch(() => ({ slots: [], error: "Não foi possível carregar os horários. Tente novamente." }));
+      const result = await (runtime
+        ? runtime.fetchSlots({
+            slug: catalog.slug,
+            serviceId,
+            professionalMemberId: memberId,
+            localDate,
+          })
+        : fetchPublicSlotsAction({
+            slug: catalog.slug,
+            serviceId,
+            professionalMemberId: memberId,
+            localDate,
+          })
+      ).catch(() => ({ slots: [], error: "Não foi possível carregar os horários. Tente novamente." }));
       if (cancelled || requestId !== slotsRequestId.current) {
         return;
       }
@@ -182,7 +219,7 @@ export function PublicBookingFlow({
     return () => {
       cancelled = true;
     };
-  }, [step, serviceId, professionalId, localDate, catalog.slug, slotsAttempt]);
+  }, [step, serviceId, professionalId, localDate, catalog.slug, slotsAttempt, runtime]);
 
   function go(next: BookingStep) {
     if (pending || reserving.current || confirmationUnknown) return;
@@ -266,6 +303,27 @@ export function PublicBookingFlow({
     reserving.current = true;
     startTransition(async () => {
       try {
+        if (runtime) {
+          const result: { error?: string; confirmation?: PublicBookingConfirmation } = await runtime.confirm({
+            slug: catalog.slug,
+            serviceId,
+            professionalMemberId,
+            localDate,
+            startsAt,
+            fullName,
+            phone,
+            email,
+            customerNote: customerNote || null,
+          }).catch(() => ({ error: "Não foi possível confirmar a demonstração. Escolha o horário de novo." }));
+          if (result.error) {
+            setFormError(result.error);
+            return;
+          }
+          if (result.confirmation) {
+            setConfirmation(result.confirmation);
+          }
+          return;
+        }
         if (!authenticated) {
           const result = await continueBookingAfterLogin({
             slug: catalog.slug,
@@ -335,8 +393,10 @@ export function PublicBookingFlow({
     return (
       <BookingSuccess
         confirmation={confirmation}
-        guestHint={confirmation.guest}
+        guestHint={runtime ? false : confirmation.guest}
         hasClientProfile={hasClientProfile}
+        footer={runtime?.successFooter?.(confirmation)}
+        showExternal={!runtime}
       />
     );
   }
@@ -348,7 +408,7 @@ export function PublicBookingFlow({
         <div className="mx-auto flex h-16 w-full max-w-lg items-center justify-between px-4">
           <BrandLogo size="sm" />
           <Link
-            href={`/p/${catalog.slug}`}
+            href={runtime?.profileHref ?? `/p/${catalog.slug}`}
             aria-disabled={pending}
             tabIndex={pending ? -1 : undefined}
             className={cn(
@@ -406,7 +466,7 @@ export function PublicBookingFlow({
                   {professional && professionalId !== ANY_PROFESSIONAL ? (
                     <PersonMark
                       name={professional.displayName}
-                      photoUrl={`/api/professionals/photo?memberId=${professional.id}&slug=${encodeURIComponent(catalog.slug)}`}
+                      photoUrl={runtime ? runtime.photoUrl(professional.id) : `/api/professionals/photo?memberId=${professional.id}&slug=${encodeURIComponent(catalog.slug)}`}
                       size="sm"
                     />
                   ) : null}
@@ -467,6 +527,7 @@ export function PublicBookingFlow({
             service={service}
             selectedId={professionalId}
             onSelect={selectProfessional}
+            photoUrl={runtime ? (person) => runtime.photoUrl(person.id) : undefined}
           />
         ) : null}
 
@@ -488,6 +549,9 @@ export function PublicBookingFlow({
             {authenticated ? null : (
               <p className="text-sm leading-6 text-muted-foreground">
                 Você pode ver os horários sem entrar. A confirmação pede uma conta de cliente, grátis e sem mensalidade.
+                {runtime
+                  ? " Nesta demonstração, a confirmação fica só neste navegador: não cria conta, cobrança nem mensagem."
+                  : ""}
               </p>
             )}
             {slotsLoading ? (
@@ -648,6 +712,10 @@ export function PublicBookingFlow({
                   <SummaryRow label="Celular" value={phone} />
                   <SummaryRow label="E-mail" value={email} />
                 </>
+              ) : runtime ? (
+                <p className="pt-3 text-sm leading-6 text-muted-foreground">
+                  O horário será registrado como Visitante Demonstração, só nesta sessão. No Agendê, a cliente entra com uma conta grátis para concluir, e a vaga é conferida de novo antes de reservar.
+                </p>
               ) : (
                 <p className="pt-3 text-sm leading-6 text-muted-foreground">
                   Para concluir, entre ou crie uma conta de cliente. Ela é grátis e não tem mensalidade. Serviço, profissional, dia e horário continuam selecionados, e a disponibilidade é conferida de novo antes de reservar.
@@ -656,17 +724,21 @@ export function PublicBookingFlow({
             </article>
             <Button
               type="button"
-              className="h-12 w-full rounded-full"
+              className="h-auto min-h-12 w-full rounded-full whitespace-normal text-center"
               disabled={pending || confirmationUnknown}
               onClick={confirm}
             >
               {pending
-                ? authenticated
-                  ? "Reservando…"
-                  : "Abrindo a conta…"
-                : authenticated
-                  ? "Reservar este horário"
-                  : "Entrar para confirmar"}
+                ? runtime
+                  ? "Registrando a demonstração…"
+                  : authenticated
+                    ? "Reservando…"
+                    : "Abrindo a conta…"
+                : runtime
+                  ? "Confirmar este horário de demonstração"
+                  : authenticated
+                    ? "Reservar este horário"
+                    : "Entrar para confirmar"}
             </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button type="button" variant="outline" className="h-auto min-h-11 whitespace-normal px-3 text-center" disabled={pending || confirmationUnknown} onClick={() => go("service")}>
@@ -725,12 +797,14 @@ function ProfessionalStep({
   service,
   selectedId,
   onSelect,
+  photoUrl,
 }: {
   slug: string;
   people: PublicBookingProfessional[];
   service: PublicBookingService | null;
   selectedId: string | null | typeof ANY_PROFESSIONAL;
   onSelect: (id: string | typeof ANY_PROFESSIONAL) => void;
+  photoUrl?: (person: PublicBookingProfessional) => string | null;
 }) {
   if (people.length === 0) {
     return (
@@ -777,7 +851,7 @@ function ProfessionalStep({
             className={`${PICKER_BUTTON} focus-visible:ring-primary ${selected ? "ring-2 ring-primary" : ""}`}
           >
             <span className="flex items-center gap-4">
-              <PersonMark name={person.displayName} photoUrl={`/api/professionals/photo?memberId=${person.id}&slug=${encodeURIComponent(slug)}`} />
+              <PersonMark name={person.displayName} photoUrl={photoUrl ? photoUrl(person) : `/api/professionals/photo?memberId=${person.id}&slug=${encodeURIComponent(slug)}`} />
               <span className="min-w-0 text-left">
                 <h2 className="font-serif text-2xl break-words text-wine-deep">{person.displayName}</h2>
                 {person.bio ? <p className="mt-1 text-sm leading-6 break-words text-muted-foreground">{person.bio}</p> : null}
@@ -901,10 +975,14 @@ function BookingSuccess({
   confirmation,
   guestHint,
   hasClientProfile,
+  footer = null,
+  showExternal = true,
 }: {
   confirmation: PublicBookingConfirmation;
   guestHint: boolean;
   hasClientProfile: boolean;
+  footer?: ReactNode;
+  showExternal?: boolean;
 }) {
   const receipt = bookingReceiptCopy(confirmation.status);
   const ics = buildIcs({
@@ -956,15 +1034,18 @@ function BookingSuccess({
           <SummaryRow label="Valor" value={formatCentsToReais(confirmation.priceCents)} />
         </article>
         <div className="grid gap-3">
-          {hasClientProfile ? (
+          {footer}
+          {showExternal && hasClientProfile ? (
             <Button variant="rose" className="h-12 rounded-full" render={<Link href="/cliente/agendamentos" />}>
               Ver meus agendamentos
             </Button>
-          ) : guestHint ? (
+          ) : showExternal && guestHint ? (
             <Button variant="rose" className="h-12 rounded-full" render={<Link href="/cadastro?intent=client&next=/cliente/agendamentos" />}>
               Ver meus agendamentos
             </Button>
           ) : null}
+          {showExternal ? (
+            <>
           <Button className="h-12 rounded-full" render={<a href={icsDataUrl(ics)} download="agende.ics" />}>
             Adicionar ao calendário
           </Button>
@@ -991,11 +1072,13 @@ function BookingSuccess({
               Falar com o salão
             </Button>
           ) : null}
-          <Button variant="ghost" className="h-12 rounded-full" render={<Link href="/" />}>
-            Voltar para o início
+            </>
+          ) : null}
+          <Button variant="ghost" className="h-12 rounded-full" render={<Link href={showExternal ? "/" : "/demo"} />}>
+            {showExternal ? "Voltar para o início" : "Voltar à demonstração"}
           </Button>
         </div>
-        {guestHint ? (
+        {footer ? null : guestHint ? (
           <p className="text-center text-sm text-muted-foreground">
             Quer guardar todos os horários na sua conta?{" "}
             <Link
