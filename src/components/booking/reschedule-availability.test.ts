@@ -81,3 +81,17 @@ test("reschedule keeps the eligible assigned professional and loads actual slots
   assert.equal((h.requests[0] as { professionalMemberId: string }).professionalMemberId, "assigned");
   assert.ok(!nodes(tree).some(n => n.props?.children === "Buscando horários..."));
 });
+
+test("customer explicitly selects an eligible professional and can review an available slot", async () => {
+  const h = harness(null, [{ id: "available", serviceIds: ["service"] }]);
+  let tree = await h.settle();
+  const select = nodes(tree).find(n => n.props?.id === "reschedule-professional");
+  (select!.props!.onChange as (event: { target: { value: string } }) => void)({ target: { value: "available" } });
+  tree = await h.settle();
+  assert.equal(h.requests.length, 1);
+  const slot = nodes(tree).find(n => n.props?.children === timezone.formatTimeInTimeZone("2026-11-02T13:00:00Z", "America/Sao_Paulo"));
+  assert.ok(slot);
+  (slot.props!.onClick as () => void)();
+  tree = await h.settle();
+  assert.equal(nodes(tree).find(n => n.props?.children === "Revisar alteração")?.props?.disabled, false);
+});

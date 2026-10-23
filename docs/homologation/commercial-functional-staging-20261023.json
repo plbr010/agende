@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-23T06:36:16.016Z",
+  "project": "fkpdudnnperufnmdwdlv",
+  "mode": "real staging GoTrue confirmation token + PostgREST; no SMTP or browser",
+  "production_connections": 0,
+  "checks": [
+    {
+      "name": "GoTrue signup confirmation token, password login, unconfirmed login rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "fresh salon onboarding creates exactly seven days of trial",
+      "status": "PASS"
+    },
+    {
+      "name": "professional profile, service assignment and working hours persist",
+      "status": "PASS"
+    },
+    {
+      "name": "public city and salon search plus bookable professional catalog",
+      "status": "PASS"
+    },
+    {
+      "name": "only confirmed customer books; anonymous rejected; duplicate slot has one winner",
+      "status": "PASS"
+    },
+    {
+      "name": "salon isolation and foreign cancellation/reschedule rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "customer reschedules same appointment then cancels and releases slot",
+      "status": "PASS"
+    }
+  ],
+  "synthetic_fixtures_retained": true,
+  "fixtures": [
+    {
+      "user_id": "fda4fc1d-222a-4c98-b712-621d604a0b58"
+    },
+    {
+      "user_id": "03b52ffe-8687-443d-89cf-12cccc98ad06"
+    },
+    {
+      "user_id": "53ed05d3-4b5a-422d-a454-c6326434816d"
+    },
+    {
+      "user_id": "63edf026-d3b4-45dc-afd7-df6bacc49130"
+    },
+    {
+      "workspace_id": "a567956b-c420-4766-8062-3845eac8d986"
+    }
+  ],
+  "smtp_delivery_verified": false,
+  "stripe_checkout_executed": false
+}
