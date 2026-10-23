@@ -44,6 +44,12 @@ export function RescheduleDialog({
         if (!data) {
           setError("Não foi possível carregar a disponibilidade. Tente novamente.");
           setLoading(false);
+        } else {
+          const eligible = data.professionals.filter((person) => person.serviceIds.includes(appointment.serviceId!));
+          const assignedIsEligible = eligible.some((person) => person.id === appointment.professionalMemberId);
+          setProfessional((current) => eligible.some((person) => person.id === current) ? current : "");
+          setError(eligible.length ? "" : "Nenhum profissional disponível para este serviço. Fale com o salão.");
+          setLoading(assignedIsEligible);
         }
       })
       .catch(() => {
@@ -55,10 +61,10 @@ export function RescheduleDialog({
     return () => {
       active = false;
     };
-  }, [appointment.slug, appointment.serviceId, attempt]);
+  }, [appointment.slug, appointment.serviceId, appointment.professionalMemberId, attempt]);
 
   useEffect(() => {
-    if (!catalog || !professional || !appointment.serviceId) {
+    if (!catalog || !professional || !appointment.serviceId || !catalog.professionals.some((person) => person.id === professional && person.serviceIds.includes(appointment.serviceId!))) {
       return;
     }
     let active = true;
@@ -170,7 +176,9 @@ export function RescheduleDialog({
             <p role="status" className="text-sm text-muted-foreground">
               Buscando horários...
             </p>
-          ) : error ? null : slots.length === 0 ? (
+          ) : error ? null : !professional ? (
+            <p className="text-sm text-muted-foreground">Selecione um profissional para ver os horários.</p>
+          ) : slots.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nenhum horário disponível nesta data.</p>
           ) : (
             <div className="grid grid-cols-3 gap-2">
