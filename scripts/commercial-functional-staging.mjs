@@ -54,7 +54,7 @@ try{
     await ok(owner.client.rpc('set_workspace_discovery',{p_workspace_id:w.id,p_enabled:true}));
   });
   await check('public city and salon search plus bookable professional catalog',async()=>{
-    for(const args of [{p_city:'Muriaé'},{p_query:w.name}]){
+    for(const args of [{p_city:'Muriaé'},{p_query:w.name},{p_query:'Professional Commercial QA'}]){
       const result=await ok(guest.rpc('search_public_workspaces',{...args,p_limit:50}));assert.ok(result.items.some(x=>x.slug===w.slug));
     }
     const catalog=await ok(guest.rpc('list_public_booking_catalog',{p_slug:w.slug}));assert.ok(catalog.professionals.some(x=>x.id===member));

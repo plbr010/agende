@@ -11,7 +11,7 @@ Base: origin/main a3923c4; branch codex/commercial-functional-20261023. Produç�
 | Serviços, profissionais e horários | PASS no staging: perfil de atendimento do proprietário, vínculo ao serviço, preço/duração e jornada persistidos. Convites e papéis de equipe cobertos por SQL/local, não por novo convite de e-mail. |
 | Agenda | PASS: reserva aparece na consulta autenticada do salão e conflita com outra reserva concorrente; Server Actions integradas ao SQL local. Gestão visual autenticada não foi repetida no navegador nesta rodada. |
 | Cadastro/login de cliente | PASS: token signup verificado no GoTrue real e login posterior. Sem simular entrega SMTP. |
-| Busca | PASS: staging retorna salão recém-publicado por cidade e por nome e catálogo com profissional habilitado. Navegador isolado cobre busca, geolocalização, mobile e estados vazios; não equivale a busca remota integral pelo navegador. |
+| Busca | PASS: staging retorna salão recém-publicado por cidade e por nome e catálogo com profissional habilitado. Consulta adicional somente leitura confirmou busca pelo nome do profissional retornando salão sintético. Navegador isolado cobre busca, geolocalização, mobile e estados vazios; não equivale a busca remota integral pelo navegador. |
 | Agendamento confirmado | PASS: cliente real de staging, reserva vinculada, rejeição anônima e concorrência com um vencedor. SQL local também cobre identidade não confirmada e isolamento. |
 | Cancelamento/reagendamento | PASS nas RPCs reais: mantém ID, muda horário, cancela com status cancelled e devolve slot à disponibilidade; terceiros são rejeitados. Defeito visual corrigido neste PR, com cinco regressões. |
 | Isolamento entre salões | PASS: segundo proprietário não lê serviços/reservas do primeiro nem cancela/reagenda atendimento alheio. Matriz SQL/local cobre papéis adicionais. |
@@ -34,7 +34,7 @@ Três casos falharam antes da correção. Cinco regressões passam depois, inclu
 
 ## Bloqueios restantes e menor sequência de piloto
 
-1. Durante instalação limpa, npm reportou avisos novos para Next 16.3.8. O aviso de DoS em Server Actions é aplicável ao padrão usado pelo app e exige upgrade segundo fornecedor. Preparar correção de dependências em PR separado, sem deploy automático de produção. O aviso de imagem tem mitigação sharp>=0.35.5 já fixada no projeto; não afirmar RCE comprovada no Agendê.
+1. Durante instalação limpa, npm reportou avisos novos para Next 16.3.8. O aviso de DoS em Server Actions é aplicável ao padrão usado pelo app e exige upgrade segundo fornecedor. Correção preparada no PR #83 (Next/eslint-config-next 16.4.2), com build, typecheck, 438 testes e 14 cenários de navegador aprovados; audit de dependências de produção zerado. Foi incorporada à branch funcional, sem merge em main nem deploy produtivo. O aviso de imagem tem mitigação sharp>=0.35.5 já fixada no projeto; não afirmar RCE comprovada no Agendê.
 2. Revisar e integrar a correção de reagendamento e a atualização Next após CI. Publicação produtiva exige decisão separada.
 3. A entrega autêntica Stripe LIVE v5 continua pendente do suporte/elegibilidade ou de alternativa aprovada; aprovação TEST não substitui essa evidência.
 4. Após preview atualizado, concluir uma passagem assistida pelas telas autenticadas com confirmação por e-mail e retorno de Checkout TEST no navegador. As provas por API e reconciliação desta rodada não substituem essa passagem visual completa.
