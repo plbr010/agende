@@ -5,6 +5,7 @@ import { AgendaBoard } from "@/components/agenda/agenda-board";
 import { PageHeader } from "@/components/app/page-header";
 import { MetricCard } from "@/components/app/metric-card";
 import { loadClients, loadServices, loadTeam } from "@/lib/catalog/queries";
+import { createClient } from "@/lib/supabase/server";
 import { loadAgendaRange, loadCurrentMemberId } from "@/lib/agenda/queries";
 import { addDaysIso, todayInTimeZone, weekdayInTimeZone, zonedWallTimeToUtc } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
@@ -39,6 +40,25 @@ export default async function AgendaPage({
     loadClients(workspace.id),
     loadCurrentMemberId(workspace.id, session.user.id),
   ]);
+
+  let sellableProducts: Array<{ id: string; name: string }> = [];
+  if (workspace.role === "owner" || workspace.role === "admin") {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase.rpc("get_inventory_ui", { p_workspace_id: workspace.id });
+      const products = !error && data && typeof data === "object" && "products" in data ? data.products : [];
+      if (Array.isArray(products)) {
+        sellableProducts = products.flatMap((product) => {
+          if (!product || typeof product !== "object" || !("id" in product) || !("name" in product)) return [];
+          const row = product as { id?: unknown; name?: unknown; active?: unknown; archived_at?: unknown };
+          if (typeof row.id !== "string" || typeof row.name !== "string" || row.active === false || row.archived_at) return [];
+          return [{ id: row.id, name: row.name }];
+        });
+      }
+    } catch {
+      sellableProducts = [];
+    }
+  }
 
   const professionals = team.filter((member) => {
     if (!member.hasProfessionalProfile) {
@@ -89,6 +109,7 @@ export default async function AgendaPage({
         selectedProfessionalId={professional}
         role={workspace.role}
         currentMemberId={currentMemberId}
+        sellableProducts={sellableProducts}
         startCreating={params.novo === "1"}
       />
     </>

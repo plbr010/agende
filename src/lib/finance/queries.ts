@@ -12,6 +12,7 @@ const financialEntrySchema = z.object({
   status: financialStatusSchema,
   source: z.enum(["manual", "appointment", "package_sale"]),
   amountCents: z.number().int().nonnegative(),
+  receivedCents: z.number().int().nonnegative(),
   refundedCents: z.number().int().nonnegative(),
   categoryLabel: z.string().min(1),
   paymentMethodLabel: z.string().nullable(),
@@ -37,6 +38,7 @@ export const financeUiRpcSchema = z.object({
     category_name: z.string().nullable(),
     client_name: z.string().nullable(),
     refunded_cents: z.number().int().nonnegative(),
+    received_cents: z.number().int().nonnegative().optional(),
   })),
   categories: z.array(z.object({
     id: z.string().uuid(),
@@ -163,6 +165,7 @@ export function adaptFinanceUiPayload(raw: unknown): FinancialSnapshot {
       status: entry.status,
       source: entry.source,
       amountCents: entry.amount_cents,
+      receivedCents: entry.received_cents ?? 0,
       refundedCents: entry.refunded_cents,
       categoryLabel: entry.category_name ?? "Sem categoria",
       paymentMethodLabel: entry.payment_method ? paymentMethodLabels[entry.payment_method] : null,

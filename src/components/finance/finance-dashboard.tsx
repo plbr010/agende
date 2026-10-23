@@ -86,7 +86,7 @@ export function FinanceDashboard({ snapshot }: {
         <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
-        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
+        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.status === "pending" && e.receivedCents > 0 && " · Recebido " + formatCentsToReais(e.receivedCents) + " de " + formatCentsToReais(e.amountCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
  {e.status === "pending" && <>
             <ActionPanel title="Marcar como pago">
             <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" confirm={"Confirmar pagamento de " + formatCentsToReais(e.amountCents) + "?"}>
