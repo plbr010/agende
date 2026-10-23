@@ -1,0 +1,19 @@
+{
+  "name": "agende-comercial",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Comercial vertical do Agendê para WhatsApp. Isolado da aplicação principal.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:vertical": "remotion render src/index.ts AgendeComercialVertical out/agende-comercial-whatsapp.mp4 --codec h264 --crf 20 --pixel-format yuv420p",
+    "render:horizontal": "remotion render src/index.ts AgendeComercialHorizontal out/agende-comercial-horizontal.mp4 --codec h264 --crf 21 --pixel-format yuv420p",
+    "preview:still": "remotion still src/index.ts AgendeComercialVertical out/preview-frame.png --frame=900"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.409",
+    "@remotion/google-fonts": "^4.0.409",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.409"
+  }
+}
