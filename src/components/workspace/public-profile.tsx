@@ -23,6 +23,13 @@ function serviceBookingHref(slug: string, serviceId: string | null) {
   return `/p/${slug}/agendar?servico=${encodeURIComponent(serviceId)}`;
 }
 
+export type PublicWorkspaceLinks = {
+  homeHref?: string;
+  homeLabel?: string;
+  bookHref?: (serviceId: string | null) => string;
+  agendaNote?: string;
+};
+
 function ratingLabel(count: number) {
   return count === 1 ? "1 avaliação" : `${count} avaliações`;
 }
@@ -31,14 +38,18 @@ export function PublicWorkspacePage({
   profile,
   bookingOpen = true,
   favorite = null,
+  links = null,
 }: {
   profile: PublicWorkspaceProfile;
   bookingOpen?: boolean;
   favorite?: { workspaceId: string | null; saved: boolean } | null;
+  links?: PublicWorkspaceLinks | null;
 }) {
   const locality = [profile.city, profile.state].filter(Boolean).join(" · ");
   const initial = profile.name.slice(0, 1).toUpperCase();
-  const bookingHref = `/p/${profile.slug}/agendar`;
+  const bookingHref = links?.bookHref?.(null) ?? `/p/${profile.slug}/agendar`;
+  const serviceHref = (serviceId: string | null) => links?.bookHref?.(serviceId) ?? serviceBookingHref(profile.slug, serviceId);
+  const agendaNote = links?.agendaNote ?? "Escolha serviço, profissional, dia e horário. A conta de cliente é grátis e só é pedida para confirmar.";
   const services = bookablePublicServices(profile);
   const showRating = profile.averageRating !== null && profile.reviewCount !== null;
 
@@ -205,7 +216,7 @@ export function PublicWorkspacePage({
                         {bookingOpen ? (
                           <Button
                             className="h-11 w-full rounded-full px-5 whitespace-normal sm:w-auto"
-                            render={<Link href={serviceBookingHref(profile.slug, service.id)} />}
+                            render={<Link href={serviceHref(service.id)} />}
                           >
                             Agendar este serviço
                           </Button>
@@ -267,7 +278,7 @@ export function PublicWorkspacePage({
               </h2>
               <p className="relative mt-2 text-sm leading-6 text-muted-foreground">
                 {bookingOpen
-                  ? "Escolha serviço, profissional, dia e horário. A conta de cliente é grátis e só é pedida para confirmar."
+                  ? agendaNote
                   : "O perfil continua público, mas as reservas online estão pausadas até o estabelecimento reativar a assinatura."}
               </p>
               {bookingOpen ? (
@@ -290,8 +301,8 @@ export function PublicWorkspacePage({
 
       <footer className={`mx-auto w-full max-w-5xl px-4 text-center text-sm text-muted-foreground ${bookingOpen ? "pb-28 sm:pb-10" : "pb-10"}`}>
         Página pública do estabelecimento.{" "}
-        <Link href="/" className="text-wine-deep underline underline-offset-4">
-          Conheça o Agendê
+        <Link href={links?.homeHref ?? "/"} className="text-wine-deep underline underline-offset-4">
+          {links?.homeLabel ?? "Conheça o Agendê"}
         </Link>
       </footer>
     </div>
