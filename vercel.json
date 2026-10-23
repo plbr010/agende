@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
+      "main": false,
+      "codex/launch-production-hold-20261023": false,
       "codex/auth-whatsapp-contract-20261016": false,
       "codex/launch-p0-20261020": false,
       "codex/final-launch-integration-20261020": false,
