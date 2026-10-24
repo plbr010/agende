@@ -19,7 +19,7 @@ export function createConfirmedSessionGuard(
       redirect(getFallbackForDeniedPath(path, session.context));
     }
     // Use the same active workspace as the page loaders, never another membership.
-    if (!canAccessWorkspacePath(path, session.workspaces[0]?.role)) {
+    if (!canAccessWorkspacePath(path, session.workspaces[0]?.role, session.permissions)) {
       redirect("/app");
     }
     return session;

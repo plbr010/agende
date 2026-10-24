@@ -7,6 +7,9 @@ export default async function SettingsLayout({ children }: { children: React.Rea
   const session = await requireConfirmedSession("/app/configuracoes");
   const role = session.workspaces[0]?.role;
   const showBilling = role === "owner" || role === "admin";
+  const showCommissions = session.permissions
+    ? Boolean(session.permissions["commissions.manage_team"])
+    : showBilling;
   return (
     <div className="grid gap-6">
       <PageHeader
@@ -15,7 +18,7 @@ export default async function SettingsLayout({ children }: { children: React.Rea
         description="Dados do salão, a página que as clientes veem e, para quem administra, o plano."
         icon={Settings2}
       />
-      <SettingsNav showBilling={showBilling} />
+      <SettingsNav showBilling={showBilling} showPermissions={role === "owner"} showCommissions={showCommissions} />
       {children}
     </div>
   );

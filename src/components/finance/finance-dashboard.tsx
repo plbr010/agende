@@ -40,7 +40,7 @@ export function FinanceDashboard({ snapshot }: {
     <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Resumo do dinheiro">
         <MetricCard label="Dinheiro que entrou" value={formatCentsToReais(snapshot.summary.paidRevenueCents)} hint="já recebido neste período" icon={CircleDollarSign} tone="success" />
         <MetricCard label="Dinheiro que saiu" value={formatCentsToReais(snapshot.summary.paidExpenseCents)} hint="já pago neste período" icon={ReceiptText} />
-        <MetricCard label="Ainda em aberto" value={formatCentsToReais(snapshot.summary.pendingCents)} hint="falta entrar ou sair" icon={Clock3} tone="warning" />
+        <MetricCard label="Ainda em aberto" value={formatCentsToReais(snapshot.summary.pendingCents)} hint="saldo atual dos registros até o fim do período" icon={Clock3} tone="warning" />
         <MetricCard label="Quanto sobrou" value={formatCentsToReais(snapshot.summary.balanceCents)} hint="entradas menos saídas" icon={Wallet} tone="neutral" />
     </section>
  <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "Adicionar dinheiro que entrou" : "Adicionar dinheiro que saiu"}>
@@ -86,19 +86,21 @@ export function FinanceDashboard({ snapshot }: {
         <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
-        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
+        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.status === "pending" && e.receivedCents > 0 && " · Recebido " + formatCentsToReais(e.receivedCents) + " de " + formatCentsToReais(e.amountCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
  {e.status === "pending" && <>
             <ActionPanel title="Marcar como pago">
-            <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" confirm={"Confirmar pagamento de " + formatCentsToReais(e.amountCents) + "?"}>
+            <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" confirm={"Confirmar recebimento/pagamento do saldo de " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0)) + "?"}>
             <PaymentField />
             </ManagementForm>
             </ActionPanel>
             <ManagementForm action="finance-cancel" id={e.id} label="Cancelar este registro" confirm="Cancelar este registro?"/>
             </>}
- {e.status === "cancelled" && <ManagementForm action="finance-reopen" id={e.id} label="Desfazer cancelamento" confirm="Desfazer o cancelamento deste registro?"/>}
- {e.status === "paid" && e.kind === "income" && e.refundedCents < e.amountCents && <ActionPanel title="Registrar devolução">
+ {e.status === "cancelled" && !e.packageReceivableLocked && <ManagementForm action="finance-reopen" id={e.id} label="Desfazer cancelamento" confirm="Desfazer o cancelamento deste registro?"/>}
+ {e.packageReceivableLocked ? <p className="text-sm">Recebível encerrado por pacote. Uma nova cobrança exige lançamento manual.</p> : null}
+ {e.commissionCashLocked ? <p className="text-sm">Movimento vinculado à comissão. Registre pagamentos e devoluções na tela de comissões.</p> : null}
+ {!e.commissionCashLocked && e.status !== "cancelled" && e.kind === "income" && e.refundedCents < e.receivedCents && <ActionPanel title="Registrar devolução">
             <ManagementForm action="finance-refund" id={e.id} label="Confirmar devolução" idempotent confirm="Confirmar a devolução? Confira valor, motivo e forma de pagamento.">
-            <p className="text-sm">Ainda dá para devolver {formatCentsToReais(e.amountCents - e.refundedCents)}. Isto só anota a devolução no Agendê. Se for um pacote inteiro, as sessões que faltam podem ser canceladas.</p>
+            <p className="text-sm">Ainda dá para devolver {formatCentsToReais(e.receivedCents - e.refundedCents)}. Isto só anota a devolução no Agendê. Se for um pacote inteiro, as sessões que faltam podem ser canceladas.</p>
             <Field label="Valor devolvido (R$)" name="amount"/>
             <Field label="Motivo da devolução" name="reason"/>
             <PaymentField />

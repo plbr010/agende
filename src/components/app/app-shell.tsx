@@ -17,21 +17,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { getAppNavigation, isNavigationItemCurrent, settingsNavigationItem } from "@/config/app-navigation";
-import type { WorkspaceRole } from "@/lib/auth/permissions";
+import type { WorkspacePermissions, WorkspaceRole } from "@/lib/auth/permissions";
 import { signOutAction } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
 
 function Navigation({
   pathname,
   role,
+  permissions,
   onNavigate,
 }: {
   pathname: string;
   role: WorkspaceRole | undefined;
+  permissions?: WorkspacePermissions | null;
   onNavigate?: () => void;
 }) {
   const items = [
-    ...getAppNavigation(role).flatMap((group) => group.items),
+    ...getAppNavigation(role, permissions).flatMap((group) => group.items),
     settingsNavigationItem,
   ];
 
@@ -110,6 +112,7 @@ export function AppShell({
   userName,
   roleLabel,
   role,
+  permissions = null,
   hasAvatar = false,
   avatarVersion = null,
   children,
@@ -119,6 +122,7 @@ export function AppShell({
   userName: string;
   roleLabel: string;
   role: WorkspaceRole | undefined;
+  permissions?: WorkspacePermissions | null;
   hasAvatar?: boolean;
   avatarVersion?: string | null;
   children: React.ReactNode;
@@ -151,7 +155,7 @@ export function AppShell({
           </SheetDescription>
         </SheetHeader>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <Navigation pathname={pathname} role={role} onNavigate={() => setMobileOpen(false)} />
+          <Navigation pathname={pathname} role={role} permissions={permissions} onNavigate={() => setMobileOpen(false)} />
           <SidebarFooter
             workspaceName={workspaceName}
             workspaceSlug={workspaceSlug}
@@ -174,7 +178,7 @@ export function AppShell({
           <p className="mt-2 truncate px-0.5 text-sm text-white/70">{workspaceName}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <Navigation pathname={pathname} role={role} />
+          <Navigation pathname={pathname} role={role} permissions={permissions} />
         </div>
         <SidebarFooter
           workspaceName={workspaceName}

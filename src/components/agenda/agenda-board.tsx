@@ -11,6 +11,7 @@ import { clientPhoneNotice } from "@/lib/agenda/phone-notice";
 import type { AgendaAppointment } from "@/lib/agenda/queries";
 import type { MemberRole } from "@/lib/catalog/queries";
 import {
+  completeAppointmentCheckoutAction,
   createAppointmentAction,
   loadSlotsAction,
   rescheduleAppointmentAction,
@@ -76,6 +77,8 @@ async function runFormAction(action: (formData: FormData) => Promise<ActionState
   }
 }
 
+export type SellableProduct = { id: string; name: string };
+
 export function AgendaBoard({
   workspaceName,
   timezone,
@@ -89,6 +92,7 @@ export function AgendaBoard({
   selectedProfessionalId,
   role,
   currentMemberId,
+  sellableProducts = [],
   startCreating = false,
 }: {
   workspaceName: string;
@@ -103,6 +107,7 @@ export function AgendaBoard({
   selectedProfessionalId: string;
   role: MemberRole;
   currentMemberId: string | null;
+  sellableProducts?: SellableProduct[];
   startCreating?: boolean;
 }) {
   const [creating, setCreating] = useState(startCreating);
@@ -211,6 +216,7 @@ export function AgendaBoard({
           services={services}
           role={role}
           currentMemberId={currentMemberId}
+          sellableProducts={sellableProducts}
         />
       ) : null}
     </div>
@@ -501,6 +507,7 @@ export function AppointmentDetailDialog({
   services,
   role,
   currentMemberId,
+  sellableProducts = [],
 }: {
   workspaceName: string;
   timezone: string;
@@ -511,9 +518,19 @@ export function AppointmentDetailDialog({
   services: ServiceRow[];
   role: MemberRole;
   currentMemberId: string | null;
+  sellableProducts?: SellableProduct[];
 }) {
   const [rescheduling, setRescheduling] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutKey, setCheckoutKey] = useState("");
   const [statusPending, startStatus] = useTransition();
+  const [checkoutState, checkoutAction, checkoutPending] = useAgendaAction(
+    async (_previous, formData) => completeAppointmentCheckoutAction(formData),
+    () => {
+      setCheckingOut(false);
+      onOpenChange(false);
+    },
+  );
   const actions = statusActions(appointment.status, role);
   const canEdit =
     canRescheduleStatus(appointment.status) &&
@@ -592,7 +609,11 @@ export function AppointmentDetailDialog({
                 Trocar horário
               </Button>
             ) : null}
-            {actions.map((status) => (
+            {actions.map((status) => status === "completed" ? (
+              <Button key={status} type="button" variant="outline" className="h-11" disabled={statusPending} onClick={() => { setCheckoutKey(crypto.randomUUID()); setCheckingOut(true); }}>
+                {STATUS_ACTION_LABEL[status]}
+              </Button>
+            ) : (
               <form
                 key={status}
                 action={(formData) => {
@@ -611,6 +632,64 @@ export function AppointmentDetailDialog({
             ))}
           </div>
           ) : null}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={checkingOut} onOpenChange={setCheckingOut}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Concluir atendimento</DialogTitle>
+            <DialogDescription>
+              {appointment.clientName} · {appointment.serviceName} · {formatCentsToReais(appointment.priceCents)}. Concluir não significa que o dinheiro já entrou.
+            </DialogDescription>
+          </DialogHeader>
+          <form action={checkoutAction} className="grid gap-4">
+            <input type="hidden" name="appointmentId" value={appointment.id} />
+            <input type="hidden" name="idempotencyKey" value={checkoutKey} />
+            <FormFields state={checkoutState}>
+              <div className="grid gap-2">
+                <Label htmlFor="checkout-discount">Desconto (R$)</Label>
+                <Input id="checkout-discount" name="discount" inputMode="decimal" placeholder="0,00" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="checkout-received">Valor recebido agora (R$)</Label>
+                <Input id="checkout-received" name="received" inputMode="decimal" placeholder="0,00" />
+                <p className="text-sm text-muted-foreground">Deixe em branco se a cliente ainda vai pagar.</p>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="checkout-method">Forma de pagamento</Label>
+                <select id="checkout-method" name="paymentMethod" className="h-11 rounded-2xl border bg-background px-3 text-sm">
+                  <option value="">Ainda não recebi</option>
+                  <option value="pix">Pix</option>
+                  <option value="cash">Dinheiro</option>
+                  <option value="debit_card">Cartão de débito</option>
+                  <option value="credit_card">Cartão de crédito</option>
+                  <option value="bank_transfer">Transferência</option>
+                  <option value="other">Outro</option>
+                </select>
+              </div>
+              {sellableProducts.length > 0 ? (
+                <div className="grid gap-2 rounded-2xl bg-secondary/50 p-3">
+                  <Label htmlFor="checkout-product">Produto vendido, se houver</Label>
+                  <select id="checkout-product" name="productId" className="h-11 rounded-2xl border bg-background px-3 text-sm" defaultValue="">
+                    <option value="">Nenhum produto</option>
+                    {sellableProducts.map((product) => (
+                      <option key={product.id} value={product.id}>{product.name}</option>
+                    ))}
+                  </select>
+                  <Label htmlFor="checkout-quantity">Quantidade</Label>
+                  <Input id="checkout-quantity" name="productQuantity" inputMode="decimal" placeholder="1 ou 1,500" />
+                  <Label htmlFor="checkout-price">Preço unitário (R$)</Label>
+                  <Input id="checkout-price" name="productPrice" inputMode="decimal" placeholder="0,00" />
+                </div>
+              ) : null}
+            </FormFields>
+            <DialogFooter>
+              <Button type="button" variant="outline" className="h-11" onClick={() => setCheckingOut(false)}>Voltar</Button>
+              <Button type="submit" className="h-11" disabled={checkoutPending} aria-busy={checkoutPending}>
+                {checkoutPending ? "Salvando..." : "Confirmar conclusão"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
       <AppointmentFormDialog

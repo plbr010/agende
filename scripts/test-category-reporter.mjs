@@ -5,6 +5,8 @@ import { resolve, relative } from 'node:path';
 const sqlFiles=['database.test.mjs','launch-readiness.test.mjs','final-hardening.test.mjs','atomic-service-sql.test.mjs','discovery-sql.test.mjs','client-phase2-sql.test.mjs','workspace-media-sql.test.mjs','profiles-booking-whatsapp-sql.test.mjs','prelaunch-upgrade.test.mjs','booking-retry-sql.test.mjs'];
 const sourceCache=new Map();
 function category(file){
+  if(file.endsWith('commissions-integrity-sql.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_integrity_and_concurrency':'pglite_integrity';
+  if(file.endsWith('commissions-upgrade-sql.test.mjs')||file.endsWith('commissions-sql.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_sql':'pglite_sql';
   if(file.endsWith('pg17-concurrency.test.mjs'))return 'native_pg17_concurrency';
   if(file.endsWith('action-sql-integration.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_integration_with_mock_auth':'pglite_integration_with_mock_auth';
   if(sqlFiles.some(name=>file.endsWith(name)))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_sql':'pglite_sql';

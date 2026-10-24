@@ -58,6 +58,10 @@ export function mutationError(message: string) {
         inventory_product_archived: "Reative o produto antes de movimentar o estoque.",
         client_package_not_active: "Este pacote não está ativo para cancelamento.",
         financial_entry_not_pending: "Somente lançamentos pendentes podem receber baixa.",
+        refund_received_money_first: "Registre a devolução do dinheiro recebido antes de cancelar ou usar um pacote.",
+        package_receivable_cannot_reopen: "Este recebível foi encerrado por pacote. Uma nova cobrança exige lançamento manual.",
+        commission_cash_movement_immutable: "Este movimento pertence à comissão. Use a tela de comissões para registrar pagamentos e devoluções.",
+        received_entry_amount_locked: "Este registro já tem recebimentos. O valor original deve permanecer no histórico.",
         refund_exceeds: "O valor excede o saldo disponível para devolução.",
         idempotency_key_conflict: "Esta solicitação já foi enviada com outros valores. Atualize a página.",
     };
