@@ -1,0 +1,215 @@
+{
+  "checked_at": "2026-10-24T04:44:38.696Z",
+  "groups": {
+    "native_pg17_integrity_and_concurrency": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_sql": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A04: retries survive full settlement and reject changed payload",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A01: checkout and snapshots respect commission permissions, including retries",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A02/A03: partial cash, method, outstanding and explicit refunds reconcile",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A03/B02: package requires explicit refund and never reopens cancelled service",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A06/A07: reopen restores stock debit, legacy settlement records only remainder",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A06: insufficient stock rolls back reopen and duplicate cancellation restores once",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A08/B05: beneficiary history and commission cash are immutable and idempotent",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A01: tenant and colleague authorization across public APIs",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "B01: explicit inventory grants and denies agree between RLS and RPC",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "internal helpers are not executable by authenticated or anonymous callers",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "B04: keyset pagination reaches records beyond the first 200 without duplicates",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A04/A05: native last-receipt retries serialize and converge to one ID",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native repeated checkout has one settlement despite distinct keys",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A03/A05: native receipt prevents concurrent package conversion without refund",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native payment and receipt serialize in both directions",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native adjustment and receipt preserve release ceiling",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native refund and payment do not deadlock or overpay",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "commissions, checkout, receipts and permissions stay isolated",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "service rule wins over the professional default and later edits do not rewrite it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "completion without money stays pending, then partial and full receipts release the same rate",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "refund and manual ceiling keep history and never raise the original amount",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "cancel and no-show do not create commission or service income",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "professional change before completion follows the appointment, and after close needs an audited reassignment",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "package redemption cancels the pending service receivable and does not recreate it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "repeated checkout and receipt keys do not duplicate money",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "products leave stock once and stay out of the commission base",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "full discount creates neither receivable nor commission, and on_completion releases before receipt",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "a rate added after completion does not create a retroactive commission",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "permissions stop cross-professional, cross-salon and privilege escalation",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "checkout locks the appointment and money tables reject a second settlement",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "commissions, checkout, receipts and permissions stay isolated",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-upgrade-sql.test.mjs",
+      "name": "PR84 atomic upgrade preserves legacy cash and supports rollback",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    }
+  ]
+}

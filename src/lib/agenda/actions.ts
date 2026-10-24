@@ -614,10 +614,11 @@ export async function completeAppointmentCheckoutAction(formData: FormData): Pro
     if (!z.string().uuid().safeParse(productId).success) {
       return { error: "Escolha um produto da lista." };
     }
-    const quantity = Number.parseInt(String(formData.get("productQuantity") ?? ""), 10);
+    const quantityRaw = String(formData.get("productQuantity") ?? "").trim().replace(",", ".");
+    const quantity = /^\d+(\.\d{1,3})?$/.test(quantityRaw) ? Number(quantityRaw) : NaN;
     const unitPrice = parseReaisToCents(String(formData.get("productPrice") ?? ""));
-    if (!Number.isInteger(quantity) || quantity <= 0 || unitPrice == null || unitPrice <= 0) {
-      return { error: "Informe a quantidade inteira e o preço do produto." };
+    if (!Number.isFinite(quantity) || quantity <= 0 || unitPrice == null || unitPrice <= 0) {
+      return { error: "Informe a quantidade com até três casas decimais e o preço do produto." };
     }
     products.push({ product_id: productId, quantity, unit_price_cents: unitPrice });
   }

@@ -1,0 +1,58 @@
+[
+  {
+    "label": "receipt_retry",
+    "pid_a": 23900,
+    "pid_b": 20672,
+    "verified_block": true,
+    "result": "committed",
+    "code": null
+  },
+  {
+    "label": "checkout_repeat",
+    "pid_a": 16532,
+    "pid_b": 6824,
+    "verified_block": true,
+    "result": "committed",
+    "code": null
+  },
+  {
+    "label": "receipt_package",
+    "pid_a": 16372,
+    "pid_b": 14340,
+    "verified_block": true,
+    "result": "refund_received_money_first",
+    "code": "22023"
+  },
+  {
+    "label": "pay_receipt_true",
+    "pid_a": 17148,
+    "pid_b": 28044,
+    "verified_block": true,
+    "result": "committed",
+    "code": null
+  },
+  {
+    "label": "pay_receipt_false",
+    "pid_a": 5608,
+    "pid_b": 13756,
+    "verified_block": true,
+    "result": "committed",
+    "code": null
+  },
+  {
+    "label": "adjust_receipt",
+    "pid_a": 27904,
+    "pid_b": 32492,
+    "verified_block": true,
+    "result": "committed",
+    "code": null
+  },
+  {
+    "label": "refund_payment",
+    "pid_a": 25896,
+    "pid_b": 22060,
+    "verified_block": true,
+    "result": "commission_exceeds_released",
+    "code": "22023"
+  }
+]

@@ -58,3 +58,18 @@ Este documento trava as regras que, se ficassem implícitas, poderiam gerar cobr
 - Autorização usa o membro ativo em `workspace_members` e `auth.uid()`. `user_metadata` não entra na decisão.
 - O identificador de salão ou de profissional enviado pela tela é conferido no banco. Outro salão não lê estas tabelas.
 - As restrições estão em RLS, grants e funções. A tela só acompanha.
+
+## Correções aprovadas em 24/10/2026
+
+O proprietário aprovou explicitamente estas escolhas durante a correção do PR #84:
+
+- Recebimentos parciais podem ser estornados até o líquido recebido. Cancelamento ou conversão em pacote exige devolver explicitamente todo o dinheiro líquido antes; não há criação automática de crédito, transferência nem estorno.
+- Depois de qualquer pagamento histórico, a beneficiária não pode ser trocada, mesmo após recuperação integral. Cada pagamento guarda a destinatária imutável. Antes do primeiro pagamento, o evento de troca guarda os IDs anterior e novo.
+- Pagamento de comissão gera uma saída paga no financeiro; recuperação efetivamente recebida gera uma entrada paga e um receipt. Tudo é vinculado por movimento único e gravado na mesma transação. O usuário apenas registra dinheiro efetivamente movimentado: não há transferência bancária automática.
+- A API anterior de comissões não informa o meio de pagamento. Esses movimentos usam `other` e a tela informa essa limitação; detalhes podem ser anotados na observação. Não atribuir Pix/dinheiro por suposição.
+- Caixa segue a data e a forma de cada recebimento, e a data da despesa paga; devoluções seguem a data do estorno. Os indicadores operacionais por agendamento continuam separados e usam preço de tabela. O saldo em aberto é atual, dos registros criados até o fim do período, não uma reconstrução histórica de saldos.
+- Desfazer uma sessão devolve a sessão, mantém o avulso cancelado e bloqueia a reabertura genérica desse recebível. Uma cobrança avulsa posterior exige lançamento manual auditável.
+
+Compatibilidade de permissões: consultar estoque começa em owner/admin, preservando o acesso anterior da tela/RPC; um grant de `inventory.view` abre consulta sem liberar escrita. Deny dessa consulta vale tanto no SELECT quanto na RPC, mesmo se `inventory.manage` continuar permitido. Mover e gerenciar continuam permissões independentes. A agenda só oferece produtos quando há consulta e movimentação/gerenciamento autorizados.
+
+Estas aprovações não constituem aceite retroativo de todas as decisões anteriores, nem autorização para aplicar migrations, fazer merge ou publicar o PR. A reauditoria continua obrigatória.

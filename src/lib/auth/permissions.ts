@@ -17,6 +17,9 @@ export const workspaceRoutePermissions: Readonly<Record<string, readonly Workspa
 };
 
 function grantedRoute(path: string, permissions: WorkspacePermissions): boolean | null {
+  if (path === "/app/estoque" || path.startsWith("/app/estoque/")) {
+    return Boolean(permissions["inventory.view"]);
+  }
   if (path === "/app/financeiro" || path.startsWith("/app/financeiro/")) {
     return Boolean(permissions["finance.view"] || permissions["finance.manage"]);
   }

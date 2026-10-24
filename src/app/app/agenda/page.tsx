@@ -42,7 +42,7 @@ export default async function AgendaPage({
   ]);
 
   let sellableProducts: Array<{ id: string; name: string }> = [];
-  if (workspace.role === "owner" || workspace.role === "admin") {
+  if (session.permissions?.["inventory.view"] && (session.permissions["inventory.move"] || session.permissions["inventory.manage"])) {
     try {
       const supabase = await createClient();
       const { data, error } = await supabase.rpc("get_inventory_ui", { p_workspace_id: workspace.id });

@@ -42,6 +42,8 @@ function revalidateCommissionScreens() {
   revalidatePath("/app/comissoes");
   revalidatePath("/app/configuracoes/comissoes");
   revalidatePath("/app/configuracoes/permissoes");
+  revalidatePath("/app/financeiro");
+  revalidatePath("/app/relatorios");
 }
 
 export async function saveCommissionRuleAction(formData: FormData): Promise<ActionState> {
@@ -90,6 +92,8 @@ export async function payCommissionAction(formData: FormData): Promise<ActionSta
   const note = String(formData.get("note") ?? "").trim();
   const key = String(formData.get("idempotencyKey") ?? "");
   const direction = String(formData.get("direction") ?? "payout");
+  if (direction !== "payout" && direction !== "recovery") return { error: "Operação inválida." };
+  if (direction === "recovery" && note.length < 3) return { error: "Informe o motivo da devolução recebida." };
   if (!z.string().uuid().safeParse(commissionId).success || amount == null || amount <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(paidOn) || key.length < 8) {
     return { error: "Informe o valor e a data do pagamento." };
   }

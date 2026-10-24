@@ -172,6 +172,11 @@ test("missing role denies protected paths without hiding unrelated routes", () =
   assert.equal(canAccessWorkspacePath("/app/estoque-extra", "professional"), true);
 });
 
+test("inventory route follows its explicit view grant and deny without implying write access", () => {
+  assert.equal(canAccessWorkspacePath("/app/estoque", "professional", { "inventory.view": true }), true);
+  assert.equal(canAccessWorkspacePath("/app/estoque", "admin", { "inventory.view": false, "inventory.manage": true }), false);
+});
+
 test("a manager membership in another workspace cannot authorize the active workspace", async () => {
   const session = sessionFor("professional");
   session.workspaces.push({ id: "workspace-2", name: "Other", slug: "other", role: "owner" });

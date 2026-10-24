@@ -677,7 +677,7 @@ export function AppointmentDetailDialog({
                     ))}
                   </select>
                   <Label htmlFor="checkout-quantity">Quantidade</Label>
-                  <Input id="checkout-quantity" name="productQuantity" inputMode="numeric" placeholder="1" />
+                  <Input id="checkout-quantity" name="productQuantity" inputMode="decimal" placeholder="1 ou 1,500" />
                   <Label htmlFor="checkout-price">Preço unitário (R$)</Label>
                   <Input id="checkout-price" name="productPrice" inputMode="decimal" placeholder="0,00" />
                 </div>

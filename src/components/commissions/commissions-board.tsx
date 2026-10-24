@@ -57,6 +57,7 @@ export function CommissionsBoard({
             {entries.map((entry) => {
               const open = openId === entry.id;
               const owed = Math.max(entry.released_cents - entry.paid_cents, 0);
+              const recoverable = Math.max(entry.paid_cents - entry.current_cents, 0);
               return (
                 <article key={entry.id} className="agende-shadow grid gap-3 rounded-3xl border bg-card p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
@@ -97,7 +98,7 @@ export function CommissionsBoard({
                           </li>
                         ))}
                       </ul>
-                      {canPay && owed > 0 ? (
+                      {canPay && (owed > 0 || recoverable > 0) ? (
                         <form className="grid gap-3 sm:grid-cols-2" action={(formData) => start(async () => {
                           const result = await payCommissionAction(formData);
                           if (result.error) toast.error(result.error);
@@ -107,11 +108,13 @@ export function CommissionsBoard({
                           }
                         })}>
                           <input type="hidden" name="commissionId" value={entry.id} />
-                          <input type="hidden" name="direction" value="payout" />
+                          <input type="hidden" name="direction" value={recoverable > 0 ? "recovery" : "payout"} />
                           <input type="hidden" name="idempotencyKey" value={payKeys[entry.id] ?? ""} />
                           <div className="grid gap-2">
-                            <Label htmlFor={`pay-${entry.id}`}>Valor pago (R$)</Label>
+                            <Label htmlFor={`pay-${entry.id}`}>{recoverable > 0 ? "Valor devolvido (R$)" : "Valor pago (R$)"}</Label>
                             <Input id={`pay-${entry.id}`} name="amount" inputMode="decimal" placeholder="0,00" required />
+                            <p className="text-sm text-muted-foreground">Até {formatCentsToReais(recoverable > 0 ? recoverable : owed)}. Registre somente dinheiro efetivamente {recoverable > 0 ? "devolvido" : "pago"}; o caixa será atualizado.</p>
+                            <p className="text-sm text-muted-foreground">A forma de pagamento fica como “Outro”. Informe detalhes na observação.</p>
                           </div>
                           <div className="grid gap-2">
                             <Label htmlFor={`date-${entry.id}`}>Data</Label>
@@ -119,9 +122,9 @@ export function CommissionsBoard({
                           </div>
                           <div className="grid gap-2 sm:col-span-2">
                             <Label htmlFor={`note-${entry.id}`}>Observação</Label>
-                            <Input id={`note-${entry.id}`} name="note" maxLength={200} />
+                            <Input id={`note-${entry.id}`} name="note" maxLength={200} minLength={recoverable > 0 ? 3 : undefined} required={recoverable > 0} />
                           </div>
-                          <Button type="submit" className="h-11 sm:col-span-2" disabled={pending}>Registrar pagamento</Button>
+                          <Button type="submit" className="h-11 sm:col-span-2" disabled={pending}>{recoverable > 0 ? "Registrar devolução recebida" : "Registrar pagamento"}</Button>
                         </form>
                       ) : null}
                       {canAdjust ? (

@@ -1419,6 +1419,7 @@ export type Database = {
       get_member_permission_editor: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_commission_settings: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_commissions_ui: { Args: { p_workspace_id: string | null; p_professional_member_id?: string | null }; Returns: Json };
+      get_commissions_page: { Args: { p_workspace_id: string; p_professional_member_id?: string | null; p_before?: string | null; p_before_id?: string | null; p_limit?: number }; Returns: Json };
       set_member_permission: { Args: { p_member_id: string | null; p_permission_key: string | null; p_effect?: string | null }; Returns: undefined };
       set_commission_rule: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id?: string | null; p_rate_bps: number | null }; Returns: string };
       set_commission_release_policy: { Args: { p_workspace_id: string | null; p_policy: string | null }; Returns: string };
