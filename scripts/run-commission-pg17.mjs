@@ -15,7 +15,7 @@ async function command(program,args,env=childEnv,inherit=false){return new Promi
 async function freePort(){const socket=createServer();await new Promise((resolve,reject)=>{socket.once('error',reject);socket.listen(0,'127.0.0.1',resolve);});const port=socket.address().port;await new Promise(resolve=>socket.close(resolve));return port;}
 const version=await command(binary('postgres'),['--version']);if(!/PostgreSQL\) 17\./.test(version))throw new Error('Native test runner requires PostgreSQL 17 binaries');
 mkdirSync('.test-postgres',{recursive:true});const run=mkdtempSync(resolve('.test-postgres/run-')),data=join(run,'data'),port=await freePort();
-const suites=process.argv.slice(2).length?process.argv.slice(2):['scripts/commissions-sql.test.mjs','scripts/commissions-integrity-sql.test.mjs','scripts/commissions-upgrade-sql.test.mjs'];
+const suites=process.argv.slice(2).length?process.argv.slice(2):['scripts/commissions-sql.test.mjs','scripts/commissions-integrity-sql.test.mjs','scripts/commissions-upgrade-sql.test.mjs','scripts/pr84-final-sql.test.mjs','scripts/pr84-final-upgrade.test.mjs'];
 let started=false,stopped=false,failure;
 
 try{

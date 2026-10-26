@@ -16,6 +16,7 @@ function findTests(directory) {
 
 const testFiles = findTests("src");
 testFiles.push("scripts/commissions-integrity-sql.test.mjs", "scripts/commissions-upgrade-sql.test.mjs");
+testFiles.push("scripts/pr84-final-sql.test.mjs", "scripts/pr84-final-upgrade.test.mjs");
 testFiles.push("scripts/workspace-media-sql.test.mjs", "scripts/profiles-booking-whatsapp-sql.test.mjs");
 testFiles.push("scripts/discovery-sql.test.mjs", "scripts/staging-auth-observer.test.mjs", "scripts/staging-auth-expiry-result.test.mjs", "scripts/client-phase2-sql.test.mjs");
 testFiles.push("scripts/prelaunch-upgrade.test.mjs", "scripts/booking-retry-sql.test.mjs");

@@ -25,12 +25,24 @@ export const mutationSchema = z.discriminatedUnion("action", [
     z.object({ action: z.literal("package-sell"), id, client: id }),
     z.object({ action: z.literal("package-cancel"), id }),
     z.object({ action: z.literal("finance-create"), kind: z.enum(["income", "expense"]), description: z.string().trim().min(1).max(160), amount: amount.refine(v => v > 0), due: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), category: z.union([id, z.literal("")]), key: id }),
-    z.object({ action: z.literal("finance-paid"), id, method: paymentMethodSchema }),
+    z.object({ action: z.literal("finance-paid"), id, method: paymentMethodSchema, key: id }),
     z.object({ action: z.literal("finance-cancel"), id }),
     z.object({ action: z.literal("finance-reopen"), id }),
     z.object({ action: z.literal("finance-refund"), id, amount: amount.refine(v => v > 0), reason: z.string().trim().min(3).max(500), method: paymentMethodSchema, key: id, confirmed: z.literal("on") }),
 ]);
 export type Mutation = z.infer<typeof mutationSchema>;
+export function canRunMutation(v: Mutation, role: string, permissions?: Record<string, boolean> | null): boolean {
+    if (role === "owner") return true;
+    const manager = role === "admin";
+    const allowed = (key: string, fallback: boolean) => permissions ? Boolean(permissions[key]) : fallback;
+    if (v.action.startsWith("product-")) return allowed("inventory.manage", manager);
+    if (v.action === "movement") return v.type === "adjustment"
+        ? allowed("inventory.manage", manager)
+        : allowed("inventory.move", manager || role === "receptionist") || allowed("inventory.manage", manager);
+    if (v.action === "finance-paid") return allowed("finance.receive", manager || role === "receptionist") || allowed("finance.manage", manager);
+    if (v.action.startsWith("finance-")) return allowed("finance.manage", manager);
+    return manager;
+}
 export function parseMutation(form: FormData) {
     const values: Record<string, unknown> = Object.fromEntries(form);
     if (values.action === "package-create")
@@ -62,6 +74,8 @@ export function mutationError(message: string) {
         package_receivable_cannot_reopen: "Este recebível foi encerrado por pacote. Uma nova cobrança exige lançamento manual.",
         commission_cash_movement_immutable: "Este movimento pertence à comissão. Use a tela de comissões para registrar pagamentos e devoluções.",
         received_entry_amount_locked: "Este registro já tem recebimentos. O valor original deve permanecer no histórico.",
+        paid_receipts_require_reconciliation: "Os recebimentos deste registro precisam de reconciliação antes de continuar.",
+        paid_receipts_mismatch: "A quitação não corresponde aos recebimentos registrados. Nada foi confirmado.",
         refund_exceeds: "O valor excede o saldo disponível para devolução.",
         idempotency_key_conflict: "Esta solicitação já foi enviada com outros valores. Atualize a página.",
     };

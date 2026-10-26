@@ -23,7 +23,8 @@ import {
 import { canRescheduleStatus, isAppointmentStatus } from "@/lib/agenda/status";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { zonedWallTimeToUtc } from "@/lib/time/timezone";
-import { formatCentsToReais, parseReaisToCents } from "@/lib/validation/money";
+import { parseReaisToCents } from "@/lib/validation/money";
+import { checkoutMessage } from "@/lib/agenda/checkout-message";
 import { PERIOD_MESSAGES } from "@/lib/agenda/period-rules";
 
 export type SlotActionState = ActionState & {
@@ -564,13 +565,6 @@ const checkoutSummarySchema = z.object({
   }).nullable(),
 });
 
-const commissionStatusLabel: Record<string, string> = {
-  pending: "aguardando o recebimento",
-  released: "liberada para pagamento",
-  paid: "paga",
-  adjusted: "ajustada",
-};
-
 function mapCheckoutError(message: string): string {
   if (message.includes("invalid_amount") || message.includes("receipt_exceeds_due")) {
     return "O desconto ou o valor recebido não cabe neste atendimento.";
@@ -646,17 +640,10 @@ export async function completeAppointmentCheckoutAction(formData: FormData): Pro
     revalidatePath("/app/comissoes");
     return { success: "Atendimento concluído." };
   }
-  const due = summary.data.amount_due_cents + summary.data.product_total_cents;
-  const commission = summary.data.commission;
-  const commissionText = commission
-    ? ` Comissão de ${formatCentsToReais(commission.original_cents)}, ${commissionStatusLabel[commission.status] ?? "registrada"}.`
-    : " Nenhuma comissão ficou devida.";
   revalidateAgenda();
   revalidatePath("/app/financeiro");
   revalidatePath("/app/comissoes");
   return {
-    success: summary.data.repeated
-      ? "Este atendimento já estava concluído. Nada foi lançado de novo."
-      : `Atendimento concluído. A receber ${formatCentsToReais(due)}. Recebido ${formatCentsToReais(summary.data.received_cents)}.${commissionText}`,
+    success: checkoutMessage(summary.data),
   };
 }

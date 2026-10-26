@@ -27,8 +27,10 @@ function PaymentField() {
     <option value="other">Outro</option>
     </SelectField>;
 }
-export function FinanceDashboard({ snapshot }: {
+export function FinanceDashboard({ snapshot, canManage, canReceive }: {
     snapshot: FinancialSnapshot | null;
+    canManage: boolean;
+    canReceive: boolean;
 }) {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
@@ -43,7 +45,7 @@ export function FinanceDashboard({ snapshot }: {
         <MetricCard label="Ainda em aberto" value={formatCentsToReais(snapshot.summary.pendingCents)} hint="saldo atual dos registros até o fim do período" icon={Clock3} tone="warning" />
         <MetricCard label="Quanto sobrou" value={formatCentsToReais(snapshot.summary.balanceCents)} hint="entradas menos saídas" icon={Wallet} tone="neutral" />
     </section>
- <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "Adicionar dinheiro que entrou" : "Adicionar dinheiro que saiu"}>
+ {canManage && <div className="grid gap-3 sm:grid-cols-2">{(["income", "expense"] as const).map(type => <ActionPanel key={type} title={type === "income" ? "Adicionar dinheiro que entrou" : "Adicionar dinheiro que saiu"}>
         <ManagementForm action="finance-create" label="Salvar" idempotent>
         <input type="hidden" name="kind" value={type}/>
         <Field name="description" label="O que foi"/>
@@ -52,7 +54,7 @@ export function FinanceDashboard({ snapshot }: {
         <SelectField label="Categoria" name="category" value="">
         <option value="">Sem categoria</option>{snapshot.categories.filter(c => c.active && !c.archivedAt && c.kind === type).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}</SelectField>
         </ManagementForm>
-        </ActionPanel>)}</div>
+        </ActionPanel>)}</div>}
  <div className="grid gap-3 sm:grid-cols-3">
     <p className="text-sm text-muted-foreground sm:col-span-3">Mostramos os registros mais recentes deste período. Use a busca para achar um nome ou valor.</p>
     <label className="grid gap-1 text-sm">Buscar
@@ -86,19 +88,19 @@ export function FinanceDashboard({ snapshot }: {
         <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
-        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.status === "pending" && e.receivedCents > 0 && " · Recebido " + formatCentsToReais(e.receivedCents) + " de " + formatCentsToReais(e.amountCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}</p>
- {e.status === "pending" && <>
+        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.kind === "income" && " · Recebido: " + formatCentsToReais(e.receivedCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}{e.kind === "income" && " · Líquido recebido: " + formatCentsToReais(Math.max(e.receivedCents - e.refundedCents, 0))}{e.status === "pending" && " · Pendente: " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0))}</p>
+ {e.status === "pending" && (e.kind === "income" ? canReceive : canManage) && <>
             <ActionPanel title="Marcar como pago">
-            <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" confirm={"Confirmar recebimento/pagamento do saldo de " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0)) + "?"}>
+            <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" idempotent confirm={"Confirmar recebimento/pagamento do saldo de " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0)) + "?"}>
             <PaymentField />
             </ManagementForm>
             </ActionPanel>
-            <ManagementForm action="finance-cancel" id={e.id} label="Cancelar este registro" confirm="Cancelar este registro?"/>
+            {canManage && <ManagementForm action="finance-cancel" id={e.id} label="Cancelar este registro" confirm="Cancelar este registro?"/>}
             </>}
- {e.status === "cancelled" && !e.packageReceivableLocked && <ManagementForm action="finance-reopen" id={e.id} label="Desfazer cancelamento" confirm="Desfazer o cancelamento deste registro?"/>}
+ {canManage && e.status === "cancelled" && !e.packageReceivableLocked && <ManagementForm action="finance-reopen" id={e.id} label="Desfazer cancelamento" confirm="Desfazer o cancelamento deste registro?"/>}
  {e.packageReceivableLocked ? <p className="text-sm">Recebível encerrado por pacote. Uma nova cobrança exige lançamento manual.</p> : null}
  {e.commissionCashLocked ? <p className="text-sm">Movimento vinculado à comissão. Registre pagamentos e devoluções na tela de comissões.</p> : null}
- {!e.commissionCashLocked && e.status !== "cancelled" && e.kind === "income" && e.refundedCents < e.receivedCents && <ActionPanel title="Registrar devolução">
+ {canManage && !e.commissionCashLocked && e.status !== "cancelled" && e.kind === "income" && e.refundedCents < e.receivedCents && <ActionPanel title="Registrar devolução">
             <ManagementForm action="finance-refund" id={e.id} label="Confirmar devolução" idempotent confirm="Confirmar a devolução? Confira valor, motivo e forma de pagamento.">
             <p className="text-sm">Ainda dá para devolver {formatCentsToReais(e.receivedCents - e.refundedCents)}. Isto só anota a devolução no Agendê. Se for um pacote inteiro, as sessões que faltam podem ser canceladas.</p>
             <Field label="Valor devolvido (R$)" name="amount"/>

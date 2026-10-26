@@ -423,7 +423,14 @@ BEGIN
     'received_cents', v_received,
     'financial_entry_id', v_entry_id,
     'release_policy', v_settlement.release_policy,
-    'commission', CASE WHEN v_commission.id IS NULL THEN NULL ELSE jsonb_build_object(
+    'commission', CASE WHEN v_commission.id IS NULL OR NOT (
+      app.member_has_permission(v_settlement.workspace_id,'commissions.manage_team')
+      OR app.member_has_permission(v_settlement.workspace_id,'commissions.pay')
+      OR (app.member_has_permission(v_settlement.workspace_id,'commissions.view_own') AND EXISTS (
+        SELECT 1 FROM public.workspace_members m WHERE m.id=v_commission.professional_member_id
+        AND m.workspace_id=v_settlement.workspace_id AND m.user_id=(SELECT auth.uid()) AND m.status='active'
+      ))
+    ) THEN NULL ELSE jsonb_build_object(
       'id', v_commission.id,
       'professional_member_id', v_commission.professional_member_id,
       'rate_bps', v_commission.rate_bps,
@@ -467,7 +474,9 @@ DECLARE
   v_commission integer;
   v_settlement_id uuid;
   v_product_total integer := 0;
+  v_lines jsonb := '[]'::jsonb;
   v_item record;
+  v_name text;
   v_line integer;
   v_entry_id uuid;
   v_service_entry public.financial_entries%ROWTYPE;
@@ -475,17 +484,15 @@ DECLARE
   v_slice integer;
   v_product_entry public.financial_entries%ROWTYPE;
 BEGIN
-  IF v_key IS NULL OR char_length(v_key) NOT BETWEEN 8 AND 120 THEN
+  IF v_key IS NULL OR char_length(v_key) NOT BETWEEN 8 AND 80 THEN
     RAISE EXCEPTION 'invalid_idempotency_key' USING ERRCODE = '22023';
   END IF;
-  IF jsonb_typeof(COALESCE(p_products, '[]'::jsonb)) <> 'array' OR jsonb_array_length(COALESCE(p_products, '[]'::jsonb)) > 20 THEN
+  IF jsonb_typeof(COALESCE(p_products, '[]'::jsonb)) <> 'array'
+     OR jsonb_array_length(COALESCE(p_products, '[]'::jsonb)) > 20 THEN
     RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
   END IF;
 
-  SELECT * INTO v_appt
-  FROM public.appointments
-  WHERE id = p_appointment_id
-  FOR UPDATE;
+  SELECT * INTO v_appt FROM public.appointments WHERE id = p_appointment_id FOR UPDATE;
   IF v_appt.id IS NULL THEN
     RAISE EXCEPTION 'appointment_not_found' USING ERRCODE = '22023';
   END IF;
@@ -497,15 +504,11 @@ BEGIN
 
   SELECT * INTO v_existing
   FROM public.appointment_settlements
-  WHERE workspace_id = v_appt.workspace_id
-    AND idempotency_key = v_key;
+  WHERE workspace_id = v_appt.workspace_id AND idempotency_key = v_key;
   IF v_existing.id IS NOT NULL AND v_existing.appointment_id <> v_appt.id THEN
     RAISE EXCEPTION 'idempotency_key_conflict' USING ERRCODE = '22023';
   END IF;
-
-  SELECT * INTO v_existing
-  FROM public.appointment_settlements
-  WHERE appointment_id = v_appt.id;
+  SELECT * INTO v_existing FROM public.appointment_settlements WHERE appointment_id = v_appt.id;
   IF v_existing.id IS NOT NULL THEN
     RETURN app.appointment_checkout_summary(v_appt.id, true);
   END IF;
@@ -518,28 +521,68 @@ BEGIN
   END IF;
   v_due := v_appt.price_cents - v_discount;
 
-  IF jsonb_array_length(p_products) > 0 AND NOT (
+  IF jsonb_array_length(COALESCE(p_products, '[]'::jsonb)) > 0 AND NOT (
     app.member_has_permission(v_appt.workspace_id, 'inventory.move')
     OR app.member_has_permission(v_appt.workspace_id, 'inventory.manage')
-  ) THEN
-    RAISE EXCEPTION 'not_authorized' USING ERRCODE = '42501';
-  END IF;
-
-  IF v_receive > 0 AND NOT (
-    app.member_has_permission(v_appt.workspace_id, 'finance.receive')
-    OR app.member_has_permission(v_appt.workspace_id, 'finance.manage')
   ) THEN
     RAISE EXCEPTION 'not_authorized' USING ERRCODE = '42501';
   END IF;
   IF v_receive > 0 AND p_payment_method IS NULL THEN
     RAISE EXCEPTION 'payment_method_required' USING ERRCODE = '22023';
   END IF;
+  IF v_receive > 0 AND NOT (
+    app.member_has_permission(v_appt.workspace_id, 'finance.receive')
+    OR app.member_has_permission(v_appt.workspace_id, 'finance.manage')
+  ) THEN
+    RAISE EXCEPTION 'not_authorized' USING ERRCODE = '42501';
+  END IF;
+
+  IF (
+    SELECT COUNT(*) <> COUNT(DISTINCT x.product_id)
+    FROM jsonb_to_recordset(COALESCE(p_products, '[]'::jsonb)) AS x(product_id uuid, quantity numeric, unit_price_cents integer)
+  ) THEN
+    RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
+  END IF;
+
+  FOR v_item IN
+    SELECT product_id, quantity, unit_price_cents
+    FROM jsonb_to_recordset(COALESCE(p_products, '[]'::jsonb)) AS x(product_id uuid, quantity numeric, unit_price_cents integer) ORDER BY product_id
+  LOOP
+    IF v_item.product_id IS NULL OR v_item.quantity IS NULL OR v_item.unit_price_cents IS NULL
+       OR v_item.quantity <= 0 OR v_item.unit_price_cents <= 0 OR v_item.unit_price_cents > 10000000 THEN
+      RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
+    END IF;
+    SELECT btrim(p.name) INTO v_name
+    FROM public.inventory_products p
+    WHERE p.id = v_item.product_id
+      AND p.workspace_id = v_appt.workspace_id
+      AND p.archived_at IS NULL
+      AND p.active;
+    IF v_name IS NULL THEN
+      RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
+    END IF;
+    IF v_item.quantity<>round(v_item.quantity,3) THEN RAISE EXCEPTION 'invalid_products' USING ERRCODE='22023'; END IF;
+    v_line := round(v_item.quantity * v_item.unit_price_cents)::integer;
+    IF v_line <= 0 OR v_line > 1000000000 THEN
+      RAISE EXCEPTION 'invalid_amount' USING ERRCODE = '22023';
+    END IF;
+    v_product_total := v_product_total + v_line;
+    v_lines := v_lines || jsonb_build_array(jsonb_build_object(
+      'product_id', v_item.product_id,
+      'quantity', v_item.quantity,
+      'unit_price_cents', v_item.unit_price_cents,
+      'line_total_cents', v_line,
+      'name', v_name
+    ));
+  END LOOP;
+
+  IF v_receive > v_due + v_product_total THEN
+    RAISE EXCEPTION 'receipt_exceeds_due' USING ERRCODE = '22023';
+  END IF;
 
   SELECT s.commission_release_policy INTO v_policy
-  FROM public.workspace_settings s
-  WHERE s.workspace_id = v_appt.workspace_id;
+  FROM public.workspace_settings s WHERE s.workspace_id = v_appt.workspace_id;
   v_policy := COALESCE(v_policy, 'on_receipt'::public.commission_release_policy);
-
   SELECT r.rule_id, r.rate_bps INTO v_rule
   FROM app.resolve_commission_rule(v_appt.workspace_id, v_appt.professional_member_id, v_appt.service_id, clock_timestamp()) r;
   v_rate := COALESCE(v_rule.rate_bps, 0);
@@ -552,23 +595,17 @@ BEGIN
     commission_rule_id, commission_rate_bps, commission_eligible_cents, commission_cents, created_by
   ) VALUES (
     v_appt.workspace_id, v_appt.id, v_key, v_appt.professional_member_id, v_appt.service_id,
-    v_appt.price_cents, v_discount, v_due, 0, v_policy,
+    v_appt.price_cents, v_discount, v_due, v_product_total, v_policy,
     v_rule.rule_id, v_rate, v_eligible, v_commission, auth.uid()
   )
   RETURNING id INTO v_settlement_id;
 
   FOR v_item IN
-    SELECT product_id, quantity, unit_price_cents
-    FROM jsonb_to_recordset(p_products) AS x(product_id uuid, quantity numeric, unit_price_cents integer)
+    SELECT product_id, quantity, unit_price_cents, line_total_cents, name
+    FROM jsonb_to_recordset(v_lines) AS x(
+      product_id uuid, quantity numeric, unit_price_cents integer, line_total_cents integer, name text
+    )
   LOOP
-    IF v_item.product_id IS NULL OR v_item.quantity IS NULL OR v_item.unit_price_cents IS NULL
-       OR v_item.quantity <= 0 OR v_item.unit_price_cents <= 0 OR v_item.unit_price_cents > 10000000 THEN
-      RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
-    END IF;
-    v_line := round(v_item.quantity * v_item.unit_price_cents)::integer;
-    IF v_line <= 0 OR v_line > 1000000000 THEN
-      RAISE EXCEPTION 'invalid_amount' USING ERRCODE = '22023';
-    END IF;
     PERFORM app.apply_inventory_movement(
       v_appt.workspace_id, v_item.product_id, 'exit'::public.inventory_movement_type,
       v_item.quantity, NULL, 'Venda no atendimento'
@@ -578,44 +615,28 @@ BEGIN
       client_id, created_by, idempotency_key, linked_settlement_id
     ) VALUES (
       v_appt.workspace_id, 'income', 'pending', 'manual',
-      left('Produto vendido no atendimento', 200),
-      v_line, v_appt.client_id, auth.uid(),
-      left(v_key || ':p:' || v_item.product_id::text, 120),
-      v_settlement_id
+      left('Produto: ' || v_item.name, 200),
+      v_item.line_total_cents, v_appt.client_id, auth.uid(),
+      left(v_key || ':p:' || v_item.product_id::text, 120), v_settlement_id
     )
     RETURNING id INTO v_entry_id;
     INSERT INTO public.appointment_settlement_products (
       workspace_id, settlement_id, product_id, quantity, unit_price_cents, line_total_cents, financial_entry_id
     ) VALUES (
-      v_appt.workspace_id, v_settlement_id, v_item.product_id, v_item.quantity, v_item.unit_price_cents, v_line, v_entry_id
+      v_appt.workspace_id, v_settlement_id, v_item.product_id, v_item.quantity,
+      v_item.unit_price_cents, v_item.line_total_cents, v_entry_id
     );
-    v_product_total := v_product_total + v_line;
   END LOOP;
-
-  UPDATE public.appointment_settlements
-  SET product_total_cents = v_product_total
-  WHERE id = v_settlement_id;
-
-  -- O fechamento é imutável depois do INSERT. O total de produtos precisa existir antes.
-  -- Recalculamos acima e gravamos numa coluna que o gatilho bloqueia. Gravamos o total no INSERT.
-  -- Se o gatilho já bloqueou o UPDATE, esta função falha. O total é calculado antes do INSERT final.
-  -- Ajuste: o UPDATE acima dispara o gatilho imutável. Removido logo abaixo se falhar no teste.
 
   UPDATE public.appointments
   SET status = 'completed'::public.appointment_status
-  WHERE id = v_appt.id
-    AND workspace_id = v_appt.workspace_id;
+  WHERE id = v_appt.id AND workspace_id = v_appt.workspace_id;
 
   v_left := v_receive;
-  IF v_left > v_due + v_product_total THEN
-    RAISE EXCEPTION 'receipt_exceeds_due' USING ERRCODE = '22023';
-  END IF;
-
   IF v_left > 0 AND v_due > 0 THEN
     SELECT * INTO v_service_entry
     FROM public.financial_entries
-    WHERE appointment_id = v_appt.id
-      AND source = 'appointment'::public.financial_entry_source
+    WHERE appointment_id = v_appt.id AND source = 'appointment'::public.financial_entry_source
     FOR UPDATE;
     v_slice := LEAST(v_left, v_service_entry.amount_cents);
     PERFORM app.record_entry_receipt(v_service_entry, v_slice, p_payment_method, v_key || ':svc', clock_timestamp());
@@ -626,8 +647,7 @@ BEGIN
     FOR v_product_entry IN
       SELECT f.*
       FROM public.financial_entries f
-      JOIN public.appointment_settlement_products sp
-        ON sp.financial_entry_id = f.id
+      JOIN public.appointment_settlement_products sp ON sp.financial_entry_id = f.id
       WHERE sp.settlement_id = v_settlement_id
       ORDER BY sp.created_at, sp.id
       FOR UPDATE OF f
@@ -635,8 +655,7 @@ BEGIN
       EXIT WHEN v_left <= 0;
       v_slice := LEAST(v_left, v_product_entry.amount_cents);
       PERFORM app.record_entry_receipt(
-        v_product_entry, v_slice, p_payment_method,
-        left(v_key || ':r:' || v_product_entry.id::text, 120), clock_timestamp()
+        v_product_entry, v_slice, p_payment_method, left(v_key || ':r:' || v_product_entry.id::text, 120), clock_timestamp()
       );
       v_left := v_left - v_slice;
     END LOOP;
@@ -645,3 +664,10 @@ BEGIN
   RETURN app.appointment_checkout_summary(v_appt.id, false);
 END;
 $$;
+
+-- No newly-created internal SECURITY DEFINER function is public between migrations.
+DO $acl$ DECLARE f record; BEGIN
+ FOR f IN SELECT p.oid::regprocedure signature FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+ WHERE n.nspname='app' AND p.proname=ANY(ARRAY['protect_commission_rule','protect_commission_snapshot','forbid_history_mutation','protect_settlement_product','protect_linked_financial_entry','finance_on_appointment_completed','sync_commission_from_entry','sync_commission_from_refund','sync_commission_from_receipt','record_entry_receipt','appointment_checkout_summary','complete_appointment_checkout'])
+ LOOP EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC,anon,authenticated',f.signature); END LOOP;
+END $acl$;

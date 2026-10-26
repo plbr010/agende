@@ -1,5 +1,7 @@
 # PR #84 — correções e pedido de reauditoria
 
+Atualização de 26/10/2026: este relatório histórico foi sucedido por [pr84-final-corrections.md](pr84-final-corrections.md), após a segunda auditoria. Consulte também a sequência revisada em [pr84-final-rollout.md](pr84-final-rollout.md).
+
 Data: 24/10/2026. Base auditada: `345d1e9f3e2abccf8dd7f53e4c33e9c9afa21f23`. Trabalho exclusivo em `cursor/commissions-finance-permissions-e0c4`, em checkout separado. Não houve alteração de branches do Codex, assinaturas Stripe, staging compartilhado, produção ou configurações Vercel. Não houve merge nem deploy.
 
 ## P1 corrigidos

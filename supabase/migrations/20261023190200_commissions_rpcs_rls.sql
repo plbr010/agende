@@ -158,7 +158,7 @@ BEGIN
 
   FOR v_item IN
     SELECT product_id, quantity, unit_price_cents
-    FROM jsonb_to_recordset(COALESCE(p_products, '[]'::jsonb)) AS x(product_id uuid, quantity numeric, unit_price_cents integer)
+    FROM jsonb_to_recordset(COALESCE(p_products, '[]'::jsonb)) AS x(product_id uuid, quantity numeric, unit_price_cents integer) ORDER BY product_id
   LOOP
     IF v_item.product_id IS NULL OR v_item.quantity IS NULL OR v_item.unit_price_cents IS NULL
        OR v_item.quantity <= 0 OR v_item.unit_price_cents <= 0 OR v_item.unit_price_cents > 10000000 THEN
@@ -173,6 +173,7 @@ BEGIN
     IF v_name IS NULL THEN
       RAISE EXCEPTION 'invalid_products' USING ERRCODE = '22023';
     END IF;
+    IF v_item.quantity<>round(v_item.quantity,3) THEN RAISE EXCEPTION 'invalid_products' USING ERRCODE='22023'; END IF;
     v_line := round(v_item.quantity * v_item.unit_price_cents)::integer;
     IF v_line <= 0 OR v_line > 1000000000 THEN
       RAISE EXCEPTION 'invalid_amount' USING ERRCODE = '22023';
@@ -1013,22 +1014,12 @@ CREATE POLICY commission_rules_select ON public.commission_rules
   FOR SELECT TO authenticated
   USING ((SELECT app.member_has_permission(workspace_id, 'commissions.manage_team')));
 
-CREATE POLICY appointment_settlements_select ON public.appointment_settlements
-  FOR SELECT TO authenticated
-  USING (
-    (SELECT app.member_has_permission(workspace_id, 'finance.manage')
-      OR app.member_has_permission(workspace_id, 'finance.view')
-      OR app.member_has_permission(workspace_id, 'commissions.manage_team'))
-    OR (
-      (SELECT app.member_has_permission(workspace_id, 'commissions.view_own'))
-      AND professional_member_id IN (
-        SELECT m.id FROM public.workspace_members m
-        WHERE m.user_id = (SELECT auth.uid())
-          AND m.workspace_id = appointment_settlements.workspace_id
-          AND m.status = 'active'::public.member_status
-      )
-    )
-  );
+CREATE POLICY appointment_settlements_select ON public.appointment_settlements FOR SELECT TO authenticated USING (
+ app.member_has_permission(workspace_id,'commissions.manage_team') OR app.member_has_permission(workspace_id,'commissions.pay')
+ OR (app.member_has_permission(workspace_id,'commissions.view_own') AND professional_member_id IN
+ (SELECT id FROM public.workspace_members WHERE user_id=(SELECT auth.uid()) AND status='active' AND workspace_id=appointment_settlements.workspace_id))
+);
+
 
 CREATE POLICY appointment_settlement_products_select ON public.appointment_settlement_products
   FOR SELECT TO authenticated

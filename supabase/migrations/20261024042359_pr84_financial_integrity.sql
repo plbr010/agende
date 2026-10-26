@@ -3,6 +3,12 @@
 -- Execute as one transaction. Existing commission payouts require explicit reconciliation,
 -- because an unlinked manual expense cannot safely be inferred from its amount/date.
 DO $$ BEGIN
+ IF EXISTS (SELECT 1 FROM public.financial_entries f WHERE f.entry_type='income' AND f.status='paid'
+   AND EXISTS(SELECT 1 FROM public.financial_receipts r WHERE r.financial_entry_id=f.id)
+   AND (SELECT sum(r.amount_cents) FROM public.financial_receipts r WHERE r.financial_entry_id=f.id)<>f.amount_cents) THEN
+  RAISE EXCEPTION 'paid_receipts_require_reconciliation' USING ERRCODE='22023',
+   HINT='Paid income with incomplete or excessive receipts must be reconciled explicitly before this migration.';
+ END IF;
  IF EXISTS (SELECT 1 FROM public.commission_payments) THEN
   RAISE EXCEPTION 'commission_payments_require_reconciliation' USING ERRCODE='22023';
  END IF;

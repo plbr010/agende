@@ -1,0 +1,49 @@
+[
+  {
+    "file": "20261023190000_commissions_permissions_settlement.sql",
+    "rls": true,
+    "force_rls": true,
+    "untrusted_dml": false,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261023190100_commissions_checkout_and_permissions.sql",
+    "rls": true,
+    "force_rls": true,
+    "untrusted_dml": false,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261023190200_commissions_rpcs_rls.sql",
+    "rls": true,
+    "force_rls": true,
+    "untrusted_dml": false,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261023190300_report_permission_and_receipts.sql",
+    "rls": true,
+    "force_rls": true,
+    "untrusted_dml": false,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261023190400_package_reversal_keeps_service_history.sql",
+    "rls": true,
+    "force_rls": true,
+    "untrusted_dml": false,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261024042359_pr84_financial_integrity.sql",
+    "rls": true,
+    "internal_helper_executable": false
+  },
+  {
+    "file": "20261025010715_pr84_final_integrity.sql",
+    "rls": true,
+    "force_rls": true,
+    "operation_ledger_accessible": false,
+    "anonymous_settlement_executable": false
+  }
+]

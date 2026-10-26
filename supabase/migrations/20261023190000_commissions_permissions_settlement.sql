@@ -377,7 +377,7 @@ AS $$
     WHEN 'appointments.cancel' THEN true
     WHEN 'clients.view' THEN true
     WHEN 'clients.manage' THEN true
-    WHEN 'inventory.view' THEN true
+    WHEN 'inventory.view' THEN p_role IN ('owner'::public.member_role, 'admin'::public.member_role)
     WHEN 'inventory.move' THEN p_role IN ('owner'::public.member_role, 'admin'::public.member_role, 'receptionist'::public.member_role)
     WHEN 'inventory.manage' THEN p_role IN ('owner'::public.member_role, 'admin'::public.member_role)
     WHEN 'finance.view' THEN p_role IN ('owner'::public.member_role, 'admin'::public.member_role)
@@ -770,3 +770,37 @@ BEGIN
   RETURN v_commission.id;
 END;
 $$;
+
+-- Secure from the first committed step, including platform auto-grants.
+ALTER TABLE public.commission_rules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.commission_rules FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.commission_rules FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.appointment_settlements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.appointment_settlements FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.appointment_settlements FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.appointment_settlement_products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.appointment_settlement_products FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.appointment_settlement_products FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.financial_receipts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.financial_receipts FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.financial_receipts FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.commission_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.commission_entries FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.commission_entries FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.commission_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.commission_events FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.commission_events FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.commission_payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.commission_payments FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.commission_payments FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.workspace_member_permissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.workspace_member_permissions FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.workspace_member_permissions FROM PUBLIC,anon,authenticated;
+
+-- No newly-created internal SECURITY DEFINER function is public between migrations.
+DO $acl$ DECLARE f record; BEGIN
+ FOR f IN SELECT p.oid::regprocedure signature FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+ WHERE n.nspname='app' AND p.proname=ANY(ARRAY['percent_of_cents','prorate_cents','permission_keys','permission_default','member_has_permission','assert_member_permission','assert_finance_manager','assert_finance_operator','assert_report_reader','assert_inventory_manager','assert_inventory_mover','resolve_commission_rule','sync_appointment_commission'])
+ LOOP EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC,anon,authenticated',f.signature); END LOOP;
+END $acl$;
+GRANT EXECUTE ON FUNCTION app.member_has_permission(uuid,text) TO authenticated;

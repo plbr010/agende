@@ -1,0 +1,9 @@
+[
+  {
+    "case": "settle_same_key",
+    "pa": 24132,
+    "pb": 23528,
+    "blocked": true,
+    "result": "same entry, one operation and receipt"
+  }
+]

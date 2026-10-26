@@ -5,7 +5,7 @@ import { runInNewContext } from "node:vm";
 import ts from "typescript";
 import * as mutations from "./mutations";
 
-function actionFor(role: string) {
+function actionFor(role: string, permissions?: Record<string, boolean>) {
   const calls: Array<{name:string;args:Record<string,unknown>}> = [];
   const paths: string[] = [];
   const exports: {managementAction?: (previous: object, form: FormData) => Promise<{error?:string;success?:string}>} = {};
@@ -14,7 +14,7 @@ function actionFor(role: string) {
   runInNewContext(outputText,{exports,require(name:string){
     if(name === "./mutations") return mutations;
     if(name === "next/cache") return {revalidatePath:(path:string)=>paths.push(path)};
-    if(name === "@/lib/auth/session") return {requireConfirmedSession:async()=>({workspaces:[{id:"session-workspace",role}]})};
+    if(name === "@/lib/auth/session") return {requireConfirmedSession:async()=>({workspaces:[{id:"session-workspace",role}],permissions})};
     if(name === "@/lib/supabase/server") return {createClient:async()=>({rpc:async(name:string,args:Record<string,unknown>)=>{calls.push({name,args});return {data:"saved",error:null};}})};
     throw Error(name);
   }});
@@ -38,7 +38,7 @@ test("server actions derive tenant from session and call the real RPC contract",
     [{action:"product-reactivate",id},"reactivate_inventory_product"],
     [{action:"package-sell",id,client:id},"sell_service_package"],
     [{action:"package-cancel",id},"cancel_client_package"],
-    [{action:"finance-paid",id,method:"pix"},"mark_financial_entry_paid"],
+    [{action:"finance-paid",id,method:"pix",key:id},"settle_financial_entry"],
     [{action:"finance-cancel",id},"cancel_financial_entry"],
     [{action:"finance-reopen",id},"reopen_financial_entry"],
   ] as Array<[Record<string,string>,string]>) {
@@ -50,6 +50,17 @@ test("server actions derive tenant from session and call the real RPC contract",
     if(input.action === "movement") { assert.equal(action.calls[0].args.p_new_quantity,0);assert.equal(action.calls[0].args.p_quantity,undefined); }
     assert.ok(action.paths.includes("/app/relatorios"));
   }
+});
+test("explicit grants reach actions, denies stop them, and grants never allow trial/package changes", async()=>{
+  const grant=actionFor("professional",{"inventory.move":true,"finance.receive":true});
+  assert.ok((await grant.run({},form({action:"movement",id,type:"entry",quantity:"1",reason:"Entrada recebida"}))).success);
+  assert.ok((await grant.run({},form({action:"finance-paid",id,method:"pix",key:id}))).success);
+  assert.equal(grant.calls[1].args.p_idempotency_key,id);
+  assert.ok((await grant.run({},form({action:"trial",plan:"equipe"}))).error);
+  const deny=actionFor("admin",{"inventory.move":false,"inventory.manage":false,"finance.receive":false,"finance.manage":false});
+  assert.ok((await deny.run({},form({action:"movement",id,type:"entry",quantity:"1",reason:"Entrada"}))).error);
+  assert.ok((await deny.run({},form({action:"finance-paid",id,method:"pix",key:id}))).error);
+  assert.equal(deny.calls.length,0);
 });
 test("invalid form input never reaches the database",async()=>{
   const action=actionFor("owner");

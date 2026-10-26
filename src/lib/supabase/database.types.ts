@@ -1448,6 +1448,7 @@ export type Database = {
       list_public_booking_catalog: { Args: { p_slug: string | null }; Returns: Json };
       list_public_localities: { Args: { p_state?: string | null; p_query?: string | null; p_limit?: number | null }; Returns: Json };
       mark_financial_entry_paid: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_paid_at?: string | null }; Returns: string };
+      settle_financial_entry: { Args: { p_workspace_id: string; p_entry_id: string; p_payment_method: Database["public"]["Enums"]["payment_method"]; p_idempotency_key: string; p_paid_at?: string | null }; Returns: string };
       peek_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       queue_account_avatar_upload: { Args: { p_user_id: string | null; p_path: string | null }; Returns: undefined };
       reactivate_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
