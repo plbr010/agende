@@ -221,3 +221,18 @@ $$;
 REVOKE ALL ON SCHEMA test_helpers FROM PUBLIC, anon, authenticated;
 GRANT USAGE ON SCHEMA test_helpers TO postgres, service_role;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO postgres, service_role;
+
+-- Test suites that load this file exercise appointment rules for an entitled workspace.
+-- This is not a migration and must not be run on production or shared staging.
+-- The product default remains globally paused with no workspace exception.
+DO $$
+BEGIN
+  IF to_regclass('app.booking_creation_controls') IS NOT NULL THEN
+    UPDATE app.booking_creation_controls
+       SET globally_paused = false,
+           updated_at = now()
+     WHERE id;
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.create_public_appointment(text,uuid,uuid,timestamptz,text,text,text,text,text) TO authenticated';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.create_appointment(uuid,uuid,uuid,uuid,timestamptz,text) TO authenticated';
+  END IF;
+END $$;
