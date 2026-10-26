@@ -21,6 +21,7 @@ import * as mutationValidation from '../src/lib/modules/mutations.ts';
 import * as agendaStatus from '../src/lib/agenda/status.ts';
 import * as checkoutMessage from '../src/lib/agenda/checkout-message.ts';
 import * as periodRules from '../src/lib/agenda/period-rules.ts';
+import * as agendaErrors from '../src/lib/agenda/errors.ts';
 import * as timezone from '../src/lib/time/timezone.ts';
 import * as workspaceTimezone from '../src/lib/workspace/timezone.ts';
 
@@ -104,7 +105,7 @@ test(`${sourceRef ? 'published '+sourceRef+' server actions on updated SQL' : 's
     '@/lib/auth/redirects':redirects, '@/lib/auth/signup-journey':signupJourney, '@/lib/auth/session':{loadAppSession:async()=>null,requireConfirmedSession:async()=>({user:{id:actor},workspaces:[{id:workspaceId,role:actor===owner?'owner':'professional'}]})},
     '@/lib/http/origin':{getRequestOrigin:async()=>'http://127.0.0.1:3000'}, '@/lib/validation/email':email,'@/lib/validation/signup':signup,
     '@/lib/validation/catalog':catalogValidation,'@/lib/validation/money':money,'@/lib/validation/phone':phone,
-    '@/lib/validation/agenda':agendaValidation,'@/lib/agenda/status':agendaStatus,'@/lib/agenda/checkout-message':checkoutMessage,'@/lib/agenda/period-rules':periodRules,'@/lib/time/timezone':timezone,
+    '@/lib/validation/agenda':agendaValidation,'@/lib/agenda/status':agendaStatus,'@/lib/agenda/checkout-message':checkoutMessage,'@/lib/agenda/period-rules':periodRules,'@/lib/agenda/errors':agendaErrors,'@/lib/time/timezone':timezone,
     '@/lib/workspace/queries':{loadWorkspaceSettings:async()=>({timezone:'America/Sao_Paulo'})},
     '@/lib/workspace/public':{publicLogoUrl:()=>null, readPublicPersonPhoto:()=>null}, '@/lib/workspace/timezone':workspaceTimezone,
     '@/lib/booking/ip':{hashClientIp:async()=>'local-fixture-only'}, '@/lib/booking/validation':bookingValidation,

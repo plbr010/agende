@@ -13,3 +13,7 @@ export function workspaceSettingsFieldError(message: string) {
 }
 
 export const inactiveWorkspaceMessage = "O teste grátis ou a assinatura deste estabelecimento está inativo. Confira a assinatura para continuar editando o negócio.";
+
+export function isInactiveWorkspaceError(error: unknown): boolean {
+  return error instanceof Error && error.message.includes("workspace_subscription_inactive");
+}

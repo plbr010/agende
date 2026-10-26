@@ -248,7 +248,7 @@ export function sanitizeBookingError(message: string | null | undefined): string
   if (value.includes("booking_creation_paused")) {
     return "A agenda online deste salão não está aberta para novos agendamentos.";
   }
-  if (value.includes("workspace_unavailable")) {
+  if (value.includes("workspace_unavailable") || value.includes("workspace_subscription_inactive")) {
     return "A agenda online deste salão está temporariamente indisponível.";
   }
   if (value.includes("workspace_not_found")) {

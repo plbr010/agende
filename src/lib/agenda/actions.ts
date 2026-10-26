@@ -25,7 +25,7 @@ import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { zonedWallTimeToUtc } from "@/lib/time/timezone";
 import { parseReaisToCents } from "@/lib/validation/money";
 import { checkoutMessage } from "@/lib/agenda/checkout-message";
-import { PERIOD_MESSAGES } from "@/lib/agenda/period-rules";
+import { mapAgendaError, slotQueryMessage } from "@/lib/agenda/errors";
 
 export type SlotActionState = ActionState & {
   slots?: string[];
@@ -43,62 +43,6 @@ function fieldErrorsFromZod(error: { issues: ReadonlyArray<{ path: readonly Prop
     }
   }
   return fieldErrors;
-}
-
-function mapAgendaError(message: string): string {
-  if (message.includes("booking_creation_paused")) {
-    return "A agenda deste salão não está aberta para novos agendamentos.";
-  }
-  if (message.includes("outside_working_hours")) {
-    return "Esse horário está fora do horário de atendimento da profissional.";
-  }
-  if (message.includes("inside_break")) {
-    return "Esse horário cai em uma pausa.";
-  }
-  if (message.includes("inside_time_block")) {
-    return "Esse horário está bloqueado na agenda.";
-  }
-  if (message.includes("appointment_overlap") || message.includes("23P01")) {
-    return "Já existe um agendamento neste horário.";
-  }
-  if (message.includes("service_inactive")) {
-    return "Este serviço não está disponível para agendar.";
-  }
-  if (message.includes("professional_booking_disabled") || message.includes("professional_inactive")) {
-    return "Este profissional não está atendendo no momento.";
-  }
-  if (message.includes("professional_service_inactive")) {
-    return "Este profissional não realiza o serviço escolhido.";
-  }
-  if (message.includes("client_not_found") || message.includes("client_archived")) {
-    return "Cliente não encontrado neste salão.";
-  }
-  if (message.includes("appointment_terminal") || message.includes("appointment_in_progress")) {
-    return "Este agendamento não pode mais ser reagendado.";
-  }
-  if (message.includes("status_denied") || message.includes("invalid_status_transition")) {
-    return "Essa mudança de situação não é permitida.";
-  }
-  if (message.includes("appointment_write_denied") || message.includes("42501") || message.includes("permission denied")) {
-    return "Você não tem permissão para esta ação.";
-  }
-  if (message.includes("appointment_crosses_local_date")) {
-    return "O atendimento precisa caber no mesmo dia.";
-  }
-  if (message.includes("working_hours_no_overlap") || message.includes("professional_breaks_no_overlap")) {
-    return PERIOD_MESSAGES.overlap;
-  }
-  if (message.includes("professional_time_blocks_no_overlap")) {
-    return "Esta folga cruza outra que já está marcada. Escolha outro horário.";
-  }
-  if (
-    message.includes("working_hours_identity_immutable") ||
-    message.includes("break_identity_immutable") ||
-    message.includes("time_block_identity_immutable")
-  ) {
-    return "Não foi possível alterar este horário. Tente de novo.";
-  }
-  return "Não deu certo salvar. Tente de novo.";
 }
 
 function validationState(error: { issues: ReadonlyArray<{ path: readonly PropertyKey[]; message: string }> }): ActionState {
@@ -270,7 +214,7 @@ export async function loadSlotsAction(
   if (error || !workspace) {
     return { error: error ?? "Nenhum negócio encontrado." };
   }
-  const slots = await loadAvailableSlots(
+  const loaded = await loadAvailableSlots(
     workspace.id,
     parsed.data.professionalMemberId,
     parsed.data.serviceId,
@@ -281,14 +225,11 @@ export async function loadSlotsAction(
     professionalMemberId: parsed.data.professionalMemberId,
     serviceId: parsed.data.serviceId,
   };
-  if (slots.length === 0) {
-    return {
-      error: "Nenhum horário livre neste dia.",
-      slots: [],
-      ...query,
-    };
+  const message = slotQueryMessage(loaded.error, loaded.slots.length);
+  if (message) {
+    return { error: message, slots: [], ...query };
   }
-  return { slots, ...query };
+  return { slots: loaded.slots, ...query };
 }
 
 export async function addWorkingHourAction(

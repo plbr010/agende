@@ -122,6 +122,7 @@ test("uniqueClientWorkspaces keeps first name per slug", () => {
 test("sanitize booking errors never leak internals", () => {
   assert.match(sanitizeBookingError("slot_taken"), /acabou de ser reservado/);
   assert.match(sanitizeBookingError("booking_rate_limited"), /Muitas tentativas/);
+  assert.match(sanitizeBookingError("workspace_subscription_inactive"), /temporariamente indisponível/i);
   assert.equal(sanitizeBookingError("something unexpected sql"), "Não foi possível concluir. Tente de novo.");
 });
 

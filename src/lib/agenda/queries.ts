@@ -212,7 +212,7 @@ export async function loadAvailableSlots(
   professionalMemberId: string,
   serviceId: string,
   localDate: string,
-): Promise<string[]> {
+): Promise<{ slots: string[]; error: string | null }> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("list_available_slots", {
     p_workspace_id: workspaceId,
@@ -221,9 +221,9 @@ export async function loadAvailableSlots(
     p_local_date: localDate,
   });
   if (error) {
-    return [];
+    return { slots: [], error: error.message };
   }
-  return (data ?? []).map((row) => row.starts_at);
+  return { slots: (data ?? []).map((row) => row.starts_at), error: null };
 }
 
 export async function loadCurrentMemberId(workspaceId: string, userId: string): Promise<string | null> {
