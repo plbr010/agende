@@ -1,0 +1,105 @@
+{
+  "purpose": "Read-only review manifest; no execution or migration repair is authorized",
+  "base_sha": "d39b2802f393eafbdc628d2a24f8368a685569b0",
+  "published_sha": "a3923c4223e234365deb0d56c932ca53106920ef",
+  "catalog_observed_at_utc": null,
+  "catalog_observed_on": "2026-10-26",
+  "historical_guards": [
+    {
+      "signature": "app.assert_member_change_allowed(uuid,workspace_members,member_role,member_status)",
+      "matches_expected": true
+    },
+    {
+      "signature": "app.enforce_active_owner()",
+      "matches_expected": true
+    },
+    {
+      "signature": "app.lock_workspace_membership(uuid)",
+      "matches_expected": true
+    },
+    {
+      "signature": "app.remove_workspace_member(uuid,uuid)",
+      "matches_expected": true
+    },
+    {
+      "signature": "app.update_workspace_member_role(uuid,uuid,member_role)",
+      "matches_expected": true
+    }
+  ],
+  "historical_trigger_matches_expected": true,
+  "pending": [
+    {
+      "file": "20261009172028_launch_observed_owner_guard.sql",
+      "version": "20261009172028",
+      "sha256_lf": "49981a76a8791b04488b1807f5f3139a245bfaae591002a6929f17426636f673",
+      "historical_reconciliation": true
+    },
+    {
+      "file": "20261023190000_commissions_permissions_settlement.sql",
+      "version": "20261023190000",
+      "sha256_lf": "33bec87fecd6dab907ea84588efe634e4f2e2631bb8efff0039d1e4214181aad",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261023190100_commissions_checkout_and_permissions.sql",
+      "version": "20261023190100",
+      "sha256_lf": "08f4dd65c22cb216a6570a37802985c9663ce8de84610bf57d32069a0cd5ff7e",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261023190200_commissions_rpcs_rls.sql",
+      "version": "20261023190200",
+      "sha256_lf": "4454825b2d6072abc03f26e7c8dc09649b519bd0d52877abcc69faeb08ab5d28",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261023190300_report_permission_and_receipts.sql",
+      "version": "20261023190300",
+      "sha256_lf": "af8ebb2d8ec2c0d38f40cc936cc560d24546642ae85afa0b20667fd94a33ba07",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261023190400_package_reversal_keeps_service_history.sql",
+      "version": "20261023190400",
+      "sha256_lf": "2da6996c74f6e48f629bdc85ffc6a404ee86f5ac4fea4bbf0b1ec832569f14b2",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261024042359_pr84_financial_integrity.sql",
+      "version": "20261024042359",
+      "sha256_lf": "4132a86ef1c2af1cb7c81e9807e0f734f7d29f9e73fbdc24993d281e8bb570f9",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261025010715_pr84_final_integrity.sql",
+      "version": "20261025010715",
+      "sha256_lf": "906ef6260e067f8e63895dc6457d5712e8707401b6d9a9edc8e0753c18f88708",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261026091115_expired_appointment_cancellation.sql",
+      "version": "20261026091115",
+      "sha256_lf": "3813fd0bf11c2e47eec1aa3badcfe0de1428e7044eded5005ecd65831c489eb7",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261026120000_pilot_workspace_booking_activation.sql",
+      "version": "20261026120000",
+      "sha256_lf": "352721b6e0b5c3296da8416dba9dc9328c7d9aceb97197d8f880479c265e229a",
+      "historical_reconciliation": false
+    },
+    {
+      "file": "20261026153000_pr84_financial_entry_due_date.sql",
+      "version": "20261026153000",
+      "sha256_lf": "36999728894e3776079b7270660d7a3ad78c971344a42e75b7ed2f1af4e17088",
+      "historical_reconciliation": false
+    }
+  ],
+  "remote_only": [
+    {
+      "name": "hardening_snapshot_owner_timezone",
+      "version": "20260919201138"
+    }
+  ],
+  "decision": "Historical effects already observed, version absent from ledger; owner must approve any explicit reconciliation. Never reconstruct the remote-only migration or run repair automatically."
+}

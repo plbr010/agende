@@ -312,7 +312,9 @@ function AppointmentFormDialog({
   const [slotState, slotAction, slotPending] = useActionState(loadSlotsAction, {} as SlotActionState);
   const [, startSlotTransition] = useTransition();
   const slotActionRef = useRef(slotAction);
-  slotActionRef.current = slotAction;
+  useEffect(() => {
+    slotActionRef.current = slotAction;
+  }, [slotAction]);
   const action = appointment ? rescheduleAppointmentAction : createAppointmentAction;
   const [state, formAction, pending] = useAgendaAction(action, () => onOpenChange(false));
   const [professionalMemberId, setProfessionalMemberId] = useState(
