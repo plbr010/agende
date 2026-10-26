@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { CircleDollarSign, Clock3, ReceiptText, Wallet } from "lucide-react";
+import { entryDateLabel } from "@/lib/finance/entry-date";
 import type { FinancialSnapshot } from "@/lib/finance/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { EmptyState } from "@/components/app/empty-state";
@@ -27,10 +28,11 @@ function PaymentField() {
     <option value="other">Outro</option>
     </SelectField>;
 }
-export function FinanceDashboard({ snapshot, canManage, canReceive }: {
+export function FinanceDashboard({ snapshot, canManage, canReceive, timezone }: {
     snapshot: FinancialSnapshot | null;
     canManage: boolean;
     canReceive: boolean;
+    timezone: string;
 }) {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
@@ -88,7 +90,7 @@ export function FinanceDashboard({ snapshot, canManage, canReceive }: {
         <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
-        <p className="text-sm">Data: {e.dueDate?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.kind === "income" && " · Recebido: " + formatCentsToReais(e.receivedCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}{e.kind === "income" && " · Líquido recebido: " + formatCentsToReais(Math.max(e.receivedCents - e.refundedCents, 0))}{e.status === "pending" && " · Pendente: " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0))}</p>
+        <p className="text-sm">Data: {entryDateLabel(e.dueDate, e.paidAt, timezone)}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.kind === "income" && " · Recebido: " + formatCentsToReais(e.receivedCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}{e.kind === "income" && " · Líquido recebido: " + formatCentsToReais(Math.max(e.receivedCents - e.refundedCents, 0))}{e.status === "pending" && " · Pendente: " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0))}</p>
  {e.status === "pending" && (e.kind === "income" ? canReceive : canManage) && <>
             <ActionPanel title="Marcar como pago">
             <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" idempotent confirm={"Confirmar recebimento/pagamento do saldo de " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0)) + "?"}>
