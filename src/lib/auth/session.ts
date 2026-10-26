@@ -47,6 +47,7 @@ export type AppSession = {
   context: AuthContext;
   workspaces: WorkspaceSummary[];
   subscription: SubscriptionSummary | null;
+  permissions?: Record<string, boolean> | null;
 };
 
 export async function loadAppSession(): Promise<AppSession | null> {
@@ -143,6 +144,20 @@ export async function loadAppSession(): Promise<AppSession | null> {
     }
   }
 
+  let permissions: Record<string, boolean> | null = null;
+  if (primaryWorkspace && typeof supabase.rpc === "function") {
+    try {
+      const { data, error } = await supabase.rpc("get_my_permissions", { p_workspace_id: primaryWorkspace.id });
+      if (!error && data && typeof data === "object" && !Array.isArray(data)) {
+        permissions = Object.fromEntries(
+          Object.entries(data as Record<string, unknown>).filter((entry): entry is [string, boolean] => typeof entry[1] === "boolean"),
+        );
+      }
+    } catch {
+      permissions = null;
+    }
+  }
+
   const intendedUse = profile?.intended_use ?? "client";
   const context: AuthContext = {
     emailConfirmed: true,
@@ -166,6 +181,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
     context,
     workspaces,
     subscription,
+    permissions,
   };
 }
 

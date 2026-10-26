@@ -94,7 +94,7 @@ export default async function AppPage({
   const todayRevenue = dayRevenueCents(appointments, today);
   const yesterdayRevenue = dayRevenueCents(appointments, yesterday);
   const rating = reviewsResult.schemaReady ? averageRating(reviewsResult.reviews.map((review) => review.rating)) : null;
-  const canOpenFinance = canAccessWorkspacePath("/app/financeiro", workspace.role);
+  const canOpenFinance = canAccessWorkspacePath("/app/financeiro", workspace.role, session.permissions);
   const occupied = new Set(
     appointments.filter((item) => item.status !== "cancelled" && item.status !== "no_show").map((item) => item.localDate),
   );

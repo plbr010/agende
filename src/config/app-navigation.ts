@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   CircleDollarSign,
+  HandCoins,
   House,
   PackageCheck,
   Settings2,
@@ -12,7 +13,7 @@ import {
   WandSparkles,
   type LucideIcon,
 } from "lucide-react";
-import { canAccessWorkspacePath, type WorkspaceRole } from "@/lib/auth/permissions";
+import { canAccessWorkspacePath, type WorkspacePermissions, type WorkspaceRole } from "@/lib/auth/permissions";
 
 export type AppNavigationItem = {
   href: string;
@@ -44,6 +45,7 @@ export const appNavigation: AppNavigationGroup[] = [
       { href: "/app/estoque", label: "Estoque", description: "Produtos e movimentações", icon: Boxes },
       { href: "/app/pacotes", label: "Pacotes", description: "Combos para clientes", icon: PackageCheck },
       { href: "/app/financeiro", label: "Financeiro", description: "Dinheiro que entra e sai", icon: CircleDollarSign },
+      { href: "/app/comissoes", label: "Comissões", description: "O que cada profissional tem a receber", icon: HandCoins },
       { href: "/app/relatorios", label: "Relatórios", description: "Números do mês", icon: ChartNoAxesCombined },
       { href: "/app/avaliacoes", label: "Avaliações", description: "Notas das clientes", icon: Star },
     ],
@@ -57,11 +59,14 @@ export const settingsNavigationItem: AppNavigationItem = {
   icon: Settings2,
 };
 
-export function getAppNavigation(role: WorkspaceRole | null | undefined): AppNavigationGroup[] {
+export function getAppNavigation(
+  role: WorkspaceRole | null | undefined,
+  permissions?: WorkspacePermissions | null,
+): AppNavigationGroup[] {
   return appNavigation
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => canAccessWorkspacePath(item.href, role)),
+      items: group.items.filter((item) => canAccessWorkspacePath(item.href, role, permissions)),
     }))
     .filter((group) => group.items.length > 0);
 }

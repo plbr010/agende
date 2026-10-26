@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { requireConfirmedSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { parseMutation, mutationError, mutationPath } from "./mutations";
+import { parseMutation, mutationError, mutationPath, canRunMutation } from "./mutations";
 import type { ActionState } from "@/lib/auth/actions";
 export async function managementAction(_previous: ActionState, form: FormData): Promise<ActionState> {
     const parsed = parseMutation(form);
@@ -16,9 +16,9 @@ export async function managementAction(_previous: ActionState, form: FormData): 
     }
     const v = parsed.data;
     const path = mutationPath(v.action);
-    const session = await requireConfirmedSession(path);
+    const session = await requireConfirmedSession("/app");
     const workspace = session.workspaces[0];
-    if (!workspace || !["owner", "admin"].includes(workspace.role))
+    if (!workspace || !canRunMutation(v, workspace.role, session.permissions))
         return { error: "Você não tem permissão para esta ação." };
     const db = await createClient();
     const w = { p_workspace_id: workspace.id };
@@ -56,7 +56,7 @@ export async function managementAction(_previous: ActionState, form: FormData): 
                 result = await db.rpc("create_financial_entry", { ...w, p_description: v.description, p_entry_type: v.kind, p_amount_cents: v.amount, p_due_date: v.due, ...(v.category ? { p_category_id: v.category } : {}), p_idempotency_key: v.key });
                 break;
             case "finance-paid":
-                result = await db.rpc("mark_financial_entry_paid", { ...w, p_entry_id: v.id, p_payment_method: v.method });
+                result = await db.rpc("settle_financial_entry", { ...w, p_entry_id: v.id, p_payment_method: v.method, p_idempotency_key: v.key });
                 break;
             case "finance-cancel":
                 result = await db.rpc("cancel_financial_entry", { ...w, p_entry_id: v.id });

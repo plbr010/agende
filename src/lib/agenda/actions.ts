@@ -23,6 +23,8 @@ import {
 import { canRescheduleStatus, isAppointmentStatus } from "@/lib/agenda/status";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { zonedWallTimeToUtc } from "@/lib/time/timezone";
+import { parseReaisToCents } from "@/lib/validation/money";
+import { checkoutMessage } from "@/lib/agenda/checkout-message";
 import { PERIOD_MESSAGES } from "@/lib/agenda/period-rules";
 
 export type SlotActionState = ActionState & {
@@ -549,4 +551,99 @@ export async function deleteTimeBlockAction(formData: FormData): Promise<ActionS
   revalidatePath(`/app/equipe/${memberId}/disponibilidade`);
   revalidateAgenda();
   return { success: "Folga removida." };
+}
+
+const checkoutSummarySchema = z.object({
+  repeated: z.boolean(),
+  amount_due_cents: z.number().int().nonnegative(),
+  product_total_cents: z.number().int().nonnegative(),
+  received_cents: z.number().int().nonnegative(),
+  commission: z.object({
+    original_cents: z.number().int().nonnegative(),
+    released_cents: z.number().int().nonnegative(),
+    status: z.string(),
+  }).nullable(),
+});
+
+function mapCheckoutError(message: string): string {
+  if (message.includes("invalid_amount") || message.includes("receipt_exceeds_due")) {
+    return "O desconto ou o valor recebido não cabe neste atendimento.";
+  }
+  if (message.includes("payment_method_required")) {
+    return "Escolha como o valor foi recebido.";
+  }
+  if (message.includes("invalid_products") || message.includes("insufficient_stock")) {
+    return "Não foi possível registrar o produto. Confira a quantidade em estoque.";
+  }
+  if (message.includes("not_authorized") || message.includes("appointment_write_denied") || message.includes("status_denied")) {
+    return "Você não pode concluir este atendimento.";
+  }
+  if (message.includes("invalid_idempotency_key")) {
+    return "Abra o atendimento de novo e confirme outra vez.";
+  }
+  return mapAgendaError(message);
+}
+
+export async function completeAppointmentCheckoutAction(formData: FormData): Promise<ActionState> {
+  const appointmentId = String(formData.get("appointmentId") ?? "");
+  const idempotencyKey = String(formData.get("idempotencyKey") ?? "");
+  if (!z.string().uuid().safeParse(appointmentId).success || idempotencyKey.length < 8 || idempotencyKey.length > 80) {
+    return { error: "Abra o atendimento de novo e confirme outra vez." };
+  }
+  const discountRaw = String(formData.get("discount") ?? "").trim();
+  const receivedRaw = String(formData.get("received") ?? "").trim();
+  const discountCents = discountRaw ? parseReaisToCents(discountRaw) : 0;
+  const receivedCents = receivedRaw ? parseReaisToCents(receivedRaw) : 0;
+  if (discountCents == null || receivedCents == null) {
+    return { error: "Informe os valores em reais, como 10,50." };
+  }
+  const paymentMethod = String(formData.get("paymentMethod") ?? "");
+  const allowedMethods = ["cash", "pix", "debit_card", "credit_card", "bank_transfer", "other"] as const;
+  if (receivedCents > 0 && !allowedMethods.includes(paymentMethod as (typeof allowedMethods)[number])) {
+    return { error: "Escolha como o valor foi recebido." };
+  }
+  const productId = String(formData.get("productId") ?? "");
+  const products: Array<{ product_id: string; quantity: number; unit_price_cents: number }> = [];
+  if (productId) {
+    if (!z.string().uuid().safeParse(productId).success) {
+      return { error: "Escolha um produto da lista." };
+    }
+    const quantityRaw = String(formData.get("productQuantity") ?? "").trim().replace(",", ".");
+    const quantity = /^\d+(\.\d{1,3})?$/.test(quantityRaw) ? Number(quantityRaw) : NaN;
+    const unitPrice = parseReaisToCents(String(formData.get("productPrice") ?? ""));
+    if (!Number.isFinite(quantity) || quantity <= 0 || unitPrice == null || unitPrice <= 0) {
+      return { error: "Informe a quantidade com até três casas decimais e o preço do produto." };
+    }
+    products.push({ product_id: productId, quantity, unit_price_cents: unitPrice });
+  }
+
+  const { error, workspace } = await requireWorkspace();
+  if (error || !workspace) {
+    return { error: error ?? "Nenhum negócio encontrado." };
+  }
+  const supabase = await createClient();
+  const { data, error: checkoutError } = await supabase.rpc("complete_appointment_checkout", {
+    p_appointment_id: appointmentId,
+    p_idempotency_key: idempotencyKey,
+    p_discount_cents: discountCents,
+    p_products: products,
+    p_receive_cents: receivedCents,
+    p_payment_method: receivedCents > 0 ? paymentMethod as (typeof allowedMethods)[number] : null,
+  });
+  if (checkoutError) {
+    return { error: mapCheckoutError(checkoutError.message) };
+  }
+  const summary = checkoutSummarySchema.safeParse(data);
+  if (!summary.success) {
+    revalidateAgenda();
+    revalidatePath("/app/financeiro");
+    revalidatePath("/app/comissoes");
+    return { success: "Atendimento concluído." };
+  }
+  revalidateAgenda();
+  revalidatePath("/app/financeiro");
+  revalidatePath("/app/comissoes");
+  return {
+    success: checkoutMessage(summary.data),
+  };
 }

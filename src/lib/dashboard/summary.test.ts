@@ -73,6 +73,7 @@ test("owner menu follows the reference and still reaches avaliações", () => {
     "Estoque",
     "Pacotes",
     "Financeiro",
+    "Comissões",
     "Relatórios",
     "Avaliações",
   ]);

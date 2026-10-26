@@ -19,7 +19,9 @@ export default async function InventoryPage() {
         description="Enxergue o que entra, o que sai e o que precisa de reposição antes de impactar seus atendimentos."
         icon={Boxes}
       />
-      <InventoryDashboard timezone={timezone} snapshot={snapshot} />
+      <InventoryDashboard timezone={timezone} snapshot={snapshot}
+        canManage={Boolean(session.permissions?.["inventory.manage"])}
+        canMove={Boolean(session.permissions?.["inventory.move"] || session.permissions?.["inventory.manage"])} />
     </>
   );
 }

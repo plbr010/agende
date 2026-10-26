@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-26T06:34:28.5610176Z",
+  "base_sha": "1a28f7a5b6bd45dee793a185a129df2760a6732f",
+  "standard_test_events": 481,
+  "native_test_events": 49,
+  "failed": 0,
+  "pg17_real_connections": true,
+  "concurrency_pairs": 8,
+  "all_seven_migration_stages_verified": true,
+  "typecheck": "passed",
+  "lint": "0 errors; 2 pre-existing warnings",
+  "build": "next build --webpack passed",
+  "security_advisors": "owned PG17, loopback only, error level: no issues",
+  "auth_service": "SQL fixture only; GoTrue/PostgREST/cookies/HTTP not verified",
+  "remote_migrations_executed": false,
+  "deployments_executed": false,
+  "owner_confirmed_original_migrations_unapplied": true
+}

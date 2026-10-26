@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-26T06:30:04.352Z",
+  "version": "postgres (PostgreSQL) 17.6",
+  "host": "127.0.0.1",
+  "port": 63286,
+  "suites": [
+    "scripts/commissions-sql.test.mjs",
+    "scripts/commissions-integrity-sql.test.mjs",
+    "scripts/commissions-upgrade-sql.test.mjs",
+    "scripts/pr84-final-sql.test.mjs",
+    "scripts/pr84-final-upgrade.test.mjs",
+    "scripts/action-sql-integration.test.mjs"
+  ],
+  "passed": true,
+  "server_stopped_after_run": true,
+  "auth": "synthetic SQL fixture; no Auth/SMTP service",
+  "data_policy": "owned test databases retained locally, ignored by Git"
+}

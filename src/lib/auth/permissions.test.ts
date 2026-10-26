@@ -113,12 +113,68 @@ for (const role of ["owner", "admin", "professional", "receptionist"] as const) 
   }
 }
 
+test("commissions follow the role, and an individual grant only opens the money screens it names", () => {
+  for (const role of ["owner", "admin", "professional"] as const) {
+    const links = getAppNavigation(role).flatMap((group) => group.items.map((item) => item.href));
+    assert.equal(links.includes("/app/comissoes"), true, role);
+    assert.equal(canAccessWorkspacePath("/app/comissoes", role), true);
+  }
+  const receptionLinks = getAppNavigation("receptionist").flatMap((group) => group.items.map((item) => item.href));
+  assert.equal(receptionLinks.includes("/app/comissoes"), false);
+  assert.equal(canAccessWorkspacePath("/app/comissoes", "receptionist"), false);
+
+  const granted = {
+    "finance.view": true,
+    "finance.manage": false,
+    "reports.view": false,
+    "commissions.view_own": true,
+    "commissions.manage_team": false,
+    "commissions.pay": false,
+  };
+  assert.equal(canAccessWorkspacePath("/app/financeiro", "professional", granted), true);
+  assert.equal(canAccessWorkspacePath("/app/relatorios", "professional", granted), false);
+  assert.equal(canAccessWorkspacePath("/app/comissoes", "professional", granted), true);
+  assert.equal(canAccessWorkspacePath("/app/estoque", "professional", granted), false);
+  assert.equal(getAppNavigation("professional", granted).flatMap((group) => group.items.map((item) => item.href)).includes("/app/financeiro"), true);
+
+  const denied = {
+    "finance.view": false,
+    "finance.manage": false,
+    "reports.view": false,
+    "commissions.view_own": false,
+    "commissions.manage_team": false,
+    "commissions.pay": false,
+  };
+  assert.equal(canAccessWorkspacePath("/app/financeiro", "owner", denied), false);
+  assert.equal(canAccessWorkspacePath("/app/comissoes", "owner", denied), false);
+  assert.equal(canAccessWorkspacePath("/app/agenda", "owner", denied), true);
+});
+
+test("the session guard uses the individual permission map for the active membership", async () => {
+  const granted = sessionFor("professional");
+  granted.permissions = { "finance.view": true, "finance.manage": false };
+  const allow = createConfirmedSessionGuard(async () => granted, redirect);
+  assert.equal(await allow("/app/financeiro"), granted);
+
+  const denied = sessionFor("owner");
+  denied.permissions = { "finance.view": false, "finance.manage": false, "commissions.view_own": false, "commissions.manage_team": false, "commissions.pay": false };
+  const block = createConfirmedSessionGuard(async () => denied, redirect);
+  await assert.rejects(() => block("/app/financeiro"), (error: unknown) => error instanceof Redirect && error.destination === "/app");
+  await assert.rejects(() => block("/app/comissoes"), (error: unknown) => error instanceof Redirect && error.destination === "/app");
+  assert.equal(await block("/app/agenda"), denied);
+});
+
 test("missing role denies protected paths without hiding unrelated routes", () => {
   for (const role of [null, undefined]) {
     for (const route of routes) assert.equal(canAccessWorkspacePath(route, role), false);
     assert.equal(canAccessWorkspacePath("/app/agenda", role), true);
   }
   assert.equal(canAccessWorkspacePath("/app/estoque-extra", "professional"), true);
+});
+
+test("inventory route follows its explicit view grant and deny without implying write access", () => {
+  assert.equal(canAccessWorkspacePath("/app/estoque", "professional", { "inventory.view": true }), true);
+  assert.equal(canAccessWorkspacePath("/app/estoque", "admin", { "inventory.view": false, "inventory.manage": true }), false);
 });
 
 test("a manager membership in another workspace cannot authorize the active workspace", async () => {

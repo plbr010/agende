@@ -21,9 +21,11 @@ function ProductFields({ product }: {
     <Field label="Estoque mínimo" name="minimum" type="number" min={0} step="0.001" value={product?.minimumQuantity ?? 0}/>
     <Field label="Custo por unidade (R$)" name="cost" value={product?.costCents == null ? "" : formatCentsInput(product.costCents)} required={false}/>{product ? <input type="hidden" name="active" value={String(product.active)}/> : <Field label="Quantidade inicial" name="quantity" type="number" min={0} step="0.001" value={0}/>}</>;
 }
-export function InventoryDashboard({ timezone, snapshot }: {
+export function InventoryDashboard({ timezone, snapshot, canManage = false, canMove = false }: {
     timezone: string;
     snapshot: InventorySnapshot | null;
+    canManage?: boolean;
+    canMove?: boolean;
 }) {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
@@ -36,11 +38,11 @@ export function InventoryDashboard({ timezone, snapshot }: {
         <MetricCard label="Estoque baixo" value={snapshot.summary.lowStock} hint="precisa repor em breve" icon={PackageMinus} tone="warning" />
         <MetricCard label="Custo em estoque" value={formatCentsToReais(snapshot.summary.estimatedCostCents)} hint="estimativa do que está na prateleira" icon={Wallet} tone="neutral" />
     </div>
- <ActionPanel title="+ Novo produto">
+ {canManage ? <ActionPanel title="+ Novo produto">
     <ManagementForm action="product-create" label="Criar produto">
     <ProductFields />
     </ManagementForm>
-    </ActionPanel>
+    </ActionPanel> : null}
  <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm">Buscar produto<input className="h-11 rounded-xl border border-input bg-background px-3" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nome do produto"/>
     </label>
@@ -62,25 +64,25 @@ export function InventoryDashboard({ timezone, snapshot }: {
         <p>{p.quantity} {p.unit} · Mínimo {p.minimumQuantity} · <strong>{p.archivedAt ? "Arquivado" : p.quantity === 0 ? "Sem estoque" : p.quantity <= p.minimumQuantity ? "Baixo" : "Normal"}</strong>
         </p>
         <p className="text-sm text-muted-foreground">{p.costCents === null ? "Custo não informado" : formatCentsToReais(p.costCents)}</p>
- {p.archivedAt ? <ManagementForm action="product-reactivate" id={p.id} label="Reativar produto"/> : <>
-            <ActionPanel title="Registrar entrada, saída ou correção">
+ {p.archivedAt ? (canManage ? <ManagementForm action="product-reactivate" id={p.id} label="Reativar produto"/> : null) : <>
+            {canMove ? <ActionPanel title="Registrar entrada, saída ou correção">
             <ManagementForm action="movement" id={p.id} label="Salvar no estoque">
             <SelectField name="type" label="O que aconteceu">
             <option value="entry">Chegou produto</option>
             <option value="exit">Saiu produto</option>
-            <option value="adjustment">Corrigir a quantidade</option>
+            {canManage ? <option value="adjustment">Corrigir a quantidade</option> : null}
             </SelectField>
             <Field name="quantity" label="Quantidade" type="number" min={0} step="0.001"/>
             <p className="text-sm text-muted-foreground">Se for correção, escreva quanto deve ficar no estoque.</p>
             <Field name="reason" label="Motivo"/>
             </ManagementForm>
-            </ActionPanel>
-            <ActionPanel title="Editar produto">
+            </ActionPanel> : null}
+            {canManage ? <><ActionPanel title="Editar produto">
             <ManagementForm action="product-update" id={p.id} label="Salvar produto">
             <ProductFields product={p}/>
             </ManagementForm>
             </ActionPanel>
-            <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? Ele some da lista, mas o histórico continua."}/>
+            <ManagementForm action="product-archive" id={p.id} label="Arquivar" confirm={"Arquivar " + p.name + "? Ele some da lista, mas o histórico continua."}/></> : null}
             </>}
  </article>)}</div>
     <section className="agende-shadow rounded-3xl border border-primary/10 bg-card p-5">
