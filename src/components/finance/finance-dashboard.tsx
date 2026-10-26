@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
 import { CircleDollarSign, Clock3, ReceiptText, Wallet } from "lucide-react";
-import { entryDateLabel } from "@/lib/finance/entry-date";
-import type { FinancialSnapshot } from "@/lib/finance/queries";
+import { financeEntryDateLabel, financeEntryVisibleInPeriod, type FinancialSnapshot } from "@/lib/finance/queries";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { EmptyState } from "@/components/app/empty-state";
 import { MetricCard } from "@/components/app/metric-card";
@@ -28,18 +27,20 @@ function PaymentField() {
     <option value="other">Outro</option>
     </SelectField>;
 }
-export function FinanceDashboard({ snapshot, canManage, canReceive, timezone }: {
+export function FinanceDashboard({ snapshot, canManage, canReceive, startDate, endDate, timeZone }: {
     snapshot: FinancialSnapshot | null;
     canManage: boolean;
     canReceive: boolean;
-    timezone: string;
+    startDate: string;
+    endDate: string;
+    timeZone: string;
 }) {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
     const [kind, setKind] = useState("all");
     if (!snapshot)
         return <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">Não foi possível carregar o financeiro. Atualize a página para tentar novamente.</p>;
-    const entries = snapshot.entries.filter(e => (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
+    const entries = snapshot.entries.filter(e => financeEntryVisibleInPeriod(e, startDate, endDate, timeZone) && (status === "all" || e.status === status) && (kind === "all" || e.kind === kind) && (e.title + " " + (e.clientName ?? "") + " " + e.categoryLabel).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")));
     return <div className="grid gap-5">
     <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Resumo do dinheiro">
         <MetricCard label="Dinheiro que entrou" value={formatCentsToReais(snapshot.summary.paidRevenueCents)} hint="já recebido neste período" icon={CircleDollarSign} tone="success" />
@@ -90,7 +91,7 @@ export function FinanceDashboard({ snapshot, canManage, canReceive, timezone }: 
         <p>{entryStatusLabel(e.kind, e.status)}</p>
         </div>
         </div>
-        <p className="text-sm">Data: {entryDateLabel(e.dueDate, e.paidAt, timezone)}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.kind === "income" && " · Recebido: " + formatCentsToReais(e.receivedCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}{e.kind === "income" && " · Líquido recebido: " + formatCentsToReais(Math.max(e.receivedCents - e.refundedCents, 0))}{e.status === "pending" && " · Pendente: " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0))}</p>
+        <p className="text-sm">Data: {financeEntryDateLabel(e, timeZone)?.split("-").reverse().join("/") ?? "Não informado"}{e.paymentMethodLabel && " · " + e.paymentMethodLabel}{e.kind === "income" && " · Recebido: " + formatCentsToReais(e.receivedCents)}{e.refundedCents > 0 && " · Devolvido: " + formatCentsToReais(e.refundedCents)}{e.kind === "income" && " · Líquido recebido: " + formatCentsToReais(Math.max(e.receivedCents - e.refundedCents, 0))}{e.status === "pending" && " · Pendente: " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0))}</p>
  {e.status === "pending" && (e.kind === "income" ? canReceive : canManage) && <>
             <ActionPanel title="Marcar como pago">
             <ManagementForm action="finance-paid" id={e.id} label="Confirmar pagamento" idempotent confirm={"Confirmar recebimento/pagamento do saldo de " + formatCentsToReais(Math.max(e.amountCents - e.receivedCents, 0)) + "?"}>

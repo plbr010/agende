@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createFinanceQueries } from "./queries";
+import { calendarDayInTimezone, createFinanceQueries, financeEntryDateLabel, financeEntryVisibleInPeriod } from "./queries";
 import { financeUiRpcFixture } from "@/test-fixtures/operational-rpcs";
 
 const entryId = "88888888-8888-4888-8888-888888888888";
@@ -57,4 +57,24 @@ test("payment, cancellation, reopening and refund are distinct finance actions",
   await queries.refund({ workspaceId: "workspace-1", entryId, amountCents: 100, reason: "Cobrança duplicada", paymentMethod: "pix" });
 
   assert.deepEqual(calls, ["create:income", "pay:pix", "cancel", "reopen", "refund:pix:Cobrança duplicada"]);
+});
+
+test("commission cash follows the payment day, not the moment it was saved", () => {
+  const timeZone = "America/Sao_Paulo";
+  const futurePayment = {
+    commissionCashLocked: true,
+    dueDate: null,
+    paidAt: "2026-10-31T03:00:00.000Z",
+  };
+  assert.equal(calendarDayInTimezone(futurePayment.paidAt, timeZone), "2026-10-31");
+  assert.equal(calendarDayInTimezone("2026-10-31T02:00:00.000Z", timeZone), "2026-10-30");
+  assert.equal(financeEntryDateLabel(futurePayment, timeZone), "2026-10-31");
+  assert.equal(financeEntryDateLabel({ dueDate: "2026-10-26", paidAt: futurePayment.paidAt }, timeZone), "2026-10-26");
+  assert.equal(financeEntryVisibleInPeriod(futurePayment, "2026-10-01", "2026-10-26", timeZone), false);
+  assert.equal(financeEntryVisibleInPeriod(futurePayment, "2026-10-01", "2026-10-31", timeZone), true);
+  assert.equal(financeEntryVisibleInPeriod({
+    commissionCashLocked: false,
+    dueDate: "2026-10-20",
+    paidAt: "2026-10-31T03:00:00.000Z",
+  }, "2026-10-01", "2026-10-26", timeZone), true);
 });

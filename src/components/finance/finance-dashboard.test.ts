@@ -13,7 +13,6 @@ test("finance actions use everyday money words instead of accounting jargon", ()
   assert.match(source, /Ainda vai entrar/);
   assert.match(source, /Ainda vai sair/);
   assert.match(source, /Ainda não entrou ou saiu/);
-  assert.match(source, /entryDateLabel\(e\.dueDate, e\.paidAt, timezone\)/);
   assert.doesNotMatch(source, /Dar baixa/);
   assert.doesNotMatch(source, /Salvar lançamento/);
   assert.doesNotMatch(source, /Saldo líquido/);
