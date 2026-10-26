@@ -172,7 +172,7 @@ test('expired trial and complimentary still allow cancellation and keep new book
     );
     await assert.rejects(
       as(db, ownerA, "select public.set_appointment_status($1,'cancelled'::public.appointment_status)", [completedId]),
-      /workspace_subscription_inactive|appointment_terminal|invalid_status_transition/,
+      /appointment_terminal/,
     );
     assert.equal((await db.query('select status from public.appointments where id=$1', [completedId])).rows[0].status, 'completed');
     assert.equal((await db.query('select status from public.appointments where id=$1', [keptId])).rows[0].status, 'scheduled');

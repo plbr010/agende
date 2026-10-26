@@ -53,8 +53,16 @@ const reviewedRevision = "b6ce86c7e9717839d60c57bfe371e3d8d5915082";
 const reviewedPlan = JSON.parse(execFileSync("git", [
   "show", `${reviewedRevision}:docs/production-readiness/launch-final-migration-plan.json`,
 ], { encoding: "utf8" }));
+// Files that landed after the pinned manifest. Checksums are exact bytes.
+// Adding a name to the current launch plan does not approve it.
+const reconciledAfterReview = [
+  ["20261026180100_expired_entitlement_appointment_cancel.sql", "0e28f1113cd2d27f356eef683cbf3aba239282222047e1b3b9c2e28f424de5dd"],
+  ["20261026192015_reconcile_expired_cancellation.sql", "6f7c3a1e5b85d5136554d7973a69db82c3703eec111e19e98cca7e919cf04d8c"],
+];
 const reviewedLocalOnly = [...new Set([
-  ...previouslyReviewedLocalOnly, ...reviewedPlan.pending.map(({ file }) => file),
+  ...previouslyReviewedLocalOnly,
+  ...reviewedPlan.pending.map(({ file }) => file),
+  ...reconciledAfterReview.map(([file]) => file),
 ])].sort();
 assert.deepEqual(
   extra.sort(), reviewedLocalOnly,
@@ -65,6 +73,11 @@ for (const migration of reviewedPlan.pending) {
   assert.match(migration.file, /^\d{14}_[a-z0-9_]+\.sql$/);
   assert.match(migration.sha256_lf, /^[0-9a-f]{64}$/);
   verify(`supabase/migrations/${migration.file}`, migration.sha256_lf, null, true);
+}
+for (const [file, sha256] of reconciledAfterReview) {
+  assert.match(file, /^\d{14}_[a-z0-9_]+\.sql$/);
+  assert.match(sha256, /^[0-9a-f]{64}$/);
+  verify(`supabase/migrations/${file}`, sha256);
 }
 const trial = history.find(({ version }) => version === "20260926194038");
 assert.ok(trial, "Applied trial migration must be in the remote snapshot");
