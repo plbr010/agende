@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AppointmentWhatsApp } from "./appointment-whatsapp";
-import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { STATUS_ACTION_LABEL } from "@/lib/usability/copy";
 import { toast } from "sonner";
 import type { ActionState } from "@/lib/auth/actions";
@@ -310,6 +310,9 @@ function AppointmentFormDialog({
   appointment?: AgendaAppointment;
 }) {
   const [slotState, slotAction, slotPending] = useActionState(loadSlotsAction, {} as SlotActionState);
+  const [, startSlotTransition] = useTransition();
+  const slotActionRef = useRef(slotAction);
+  slotActionRef.current = slotAction;
   const action = appointment ? rescheduleAppointmentAction : createAppointmentAction;
   const [state, formAction, pending] = useAgendaAction(action, () => onOpenChange(false));
   const [professionalMemberId, setProfessionalMemberId] = useState(
@@ -329,8 +332,10 @@ function AppointmentFormDialog({
     data.set("professionalMemberId", professionalMemberId);
     data.set("serviceId", serviceId);
     data.set("localDate", localDate);
-    slotAction(data);
-  }, [open, professionalMemberId, serviceId, localDate, slotAction]);
+    startSlotTransition(() => {
+      slotActionRef.current(data);
+    });
+  }, [open, professionalMemberId, serviceId, localDate]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
