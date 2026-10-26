@@ -1,10 +1,11 @@
 {
-  "checked_at": "2026-10-16T08:22:16.166Z",
-  "version": "postgres (PostgreSQL) 17.6",
+  "checked_at": "2026-10-26T10:59:55.960Z",
+  "version": "postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg24.04+2)",
   "host": "127.0.0.1",
-  "port": 64097,
+  "port": 36597,
   "suites": [
     "scripts/database.test.mjs",
+    "scripts/commissions-sql.test.mjs",
     "scripts/launch-readiness.test.mjs",
     "scripts/final-hardening.test.mjs",
     "scripts/atomic-service-sql.test.mjs",
@@ -12,6 +13,8 @@
     "scripts/pg17-concurrency.test.mjs",
     "scripts/profiles-booking-whatsapp-sql.test.mjs",
     "scripts/workspace-media-sql.test.mjs",
+    "scripts/expired-entitlement-cancel.test.mjs",
+    "scripts/pilot-booking-activation.test.mjs",
     "scripts/discovery-sql.test.mjs"
   ],
   "passed": true,

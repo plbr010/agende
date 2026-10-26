@@ -21,6 +21,7 @@ testFiles.push("scripts/workspace-media-sql.test.mjs", "scripts/profiles-booking
 testFiles.push("scripts/discovery-sql.test.mjs", "scripts/staging-auth-observer.test.mjs", "scripts/staging-auth-expiry-result.test.mjs", "scripts/client-phase2-sql.test.mjs");
 testFiles.push("scripts/prelaunch-upgrade.test.mjs", "scripts/booking-retry-sql.test.mjs");
 testFiles.push("scripts/pilot-booking-activation.test.mjs");
+testFiles.push("scripts/expired-entitlement-cancel.test.mjs");
 testFiles.push("scripts/encrypted-storage-backup.test.mjs");
 testFiles.push("scripts/backup-catalog-compare.test.mjs");
 

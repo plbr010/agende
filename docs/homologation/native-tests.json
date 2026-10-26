@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-16T08:21:51.584Z",
+  "checked_at": "2026-10-26T10:59:53.306Z",
   "groups": {
     "native_pg17_integration_with_mock_auth": {
       "passed": 11,
@@ -7,7 +7,12 @@
       "skipped": 0
     },
     "native_pg17_sql": {
-      "passed": 49,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 14,
       "failed": 0,
       "skipped": 0
     },
@@ -18,7 +23,7 @@
     }
   },
   "totals": {
-    "passed": 70,
+    "passed": 97,
     "failed": 0,
     "skipped": 0
   },
@@ -121,6 +126,84 @@
       "status": "passed"
     },
     {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "service rule wins over the professional default and later edits do not rewrite it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "completion without money stays pending, then partial and full receipts release the same rate",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "refund and manual ceiling keep history and never raise the original amount",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "cancel and no-show do not create commission or service income",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "professional change before completion follows the appointment, and after close needs an audited reassignment",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "package redemption cancels the pending service receivable and does not recreate it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "repeated checkout and receipt keys do not duplicate money",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "products leave stock once and stay out of the commission base",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "full discount creates neither receivable nor commission, and on_completion releases before receipt",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "a rate added after completion does not create a retroactive commission",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "permissions stop cross-professional, cross-salon and privilege escalation",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "checkout locks the appointment and money tables reject a second settlement",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "commissions, checkout, receipts and permissions stay isolated",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
       "file": "scripts/database.test.mjs",
       "name": "selected plans, invalid plan, confirmed email and anonymous access",
       "category": "native_pg17_sql",
@@ -196,6 +279,30 @@
       "file": "scripts/discovery-sql.test.mjs",
       "name": "public discovery: consent, any city, global name, pagination, privacy and tenant permissions",
       "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-entitlement-cancel.test.mjs",
+      "name": "new bookings, slots, reschedule, completion and no-show stay closed",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-entitlement-cancel.test.mjs",
+      "name": "staff, the client and a denied permission follow the existing cancel rules",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-entitlement-cancel.test.mjs",
+      "name": "direct writes, bypass and reopening the row still fail",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-entitlement-cancel.test.mjs",
+      "name": "expired trial and complimentary still allow cancellation and keep new bookings closed",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -334,6 +441,66 @@
       "file": "scripts/pg17-concurrency.test.mjs",
       "name": "PG17 professional photo concurrent replacements retain one live reference",
       "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "default posture blocks both fictional salons before any exception",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "direct insert and the entitlement bypass cannot open a paused salon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "authenticated callers cannot activate themselves, even if execute is granted by mistake",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "service role activates only the pilot UUID and does not touch trial or Stripe state",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "public and internal booking succeed only for the activated salon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "API roles still cannot insert directly; service role is stopped by the trigger when blocked",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "expiry and deactivation block new bookings and keep the existing row",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "the old global resume still does not open the blocked salon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "pilot booking stays closed except for one activated fictional salon",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "two native sessions race on the pilot salon and stay isolated from the blocked salon",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {

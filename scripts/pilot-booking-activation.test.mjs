@@ -281,6 +281,13 @@ test('pilot booking stays closed except for one activated fictional salon', asyn
     await db.query("update app.booking_workspace_exceptions set created_at = now() - interval '2 days', expires_at = now() - interval '1 minute' where workspace_id=$1", [salonA]);
     await assert.rejects(as(db, clientA, book, [slugA, serviceA, memberA, await at('17:00')]), /workspace_unavailable|workspace_subscription_inactive|booking_creation_paused/);
     assert.equal((await db.query('select count(*)::int n from public.appointments where id=$1', [revived])).rows[0].n, 1);
+    await assert.rejects(as(db, clientA, 'select public.reschedule_my_appointment($1,$2,$3)', [revived, await at('18:00'), memberA]), /workspace_subscription_inactive|booking_creation_paused|workspace_unavailable/);
+    const beforeExpiredCancel = await countWhere(db, 'public.appointments', 'workspace_id', salonA);
+    await as(db, ownerA, "select public.set_appointment_status($1,'cancelled'::public.appointment_status)", [revived]);
+    assert.equal((await db.query('select status from public.appointments where id=$1', [revived])).rows[0].status, 'cancelled');
+    assert.equal(await countWhere(db, 'public.appointments', 'workspace_id', salonA), beforeExpiredCancel);
+    await assert.rejects(as(db, clientA, book, [slugA, serviceA, memberA, await at('17:00')]), /workspace_unavailable|workspace_subscription_inactive|booking_creation_paused/);
+    await assert.rejects(db.query("update public.appointments set status='scheduled' where id=$1", [revived]), /workspace_subscription_inactive/);
 
     const beforeDeactivate = await subscription(salonA);
     await assert.rejects(execSql(db, deactivateSql), /pilot_deactivation_not_confirmed/);

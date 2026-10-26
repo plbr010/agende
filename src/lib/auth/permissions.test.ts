@@ -54,6 +54,13 @@ function loadServerPage(
       if (name === "@/lib/catalog/queries") return { loadServices: async () => [], loadClients: async () => [] };
       if (name === "react/jsx-runtime") return { jsx: () => ({}), jsxs: () => ({}), Fragment: "fragment" };
       if (name === "lucide-react" || name.startsWith("@/components/")) return {};
+      if (name === "next/navigation") return { unstable_rethrow() {} };
+      if (name === "@/lib/workspace/settings-errors") {
+        return {
+          isInactiveWorkspaceError: (error: unknown) =>
+            error instanceof Error && error.message.includes("workspace_subscription_inactive"),
+        };
+      }
       throw new Error(`Unexpected page dependency: ${name}`);
     },
   });
@@ -112,6 +119,30 @@ for (const role of ["owner", "admin", "professional", "receptionist"] as const) 
     });
   }
 }
+
+test("an expired entitlement renders finance instead of escaping as an unhandled page error", async () => {
+  const requireSession = createConfirmedSessionGuard(async () => sessionFor("owner"), redirect);
+  const loaders = createOperationalModuleLoaders({
+    inventory: { async loadInventory() { throw new Error("not used"); } },
+    packages: {
+      async loadPackages() { throw new Error("not used"); },
+      async sellPackage() { throw new Error("unexpected mutation"); },
+      async cancelClientPackage() { throw new Error("unexpected mutation"); },
+      async reversePackageRedemption() { throw new Error("unexpected mutation"); },
+    },
+    finance: {
+      async loadFinance() { throw new Error("Supabase RPC get_finance_ui failed: workspace_subscription_inactive"); },
+      async createEntry() { throw new Error("unexpected mutation"); },
+      async markEntryPaid() { throw new Error("unexpected mutation"); },
+      async cancelEntry() { throw new Error("unexpected mutation"); },
+      async reopenEntry() { throw new Error("unexpected mutation"); },
+      async refundEntry() { throw new Error("unexpected mutation"); },
+    },
+    reports: { async loadAdvancedReport() { throw new Error("not used"); } },
+  });
+  const renderRoute = loadServerPage("/app/financeiro", requireSession, loaders);
+  assert.ok(await renderRoute());
+});
 
 test("commissions follow the role, and an individual grant only opens the money screens it names", () => {
   for (const role of ["owner", "admin", "professional"] as const) {

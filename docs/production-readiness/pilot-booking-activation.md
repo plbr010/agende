@@ -41,7 +41,7 @@ Se `request.jwt.claim.role` for `anon` ou `authenticated`, elas levantam `bookin
 
 A migration termina com `SELECT app.suspend_booking_creation()`. Aplicá-la fecha a criação de novo. Ela não insere exceção e não faz `GRANT` de criação.
 
-`app.create_appointment`, `app.create_public_appointment`, `app.list_available_slots` e `app.list_public_available_slots` chamam o gate antes de criar cliente, consumir rate limit ou devolver horários. Uma tentativa pausada não grava cliente nem evento de limite.
+`app.create_appointment`, `app.create_public_appointment`, `app.list_available_slots` e `app.list_public_available_slots` chamam o gate antes de criar cliente, consumir rate limit ou devolver horários. Uma tentativa pausada não grava cliente nem evento de limite. Na agenda interna, a falta de horários por causa desse gate aparece como agenda fechada. Um dia realmente vazio continua com a mensagem de nenhum horário livre.
 
 ## Procedimento
 
@@ -86,7 +86,7 @@ Dois salões fictícios (`Salao Piloto Ficticio` e `Salao Bloqueado Ficticio`) e
 - Anônimo continua sem `EXECUTE`. E-mail não confirmado recebe `email_not_confirmed`. O salão bloqueado recebe `booking_creation_paused` sem cliente novo e sem agendamento. O piloto cria às 10:00 (público, `price_cents` 8000) e às 11:00 (interno). O bloqueado não cria no próprio salão nem no piloto. O dono bloqueado não vê nem cancela o agendamento do piloto. A lista pública do piloto devolve horários; a do bloqueado, pública e interna, levanta `booking_creation_paused`.
 - Com `INSERT` concedido de propósito, `authenticated` esbarra na policy restritiva. `service_role` no salão bloqueado esbarra no trigger. `service_role` no piloto, no horário livre, grava a linha.
 - Com a exceção vencida, nova reserva e remarcação falham com `booking_creation_paused`. O cancelamento ainda funciona enquanto o trial existe, e a linha permanece.
-- Com o trial já vencido, o script de ativação reabre por cortesia sem alterar `trial_ends_at` nem `status`. Uma reserva nova entra. Depois que cortesia e exceção vencem, a reserva seguinte falha e a linha anterior continua.
+- Com o trial já vencido, o script de ativação reabre por cortesia sem alterar `trial_ends_at` nem `status`. Uma reserva nova entra. Depois que cortesia e exceção vencem, a reserva seguinte e a remarcação falham, o cancelamento da linha existente funciona e a linha continua. Voltar o status para `scheduled` continua recusado. O detalhe de papéis, permissão negada, cliente, salão vizinho e bypass está em `scripts/expired-entitlement-cancel.test.mjs`.
 - Desativar sem confirmação falha. Com confirmação, a assinatura não muda, a exceção fica desligada e a criação seguinte falha. A linha permanece.
 - O stop antigo volta a negar `EXECUTE`. O resume antigo reabre só o UUID que ainda tem exceção. O salão bloqueado segue em `booking_creation_paused` com zero agendamentos, e a assinatura dele permanece a original.
 
@@ -104,6 +104,6 @@ O navegador não foi usado contra um salão. Não há sessão de salão aqui, e 
 - O `GRANT EXECUTE` é do papel `authenticated`, não de um UUID. A proteção é a tabela de exceção vazia por padrão, mais o trigger. O resume antigo não abre todos os salões, mas reabre um UUID que ainda tenha exceção vigente.
 - `suspend_booking_creation` não apaga a exceção. Uma desativação de outro salão chama o sync e pode devolver o `EXECUTE` se alguma exceção continuar vigente. Para parar o piloto, desative o UUID dele. Para parar todos, revogue o `EXECUTE` e não deixe outra exceção ativa antes de um sync.
 - Superusuário consegue desligar trigger. Os papéis da API não.
-- Depois que a cortesia e o trial acabam, o trigger antigo de entitlement também recusa alteração da linha, inclusive cancelamento. A linha não é apagada. Enquanto o trial ainda vale e só a janela de agenda venceu, cancelar funciona e remarcar não. Esse segundo caso foi o exercitado.
+- Depois que a cortesia e o trial acabam, criar, remarcar, concluir e marcar falta continuam recusados. Cancelar um horário em aberto continua possível: a migration `20261026180100_expired_entitlement_appointment_cancel.sql` libera só a passagem para `cancelled`, sem mudar horário, profissional, serviço, preço ou qualquer outro campo, e sem reabrir a exceção. A linha não é apagada. Um horário concluído ou já marcado como falta não entra nessa exceção. Enquanto o trial ainda vale e só a janela de agenda venceu, cancelar também funciona e remarcar não. Financeiro, relatórios, pacotes e estoque continuam sem leitura nesse estado e mostram o aviso de assinatura inativa, sem o erro genérico da área profissional.
 - Aplicar a migration em um banco que hoje aceita reservas fecha a criação, porque o final chama `suspend_booking_creation`. Não aplicar em produção nem em staging compartilhado sem uma janela autorizada.
-- O cluster de concorrência foi PostgreSQL 16.15, não o PostgreSQL 17.6 do harness do projeto.
+- A suíte nativa isolada desta branch rodou em PostgreSQL 17, com 97 testes e a concorrência incluída. Um cluster anterior de concorrência usou PostgreSQL 16.15.
