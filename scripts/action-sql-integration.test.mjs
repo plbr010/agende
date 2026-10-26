@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import { execFileSync } from 'node:child_process';
 import ts from 'typescript';
 import { z } from 'zod';
 import { createLocalDatabase } from './local-database.mjs';
@@ -26,19 +27,31 @@ import * as workspaceTimezone from '../src/lib/workspace/timezone.ts';
 
 // Real server modules -> a synthetic Supabase transport -> real in-memory SQL.
 // No browser, PostgREST, Auth server, SMTP or Stripe service is supplied here.
+const publishedSha = 'a3923c4223e234365deb0d56c932ca53106920ef';
+const sourceRef = process.env.AGENDE_ACTION_SOURCE_REF;
+if (sourceRef && sourceRef !== publishedSha) throw new Error('Compatibility mode only accepts the recorded published SHA');
 function moduleFrom(path, dependencies) {
-  const { outputText } = ts.transpileModule(readFileSync(path, 'utf8'), {
+  const source = sourceRef
+    ? execFileSync('git', ['show', `${sourceRef}:${path}`], { encoding: 'utf8', windowsHide: true })
+    : readFileSync(path, 'utf8');
+  const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   const exports = {};
   runInNewContext(outputText, { exports, URL, FormData, Set, Map, process: { env: { NODE_ENV: 'test' } },
-    require(name) { if (name in dependencies) return dependencies[name]; throw new Error('Unexpected dependency ' + name); } });
+    require(name) {
+      if (name in dependencies) return dependencies[name];
+      if (sourceRef && name.startsWith('@/')) {
+        return dependencies[name] = moduleFrom('src/' + name.slice(2) + '.ts', dependencies);
+      }
+      throw new Error('Unexpected dependency ' + name);
+    } });
   return exports;
 }
 const form = values => { const f = new FormData(); for (const [key,value] of Object.entries(values)) f.set(key,String(value)); return f; };
 const identifier = value => { assert.match(value, /^[a-z_]+$/); return '"' + value + '"'; };
 
-test('server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews', async t => {
+test(`${sourceRef ? 'published '+sourceRef+' server actions on updated SQL' : 'server actions and SQL'} integrate workspace, catalog, booking, finance, stock, packages and reviews`, async t => {
   const db = await createLocalDatabase(); t.after(() => db.close());
   await db.exec(readFileSync('supabase/tests/helpers.sql','utf8'));
   const user = async (email,intent='professional') => (await db.query('select test_helpers.create_auth_user($1,$2,true) id',[email,intent])).rows[0].id;
@@ -99,6 +112,7 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     '@/lib/reviews/validation':reviewValidation,'./mutations':mutationValidation,
   };
   const load=path=>moduleFrom(path,dependencies);
+  if (sourceRef) dependencies['./mutations'] = load('src/lib/modules/mutations.ts');
   dependencies['@/lib/catalog/queries']=load('src/lib/catalog/queries.ts');
   dependencies['@/lib/agenda/queries']=load('src/lib/agenda/queries.ts');
   const auth=load('src/lib/auth/actions.ts');
@@ -182,6 +196,10 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     assert.ok((await management.managementAction({},form({action:'finance-paid',id:entry,method:'pix',key:entry}))).success);
     const paidDay=(await db.query("select (now() at time zone 'America/Sao_Paulo')::date::text d")).rows[0].d;
     const result=await client.rpc('get_finance_ui',{p_workspace_id:workspaceId,p_start_date:paidDay,p_end_date:localDate});assert.ok(result.data.entries.some(row=>row.id===entry&&row.status==='paid'));
+    if (sourceRef) {
+      const oldFinance = load('src/lib/finance/queries.ts');
+      assert.ok(oldFinance.financeUiRpcSchema.safeParse(result.data).success, 'published finance decoder must accept updated response');
+    }
   });
   await t.test('expired identity and foreign user cannot mutate bookings or read finance',async()=>{
     const before=(await db.query('select id,status,starts_at from public.appointments where workspace_id=$1 order by id',[workspaceId])).rows;
@@ -205,5 +223,25 @@ test('server actions and SQL integrate workspace, catalog, booking, finance, sto
     const pack=(await db.query('select id from public.service_packages where workspace_id=$1',[workspaceId])).rows[0].id;
     assert.ok((await management.managementAction({},form({action:'package-sell',id:pack,client:clientId}))).success);
     assert.equal((await client.rpc('get_packages_ui',{p_workspace_id:workspaceId})).data.sales[0].included_total,2);
+  });
+  await t.test('authenticated customer and team actions cancel after trial expiry while writes stay closed', async()=>{
+    actor=customer;
+    const slug=(await db.query('select slug from public.workspaces where id=$1',[workspaceId])).rows[0].slug;
+    const ids=[];
+    for(let i=0;i<2;i++){
+      const slots=await booking.fetchPublicSlotsAction({slug,serviceId,professionalMemberId:memberId,localDate});
+      const result=await booking.createPublicAppointmentAction({slug,serviceId,professionalMemberId:memberId,startsAt:slots.slots[0],fullName:'Client Local',phone:'55999999999',email:'client@action-sql.invalid',customerNote:null});
+      assert.ok(result.confirmation,result.error);
+      ids.push((await db.query("select id from public.appointments where workspace_id=$1 and starts_at=$2",[workspaceId,slots.slots[0]])).rows[0].id);
+    }
+    await db.transaction(async tx=>{
+      await tx.query("select set_config('app.bypass_protected_columns','on',true)");
+      await tx.query("update public.subscriptions set trial_started_at=now()-interval '8 days',trial_ends_at=now()-interval '1 day' where workspace_id=$1",[workspaceId]);
+    });
+    assert.ok((await booking.cancelMyAppointmentAction(ids[0])).success);
+    actor=owner;
+    assert.ok((await agenda.setAppointmentStatusAction(form({appointmentId:ids[1],status:'cancelled'}))).success);
+    assert.ok((await agenda.setAppointmentStatusAction(form({appointmentId:ids[1],status:'confirmed'}))).error);
+    assert.equal((await db.query("select count(*)::int n from public.appointments where id=any($1::uuid[]) and status='cancelled'",[ids])).rows[0].n,2);
   });
 });

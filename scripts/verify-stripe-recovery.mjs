@@ -5,9 +5,9 @@ import { execFileSync } from "node:child_process";
 
 const manifest = JSON.parse(readFileSync("docs/migrations/remote-history-2026-09-26.json", "utf8"));
 const history = JSON.parse(readFileSync("docs/migrations/remote-inventory-2026-09-27.json", "utf8"));
-function verify(path, expected, revision = null) {
+function verify(path, expected, revision = null, normalizeLf = false) {
   const source = revision ? execFileSync("git", ["show", `${revision}:${path}`]) : readFileSync(path);
-  const actual = createHash("sha256").update(source).digest("hex");
+  const actual = createHash("sha256").update(normalizeLf ? source.toString("utf8").replaceAll("\r\n", "\n") : source).digest("hex");
   assert.equal(actual, expected, path);
   console.log(`${actual}  ${path}${revision ? " @ " + revision : ""}`);
 }
@@ -30,11 +30,8 @@ const remote = history.map(({ version, name }) => `${version}_${name}.sql`);
 const missing = remote.filter((file) => !local.includes(file));
 const extra = local.filter((file) => !remote.includes(file));
 assert.equal(remote.length, 63);
-assert.equal(local.length, 75);
 assert.deepEqual(missing, ["20260919201138_hardening_snapshot_owner_timezone.sql"]);
-assert.deepEqual(
-  extra.sort(),
-  [
+const previouslyReviewedLocalOnly = [
     "20260927014947_launch_readiness_reviews.sql",
     "20261008131859_launch_hardening_reviews_force_rls.sql",
     "20261009172028_launch_observed_owner_guard.sql",
@@ -48,9 +45,27 @@ assert.deepEqual(
     "20261016075244_profiles_booking_whatsapp.sql",
     "20261016235000_require_confirmed_public_booking.sql",
     "20261020162935_launch_discovery_eligibility.sql",
-  ].sort(),
-  "Only reviewed launch-readiness migrations may remain local-only versus the 2026-09-27 snapshot",
+];
+// PR #89's merged manifest adds ten reviewed files (and repeats the historical
+// owner guard above). Pin its commit: regenerating today's manifest must never
+// silently approve an unknown migration or replace a reviewed checksum.
+const reviewedRevision = "b6ce86c7e9717839d60c57bfe371e3d8d5915082";
+const reviewedPlan = JSON.parse(execFileSync("git", [
+  "show", `${reviewedRevision}:docs/production-readiness/launch-final-migration-plan.json`,
+], { encoding: "utf8" }));
+const reviewedLocalOnly = [...new Set([
+  ...previouslyReviewedLocalOnly, ...reviewedPlan.pending.map(({ file }) => file),
+])].sort();
+assert.deepEqual(
+  extra.sort(), reviewedLocalOnly,
+  "Only reviewed migrations may remain local-only versus the 2026-09-27 snapshot",
 );
+assert.equal(local.length, remote.length - missing.length + reviewedLocalOnly.length);
+for (const migration of reviewedPlan.pending) {
+  assert.match(migration.file, /^\d{14}_[a-z0-9_]+\.sql$/);
+  assert.match(migration.sha256_lf, /^[0-9a-f]{64}$/);
+  verify(`supabase/migrations/${migration.file}`, migration.sha256_lf, null, true);
+}
 const trial = history.find(({ version }) => version === "20260926194038");
 assert.ok(trial, "Applied trial migration must be in the remote snapshot");
 assert.equal(trial.statement_count, 1);
