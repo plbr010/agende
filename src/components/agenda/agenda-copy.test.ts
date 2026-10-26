@@ -17,6 +17,8 @@ test("agenda dialogs tell the professional what to do next in plain language", (
   assert.match(source, /lg:grid-cols-7/);
   assert.doesNotMatch(source, /encaixar uma cliente/);
   assert.match(source, /loadedQueryKey !== slotQueryKey/);
+  assert.match(source, /startSlotTransition\(\(\) => \{\s*slotActionRef\.current\(data\);\s*\}\)/);
+  assert.doesNotMatch(source, /slotAction\(data\)/);
   assert.match(source, /disabled=\{pending \|\| slotPending \|\| slots\.length === 0\}/);
 });
 
