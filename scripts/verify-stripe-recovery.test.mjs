@@ -34,7 +34,7 @@ test('Stripe recovery accepts the reviewed inventory and preserves historical ed
   const { run } = fixture(t);
   const result = run();
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /local: 85/);
+  assert.match(result.stdout, /local: 87/);
   assert.match(result.stdout, /remote: 63/);
   assert.match(result.stdout, /Verified against the read-only remote snapshot/);
   assert.match(result.stdout, /stripe-webhook\/index\.ts @ [0-9a-f]{40}/);
@@ -67,6 +67,11 @@ test('Stripe recovery refuses changes to the newly reviewed migration SQL', t =>
   const { run, sql } = fixture(t);
   writeFileSync(sql('20261026091115_expired_appointment_cancellation.sql'), 'select 1;\n');
   rejects(run(), /expired_appointment_cancellation\.sql/);
+});
+test('Stripe recovery refuses changes to the reconciled cancellation migration', t => {
+  const { run, sql } = fixture(t);
+  writeFileSync(sql('20261026192015_reconcile_expired_cancellation.sql'), 'select 1;\n');
+  rejects(run(), /reconcile_expired_cancellation\.sql/);
 });
 test('Stripe recovery still refuses a changed historical Edge Function checksum', t => {
   const { root, run } = fixture(t);
