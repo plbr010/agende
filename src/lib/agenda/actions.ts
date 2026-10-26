@@ -44,6 +44,9 @@ function fieldErrorsFromZod(error: { issues: ReadonlyArray<{ path: readonly Prop
 }
 
 function mapAgendaError(message: string): string {
+  if (message.includes("booking_creation_paused")) {
+    return "A agenda deste salão não está aberta para novos agendamentos.";
+  }
   if (message.includes("outside_working_hours")) {
     return "Esse horário está fora do horário de atendimento da profissional.";
   }
