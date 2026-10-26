@@ -15,6 +15,7 @@ function findTests(directory) {
 }
 
 const testFiles = findTests("src");
+testFiles.push("scripts/verify-stripe-recovery.test.mjs");
 testFiles.push("scripts/commissions-integrity-sql.test.mjs", "scripts/commissions-upgrade-sql.test.mjs");
 testFiles.push("scripts/pr84-final-sql.test.mjs", "scripts/pr84-final-upgrade.test.mjs");
 testFiles.push("scripts/workspace-media-sql.test.mjs", "scripts/profiles-booking-whatsapp-sql.test.mjs");
