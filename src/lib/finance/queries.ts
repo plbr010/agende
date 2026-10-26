@@ -141,6 +141,38 @@ const paymentMethodLabels: Record<z.infer<typeof paymentMethodSchema>, string> =
   other: "Outro",
 };
 
+export function calendarDayInTimezone(value: string | null, timeZone: string): string | null {
+  if (!value) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
+export function financeEntryDateLabel(
+  entry: { dueDate: string | null; paidAt: string | null },
+  timeZone: string,
+): string | null {
+  return entry.dueDate ?? calendarDayInTimezone(entry.paidAt, timeZone);
+}
+
+/** Commission cash uses the payment date. A line created today must not appear in another period. */
+export function financeEntryVisibleInPeriod(
+  entry: { commissionCashLocked: boolean; dueDate: string | null; paidAt: string | null },
+  startDate: string,
+  endDate: string,
+  timeZone: string,
+): boolean {
+  if (!entry.commissionCashLocked) return true;
+  const day = calendarDayInTimezone(entry.paidAt, timeZone) ?? entry.dueDate;
+  return day != null && day >= startDate && day <= endDate;
+}
+
 export function adaptFinanceUiPayload(raw: unknown): FinancialSnapshot {
   const payload = financeUiRpcSchema.parse(raw);
   const report = adaptAdvancedReportPayload(payload.report);

@@ -28,6 +28,9 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
       />
       <PeriodSelector {...period} />
       <FinanceDashboard snapshot={snapshot}
+        startDate={period.startDate}
+        endDate={period.endDate}
+        timeZone={settings.timezone}
         canManage={session.permissions ? Boolean(session.permissions["finance.manage"]) : ["owner", "admin"].includes(workspace.role)}
         canReceive={session.permissions ? Boolean(session.permissions["finance.receive"] || session.permissions["finance.manage"]) : ["owner", "admin", "receptionist"].includes(workspace.role)} />
     </>
