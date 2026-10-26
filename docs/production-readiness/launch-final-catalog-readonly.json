@@ -1,0 +1,331 @@
+{
+  "observed_at_utc": null,
+  "observed_on": "2026-10-26",
+  "project_id": "wohimauqgywshbbejjcl",
+  "source": "read-only PostgreSQL catalog; not a backup or remote modification",
+  "history": [
+    {
+      "name": "foundation_types_and_tables",
+      "version": "20260918150334"
+    },
+    {
+      "name": "foundation_functions",
+      "version": "20260918150401"
+    },
+    {
+      "name": "foundation_guards",
+      "version": "20260918150422"
+    },
+    {
+      "name": "foundation_auth_sync",
+      "version": "20260918150434"
+    },
+    {
+      "name": "foundation_workspace_rpc",
+      "version": "20260918150443"
+    },
+    {
+      "name": "foundation_invites",
+      "version": "20260918150456"
+    },
+    {
+      "name": "foundation_rpc_wrappers_and_triggers",
+      "version": "20260918150505"
+    },
+    {
+      "name": "foundation_rls",
+      "version": "20260918150516"
+    },
+    {
+      "name": "foundation_fk_indexes",
+      "version": "20260918150607"
+    },
+    {
+      "name": "foundation_hardening",
+      "version": "20260918183729"
+    },
+    {
+      "name": "foundation_hardening_seats_invites",
+      "version": "20260918183827"
+    },
+    {
+      "name": "foundation_hardening_invites_grants",
+      "version": "20260918183848"
+    },
+    {
+      "name": "catalog_professionals_services_clients",
+      "version": "20260918191634"
+    },
+    {
+      "name": "catalog_professionals_services_clients_rls",
+      "version": "20260918191706"
+    },
+    {
+      "name": "catalog_indexes_and_policy_merge",
+      "version": "20260918192038"
+    },
+    {
+      "name": "workspace_settings_schema",
+      "version": "20260918194255"
+    },
+    {
+      "name": "agenda_types_and_tables",
+      "version": "20260918194304"
+    },
+    {
+      "name": "agenda_functions",
+      "version": "20260918194355"
+    },
+    {
+      "name": "workspace_settings_rpcs",
+      "version": "20260918194427"
+    },
+    {
+      "name": "agenda_availability_helpers",
+      "version": "20260918194437"
+    },
+    {
+      "name": "workspace_settings_rls_storage",
+      "version": "20260918194446"
+    },
+    {
+      "name": "agenda_list_available_slots",
+      "version": "20260918194454"
+    },
+    {
+      "name": "agenda_appointment_rpcs",
+      "version": "20260918194510"
+    },
+    {
+      "name": "agenda_triggers",
+      "version": "20260918194527"
+    },
+    {
+      "name": "agenda_rls",
+      "version": "20260918194551"
+    },
+    {
+      "name": "agenda_indexes_and_policy_split",
+      "version": "20260918194708"
+    },
+    {
+      "name": "agenda_write_policies",
+      "version": "20260918194722"
+    },
+    {
+      "name": "agenda_snapshot_professional_and_select",
+      "version": "20260918195354"
+    },
+    {
+      "name": "public_booking_schema",
+      "version": "20260918203839"
+    },
+    {
+      "name": "public_booking_functions",
+      "version": "20260918203840"
+    },
+    {
+      "name": "public_booking_rpcs_rls",
+      "version": "20260918203841"
+    },
+    {
+      "name": "hardening_snapshot_owner_timezone",
+      "version": "20260919201138"
+    },
+    {
+      "name": "inventory_schema",
+      "version": "20260919201409"
+    },
+    {
+      "name": "inventory_rpcs",
+      "version": "20260919201432"
+    },
+    {
+      "name": "inventory_rls",
+      "version": "20260919201509"
+    },
+    {
+      "name": "inventory_fk_indexes",
+      "version": "20260921165035"
+    },
+    {
+      "name": "packages_core",
+      "version": "20260921171533"
+    },
+    {
+      "name": "finance_core",
+      "version": "20260921171751"
+    },
+    {
+      "name": "reports_core",
+      "version": "20260921171949"
+    },
+    {
+      "name": "packages_finance_fk_indexes",
+      "version": "20260921172021"
+    },
+    {
+      "name": "secure_public_default_privileges",
+      "version": "20260921172331"
+    },
+    {
+      "name": "subscription_entitlement_enforcement",
+      "version": "20260921174123"
+    },
+    {
+      "name": "audit_events",
+      "version": "20260921174239"
+    },
+    {
+      "name": "finance_refunds_package_hardening",
+      "version": "20260921174332"
+    },
+    {
+      "name": "billing_intervals_annual_ready",
+      "version": "20260921174537"
+    },
+    {
+      "name": "database_maintenance_cron",
+      "version": "20260921174547"
+    },
+    {
+      "name": "package_lifecycle_hardening",
+      "version": "20260921175259"
+    },
+    {
+      "name": "finance_categories_idempotency",
+      "version": "20260921175525"
+    },
+    {
+      "name": "agenda_client_reschedule_deadlock_hardening",
+      "version": "20260921175704"
+    },
+    {
+      "name": "advanced_reports",
+      "version": "20260921175824"
+    },
+    {
+      "name": "privacy_requests_export_audit_expansion",
+      "version": "20260921175927"
+    },
+    {
+      "name": "public_booking_duplicate_concurrency_guard",
+      "version": "20260921180139"
+    },
+    {
+      "name": "client_packages_and_billing_foundation",
+      "version": "20260921180256"
+    },
+    {
+      "name": "frontend_read_models",
+      "version": "20260921181255"
+    },
+    {
+      "name": "frontend_read_models_inventory_fix",
+      "version": "20260921181317"
+    },
+    {
+      "name": "stripe_billing_sync_foundation",
+      "version": "20260926062411"
+    },
+    {
+      "name": "stripe_webhook_hardening",
+      "version": "20260926062835"
+    },
+    {
+      "name": "stripe_billing_resubscribe_hardening",
+      "version": "20260926063106"
+    },
+    {
+      "name": "stripe_billing_sync_reconcile",
+      "version": "20260926063212"
+    },
+    {
+      "name": "stripe_checkout_resubscribe_hardening",
+      "version": "20260926063514"
+    },
+    {
+      "name": "stripe_api_key_vault_access",
+      "version": "20260926063534"
+    },
+    {
+      "name": "trial_selected_plan",
+      "version": "20260926194038"
+    },
+    {
+      "name": "stripe_checkout_guards",
+      "version": "20260927005815"
+    },
+    {
+      "name": "launch_readiness_reviews",
+      "version": "20260927014947"
+    },
+    {
+      "name": "launch_hardening_reviews_force_rls",
+      "version": "20261008131859"
+    },
+    {
+      "name": "billing_reconcile_excess_seats",
+      "version": "20261009173042"
+    },
+    {
+      "name": "atomic_service_professional_links",
+      "version": "20261010232248"
+    },
+    {
+      "name": "public_workspace_discovery",
+      "version": "20261014030220"
+    },
+    {
+      "name": "client_phase2_profiles_favorites",
+      "version": "20261014172158"
+    },
+    {
+      "name": "client_phase2_avatar_upload_cleanup",
+      "version": "20261014173903"
+    },
+    {
+      "name": "workspace_media_and_settings_contract",
+      "version": "20261015054116"
+    },
+    {
+      "name": "workspace_settings_validation",
+      "version": "20261015054818"
+    },
+    {
+      "name": "profiles_booking_whatsapp",
+      "version": "20261016075244"
+    },
+    {
+      "name": "require_confirmed_public_booking",
+      "version": "20261016235000"
+    },
+    {
+      "name": "launch_discovery_eligibility",
+      "version": "20261020162935"
+    }
+  ],
+  "membership_trigger": "CREATE CONSTRAINT TRIGGER workspace_members_keep_owner AFTER INSERT OR UPDATE OF role, status ON public.workspace_members DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW EXECUTE FUNCTION app.enforce_active_owner()",
+  "membership_functions": [
+    {
+      "signature": "app.assert_member_change_allowed(uuid,workspace_members,member_role,member_status)",
+      "definition": "CREATE OR REPLACE FUNCTION app.assert_member_change_allowed(p_workspace_id uuid, p_member workspace_members, p_next_role member_role, p_next_status member_status)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM app.lock_workspace_membership(p_workspace_id);\n  IF p_member.workspace_id IS DISTINCT FROM p_workspace_id THEN\n    RAISE EXCEPTION 'not_authorized' USING ERRCODE = '42501';\n  END IF;\n  IF p_next_role = 'owner'::public.member_role AND p_member.role IS DISTINCT FROM 'owner'::public.member_role THEN\n    RAISE EXCEPTION 'owner_transfer_not_supported' USING ERRCODE = '42501';\n  END IF;\n  IF p_member.role = 'owner'::public.member_role\n     AND p_member.status = 'active'::public.member_status\n     AND (\n       p_next_role IS DISTINCT FROM 'owner'::public.member_role\n       OR p_next_status IS DISTINCT FROM 'active'::public.member_status\n     )\n     AND app.active_owner_count(p_workspace_id) <= 1 THEN\n    RAISE EXCEPTION 'last_owner_protected' USING ERRCODE = 'P0001';\n  END IF;\nEND;\n$function$\n"
+    },
+    {
+      "signature": "app.enforce_active_owner()",
+      "definition": "CREATE OR REPLACE FUNCTION app.enforce_active_owner()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_workspace_id uuid;\nBEGIN\n  v_workspace_id := COALESCE(NEW.workspace_id, OLD.workspace_id);\n  PERFORM app.lock_workspace_membership(v_workspace_id);\n  IF NOT EXISTS (\n    SELECT 1 FROM public.workspace_members m\n    WHERE m.workspace_id = v_workspace_id\n      AND m.status = 'active'\n      AND m.role = 'owner'::public.member_role\n  ) THEN\n    RAISE EXCEPTION 'last_owner_protected' USING ERRCODE = 'P0001';\n  END IF;\n  IF TG_OP = 'DELETE' THEN\n    RETURN OLD;\n  END IF;\n  RETURN NEW;\nEND;\n$function$\n"
+    },
+    {
+      "signature": "app.lock_workspace_membership(uuid)",
+      "definition": "CREATE OR REPLACE FUNCTION app.lock_workspace_membership(p_workspace_id uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  IF p_workspace_id IS NULL THEN\n    RAISE EXCEPTION 'workspace_required' USING ERRCODE = '22023';\n  END IF;\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_workspace_id::text, 881001));\n  PERFORM 1 FROM public.workspaces w WHERE w.id = p_workspace_id FOR UPDATE;\n  IF NOT FOUND THEN\n    RAISE EXCEPTION 'workspace_not_found' USING ERRCODE = 'P0002';\n  END IF;\nEND;\n$function$\n"
+    },
+    {
+      "signature": "app.remove_workspace_member(uuid,uuid)",
+      "definition": "CREATE OR REPLACE FUNCTION app.remove_workspace_member(p_workspace_id uuid, p_member_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_member public.workspace_members;\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  PERFORM app.lock_workspace_membership(p_workspace_id);\n  SELECT * INTO v_member FROM public.workspace_members m WHERE m.id = p_member_id FOR UPDATE;\n  IF v_member.id IS NULL OR v_member.workspace_id IS DISTINCT FROM p_workspace_id THEN\n    RAISE EXCEPTION 'member_not_found' USING ERRCODE = 'P0002';\n  END IF;\n  PERFORM app.assert_member_change_allowed(\n    p_workspace_id, v_member, v_member.role, 'removed'::public.member_status\n  );\n  PERFORM set_config('app.bypass_protected_columns', 'on', true);\n  UPDATE public.workspace_members SET status = 'removed', updated_at = clock_timestamp() WHERE id = v_member.id;\n  RETURN jsonb_build_object('member_id', v_member.id, 'status', 'removed');\nEND;\n$function$\n"
+    },
+    {
+      "signature": "app.update_workspace_member_role(uuid,uuid,member_role)",
+      "definition": "CREATE OR REPLACE FUNCTION app.update_workspace_member_role(p_workspace_id uuid, p_member_id uuid, p_role member_role)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_member public.workspace_members;\n  v_needs_seat boolean;\nBEGIN\n  PERFORM app.require_workspace_manager(p_workspace_id);\n  PERFORM app.lock_workspace_membership(p_workspace_id);\n  IF p_role IS NULL OR p_role = 'owner'::public.member_role THEN\n    RAISE EXCEPTION 'owner_transfer_not_supported' USING ERRCODE = '42501';\n  END IF;\n  SELECT * INTO v_member FROM public.workspace_members m WHERE m.id = p_member_id FOR UPDATE;\n  IF v_member.id IS NULL OR v_member.workspace_id IS DISTINCT FROM p_workspace_id THEN\n    RAISE EXCEPTION 'member_not_found' USING ERRCODE = 'P0002';\n  END IF;\n  PERFORM app.assert_member_change_allowed(p_workspace_id, v_member, p_role, v_member.status);\n  v_needs_seat := p_role IN ('admin'::public.member_role, 'professional'::public.member_role)\n    AND v_member.status = 'active'::public.member_status\n    AND v_member.role = 'receptionist'::public.member_role;\n  IF v_needs_seat THEN\n    PERFORM app.assert_professional_seat_available(p_workspace_id);\n  END IF;\n  PERFORM set_config('app.bypass_protected_columns', 'on', true);\n  UPDATE public.workspace_members SET role = p_role, updated_at = clock_timestamp() WHERE id = v_member.id;\n  RETURN jsonb_build_object('member_id', v_member.id, 'role', p_role);\nEND;\n$function$\n"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ import { resolve, relative } from 'node:path';
 const sqlFiles=['database.test.mjs','launch-readiness.test.mjs','final-hardening.test.mjs','atomic-service-sql.test.mjs','discovery-sql.test.mjs','client-phase2-sql.test.mjs','workspace-media-sql.test.mjs','profiles-booking-whatsapp-sql.test.mjs','prelaunch-upgrade.test.mjs','booking-retry-sql.test.mjs'];
 const sourceCache=new Map();
 function category(file){
+  if(file.endsWith('launch-final-upgrade.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_final_upgrade':'pglite_final_upgrade';
+  if(file.endsWith('expired-cancellation-sql.test.mjs')||file.endsWith('pilot-booking-activation.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_pilot_and_cancellation':'pglite_pilot_and_cancellation';
   if(file.endsWith('pr84-final-sql.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_actions_and_settlement':'pglite_actions_and_settlement';
   if(file.endsWith('pr84-final-upgrade.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_migration_steps':'pglite_migration_steps';
   if(file.endsWith('commissions-integrity-sql.test.mjs'))return process.env.AGENDE_NATIVE_PG_PORT?'native_pg17_integrity_and_concurrency':'pglite_integrity';

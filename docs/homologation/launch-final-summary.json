@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-26T09:27:14.658Z",
+  "base_sha": "d39b2802f393eafbdc628d2a24f8368a685569b0",
+  "published_sha": "a3923c4223e234365deb0d56c932ca53106920ef",
+  "node": "v24.22.1",
+  "standard": {
+    "passed": 505,
+    "failed": 0,
+    "skipped": 2
+  },
+  "native": {
+    "passed": 81,
+    "failed": 0,
+    "skipped": 1
+  },
+  "legacy_contracts": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "npm_audit_production_vulnerabilities": 0,
+  "lint": {
+    "errors": 0,
+    "preexisting_warnings": 2
+  },
+  "typecheck": "passed",
+  "build": "next build --webpack passed",
+  "local_http_smoke": "passed; unauthenticated synthetic environment",
+  "real_auth_http_tested": false,
+  "production_mutations": false,
+  "production_stripe_operations": false,
+  "source_sha256_lf": {
+    "package.json": "75acfb33991c41c29b6ad440374318e485fa502b1e0aae6781356091be746b03",
+    "package-lock.json": "a2d2a1e2a5e1265339feddeee4e044c470564afdc242e8600607210aa8a82688",
+    "src/components/agenda/agenda-board.tsx": "833982c81cc548a4a188b36eab148ed39070b78e5cf280e4f66d78eec8173907",
+    "supabase/migrations/20261026091115_expired_appointment_cancellation.sql": "3813fd0bf11c2e47eec1aa3badcfe0de1428e7044eded5005ecd65831c489eb7",
+    "scripts/action-sql-integration.test.mjs": "f7f61bcf71d5659dad140fa48adf51391cfbd4b04b85435c20657ed898ed4532",
+    "scripts/expired-cancellation-sql.test.mjs": "7a78a64d14b832b65204aad95d467564b346d3fdc4e479a1ffc17091e4035ec0",
+    "scripts/launch-final-upgrade.test.mjs": "43fbc3b393c0ecb7949f9fd5cdfdeb89f5cb9a93837e0c168a47d4a070dc6aa6",
+    "scripts/prepare-launch-final-plan.mjs": "75db07369a3014292d8c1a444805e4c6575a2a262165580f1a8516a707f51a60",
+    "scripts/run-tests.mjs": "963e9117cb185983b7d3125d0cff77c6e2d783e7cf84a8e795a50aa5d5e064af",
+    "scripts/test-category-reporter.mjs": "1d18882e41f91b0ffc22066f6f3cbee19a0a68b450a3857e8b2cf14c7c36da44"
+  }
+}

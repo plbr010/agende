@@ -1,0 +1,550 @@
+{
+  "checked_at": "2026-10-26T09:23:01.941Z",
+  "groups": {
+    "native_pg17_integration_with_mock_auth": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_integrity_and_concurrency": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_sql": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_pilot_and_cancellation": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 1
+    },
+    "native_pg17_final_upgrade": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_concurrency": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_actions_and_settlement": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "native_pg17_migration_steps": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit_or_static_contract": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "totals": {
+    "passed": 81,
+    "failed": 0,
+    "skipped": 1
+  },
+  "external_authenticated_services_tested": false,
+  "cases": [
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "workspace create action starts one trial and respects Cursor setup redirect",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "profile, service and availability actions persist a bookable catalog",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "public actions book an actual slot and reject overlapping requests",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client rescheduling preserves appointment ID and denies another client",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "reschedule remains committed when its follow-up read fails, without returning an empty success",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "completed appointment receives exactly one immutable client review",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "client cancellation action frees a second booked slot",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "finance actions register a local payment and finance RPC reflects it",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "expired identity and foreign user cannot mutate bookings or read finance",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "stock and package actions persist their business operations",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "authenticated customer and team actions cancel after trial expiry while writes stay closed",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/action-sql-integration.test.mjs",
+      "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
+      "category": "native_pg17_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A04: retries survive full settlement and reject changed payload",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A01: checkout and snapshots respect commission permissions, including retries",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A02/A03: partial cash, method, outstanding and explicit refunds reconcile",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A03/B02: package requires explicit refund and never reopens cancelled service",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A06/A07: reopen restores stock debit, legacy settlement records only remainder",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A06: insufficient stock rolls back reopen and duplicate cancellation restores once",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A08/B05: beneficiary history and commission cash are immutable and idempotent",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A01: tenant and colleague authorization across public APIs",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "B01: explicit inventory grants and denies agree between RLS and RPC",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "internal helpers are not executable by authenticated or anonymous callers",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "B04: keyset pagination reaches records beyond the first 200 without duplicates",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A04/A05: native last-receipt retries serialize and converge to one ID",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native repeated checkout has one settlement despite distinct keys",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A03/A05: native receipt prevents concurrent package conversion without refund",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native payment and receipt serialize in both directions",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native adjustment and receipt preserve release ceiling",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "A05: native refund and payment do not deadlock or overpay",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-integrity-sql.test.mjs",
+      "name": "commissions, checkout, receipts and permissions stay isolated",
+      "category": "native_pg17_integrity_and_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "service rule wins over the professional default and later edits do not rewrite it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "completion without money stays pending, then partial and full receipts release the same rate",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "refund and manual ceiling keep history and never raise the original amount",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "cancel and no-show do not create commission or service income",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "professional change before completion follows the appointment, and after close needs an audited reassignment",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "package redemption cancels the pending service receivable and does not recreate it",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "repeated checkout and receipt keys do not duplicate money",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "products leave stock once and stay out of the commission base",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "full discount creates neither receivable nor commission, and on_completion releases before receipt",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "a rate added after completion does not create a retroactive commission",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "permissions stop cross-professional, cross-salon and privilege escalation",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "checkout locks the appointment and money tables reject a second settlement",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-sql.test.mjs",
+      "name": "commissions, checkout, receipts and permissions stay isolated",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commissions-upgrade-sql.test.mjs",
+      "name": "PR84 atomic upgrade preserves legacy cash and supports rollback",
+      "category": "native_pg17_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "client cancels after both grants expire without changing the reservation snapshot",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "owner cancellation and retry work without entitlement",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "foreign owner, unrelated client, unconfirmed and anon are rejected",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "permission denies and professional scope remain enforced",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "terminal appointments and repeated customer cancellation stay blocked",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "client lead-time rule still applies after entitlement expires",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "creation, reschedule, confirmation and reopening remain denied",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "explicit deactivation also preserves only cancellation and financial records",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "a concurrent start cannot be overwritten by client cancellation",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/expired-cancellation-sql.test.mjs",
+      "name": "expired trial and courtesy preserve cancellation only, with tenant and role checks",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/launch-final-upgrade.test.mjs",
+      "name": "final pending set upgrades populated legacy SQL atomically and rolls back on failure",
+      "category": "native_pg17_final_upgrade",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent public reservations: one winner for the same professional/slot",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 a rolled-back reservation frees the waiting client to book",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent client reschedules cannot converge on one occupied slot",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 duplicate concurrent reviews persist exactly one immutable rating",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent owner demotions retain one active owner",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent invite acceptance cannot exceed the plan seat limit",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent billing-event replay returns one event ID",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 concurrent checkout leases cannot both acquire the same workspace",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 double-click by the same client persists one booking",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pg17-concurrency.test.mjs",
+      "name": "PG17 professional photo concurrent replacements retain one live reference",
+      "category": "native_pg17_concurrency",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "default posture blocks both fictional salons before any exception",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "direct insert and the entitlement bypass cannot open a paused salon",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "authenticated callers cannot activate themselves, even if execute is granted by mistake",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "service role activates only the pilot UUID and does not touch trial or Stripe state",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "public and internal booking succeed only for the activated salon",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "API roles still cannot insert directly; service role is stopped by the trigger when blocked",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "expiry and deactivation block new bookings and keep the existing row",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "the old global resume still does not open the blocked salon",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "pilot booking stays closed except for one activated fictional salon",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pilot-booking-activation.test.mjs",
+      "name": "two native sessions race on the pilot salon and stay isolated from the blocked salon",
+      "category": "native_pg17_pilot_and_cancellation",
+      "status": "skipped"
+    },
+    {
+      "file": "scripts/pr84-final-sql.test.mjs",
+      "name": "R01 actual settlement API returns prior result after success and reopening",
+      "category": "native_pg17_actions_and_settlement",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-final-sql.test.mjs",
+      "name": "R02 paid products require complete receipts, preserve mixed payments and refund totals",
+      "category": "native_pg17_actions_and_settlement",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-final-sql.test.mjs",
+      "name": "R04 real action module uses database membership permissions and SQL authorization",
+      "category": "native_pg17_actions_and_settlement",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-final-sql.test.mjs",
+      "name": "R01 two PG17 connections converge to one settlement operation",
+      "category": "native_pg17_actions_and_settlement",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-final-sql.test.mjs",
+      "name": "PR84 final monetary regression with real SQL identities",
+      "category": "native_pg17_actions_and_settlement",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-final-upgrade.test.mjs",
+      "name": "PR84 secure intermediate migrations and explicit legacy reconciliation",
+      "category": "native_pg17_migration_steps",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/pr84-local-advisors.test.mjs",
+      "name": "Supabase security advisors against verified owned PG17 only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    }
+  ]
+}
