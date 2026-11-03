@@ -199,6 +199,7 @@ export default async function AppPage({
         href: "/app/agenda?novo=1",
         label: "Novo horário",
       }}
+      showMasterAdmin={session.context.isPlatformAdmin === true || session.context.isOfficialPlatformOwner === true}
     />
   );
 }

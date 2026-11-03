@@ -10,6 +10,7 @@ import * as signup from "../validation/signup";
 import * as signupJourney from "./signup-journey";
 import * as email from "../validation/email";
 import * as sessionProfile from "./session-profile";
+import * as bootstrap from "../admin/bootstrap";
 
 // Executes the real server modules with isolated platform adapters, never a network client.
 function sourceModule<T>(file: string, dependencies: Record<string, unknown>): T {
@@ -28,19 +29,26 @@ function sourceModule<T>(file: string, dependencies: Record<string, unknown>): T
 }
 
 const user = { id: "user", email: "test@example.invalid", email_confirmed_at: "2026-10-01" };
-function sessionLoader(failingTable?: string) {
+function sessionLoader(
+  failingTable?: string,
+  sessionUser: { id: string; email: string; email_confirmed_at: string | null } = user,
+) {
   const rows: Record<string, unknown> = {
-    profiles: { full_name: "Test", email: user.email, intended_use: "professional" },
+    profiles: { full_name: "Test", email: sessionUser.email, intended_use: "professional" },
     client_profiles: null,
     workspace_members: [{ role: "owner", workspaces: { id: "studio", name: "Studio", slug: "studio" } }],
     subscriptions: { plan: "solo", status: "trialing" },
   };
-  return sourceModule<{ loadAppSession: () => Promise<{ workspaces: unknown[] }> }>("./session.ts", {
+  return sourceModule<{ loadAppSession: () => Promise<{
+    workspaces: unknown[];
+    context: { isPlatformAdmin?: boolean; isOfficialPlatformOwner?: boolean };
+  }> }>("./session.ts", {
     "next/navigation": {}, "@/lib/account/avatar-ui": avatarUi, "@/lib/auth/redirects": redirects,
     "@/lib/auth/session-guard": { createConfirmedSessionGuard: () => null },
     "@/lib/auth/session-profile": sessionProfile,
+    "@/lib/admin/bootstrap": bootstrap,
     "@/lib/supabase/server": { createClient: async () => ({
-      auth: { getUser: async () => ({ data: { user } }) },
+      auth: { getUser: async () => ({ data: { user: sessionUser } }) },
       from(table: string) {
         const result = { data: rows[table], error: table === failingTable ? { message: "private diagnostic" } : null };
         return { select() { return this; }, eq() { return this; }, maybeSingle: async () => result,
@@ -56,6 +64,22 @@ test("session data outages never masquerade as onboarding, missing client profil
       /Não foi possível carregar/.test(String(error)) && !String(error).includes("private diagnostic"));
   }
   assert.equal((await sessionLoader()()).workspaces.length, 1);
+});
+
+test("confirmed official owner still sees master flags when admin RPCs are missing", async () => {
+  const session = await sessionLoader(undefined, {
+    id: "official",
+    email: "plbrpc@gmail.com",
+    email_confirmed_at: "2026-10-01",
+  })();
+  assert.equal(session.context.isOfficialPlatformOwner, true);
+  assert.equal(session.context.isPlatformAdmin, false);
+});
+
+test("any other confirmed email does not become master from the session fallback", async () => {
+  const session = await sessionLoader()();
+  assert.equal(session.context.isOfficialPlatformOwner, false);
+  assert.equal(session.context.isPlatformAdmin, false);
 });
 
 function actions(error: { code?: string; message: string; status?: number } | null = null, signupData?: unknown) {

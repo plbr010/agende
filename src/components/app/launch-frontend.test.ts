@@ -24,9 +24,16 @@ test("approved dashboard identity stays on the launch screens", () => {
   assert.match(shell, /lg:hidden/);
   assert.match(shell, /showMasterAdmin/);
   assert.match(shell, /masterNavigationItem/);
+  assert.match(shell, /Painel master/);
+  assert.match(shell, /href=\"\/admin\"/);
   assert.match(source("src/config/app-navigation.ts"), /Painel master/);
+  assert.match(source("src/lib/auth/session.ts"), /isOfficialMasterAdminEmail/);
+  assert.match(source("vercel.json"), /deploymentEnabled/);
+  assert.doesNotMatch(source("vercel.json"), /"main": false/);
 
   const dashboard = source("src/components/app/professional-dashboard.tsx");
+  assert.match(dashboard, /showMasterAdmin/);
+  assert.match(dashboard, /Painel master/);
   assert.match(dashboard, /Olá, \{firstName\}!/);
   assert.match(dashboard, /Agenda de hoje/);
   assert.match(dashboard, /dias restantes de teste/);

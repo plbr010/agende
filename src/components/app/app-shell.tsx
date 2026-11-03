@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, CalendarPlus, ExternalLink, House, LogOut, Menu, UsersRound } from "lucide-react";
+import { CalendarDays, CalendarPlus, ExternalLink, House, LogOut, Menu, Shield, UsersRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
 import { FloralSprig } from "@/components/brand/floral";
 import { AccountAvatar } from "@/components/account/account-avatar";
@@ -217,6 +217,17 @@ export function AppShell({
               <p className="truncate font-serif text-lg leading-none text-wine-deep">{workspaceName}</p>
               <p className="mt-1 text-xs text-muted-foreground">{roleLabel}</p>
             </div>
+            {showMasterAdmin ? (
+              <Button
+                variant="ghost"
+                className="h-11 gap-1 px-2 text-wine-deep"
+                aria-label="Painel master"
+                render={<Link href="/admin" />}
+              >
+                <Shield className="size-5" />
+                <span className="text-sm">Admin</span>
+              </Button>
+            ) : null}
             <Button
               variant="ghost"
               className="h-11 gap-1 px-2 text-wine-deep"

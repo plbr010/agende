@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-03T21:01:25.464Z",
+  "checked_at": "2026-11-03T22:21:34.256Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -47,13 +47,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 100,
+      "passed": 102,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 535,
+    "passed": 537,
     "failed": 0,
     "skipped": 2
   },
@@ -1712,6 +1712,18 @@
     {
       "file": "src/lib/auth/launch-auth.test.ts",
       "name": "session data outages never masquerade as onboarding, missing client profile or missing subscription",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "confirmed official owner still sees master flags when admin RPCs are missing",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "any other confirmed email does not become master from the session fallback",
       "category": "platform_mocks",
       "status": "passed"
     },

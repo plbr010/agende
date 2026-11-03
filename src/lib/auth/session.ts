@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { avatarCacheVersion } from "@/lib/account/avatar-ui";
+import { isOfficialMasterAdminEmail } from "@/lib/admin/bootstrap";
 import { createClient } from "@/lib/supabase/server";
 import {
   getDefaultDestination,
@@ -229,11 +230,16 @@ export async function loadAppSession(): Promise<AppSession | null> {
     }
   }
 
-  const [isPlatformAdmin, isOfficialPlatformOwner, hold] = await Promise.all([
+  const officialFromAuth = isOfficialMasterAdminEmail(user.email);
+  const [rpcAdmin, rpcOwner, hold] = await Promise.all([
     readPlatformAdminFlag(supabase),
     readOfficialOwnerFlag(supabase),
     readPlatformHold(supabase),
   ]);
+  // Auth getUser() email is the confirmed identity, not a form field. Keep the
+  // menu visible if PostgREST has not loaded the admin RPCs yet.
+  const isOfficialPlatformOwner = rpcOwner || officialFromAuth;
+  const isPlatformAdmin = rpcAdmin;
 
   const intendedUse = profile?.intended_use ?? "client";
   const context: AuthContext = {
