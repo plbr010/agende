@@ -164,6 +164,7 @@ export function ProfessionalDashboard({
     trialStarted: string;
     trialEnds: string;
     trialDaysRemaining: number;
+    lifetime?: boolean;
     roleLabel: string;
     publicPath: string | null;
     hasClientProfile: boolean;
@@ -441,12 +442,14 @@ export function ProfessionalDashboard({
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Plano {plan.planLabel} · {plan.statusLabel}
-              {plan.trialDaysRemaining > 0
+              {!plan.lifetime && plan.trialDaysRemaining > 0
                 ? ` · ${plan.trialDaysRemaining === 1 ? "1 dia restante de teste grátis" : `${plan.trialDaysRemaining} dias restantes de teste grátis`}`
                 : ""}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Teste grátis: {plan.trialStarted} até {plan.trialEnds}. Sua função: {plan.roleLabel}.
+              {plan.lifetime
+                ? `Acesso vitalício deste salão. Sua função: ${plan.roleLabel}.`
+                : `Teste grátis: ${plan.trialStarted} até ${plan.trialEnds}. Sua função: ${plan.roleLabel}.`}
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">

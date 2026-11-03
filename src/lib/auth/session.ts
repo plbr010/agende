@@ -36,6 +36,19 @@ async function readOfficialOwnerFlag(supabase: SessionClient): Promise<boolean> 
   }
 }
 
+async function readLifetimeEntitlement(supabase: SessionClient, workspaceId: string): Promise<boolean> {
+  if (typeof supabase.rpc !== "function") return false;
+  try {
+    const { data, error } = await supabase.rpc("workspace_has_lifetime_entitlement", {
+      p_workspace_id: workspaceId,
+    });
+    if (error) return false;
+    return data === true;
+  } catch {
+    return false;
+  }
+}
+
 async function readPlatformHold(supabase: SessionClient): Promise<AppSession["hold"]> {
   if (typeof supabase.rpc !== "function") return { ...emptyHold };
   try {
@@ -69,6 +82,7 @@ export type WorkspaceSummary = {
 export type SubscriptionSummary = {
   plan: "solo" | "equipe" | "salao";
   status: "trialing" | "active" | "past_due" | "expired" | "canceled";
+  lifetime: boolean;
   trialStartedAt: string | null;
   trialEndsAt: string | null;
   currentPeriodStart: string | null;
@@ -177,11 +191,14 @@ export async function loadAppSession(): Promise<AppSession | null> {
   let subscription: SubscriptionSummary | null = null;
   const primaryWorkspace = workspaces[0];
   if (primaryWorkspace) {
-    const { data: sub, error: subscriptionError } = await supabase
-      .from("subscriptions")
-      .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
-      .eq("workspace_id", primaryWorkspace.id)
-      .maybeSingle();
+    const [{ data: sub, error: subscriptionError }, lifetime] = await Promise.all([
+      supabase
+        .from("subscriptions")
+        .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
+        .eq("workspace_id", primaryWorkspace.id)
+        .maybeSingle(),
+      readLifetimeEntitlement(supabase, primaryWorkspace.id),
+    ]);
     if (subscriptionError) {
       throw new Error("Não foi possível carregar sua assinatura. Tente novamente.");
     }
@@ -189,6 +206,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
       subscription = {
         plan: sub.plan,
         status: sub.status,
+        lifetime,
         trialStartedAt: sub.trial_started_at,
         trialEndsAt: sub.trial_ends_at,
         currentPeriodStart: sub.current_period_start,

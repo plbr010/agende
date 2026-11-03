@@ -34,7 +34,7 @@ export function canAccessPath(path: string, ctx: AuthContext): boolean {
     return false;
   }
   if (path === "/admin" || path.startsWith("/admin/")) {
-    return Boolean(ctx.isPlatformAdmin);
+    return Boolean(ctx.isPlatformAdmin) || Boolean(ctx.isOfficialPlatformOwner);
   }
   if (path === "/conta-suspensa") {
     return Boolean(ctx.accountHeld) || Boolean(ctx.isPlatformAdmin);
@@ -61,7 +61,7 @@ export function getFallbackForDeniedPath(path: string, ctx: AuthContext): string
   if ((path === "/app" || path.startsWith("/app/") || path.startsWith("/onboarding")) && ctx.accountHeld && !ctx.isPlatformAdmin) {
     return "/conta-suspensa";
   }
-  if ((path === "/admin" || path.startsWith("/admin/")) && !ctx.isPlatformAdmin) {
+  if ((path === "/admin" || path.startsWith("/admin/")) && !ctx.isPlatformAdmin && !ctx.isOfficialPlatformOwner) {
     return getDefaultDestination(ctx);
   }
   if ((path === "/app" || path.startsWith("/app/")) && !ctx.hasWorkspace) {

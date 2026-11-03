@@ -22,6 +22,9 @@ test("approved dashboard identity stays on the launch screens", () => {
   assert.match(shell, /Início/);
   assert.match(shell, /Mais/);
   assert.match(shell, /lg:hidden/);
+  assert.match(shell, /showMasterAdmin/);
+  assert.match(shell, /masterNavigationItem/);
+  assert.match(source("src/config/app-navigation.ts"), /Painel master/);
 
   const dashboard = source("src/components/app/professional-dashboard.tsx");
   assert.match(dashboard, /Olá, \{firstName\}!/);

@@ -199,4 +199,49 @@ test("master admin authorization, reads, holds and audit stay off the public API
     assert.equal(support.application_error_log, false);
     assert.equal(Array.isArray(support.unconfirmed_signups), true);
   });
+
+  await t.test("lifetime entitlement survives an expired Stripe subscription row", async () => {
+    const expire = (workspaceId, status = "expired") =>
+      db.transaction(async (tx) => {
+        await tx.exec("select set_config('app.bypass_protected_columns','on',true)");
+        return tx.query(
+          "update public.subscriptions set status=$2::public.subscription_status, trial_started_at = now() - interval '8 days', trial_ends_at = now() - interval '1 day', current_period_start = now() - interval '8 days', current_period_end = now() - interval '1 day', canceled_at = case when $2::text = 'canceled' then now() else canceled_at end, billing_provider='stripe' where workspace_id=$1",
+          [workspaceId, status],
+        );
+      });
+
+    await expire(wid);
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [wid])).rows[0].ok, false);
+
+    await db.query(
+      "insert into app.lifetime_entitlements(workspace_id, granted_to, note) values ($1,$2,'vitalicia teste')",
+      [wid, owner],
+    );
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [wid])).rows[0].ok, true);
+    assert.equal(
+      (await as(owner, "select public.workspace_has_lifetime_entitlement($1) as ok", [wid])).rows[0].ok,
+      true,
+    );
+    assert.equal(
+      (await as(outsider, "select public.workspace_has_lifetime_entitlement($1) as ok", [wid])).rows[0].ok,
+      false,
+    );
+
+    await expire(wid, "canceled");
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [wid])).rows[0].ok, true);
+
+    const other = await user("professional");
+    const extra = (await as(other, "select public.create_workspace($1,null,$2) as result", ["Salao Cortesia", "solo"]))
+      .rows[0].result.workspace_id;
+    await expire(extra);
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [extra])).rows[0].ok, false);
+    await db.query(
+      "insert into app.complimentary_entitlements(workspace_id, starts_at, ends_at, note) values ($1, now() - interval '1 hour', now() + interval '2 days', 'cortesia')",
+      [extra],
+    );
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [extra])).rows[0].ok, true);
+
+    await db.query("update app.lifetime_entitlements set revoked_at = now() where workspace_id=$1", [wid]);
+    assert.equal((await db.query("select app.workspace_has_entitlement($1) as ok", [wid])).rows[0].ok, false);
+  });
 });

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-03T20:18:04.855Z",
+  "checked_at": "2026-11-03T21:01:25.464Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 300,
+      "passed": 302,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 533,
+    "passed": 535,
     "failed": 0,
     "skipped": 2
   },
@@ -776,6 +776,12 @@
     {
       "file": "scripts/platform-admin-sql.test.mjs",
       "name": "dashboard, clients, subscriptions and support read live rows",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/platform-admin-sql.test.mjs",
+      "name": "lifetime entitlement survives an expired Stripe subscription row",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -3171,6 +3177,12 @@
       "file": "src/lib/workspace/images.test.ts",
       "name": "public image upload preserves new bytes on uncertain or stale swap acknowledgement",
       "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/workspace/labels.test.ts",
+      "name": "lifetime access is shown instead of the Stripe row status",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {

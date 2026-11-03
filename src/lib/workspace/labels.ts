@@ -33,6 +33,17 @@ export const SUBSCRIPTION_STATUS_LABEL: Record<SubscriptionStatus, string> = {
   canceled: "Cancelada",
 };
 
+export const LIFETIME_SUBSCRIPTION_LABEL = "Vitalícia";
+
+export function formatWorkspaceSubscriptionStatus(
+  status: SubscriptionStatus | null | undefined,
+  lifetime = false,
+): string {
+  if (lifetime) return LIFETIME_SUBSCRIPTION_LABEL;
+  if (!status) return SUBSCRIPTION_STATUS_LABEL.expired;
+  return SUBSCRIPTION_STATUS_LABEL[status];
+}
+
 export const INVITE_ROLES = ["admin", "professional", "receptionist"] as const;
 export type InviteRole = (typeof INVITE_ROLES)[number];
 
