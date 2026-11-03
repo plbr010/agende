@@ -1,0 +1,30 @@
+{
+  "width": 1080,
+  "height": 1350,
+  "headline": "Sua agenda pode trabalhar melhor por você.",
+  "headlineLines": [
+    "Sua agenda pode",
+    "trabalhar melhor",
+    "por você."
+  ],
+  "support": "Organize agendamentos, clientes e serviços em um só lugar.",
+  "supportLines": [
+    "Organize agendamentos, clientes",
+    "e serviços em um só lugar."
+  ],
+  "badge": "7 DIAS GRÁTIS",
+  "closing": "Conheça o Agendê e simplifique a gestão do seu negócio.",
+  "cta": "CONHEÇA O AGENDÊ",
+  "domain": "agendeapp.online",
+  "logoAlt": "Agendê",
+  "captures": {
+    "dashboard": "captures/painel-profissional.png",
+    "agenda": "captures/agenda.png",
+    "servicos": "captures/servicos.png",
+    "mobile": "captures/painel-mobile.png"
+  },
+  "notes": {
+    "source": "Telas reais do Agendê, capturadas das rotas oficiais de prévia visual /identidade e /identidade/servicos. Os nomes na prévia já existem no produto e são dados ilustrativos da identidade, não clientes reais.",
+    "edit": "Altere os textos neste arquivo e rode: node marketing/ads/instagram-aquisicao-4x5/export.mjs --compose-only"
+  }
+}
