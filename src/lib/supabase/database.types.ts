@@ -1840,6 +1840,7 @@ export type Database = {
       cancel_client_package: { Args: { p_workspace_id: string | null; p_client_package_id: string | null }; Returns: string };
       cancel_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null }; Returns: string };
       cancel_my_appointment: { Args: { p_appointment_id: string | null }; Returns: Json };
+      claim_official_platform_admin: { Args: Record<PropertyKey, never>; Returns: Json };
       cancel_my_privacy_request: { Args: { p_request_id: string | null }; Returns: string };
       change_trial_plan: { Args: { p_workspace_id: string | null; p_plan: string | null }; Returns: Json };
       claim_professional_photo_cleanup: { Args: { p_member_id: string | null }; Returns: string[] };
@@ -1880,6 +1881,7 @@ export type Database = {
       get_workspace_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_seat_usage: { Args: { p_workspace_id: string | null }; Returns: Json };
       grant_platform_admin: { Args: { p_user_id: string | null }; Returns: Json };
+      is_official_platform_owner: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_platform_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       list_available_slots: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_avatar_cleanup: { Args: Record<PropertyKey, never>; Returns: string[] };

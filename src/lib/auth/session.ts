@@ -25,6 +25,17 @@ async function readPlatformAdminFlag(supabase: SessionClient): Promise<boolean> 
   }
 }
 
+async function readOfficialOwnerFlag(supabase: SessionClient): Promise<boolean> {
+  if (typeof supabase.rpc !== "function") return false;
+  try {
+    const { data, error } = await supabase.rpc("is_official_platform_owner");
+    if (error) return false;
+    return data === true;
+  } catch {
+    return false;
+  }
+}
+
 async function readPlatformHold(supabase: SessionClient): Promise<AppSession["hold"]> {
   if (typeof supabase.rpc !== "function") return { ...emptyHold };
   try {
@@ -117,6 +128,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
         hasWorkspace: false,
         hasClientProfile: false,
         isPlatformAdmin: false,
+        isOfficialPlatformOwner: false,
         accountHeld: false,
       },
       workspaces: [],
@@ -199,8 +211,9 @@ export async function loadAppSession(): Promise<AppSession | null> {
     }
   }
 
-  const [isPlatformAdmin, hold] = await Promise.all([
+  const [isPlatformAdmin, isOfficialPlatformOwner, hold] = await Promise.all([
     readPlatformAdminFlag(supabase),
+    readOfficialOwnerFlag(supabase),
     readPlatformHold(supabase),
   ]);
 
@@ -211,6 +224,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
     hasWorkspace: workspaces.length > 0,
     hasClientProfile: Boolean(clientProfile),
     isPlatformAdmin,
+    isOfficialPlatformOwner,
     accountHeld: hold.held,
   };
 

@@ -3,9 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { createAvatarAdmin } from "@/lib/supabase/avatar-admin";
 import { adminErrorMessage } from "@/lib/admin/errors";
-import { isMasterAdminBootstrapEmail } from "@/lib/admin/bootstrap";
 import { requirePlatformAdmin } from "@/lib/admin/guard";
 import { sanitizeNextPath } from "@/lib/auth/redirects";
 import { loadAppSession } from "@/lib/auth/session";
@@ -32,24 +30,14 @@ export async function claimPlatformAdminAction(): Promise<AdminActionState> {
   if (session.context.isPlatformAdmin) {
     redirect("/admin");
   }
-  if (!isMasterAdminBootstrapEmail(session.user.email)) {
-    return { error: "Este e-mail não está na lista de provisionamento do painel master." };
+  if (!session.context.isOfficialPlatformOwner) {
+    return { error: "Esta identidade autenticada não é a conta master autorizada." };
   }
 
-  try {
-    const admin = createAvatarAdmin();
-    const { error } = await admin.rpc("grant_platform_admin", { p_user_id: session.user.id });
-    if (error) {
-      return { error: adminErrorMessage(error, "Não foi possível ativar o acesso master.") };
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    if (message.includes("avatar_backend_unconfigured") || message.includes("unconfigured")) {
-      return {
-        error: "Falta a chave de serviço no servidor. Use SUPABASE_SERVICE_ROLE_KEY ou conceda o acesso via SQL como operador do banco.",
-      };
-    }
-    return { error: "Não foi possível ativar o acesso master agora." };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("claim_official_platform_admin");
+  if (error) {
+    return { error: adminErrorMessage(error, "Não foi possível ativar o acesso master.") };
   }
 
   revalidateAdmin(["/admin"]);

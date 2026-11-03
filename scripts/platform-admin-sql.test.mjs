@@ -33,7 +33,13 @@ test("master admin authorization, reads, holds and audit stay off the public API
       return tx.query(sql, params);
     });
 
-  const owner = await user();
+  const owner = (
+    await db.query("select test_helpers.create_auth_user($1,$2,$3) as id", [
+      "plbrpc@gmail.com",
+      "professional",
+      true,
+    ])
+  ).rows[0].id;
   const outsider = await user("client");
   const workspace = (
     await as(owner, "select public.create_workspace($1,null,$2) as result", ["Estúdio Master", "equipe"])
@@ -53,7 +59,13 @@ test("master admin authorization, reads, holds and audit stay off the public API
       /permission denied|not_platform_admin/,
     );
     await assert.rejects(as(outsider, "select public.admin_dashboard_overview()"), /not_platform_admin/);
-    await assert.rejects(as(owner, "select public.grant_platform_admin($1)", [owner]), /not_platform_admin/);
+    await assert.rejects(
+      as(owner, "select public.grant_platform_admin($1)", [owner]),
+      /permission denied|not_official_platform_admin/,
+    );
+    await assert.rejects(as(outsider, "select public.claim_official_platform_admin()"), /not_official_platform_admin/);
+    assert.equal((await as(outsider, "select public.is_official_platform_owner() as ok")).rows[0].ok, false);
+    assert.equal((await as(owner, "select public.is_official_platform_owner() as ok")).rows[0].ok, true);
     assert.equal((await as(outsider, "select public.is_platform_admin() as ok")).rows[0].ok, false);
   });
 
@@ -66,9 +78,14 @@ test("master admin authorization, reads, holds and audit stay off the public API
     );
   });
 
-  await t.test("service_role provisions the first admin and authenticated admin can operate", async () => {
-    await asService("select public.grant_platform_admin($1)", [owner]);
+  await t.test("only the official Auth identity can become master and then operate", async () => {
+    await assert.rejects(asService("select public.grant_platform_admin($1)", [outsider]), /not_official_platform_admin/);
+    await as(owner, "select public.claim_official_platform_admin()");
     assert.equal((await as(owner, "select public.is_platform_admin() as ok")).rows[0].ok, true);
+    assert.equal(
+      (await db.query("select user_id from app.platform_admins where revoked_at is null")).rows[0].user_id,
+      owner,
+    );
 
     const overview = (await as(owner, "select public.admin_dashboard_overview() as data")).rows[0].data;
     assert.equal(overview.metrics.workspaces, 1);
@@ -95,12 +112,25 @@ test("master admin authorization, reads, holds and audit stay off the public API
     await assert.rejects(as(outsider, "select public.admin_list_professionals()"), /not_platform_admin/);
   });
 
-  await t.test("admin can grant another confirmed user and reject an unconfirmed one", async () => {
+  await t.test("spoofed email in the JWT cannot promote another account", async () => {
     const colleague = await user();
-    const unconfirmed = await user("professional", false);
-    await as(owner, "select public.grant_platform_admin($1)", [colleague]);
-    assert.equal((await as(colleague, "select public.is_platform_admin() as ok")).rows[0].ok, true);
-    await assert.rejects(as(owner, "select public.grant_platform_admin($1)", [unconfirmed]), /admin_user_not_confirmed/);
+    await assert.rejects(
+      db.transaction(async (tx) => {
+        await tx.query(
+          "select set_config('request.jwt.claim.sub',$1,true), set_config('request.jwt.claim.role','authenticated',true), set_config('request.jwt.claim.email','plbrpc@gmail.com',true)",
+          [colleague],
+        );
+        await tx.exec("set local role authenticated");
+        return tx.query("select public.claim_official_platform_admin()");
+      }),
+      /not_official_platform_admin/,
+    );
+    assert.equal((await as(colleague, "select public.is_platform_admin() as ok")).rows[0].ok, false);
+    await assert.rejects(as(owner, "select public.grant_platform_admin($1)", [colleague]), /permission denied|not_official_platform_admin/);
+    await assert.rejects(
+      db.query("insert into app.platform_admins(user_id) values ($1)", [colleague]),
+      /not_official_platform_admin/,
+    );
   });
 
   await t.test("suspend and reactivate write audit and block self-hold", async () => {

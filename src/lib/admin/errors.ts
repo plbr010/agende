@@ -1,5 +1,8 @@
 export function adminErrorMessage(error: { message?: string; code?: string } | null | undefined, fallback: string): string {
   const message = error?.message ?? "";
+  if (message.includes("not_official_platform_admin")) {
+    return "Só a conta master autorizada pode receber este acesso.";
+  }
   if (message.includes("not_platform_admin") || error?.code === "42501") {
     return "Você não tem permissão para o painel master.";
   }

@@ -59,6 +59,7 @@ const reconciledAfterReview = [
   ["20261026180100_expired_entitlement_appointment_cancel.sql", "0e28f1113cd2d27f356eef683cbf3aba239282222047e1b3b9c2e28f424de5dd"],
   ["20261026192015_reconcile_expired_cancellation.sql", "6f7c3a1e5b85d5136554d7973a69db82c3703eec111e19e98cca7e919cf04d8c"],
   ["20261103180000_platform_master_admin.sql", "af6f9d5ecd739ae24f5d06c853dd63c6f78f6145b32f543b74da2252351cee64"],
+  ["20261103203000_official_master_admin_identity.sql", "0ad457539586d3904a018b196769fa22518395cce8286476bd3446db8d04ee2d"],
 ];
 const reviewedLocalOnly = [...new Set([
   ...previouslyReviewedLocalOnly,

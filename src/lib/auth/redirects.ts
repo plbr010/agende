@@ -6,6 +6,7 @@ export type AuthContext = {
   hasWorkspace: boolean;
   hasClientProfile: boolean;
   isPlatformAdmin?: boolean;
+  isOfficialPlatformOwner?: boolean;
   accountHeld?: boolean;
 };
 

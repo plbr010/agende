@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-03T20:11:20.014Z",
+  "checked_at": "2026-11-03T20:18:04.855Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -751,13 +751,13 @@
     },
     {
       "file": "scripts/platform-admin-sql.test.mjs",
-      "name": "service_role provisions the first admin and authenticated admin can operate",
+      "name": "only the official Auth identity can become master and then operate",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
       "file": "scripts/platform-admin-sql.test.mjs",
-      "name": "admin can grant another confirmed user and reject an unconfirmed one",
+      "name": "spoofed email in the JWT cannot promote another account",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1561,7 +1561,7 @@
     },
     {
       "file": "src/lib/admin/bootstrap.test.ts",
-      "name": "master admin allowlist is server-only and ignores profile-like casing",
+      "name": "only the official owner email is recognized and env cannot expand it",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

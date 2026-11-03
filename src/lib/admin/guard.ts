@@ -2,7 +2,6 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { loadAppSession, type AppSession } from "@/lib/auth/session";
 import { getDefaultDestination } from "@/lib/auth/redirects";
-import { isMasterAdminBootstrapEmail } from "@/lib/admin/bootstrap";
 
 export type PlatformAdminAccess = {
   session: AppSession;
@@ -26,7 +25,7 @@ export async function requirePlatformAdmin(
   if (session.hold.held) {
     redirect("/conta-suspensa");
   }
-  if (options.allowProvision && isMasterAdminBootstrapEmail(session.user.email)) {
+  if (options.allowProvision && session.context.isOfficialPlatformOwner) {
     return { session, provisionPending: true };
   }
   redirect(getDefaultDestination(session.context));

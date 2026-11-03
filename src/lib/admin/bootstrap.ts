@@ -1,14 +1,8 @@
 import { normalizeEmail } from "@/lib/validation/email";
 
-export function masterAdminAllowlist(): string[] {
-  const raw = process.env.AGENDE_MASTER_ADMIN_EMAILS ?? process.env.AGENDE_MASTER_ADMIN_EMAIL ?? "";
-  return raw
-    .split(/[,\n;]+/)
-    .map((value) => normalizeEmail(value))
-    .filter((value): value is string => Boolean(value));
-}
+/** Official SaaS owner. Authorization is bound to this account's auth.users.id. */
+export const OFFICIAL_MASTER_ADMIN_EMAIL = "plbrpc@gmail.com";
 
-export function isMasterAdminBootstrapEmail(email: string | null | undefined): boolean {
-  const normalized = normalizeEmail(email ?? "");
-  return Boolean(normalized && masterAdminAllowlist().includes(normalized));
+export function isOfficialMasterAdminEmail(email: string | null | undefined): boolean {
+  return normalizeEmail(email ?? "") === OFFICIAL_MASTER_ADMIN_EMAIL;
 }
