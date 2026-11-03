@@ -25,7 +25,9 @@ for (const path of [...pages("src/app"), "/p/e2e-audit-nonexistent-pr12", "/p/e2
   const streamedRedirect = body.match(/<meta[^>]+http-equiv="refresh"[^>]+content="[01];url=([^"]+)"/i)?.[1];
   const location = response.headers.get("location") ?? streamedRedirect ?? null;
   const redirected = [303, 307, 308].includes(response.status) || (response.status === 200 && Boolean(streamedRedirect));
-  const protectedRoute = path === "/app" || path.startsWith("/app/") || path === "/cliente" || path.startsWith("/cliente/") || path === "/onboarding";
+  const protectedRoute = ["/app", "/cliente", "/onboarding", "/admin", "/conta-suspensa"].some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+  );
   const pass = protectedRoute ? redirected && Boolean(location?.includes("/login"))
     : path === "/auth/recovery" || path === "/redefinir-senha" ? redirected && Boolean(location?.includes("/recuperar-senha?status=expired"))
     : path.startsWith("/auth/") ? redirected && Boolean(location?.includes("/verificar-email"))

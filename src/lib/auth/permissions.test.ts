@@ -20,6 +20,7 @@ function sessionFor(role: WorkspaceRole): AppSession {
     context: { emailConfirmed: true, intendedUse: "professional", hasWorkspace: true, hasClientProfile: false },
     workspaces: [{ id: "workspace-1", name: "Test", slug: "test", role }],
     subscription: null,
+    hold: { held: false, reason: null, subjectType: null, createdAt: null },
   };
 }
 
@@ -225,4 +226,14 @@ test("server guard preserves login, confirmation and onboarding redirects", asyn
     const guard = createConfirmedSessionGuard(async () => session, redirect);
     await assert.rejects(() => guard("/app/estoque"), (error: unknown) => error instanceof Redirect && error.destination === destination);
   }
+});
+
+test("held professional accounts cannot open the salon app", async () => {
+  const session = sessionFor("owner");
+  session.hold = { held: true, reason: "teste", subjectType: "user", createdAt: "2026-11-03T00:00:00.000Z" };
+  session.context = { ...session.context, accountHeld: true };
+  const guard = createConfirmedSessionGuard(async () => session, redirect);
+  await assert.rejects(() => guard("/app"), (error: unknown) => error instanceof Redirect && error.destination === "/conta-suspensa");
+  await assert.rejects(() => guard("/app/agenda"), (error: unknown) => error instanceof Redirect && error.destination === "/conta-suspensa");
+  await assert.rejects(() => guard("/onboarding"), (error: unknown) => error instanceof Redirect && error.destination === "/conta-suspensa");
 });
