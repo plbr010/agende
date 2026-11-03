@@ -17,6 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       hasAvatar={session.profile.hasAvatar}
       avatarVersion={session.profile.avatarVersion}
       isPlatformAdmin={session.context.isPlatformAdmin === true}
+      isOfficialPlatformOwner={session.context.isOfficialPlatformOwner === true}
     >
       {children}
     </AppShell>

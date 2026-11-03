@@ -105,6 +105,7 @@ export type SubscriptionDetail = {
   billingInterval: "monthly" | "annual";
   hasStripeCustomer: boolean;
   hasStripeSubscription: boolean;
+  lifetime: boolean;
   plan: Database["public"]["Enums"]["subscription_plan"];
   status: Database["public"]["Enums"]["subscription_status"];
   trialStartedAt: string | null;
@@ -123,10 +124,22 @@ export async function loadSubscriptionDetail(workspaceId: string): Promise<Subsc
   if (!data) {
     return null;
   }
+  let lifetime = false;
+  if (typeof supabase.rpc === "function") {
+    try {
+      const { data: lifetimeData, error: lifetimeError } = await supabase.rpc("workspace_has_lifetime_entitlement", {
+        p_workspace_id: workspaceId,
+      });
+      lifetime = !lifetimeError && lifetimeData === true;
+    } catch {
+      lifetime = false;
+    }
+  }
   return {
     billingInterval: data.billing_interval,
     hasStripeCustomer: data.billing_provider === "stripe" && Boolean(data.external_customer_id),
     hasStripeSubscription: data.billing_provider === "stripe" && Boolean(data.external_subscription_id),
+    lifetime,
     plan: data.plan,
     status: data.status,
     trialStartedAt: data.trial_started_at,

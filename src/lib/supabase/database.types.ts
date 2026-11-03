@@ -1936,6 +1936,7 @@ export type Database = {
       update_service_package: { Args: { p_workspace_id: string | null; p_package_id: string | null; p_name: string | null; p_description: string | null; p_price_cents: number | null; p_validity_days: number | null; p_active: boolean | null; p_items: Json | null }; Returns: string };
       update_workspace_member_role: { Args: { p_workspace_id: string | null; p_member_id: string | null; p_role: Database["public"]["Enums"]["member_role"] | null }; Returns: Json };
       update_workspace_settings: { Args: { p_workspace_id: string | null; p_name: string | null; p_slug: string | null; p_business_phone?: string | null; p_business_email?: string | null; p_description?: string | null; p_address?: string | null; p_city?: string | null; p_state?: string | null; p_postal_code?: string | null; p_instagram?: string | null; p_timezone?: string | null; p_logo_path?: string | null; p_clear_logo?: boolean | null }; Returns: Json };
+      workspace_has_lifetime_entitlement: { Args: { p_workspace_id: string | null }; Returns: boolean };
     };
     Enums: {
       appointment_status: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";

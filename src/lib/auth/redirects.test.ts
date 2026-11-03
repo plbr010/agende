@@ -78,6 +78,10 @@ test("only a platform admin reaches /admin and held accounts leave the salon app
   assert.equal(getDefaultDestination(master), "/admin");
   assert.equal(canAccessPath("/admin", master), true);
 
+  const officialOwner = { ...professional, isOfficialPlatformOwner: true };
+  assert.equal(canAccessPath("/admin", officialOwner), true);
+  assert.equal(getFallbackForDeniedPath("/admin", professional), "/app");
+
   const held = { ...professional, accountHeld: true };
   assert.equal(canAccessPath("/app", held), false);
   assert.equal(getFallbackForDeniedPath("/app", held), "/conta-suspensa");

@@ -1,7 +1,7 @@
 import { PLANS } from "@/lib/marketing/content";
 import type { SubscriptionDetail } from "@/lib/workspace/queries";
 import type { SeatUsage } from "@/lib/workspace/public";
-import { PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
+import { PLAN_LABEL, formatWorkspaceSubscriptionStatus } from "@/lib/workspace/labels";
 import { formatDateTime } from "@/lib/workspace/timezone";
 import { trialDaysRemaining } from "@/lib/billing/plans";
 import { ManagementForm } from "@/components/modules/management-form";
@@ -37,11 +37,18 @@ export function SubscriptionOverview({
       <section className="rounded-[1.5rem] bg-wine-deep p-6 text-white sm:p-8">
         <p className="text-xs font-semibold tracking-[0.16em] text-white/70 uppercase">Assinatura do negócio</p>
         <h2 className="mt-2 font-serif text-4xl">{subscription ? PLAN_LABEL[subscription.plan] : "Plano indisponível"}</h2>
-        <p className="mt-3 text-white/85">{subscription ? SUBSCRIPTION_STATUS_LABEL[subscription.status] : "Não disponível"}</p>
+        <p className="mt-3 text-white/85">
+          {subscription ? formatWorkspaceSubscriptionStatus(subscription.status, subscription.lifetime) : "Não disponível"}
+        </p>
         <p className="mt-3 text-white/85">
           Profissionais: {seats ? `${seats.usedProfessionals} de ${seats.maxProfessionals}` : "Não disponível"}
         </p>
-        {subscription?.trialEndsAt ? (
+        {subscription?.lifetime ? (
+          <div className="mt-5 rounded-2xl bg-white/10 p-4">
+            <p className="font-serif text-3xl">Acesso vitalício</p>
+            <p className="mt-1 text-sm text-white/80">Este salão não perde o acesso quando a cobrança do Stripe vence ou expira.</p>
+          </div>
+        ) : subscription?.trialEndsAt ? (
           <div className="mt-5 rounded-2xl bg-white/10 p-4">
             <p className="font-serif text-3xl">
               {days === 1 ? "1 dia restante de teste" : `${days} dias restantes de teste`}
@@ -52,9 +59,15 @@ export function SubscriptionOverview({
         ) : null}
       </section>
 
-      <p className="rounded-2xl bg-metric-blush px-4 py-3 text-sm">
-        Trocar de plano durante o teste não reinicia os 7 dias nem altera a data final.
-      </p>
+      {subscription?.lifetime ? (
+        <p className="rounded-2xl bg-metric-blush px-4 py-3 text-sm">
+          A assinatura vitalícia vale mesmo se o Stripe marcar o período como expirado.
+        </p>
+      ) : (
+        <p className="rounded-2xl bg-metric-blush px-4 py-3 text-sm">
+          Trocar de plano durante o teste não reinicia os 7 dias nem altera a data final.
+        </p>
+      )}
 
       {trial ? (
         <section className="grid gap-4 lg:grid-cols-3" aria-label="Plano durante o teste">
