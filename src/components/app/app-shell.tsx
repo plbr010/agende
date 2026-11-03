@@ -71,6 +71,7 @@ function SidebarFooter({
   roleLabel,
   hasAvatar,
   avatarVersion,
+  isPlatformAdmin,
 }: {
   workspaceName: string;
   workspaceSlug: string;
@@ -78,9 +79,19 @@ function SidebarFooter({
   roleLabel: string;
   hasAvatar: boolean;
   avatarVersion: string | null;
+  isPlatformAdmin: boolean;
 }) {
   return (
     <div className="mt-4 grid gap-2 border-t border-white/15 pt-4">
+      {isPlatformAdmin ? (
+        <Button
+          variant="ghost"
+          className="h-11 justify-start rounded-full px-3 text-white/85 hover:bg-white/10 hover:text-white"
+          render={<Link href="/admin" />}
+        >
+          Painel master
+        </Button>
+      ) : null}
       {workspaceSlug ? (
         <Button
           variant="ghost"
@@ -115,6 +126,7 @@ export function AppShell({
   permissions = null,
   hasAvatar = false,
   avatarVersion = null,
+  isPlatformAdmin = false,
   children,
 }: {
   workspaceName: string;
@@ -125,6 +137,7 @@ export function AppShell({
   permissions?: WorkspacePermissions | null;
   hasAvatar?: boolean;
   avatarVersion?: string | null;
+  isPlatformAdmin?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -163,6 +176,7 @@ export function AppShell({
             roleLabel={roleLabel}
             hasAvatar={hasAvatar}
             avatarVersion={avatarVersion}
+            isPlatformAdmin={isPlatformAdmin}
           />
         </div>
       </SheetContent>
@@ -187,6 +201,7 @@ export function AppShell({
           roleLabel={roleLabel}
           hasAvatar={hasAvatar}
           avatarVersion={avatarVersion}
+          isPlatformAdmin={isPlatformAdmin}
         />
       </aside>
 

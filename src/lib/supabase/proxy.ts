@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/env";
 import type { Database } from "@/lib/supabase/database.types";
 
-const PROTECTED_PREFIXES = ["/app", "/cliente", "/onboarding"];
+const PROTECTED_PREFIXES = ["/app", "/cliente", "/onboarding", "/admin", "/conta-suspensa"];
 
 function copyAuthCookies(
   from: NextResponse,

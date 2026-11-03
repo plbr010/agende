@@ -37,6 +37,117 @@ export type Database = {
           { foreignKeyName: "appointment_reviews_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
         ];
       };
+      appointment_settlement_products: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          settlement_id: string;
+          product_id: string;
+          quantity: number;
+          unit_price_cents: number;
+          line_total_cents: number;
+          financial_entry_id: string | null;
+          stock_restored: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          settlement_id: string;
+          product_id: string;
+          quantity: number;
+          unit_price_cents: number;
+          line_total_cents: number;
+          financial_entry_id?: string | null;
+          stock_restored?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          settlement_id?: string;
+          product_id?: string;
+          quantity?: number;
+          unit_price_cents?: number;
+          line_total_cents?: number;
+          financial_entry_id?: string | null;
+          stock_restored?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "appointment_settlement_products_entry_fk"; columns: ["financial_entry_id","workspace_id"]; isOneToOne: false; referencedRelation: "financial_entries"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlement_products_product_fk"; columns: ["product_id","workspace_id"]; isOneToOne: false; referencedRelation: "inventory_products"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlement_products_settlement_fk"; columns: ["settlement_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointment_settlements"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlement_products_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      appointment_settlements: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          appointment_id: string;
+          idempotency_key: string;
+          professional_member_id: string;
+          service_id: string;
+          list_price_cents: number;
+          discount_cents: number;
+          amount_due_cents: number;
+          product_total_cents: number;
+          release_policy: Database["public"]["Enums"]["commission_release_policy"];
+          commission_rule_id: string | null;
+          commission_rate_bps: number;
+          commission_eligible_cents: number;
+          commission_cents: number;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          appointment_id: string;
+          idempotency_key: string;
+          professional_member_id: string;
+          service_id: string;
+          list_price_cents: number;
+          discount_cents?: number;
+          amount_due_cents: number;
+          product_total_cents?: number;
+          release_policy: Database["public"]["Enums"]["commission_release_policy"];
+          commission_rule_id?: string | null;
+          commission_rate_bps?: number;
+          commission_eligible_cents?: number;
+          commission_cents?: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          appointment_id?: string;
+          idempotency_key?: string;
+          professional_member_id?: string;
+          service_id?: string;
+          list_price_cents?: number;
+          discount_cents?: number;
+          amount_due_cents?: number;
+          product_total_cents?: number;
+          release_policy?: Database["public"]["Enums"]["commission_release_policy"];
+          commission_rule_id?: string | null;
+          commission_rate_bps?: number;
+          commission_eligible_cents?: number;
+          commission_cents?: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "appointment_settlements_appointment_fk"; columns: ["appointment_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointments"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlements_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "appointment_settlements_professional_fk"; columns: ["professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "appointment_settlements_rule_fk"; columns: ["commission_rule_id","workspace_id"]; isOneToOne: false; referencedRelation: "commission_rules"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlements_service_fk"; columns: ["service_id","workspace_id"]; isOneToOne: false; referencedRelation: "services"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "appointment_settlements_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
       appointments: {
         Row: {
           id: string;
@@ -314,6 +425,211 @@ export type Database = {
           { foreignKeyName: "client_workspace_favorites_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
         ];
       };
+      commission_entries: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          appointment_id: string;
+          settlement_id: string | null;
+          professional_member_id: string;
+          rule_id: string | null;
+          release_policy: Database["public"]["Enums"]["commission_release_policy"];
+          rate_bps: number;
+          eligible_cents: number;
+          original_commission_cents: number;
+          current_commission_cents: number;
+          released_cents: number;
+          paid_cents: number;
+          manual_ceiling_cents: number | null;
+          status: Database["public"]["Enums"]["commission_status"];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          appointment_id: string;
+          settlement_id?: string | null;
+          professional_member_id: string;
+          rule_id?: string | null;
+          release_policy: Database["public"]["Enums"]["commission_release_policy"];
+          rate_bps: number;
+          eligible_cents: number;
+          original_commission_cents: number;
+          current_commission_cents: number;
+          released_cents?: number;
+          paid_cents?: number;
+          manual_ceiling_cents?: number | null;
+          status?: Database["public"]["Enums"]["commission_status"];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          appointment_id?: string;
+          settlement_id?: string | null;
+          professional_member_id?: string;
+          rule_id?: string | null;
+          release_policy?: Database["public"]["Enums"]["commission_release_policy"];
+          rate_bps?: number;
+          eligible_cents?: number;
+          original_commission_cents?: number;
+          current_commission_cents?: number;
+          released_cents?: number;
+          paid_cents?: number;
+          manual_ceiling_cents?: number | null;
+          status?: Database["public"]["Enums"]["commission_status"];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "commission_entries_appointment_fk"; columns: ["appointment_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointments"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_entries_professional_fk"; columns: ["professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "commission_entries_rule_fk"; columns: ["rule_id","workspace_id"]; isOneToOne: false; referencedRelation: "commission_rules"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_entries_settlement_fk"; columns: ["settlement_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointment_settlements"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_entries_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      commission_events: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          commission_id: string;
+          event_type: string;
+          note: string | null;
+          current_cents: number;
+          released_cents: number;
+          paid_cents: number;
+          actor_user_id: string | null;
+          created_at: string;
+          previous_professional_member_id: string | null;
+          next_professional_member_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          commission_id: string;
+          event_type: string;
+          note?: string | null;
+          current_cents: number;
+          released_cents: number;
+          paid_cents: number;
+          actor_user_id?: string | null;
+          created_at?: string;
+          previous_professional_member_id?: string | null;
+          next_professional_member_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          commission_id?: string;
+          event_type?: string;
+          note?: string | null;
+          current_cents?: number;
+          released_cents?: number;
+          paid_cents?: number;
+          actor_user_id?: string | null;
+          created_at?: string;
+          previous_professional_member_id?: string | null;
+          next_professional_member_id?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "commission_events_actor_user_id_fkey"; columns: ["actor_user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "commission_events_commission_fk"; columns: ["commission_id","workspace_id"]; isOneToOne: false; referencedRelation: "commission_entries"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_events_next_fk"; columns: ["next_professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "commission_events_previous_fk"; columns: ["previous_professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "commission_events_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      commission_payments: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          commission_id: string;
+          direction: Database["public"]["Enums"]["commission_payment_direction"];
+          amount_cents: number;
+          paid_on: string;
+          note: string | null;
+          idempotency_key: string | null;
+          created_by: string | null;
+          created_at: string;
+          professional_member_id: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          commission_id: string;
+          direction: Database["public"]["Enums"]["commission_payment_direction"];
+          amount_cents: number;
+          paid_on: string;
+          note?: string | null;
+          idempotency_key?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          professional_member_id: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          commission_id?: string;
+          direction?: Database["public"]["Enums"]["commission_payment_direction"];
+          amount_cents?: number;
+          paid_on?: string;
+          note?: string | null;
+          idempotency_key?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          professional_member_id?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "commission_payments_beneficiary_fk"; columns: ["professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "commission_payments_commission_fk"; columns: ["commission_id","workspace_id"]; isOneToOne: false; referencedRelation: "commission_entries"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_payments_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "commission_payments_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      commission_rules: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          professional_member_id: string;
+          service_id: string | null;
+          rate_bps: number;
+          effective_from: string;
+          effective_to: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          professional_member_id: string;
+          service_id?: string | null;
+          rate_bps: number;
+          effective_from?: string;
+          effective_to?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          professional_member_id?: string;
+          service_id?: string | null;
+          rate_bps?: number;
+          effective_from?: string;
+          effective_to?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "commission_rules_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "commission_rules_professional_fk"; columns: ["professional_member_id","workspace_id"]; isOneToOne: false; referencedRelation: "professional_profiles"; referencedColumns: ["member_id","workspace_id"] },
+          { foreignKeyName: "commission_rules_service_fk"; columns: ["service_id","workspace_id"]; isOneToOne: false; referencedRelation: "services"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "commission_rules_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
       financial_categories: {
         Row: {
           id: string;
@@ -377,6 +693,8 @@ export type Database = {
           updated_at: string;
           category_id: string | null;
           idempotency_key: string | null;
+          linked_settlement_id: string | null;
+          commission_payment_id: string | null;
         };
         Insert: {
           id?: string;
@@ -398,6 +716,8 @@ export type Database = {
           updated_at?: string;
           category_id?: string | null;
           idempotency_key?: string | null;
+          linked_settlement_id?: string | null;
+          commission_payment_id?: string | null;
         };
         Update: {
           id?: string;
@@ -419,14 +739,58 @@ export type Database = {
           updated_at?: string;
           category_id?: string | null;
           idempotency_key?: string | null;
+          linked_settlement_id?: string | null;
+          commission_payment_id?: string | null;
         };
         Relationships: [
           { foreignKeyName: "financial_entries_appointment_fk"; columns: ["appointment_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointments"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_entries_category_fk"; columns: ["category_id","workspace_id"]; isOneToOne: false; referencedRelation: "financial_categories"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_entries_client_fk"; columns: ["client_id","workspace_id"]; isOneToOne: false; referencedRelation: "workspace_clients"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_entries_client_package_fk"; columns: ["client_package_id","workspace_id"]; isOneToOne: false; referencedRelation: "client_packages"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "financial_entries_commission_payment_fk"; columns: ["commission_payment_id","workspace_id"]; isOneToOne: false; referencedRelation: "commission_payments"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_entries_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "financial_entries_settlement_fk"; columns: ["linked_settlement_id","workspace_id"]; isOneToOne: false; referencedRelation: "appointment_settlements"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_entries_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      financial_receipts: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          financial_entry_id: string;
+          amount_cents: number;
+          payment_method: Database["public"]["Enums"]["payment_method"];
+          received_at: string;
+          idempotency_key: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          financial_entry_id: string;
+          amount_cents: number;
+          payment_method: Database["public"]["Enums"]["payment_method"];
+          received_at?: string;
+          idempotency_key?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          financial_entry_id?: string;
+          amount_cents?: number;
+          payment_method?: Database["public"]["Enums"]["payment_method"];
+          received_at?: string;
+          idempotency_key?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "financial_receipts_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "financial_receipts_entry_fk"; columns: ["financial_entry_id","workspace_id"]; isOneToOne: false; referencedRelation: "financial_entries"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "financial_receipts_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
         ];
       };
       financial_refunds: {
@@ -470,6 +834,43 @@ export type Database = {
           { foreignKeyName: "financial_refunds_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
           { foreignKeyName: "financial_refunds_entry_fk"; columns: ["financial_entry_id","workspace_id"]; isOneToOne: false; referencedRelation: "financial_entries"; referencedColumns: ["id","workspace_id"] },
           { foreignKeyName: "financial_refunds_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
+        ];
+      };
+      financial_settlement_operations: {
+        Row: {
+          workspace_id: string;
+          idempotency_key: string;
+          financial_entry_id: string;
+          payment_method: Database["public"]["Enums"]["payment_method"];
+          requested_paid_at: string | null;
+          received_delta_cents: number;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          workspace_id: string;
+          idempotency_key: string;
+          financial_entry_id: string;
+          payment_method: Database["public"]["Enums"]["payment_method"];
+          requested_paid_at?: string | null;
+          received_delta_cents: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          workspace_id?: string;
+          idempotency_key?: string;
+          financial_entry_id?: string;
+          payment_method?: Database["public"]["Enums"]["payment_method"];
+          requested_paid_at?: string | null;
+          received_delta_cents?: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "financial_settlement_operatio_financial_entry_id_workspace_fkey"; columns: ["financial_entry_id","workspace_id"]; isOneToOne: false; referencedRelation: "financial_entries"; referencedColumns: ["id","workspace_id"] },
+          { foreignKeyName: "financial_settlement_operations_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "financial_settlement_operations_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
         ];
       };
       inventory_movements: {
@@ -733,7 +1134,6 @@ export type Database = {
       };
       professional_profiles: {
         Row: {
-          photo_path: string | null;
           member_id: string;
           workspace_id: string;
           display_name: string;
@@ -741,6 +1141,7 @@ export type Database = {
           booking_enabled: boolean;
           created_at: string;
           updated_at: string;
+          photo_path: string | null;
         };
         Insert: {
           member_id: string;
@@ -750,6 +1151,7 @@ export type Database = {
           booking_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
+          photo_path?: string | null;
         };
         Update: {
           member_id?: string;
@@ -759,6 +1161,7 @@ export type Database = {
           booking_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
+          photo_path?: string | null;
         };
         Relationships: [
           { foreignKeyName: "professional_profiles_member_workspace_fk"; columns: ["member_id","workspace_id"]; isOneToOne: true; referencedRelation: "workspace_members"; referencedColumns: ["id","workspace_id"] },
@@ -1253,6 +1656,39 @@ export type Database = {
           { foreignKeyName: "workspace_invites_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: false; referencedRelation: "workspaces"; referencedColumns: ["id"] },
         ];
       };
+      workspace_member_permissions: {
+        Row: {
+          member_id: string;
+          workspace_id: string;
+          permission_key: string;
+          effect: string;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          member_id: string;
+          workspace_id: string;
+          permission_key: string;
+          effect: string;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          member_id?: string;
+          workspace_id?: string;
+          permission_key?: string;
+          effect?: string;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "workspace_member_permissions_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["user_id"] },
+          { foreignKeyName: "workspace_member_permissions_member_fk"; columns: ["member_id","workspace_id"]; isOneToOne: false; referencedRelation: "workspace_members"; referencedColumns: ["id","workspace_id"] },
+        ];
+      };
       workspace_members: {
         Row: {
           id: string;
@@ -1298,11 +1734,12 @@ export type Database = {
           postal_code: string | null;
           instagram: string | null;
           logo_path: string | null;
-          cover_path: string | null;
           timezone: string;
           created_at: string;
           updated_at: string;
           discovery_enabled: boolean;
+          cover_path: string | null;
+          commission_release_policy: Database["public"]["Enums"]["commission_release_policy"];
         };
         Insert: {
           workspace_id: string;
@@ -1315,11 +1752,12 @@ export type Database = {
           postal_code?: string | null;
           instagram?: string | null;
           logo_path?: string | null;
-          cover_path?: string | null;
           timezone?: string;
           created_at?: string;
           updated_at?: string;
           discovery_enabled?: boolean;
+          cover_path?: string | null;
+          commission_release_policy?: Database["public"]["Enums"]["commission_release_policy"];
         };
         Update: {
           workspace_id?: string;
@@ -1332,11 +1770,12 @@ export type Database = {
           postal_code?: string | null;
           instagram?: string | null;
           logo_path?: string | null;
-          cover_path?: string | null;
           timezone?: string;
           created_at?: string;
           updated_at?: string;
           discovery_enabled?: boolean;
+          cover_path?: string | null;
+          commission_release_policy?: Database["public"]["Enums"]["commission_release_policy"];
         };
         Relationships: [
           { foreignKeyName: "workspace_settings_workspace_id_fkey"; columns: ["workspace_id"]; isOneToOne: true; referencedRelation: "workspaces"; referencedColumns: ["id"] },
@@ -1374,22 +1813,24 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
-      get_professional_photo: { Args: { p_member_id: string; p_slug?: string }; Returns: string | null };
-      get_related_client_avatar: { Args: { p_client_id: string }; Returns: string | null };
-      get_appointment_whatsapp: { Args: { p_appointment_id: string }; Returns: Json };
-      queue_professional_photo: { Args: { p_actor_id: string; p_member_id: string; p_path: string }; Returns: undefined };
-      swap_professional_photo: { Args: { p_actor_id: string; p_member_id: string; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
-      claim_professional_photo_cleanup: { Args: { p_member_id: string }; Returns: string[] };
-      finish_professional_photo_cleanup: { Args: { p_path: string }; Returns: undefined };
-
-      queue_workspace_image_upload: { Args: { p_workspace_id: string; p_kind: string; p_path: string }; Returns: undefined };
-      swap_workspace_image: { Args: { p_workspace_id: string; p_kind: string; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
-      claim_workspace_image_cleanup: { Args: { p_workspace_id: string }; Returns: string[] };
-      finish_workspace_image_cleanup: { Args: { p_workspace_id: string; p_path: string }; Returns: undefined };
-      get_public_workspace_cover: { Args: { p_slug: string }; Returns: string | null };
       accept_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       acquire_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: boolean };
       add_my_workspace_favorite: { Args: { p_workspace_id: string | null }; Returns: undefined };
+      adjust_commission: { Args: { p_commission_id: string | null; p_new_amount_cents: number | null; p_reason: string | null }; Returns: string };
+      admin_dashboard_overview: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_get_client: { Args: { p_user_id: string | null }; Returns: Json };
+      admin_get_professional: { Args: { p_user_id: string | null }; Returns: Json };
+      admin_get_workspace: { Args: { p_workspace_id: string | null }; Returns: Json };
+      admin_list_appointments: { Args: { p_query?: string | null; p_status?: string | null; p_workspace_id?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_audit_events: { Args: { p_query?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_billing_events: { Args: { p_query?: string | null; p_kind?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_clients: { Args: { p_query?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_professionals: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_subscriptions: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_users: { Args: { p_query?: string | null; p_intent?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_list_workspaces: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_set_account_hold: { Args: { p_subject_type: string | null; p_subject_id: string | null; p_reason: string | null; p_active: boolean | null }; Returns: Json };
+      admin_support_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       apply_inventory_movement: { Args: { p_workspace_id: string | null; p_product_id: string | null; p_type: Database["public"]["Enums"]["inventory_movement_type"] | null; p_quantity?: number | null; p_new_quantity?: number | null; p_reason?: string | null }; Returns: Json };
       archive_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null }; Returns: string };
       archive_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
@@ -1401,6 +1842,9 @@ export type Database = {
       cancel_my_appointment: { Args: { p_appointment_id: string | null }; Returns: Json };
       cancel_my_privacy_request: { Args: { p_request_id: string | null }; Returns: string };
       change_trial_plan: { Args: { p_workspace_id: string | null; p_plan: string | null }; Returns: Json };
+      claim_professional_photo_cleanup: { Args: { p_member_id: string | null }; Returns: string[] };
+      claim_workspace_image_cleanup: { Args: { p_workspace_id: string | null }; Returns: string[] };
+      complete_appointment_checkout: { Args: { p_appointment_id: string | null; p_idempotency_key: string | null; p_discount_cents?: number | null; p_products?: Json | null; p_receive_cents?: number | null; p_payment_method?: Database["public"]["Enums"]["payment_method"] | null }; Returns: Json };
       create_appointment: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_starts_at: string | null; p_notes?: string | null }; Returns: string };
       create_client_profile: { Args: Record<PropertyKey, never>; Returns: string };
       create_financial_category: { Args: { p_workspace_id: string | null; p_name: string | null; p_entry_type: Database["public"]["Enums"]["financial_entry_type"] | null }; Returns: string };
@@ -1414,30 +1858,29 @@ export type Database = {
       deactivate_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
       export_my_personal_data: { Args: Record<PropertyKey, never>; Returns: Json };
       finish_avatar_cleanup: { Args: { p_path: string | null }; Returns: undefined };
-      get_finance_ui: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
-      get_my_permissions: { Args: { p_workspace_id: string | null }; Returns: Json };
-      get_member_permission_editor: { Args: { p_workspace_id: string | null }; Returns: Json };
+      finish_professional_photo_cleanup: { Args: { p_path: string | null }; Returns: undefined };
+      finish_workspace_image_cleanup: { Args: { p_workspace_id: string | null; p_path: string | null }; Returns: undefined };
+      get_appointment_whatsapp: { Args: { p_appointment_id: string | null }; Returns: Json };
       get_commission_settings: { Args: { p_workspace_id: string | null }; Returns: Json };
+      get_commissions_page: { Args: { p_workspace_id: string | null; p_professional_member_id?: string | null; p_before?: string | null; p_before_id?: string | null; p_limit?: number | null }; Returns: Json };
       get_commissions_ui: { Args: { p_workspace_id: string | null; p_professional_member_id?: string | null }; Returns: Json };
-      get_commissions_page: { Args: { p_workspace_id: string; p_professional_member_id?: string | null; p_before?: string | null; p_before_id?: string | null; p_limit?: number }; Returns: Json };
-      set_member_permission: { Args: { p_member_id: string | null; p_permission_key: string | null; p_effect?: string | null }; Returns: undefined };
-      set_commission_rule: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id?: string | null; p_rate_bps: number | null }; Returns: string };
-      set_commission_release_policy: { Args: { p_workspace_id: string | null; p_policy: string | null }; Returns: string };
-      complete_appointment_checkout: { Args: { p_appointment_id: string | null; p_idempotency_key: string | null; p_discount_cents?: number | null; p_products?: Json | null; p_receive_cents?: number | null; p_payment_method?: Database["public"]["Enums"]["payment_method"] | null }; Returns: Json };
-      record_financial_receipt: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_amount_cents: number | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_idempotency_key: string | null }; Returns: string };
-      pay_commission: { Args: { p_commission_id: string | null; p_amount_cents: number | null; p_paid_on: string | null; p_note?: string | null; p_idempotency_key: string | null }; Returns: string };
-      recover_commission: { Args: { p_commission_id: string | null; p_amount_cents: number | null; p_paid_on: string | null; p_note?: string | null; p_idempotency_key: string | null }; Returns: string };
-      adjust_commission: { Args: { p_commission_id: string | null; p_new_amount_cents: number | null; p_reason: string | null }; Returns: string };
-      reassign_commission: { Args: { p_commission_id: string | null; p_professional_member_id: string | null; p_reason: string | null }; Returns: string };
+      get_finance_ui: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_inventory_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
+      get_member_permission_editor: { Args: { p_workspace_id: string | null }; Returns: Json };
+      get_my_permissions: { Args: { p_workspace_id: string | null }; Returns: Json };
       get_packages_ui: { Args: { p_workspace_id: string | null }; Returns: Json };
+      get_professional_photo: { Args: { p_member_id: string | null; p_slug?: string | null }; Returns: string };
+      get_public_workspace_cover: { Args: { p_slug: string | null }; Returns: string };
       get_public_workspace_profile: { Args: { p_slug: string | null }; Returns: Json };
+      get_related_client_avatar: { Args: { p_client_id: string | null }; Returns: string };
       get_stripe_api_key: { Args: Record<PropertyKey, never>; Returns: string };
       get_stripe_webhook_secret: { Args: Record<PropertyKey, never>; Returns: string };
       get_workspace_advanced_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_discovery: { Args: { p_workspace_id: string | null }; Returns: boolean };
       get_workspace_report: { Args: { p_workspace_id: string | null; p_start_date: string | null; p_end_date: string | null }; Returns: Json };
       get_workspace_seat_usage: { Args: { p_workspace_id: string | null }; Returns: Json };
+      grant_platform_admin: { Args: { p_user_id: string | null }; Returns: Json };
+      is_platform_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       list_available_slots: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_local_date: string | null }; Returns: { starts_at: string }[] };
       list_avatar_cleanup: { Args: Record<PropertyKey, never>; Returns: string[] };
       list_my_appointments: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -1448,13 +1891,19 @@ export type Database = {
       list_public_booking_catalog: { Args: { p_slug: string | null }; Returns: Json };
       list_public_localities: { Args: { p_state?: string | null; p_query?: string | null; p_limit?: number | null }; Returns: Json };
       mark_financial_entry_paid: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_paid_at?: string | null }; Returns: string };
-      settle_financial_entry: { Args: { p_workspace_id: string; p_entry_id: string; p_payment_method: Database["public"]["Enums"]["payment_method"]; p_idempotency_key: string; p_paid_at?: string | null }; Returns: string };
+      my_platform_hold: { Args: Record<PropertyKey, never>; Returns: Json };
+      pay_commission: { Args: { p_commission_id: string | null; p_amount_cents: number | null; p_paid_on: string | null; p_note: string | null; p_idempotency_key: string | null }; Returns: string };
       peek_workspace_invite: { Args: { p_token: string | null }; Returns: Json };
       queue_account_avatar_upload: { Args: { p_user_id: string | null; p_path: string | null }; Returns: undefined };
+      queue_professional_photo: { Args: { p_actor_id: string | null; p_member_id: string | null; p_path: string | null }; Returns: undefined };
+      queue_workspace_image_upload: { Args: { p_workspace_id: string | null; p_kind: string | null; p_path: string | null }; Returns: undefined };
       reactivate_inventory_product: { Args: { p_workspace_id: string | null; p_product_id: string | null }; Returns: Json };
       reactivate_service_package: { Args: { p_workspace_id: string | null; p_package_id: string | null }; Returns: string };
       reactivate_workspace_member: { Args: { p_workspace_id: string | null; p_member_id: string | null }; Returns: Json };
+      reassign_commission: { Args: { p_commission_id: string | null; p_professional_member_id: string | null; p_reason: string | null }; Returns: string };
       record_billing_event: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_event_id: string | null; p_event_type: string | null; p_amount_cents?: number | null; p_currency?: string | null; p_billing_interval?: Database["public"]["Enums"]["billing_interval"] | null; p_event_status?: string | null; p_occurred_at?: string | null }; Returns: string };
+      record_financial_receipt: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_amount_cents: number | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_idempotency_key: string | null }; Returns: string };
+      recover_commission: { Args: { p_commission_id: string | null; p_amount_cents: number | null; p_paid_on: string | null; p_note: string | null; p_idempotency_key: string | null }; Returns: string };
       redeem_client_package: { Args: { p_workspace_id: string | null; p_client_package_id: string | null; p_appointment_id: string | null }; Returns: Json };
       refund_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_amount_cents: number | null; p_reason: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_refunded_at?: string | null; p_idempotency_key?: string | null }; Returns: string };
       release_stripe_checkout: { Args: { p_workspace_id: string | null; p_token: string | null }; Returns: undefined };
@@ -1469,9 +1918,15 @@ export type Database = {
       search_public_workspaces: { Args: { p_city?: string | null; p_state?: string | null; p_query?: string | null; p_postal_code?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       sell_service_package: { Args: { p_workspace_id: string | null; p_client_id: string | null; p_package_id: string | null }; Returns: string };
       set_appointment_status: { Args: { p_appointment_id: string | null; p_status: Database["public"]["Enums"]["appointment_status"] | null }; Returns: string };
+      set_commission_release_policy: { Args: { p_workspace_id: string | null; p_policy: Database["public"]["Enums"]["commission_release_policy"] | null }; Returns: Database["public"]["Enums"]["commission_release_policy"] };
+      set_commission_rule: { Args: { p_workspace_id: string | null; p_professional_member_id: string | null; p_service_id: string | null; p_rate_bps: number | null }; Returns: string };
+      set_member_permission: { Args: { p_member_id: string | null; p_permission_key: string | null; p_effect?: string | null }; Returns: undefined };
       set_workspace_discovery: { Args: { p_workspace_id: string | null; p_enabled: boolean | null }; Returns: boolean };
+      settle_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_payment_method: Database["public"]["Enums"]["payment_method"] | null; p_idempotency_key: string | null; p_paid_at?: string | null }; Returns: string };
       submit_appointment_review: { Args: { p_appointment_id: string | null; p_rating: number | null; p_comment?: string | null }; Returns: Json };
       swap_account_avatar: { Args: { p_user_id: string | null; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
+      swap_professional_photo: { Args: { p_actor_id: string | null; p_member_id: string | null; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
+      swap_workspace_image: { Args: { p_workspace_id: string | null; p_kind: string | null; p_expected_path: string | null; p_new_path: string | null }; Returns: boolean };
       sync_billing_subscription: { Args: { p_workspace_id: string | null; p_provider: string | null; p_external_customer_id: string | null; p_external_subscription_id: string | null; p_plan: Database["public"]["Enums"]["subscription_plan"] | null; p_billing_interval: Database["public"]["Enums"]["billing_interval"] | null; p_status: Database["public"]["Enums"]["subscription_status"] | null; p_current_period_start?: string | null; p_current_period_end?: string | null; p_canceled_at?: string | null }; Returns: undefined };
       update_financial_category: { Args: { p_workspace_id: string | null; p_category_id: string | null; p_name: string | null }; Returns: string };
       update_financial_entry: { Args: { p_workspace_id: string | null; p_entry_id: string | null; p_description: string | null; p_amount_cents: number | null; p_due_date: string | null }; Returns: string };
@@ -1484,6 +1939,9 @@ export type Database = {
       appointment_status: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";
       billing_interval: "monthly" | "annual";
       client_package_status: "active" | "exhausted" | "cancelled" | "expired";
+      commission_payment_direction: "payout" | "recovery";
+      commission_release_policy: "on_completion" | "on_receipt";
+      commission_status: "pending" | "released" | "paid" | "adjusted";
       financial_entry_source: "manual" | "appointment" | "package_sale";
       financial_entry_status: "pending" | "paid" | "cancelled";
       financial_entry_type: "income" | "expense";

@@ -15,6 +15,9 @@ export function createConfirmedSessionGuard(
     if (!session.context.emailConfirmed) {
       redirect("/verificar-email");
     }
+    if (session.hold.held && !session.context.isPlatformAdmin && (path === "/app" || path.startsWith("/app/") || path === "/onboarding" || path.startsWith("/onboarding/"))) {
+      redirect("/conta-suspensa");
+    }
     if (!canAccessPath(path, session.context)) {
       redirect(getFallbackForDeniedPath(path, session.context));
     }

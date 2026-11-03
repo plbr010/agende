@@ -10,6 +10,38 @@ import { createConfirmedSessionGuard } from "@/lib/auth/session-guard";
 import { loadSessionProfile } from "@/lib/auth/session-profile";
 import type { WorkspaceRole } from "@/lib/auth/permissions";
 
+type SessionClient = Awaited<ReturnType<typeof createClient>>;
+
+const emptyHold = { held: false, reason: null, subjectType: null, createdAt: null } as const;
+
+async function readPlatformAdminFlag(supabase: SessionClient): Promise<boolean> {
+  if (typeof supabase.rpc !== "function") return false;
+  try {
+    const { data, error } = await supabase.rpc("is_platform_admin");
+    if (error) return false;
+    return data === true;
+  } catch {
+    return false;
+  }
+}
+
+async function readPlatformHold(supabase: SessionClient): Promise<AppSession["hold"]> {
+  if (typeof supabase.rpc !== "function") return { ...emptyHold };
+  try {
+    const { data, error } = await supabase.rpc("my_platform_hold");
+    if (error || !data || typeof data !== "object" || Array.isArray(data)) return { ...emptyHold };
+    const row = data as Record<string, unknown>;
+    return {
+      held: row.held === true,
+      reason: typeof row.reason === "string" ? row.reason : null,
+      subjectType: typeof row.subject_type === "string" ? row.subject_type : null,
+      createdAt: typeof row.created_at === "string" ? row.created_at : null,
+    };
+  } catch {
+    return { ...emptyHold };
+  }
+}
+
 export type CurrentUser = {
   id: string;
   email: string;
@@ -48,6 +80,12 @@ export type AppSession = {
   workspaces: WorkspaceSummary[];
   subscription: SubscriptionSummary | null;
   permissions?: Record<string, boolean> | null;
+  hold: {
+    held: boolean;
+    reason: string | null;
+    subjectType: string | null;
+    createdAt: string | null;
+  };
 };
 
 export async function loadAppSession(): Promise<AppSession | null> {
@@ -78,9 +116,12 @@ export async function loadAppSession(): Promise<AppSession | null> {
         intendedUse: null,
         hasWorkspace: false,
         hasClientProfile: false,
+        isPlatformAdmin: false,
+        accountHeld: false,
       },
       workspaces: [],
       subscription: null,
+      hold: { held: false, reason: null, subjectType: null, createdAt: null },
     };
   }
 
@@ -158,12 +199,19 @@ export async function loadAppSession(): Promise<AppSession | null> {
     }
   }
 
+  const [isPlatformAdmin, hold] = await Promise.all([
+    readPlatformAdminFlag(supabase),
+    readPlatformHold(supabase),
+  ]);
+
   const intendedUse = profile?.intended_use ?? "client";
   const context: AuthContext = {
     emailConfirmed: true,
     intendedUse,
     hasWorkspace: workspaces.length > 0,
     hasClientProfile: Boolean(clientProfile),
+    isPlatformAdmin,
+    accountHeld: hold.held,
   };
 
   return {
@@ -182,6 +230,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
     workspaces,
     subscription,
     permissions,
+    hold,
   };
 }
 

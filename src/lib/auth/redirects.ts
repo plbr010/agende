@@ -5,11 +5,19 @@ export type AuthContext = {
   intendedUse: SignupIntent | null;
   hasWorkspace: boolean;
   hasClientProfile: boolean;
+  isPlatformAdmin?: boolean;
+  accountHeld?: boolean;
 };
 
 export function getDefaultDestination(ctx: AuthContext): string {
   if (!ctx.emailConfirmed) {
     return "/verificar-email";
+  }
+  if (ctx.accountHeld && !ctx.isPlatformAdmin) {
+    return "/conta-suspensa";
+  }
+  if (ctx.isPlatformAdmin && !ctx.hasWorkspace) {
+    return "/admin";
   }
   if (ctx.hasWorkspace) {
     return "/app";
@@ -22,6 +30,15 @@ export function getDefaultDestination(ctx: AuthContext): string {
 
 export function canAccessPath(path: string, ctx: AuthContext): boolean {
   if (!ctx.emailConfirmed) {
+    return false;
+  }
+  if (path === "/admin" || path.startsWith("/admin/")) {
+    return Boolean(ctx.isPlatformAdmin);
+  }
+  if (path === "/conta-suspensa") {
+    return Boolean(ctx.accountHeld) || Boolean(ctx.isPlatformAdmin);
+  }
+  if (ctx.accountHeld && !ctx.isPlatformAdmin && (path.startsWith("/app") || path.startsWith("/onboarding"))) {
     return false;
   }
   if (path === "/app" || path.startsWith("/app/")) {
@@ -39,6 +56,12 @@ export function canAccessPath(path: string, ctx: AuthContext): boolean {
 export function getFallbackForDeniedPath(path: string, ctx: AuthContext): string {
   if (!ctx.emailConfirmed) {
     return "/verificar-email";
+  }
+  if ((path === "/app" || path.startsWith("/app/") || path.startsWith("/onboarding")) && ctx.accountHeld && !ctx.isPlatformAdmin) {
+    return "/conta-suspensa";
+  }
+  if ((path === "/admin" || path.startsWith("/admin/")) && !ctx.isPlatformAdmin) {
+    return getDefaultDestination(ctx);
   }
   if ((path === "/app" || path.startsWith("/app/")) && !ctx.hasWorkspace) {
     return ctx.intendedUse === "professional" ? "/onboarding" : "/cliente";
