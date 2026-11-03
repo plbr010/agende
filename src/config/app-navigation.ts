@@ -7,6 +7,7 @@ import {
   House,
   PackageCheck,
   Settings2,
+  Shield,
   Sparkles,
   Star,
   UsersRound,
@@ -57,6 +58,13 @@ export const settingsNavigationItem: AppNavigationItem = {
   label: "Configurações",
   description: "Dados do salão e do plano",
   icon: Settings2,
+};
+
+export const masterNavigationItem: AppNavigationItem = {
+  href: "/admin",
+  label: "Painel master",
+  description: "Contas, assinaturas e suporte da plataforma",
+  icon: Shield,
 };
 
 export function getAppNavigation(

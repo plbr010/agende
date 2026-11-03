@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, CalendarPlus, ExternalLink, House, LogOut, Menu, UsersRound } from "lucide-react";
+import { CalendarDays, CalendarPlus, ExternalLink, House, LogOut, Menu, Shield, UsersRound } from "lucide-react";
 import { BrandLogo } from "@/components/brand/logo";
 import { FloralSprig } from "@/components/brand/floral";
 import { AccountAvatar } from "@/components/account/account-avatar";
@@ -16,7 +16,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getAppNavigation, isNavigationItemCurrent, settingsNavigationItem } from "@/config/app-navigation";
+import {
+  getAppNavigation,
+  isNavigationItemCurrent,
+  masterNavigationItem,
+  settingsNavigationItem,
+} from "@/config/app-navigation";
 import type { WorkspacePermissions, WorkspaceRole } from "@/lib/auth/permissions";
 import { signOutAction } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
@@ -25,14 +30,17 @@ function Navigation({
   pathname,
   role,
   permissions,
+  showMasterAdmin,
   onNavigate,
 }: {
   pathname: string;
   role: WorkspaceRole | undefined;
   permissions?: WorkspacePermissions | null;
+  showMasterAdmin: boolean;
   onNavigate?: () => void;
 }) {
   const items = [
+    ...(showMasterAdmin ? [masterNavigationItem] : []),
     ...getAppNavigation(role, permissions).flatMap((group) => group.items),
     settingsNavigationItem,
   ];
@@ -71,7 +79,6 @@ function SidebarFooter({
   roleLabel,
   hasAvatar,
   avatarVersion,
-  isPlatformAdmin,
 }: {
   workspaceName: string;
   workspaceSlug: string;
@@ -79,19 +86,9 @@ function SidebarFooter({
   roleLabel: string;
   hasAvatar: boolean;
   avatarVersion: string | null;
-  isPlatformAdmin: boolean;
 }) {
   return (
     <div className="mt-4 grid gap-2 border-t border-white/15 pt-4">
-      {isPlatformAdmin ? (
-        <Button
-          variant="ghost"
-          className="h-11 justify-start rounded-full px-3 text-white/85 hover:bg-white/10 hover:text-white"
-          render={<Link href="/admin" />}
-        >
-          Painel master
-        </Button>
-      ) : null}
       {workspaceSlug ? (
         <Button
           variant="ghost"
@@ -127,6 +124,7 @@ export function AppShell({
   hasAvatar = false,
   avatarVersion = null,
   isPlatformAdmin = false,
+  isOfficialPlatformOwner = false,
   children,
 }: {
   workspaceName: string;
@@ -138,6 +136,7 @@ export function AppShell({
   hasAvatar?: boolean;
   avatarVersion?: string | null;
   isPlatformAdmin?: boolean;
+  isOfficialPlatformOwner?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -146,6 +145,7 @@ export function AppShell({
   const agendaCurrent = pathname.startsWith("/app/agenda");
   const clientsCurrent = pathname.startsWith("/app/clientes");
   const moreCurrent = !homeCurrent && !agendaCurrent && !clientsCurrent;
+  const showMasterAdmin = isPlatformAdmin || isOfficialPlatformOwner;
 
   const menu = (
     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -168,7 +168,13 @@ export function AppShell({
           </SheetDescription>
         </SheetHeader>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <Navigation pathname={pathname} role={role} permissions={permissions} onNavigate={() => setMobileOpen(false)} />
+          <Navigation
+            pathname={pathname}
+            role={role}
+            permissions={permissions}
+            showMasterAdmin={showMasterAdmin}
+            onNavigate={() => setMobileOpen(false)}
+          />
           <SidebarFooter
             workspaceName={workspaceName}
             workspaceSlug={workspaceSlug}
@@ -176,7 +182,6 @@ export function AppShell({
             roleLabel={roleLabel}
             hasAvatar={hasAvatar}
             avatarVersion={avatarVersion}
-            isPlatformAdmin={isPlatformAdmin}
           />
         </div>
       </SheetContent>
@@ -192,7 +197,7 @@ export function AppShell({
           <p className="mt-2 truncate px-0.5 text-sm text-white/70">{workspaceName}</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <Navigation pathname={pathname} role={role} permissions={permissions} />
+          <Navigation pathname={pathname} role={role} permissions={permissions} showMasterAdmin={showMasterAdmin} />
         </div>
         <SidebarFooter
           workspaceName={workspaceName}
@@ -201,7 +206,6 @@ export function AppShell({
           roleLabel={roleLabel}
           hasAvatar={hasAvatar}
           avatarVersion={avatarVersion}
-          isPlatformAdmin={isPlatformAdmin}
         />
       </aside>
 
@@ -213,6 +217,17 @@ export function AppShell({
               <p className="truncate font-serif text-lg leading-none text-wine-deep">{workspaceName}</p>
               <p className="mt-1 text-xs text-muted-foreground">{roleLabel}</p>
             </div>
+            {showMasterAdmin ? (
+              <Button
+                variant="ghost"
+                className="h-11 gap-1 px-2 text-wine-deep"
+                aria-label="Painel master"
+                render={<Link href="/admin" />}
+              >
+                <Shield className="size-5" />
+                <span className="text-sm">Admin</span>
+              </Button>
+            ) : null}
             <Button
               variant="ghost"
               className="h-11 gap-1 px-2 text-wine-deep"

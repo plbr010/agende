@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { avatarCacheVersion } from "@/lib/account/avatar-ui";
+import { isOfficialMasterAdminEmail } from "@/lib/admin/bootstrap";
 import { createClient } from "@/lib/supabase/server";
 import {
   getDefaultDestination,
@@ -29,6 +30,19 @@ async function readOfficialOwnerFlag(supabase: SessionClient): Promise<boolean> 
   if (typeof supabase.rpc !== "function") return false;
   try {
     const { data, error } = await supabase.rpc("is_official_platform_owner");
+    if (error) return false;
+    return data === true;
+  } catch {
+    return false;
+  }
+}
+
+async function readLifetimeEntitlement(supabase: SessionClient, workspaceId: string): Promise<boolean> {
+  if (typeof supabase.rpc !== "function") return false;
+  try {
+    const { data, error } = await supabase.rpc("workspace_has_lifetime_entitlement", {
+      p_workspace_id: workspaceId,
+    });
     if (error) return false;
     return data === true;
   } catch {
@@ -69,6 +83,7 @@ export type WorkspaceSummary = {
 export type SubscriptionSummary = {
   plan: "solo" | "equipe" | "salao";
   status: "trialing" | "active" | "past_due" | "expired" | "canceled";
+  lifetime: boolean;
   trialStartedAt: string | null;
   trialEndsAt: string | null;
   currentPeriodStart: string | null;
@@ -177,11 +192,14 @@ export async function loadAppSession(): Promise<AppSession | null> {
   let subscription: SubscriptionSummary | null = null;
   const primaryWorkspace = workspaces[0];
   if (primaryWorkspace) {
-    const { data: sub, error: subscriptionError } = await supabase
-      .from("subscriptions")
-      .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
-      .eq("workspace_id", primaryWorkspace.id)
-      .maybeSingle();
+    const [{ data: sub, error: subscriptionError }, lifetime] = await Promise.all([
+      supabase
+        .from("subscriptions")
+        .select("plan, status, trial_started_at, trial_ends_at, current_period_start, current_period_end")
+        .eq("workspace_id", primaryWorkspace.id)
+        .maybeSingle(),
+      readLifetimeEntitlement(supabase, primaryWorkspace.id),
+    ]);
     if (subscriptionError) {
       throw new Error("Não foi possível carregar sua assinatura. Tente novamente.");
     }
@@ -189,6 +207,7 @@ export async function loadAppSession(): Promise<AppSession | null> {
       subscription = {
         plan: sub.plan,
         status: sub.status,
+        lifetime,
         trialStartedAt: sub.trial_started_at,
         trialEndsAt: sub.trial_ends_at,
         currentPeriodStart: sub.current_period_start,
@@ -211,11 +230,16 @@ export async function loadAppSession(): Promise<AppSession | null> {
     }
   }
 
-  const [isPlatformAdmin, isOfficialPlatformOwner, hold] = await Promise.all([
+  const officialFromAuth = isOfficialMasterAdminEmail(user.email);
+  const [rpcAdmin, rpcOwner, hold] = await Promise.all([
     readPlatformAdminFlag(supabase),
     readOfficialOwnerFlag(supabase),
     readPlatformHold(supabase),
   ]);
+  // Auth getUser() email is the confirmed identity, not a form field. Keep the
+  // menu visible if PostgREST has not loaded the admin RPCs yet.
+  const isOfficialPlatformOwner = rpcOwner || officialFromAuth;
+  const isPlatformAdmin = rpcAdmin;
 
   const intendedUse = profile?.intended_use ?? "client";
   const context: AuthContext = {

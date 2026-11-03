@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CalendarDays,
   CircleDollarSign,
+  Shield,
   Sparkles,
   Star,
   UsersRound,
@@ -136,6 +137,7 @@ export function ProfessionalDashboard({
   setup,
   plan,
   primaryAction,
+  showMasterAdmin = false,
 }: {
   firstName: string;
   salonName: string;
@@ -164,14 +166,31 @@ export function ProfessionalDashboard({
     trialStarted: string;
     trialEnds: string;
     trialDaysRemaining: number;
+    lifetime?: boolean;
     roleLabel: string;
     publicPath: string | null;
     hasClientProfile: boolean;
   };
   primaryAction: { href: string; label: string };
+  showMasterAdmin?: boolean;
 }) {
   return (
     <div className="grid gap-5">
+      {showMasterAdmin ? (
+        <Link
+          href="/admin"
+          className="flex min-h-14 items-center justify-between gap-3 rounded-[1.5rem] bg-wine-deep px-5 py-4 text-white shadow-[0_18px_40px_-30px_rgba(92,26,46,0.7)] ring-1 ring-white/10 transition-transform hover:-translate-y-0.5"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <Shield className="size-5 shrink-0" aria-hidden="true" />
+            <span className="min-w-0">
+              <span className="block font-medium">Painel master</span>
+              <span className="block text-sm text-white/75">Contas, assinaturas e suporte da plataforma</span>
+            </span>
+          </span>
+          <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
+        </Link>
+      ) : null}
       {clientError ? (
         <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
           Não foi possível ativar sua área de cliente agora. Tente novamente em instantes.
@@ -441,12 +460,14 @@ export function ProfessionalDashboard({
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Plano {plan.planLabel} · {plan.statusLabel}
-              {plan.trialDaysRemaining > 0
+              {!plan.lifetime && plan.trialDaysRemaining > 0
                 ? ` · ${plan.trialDaysRemaining === 1 ? "1 dia restante de teste grátis" : `${plan.trialDaysRemaining} dias restantes de teste grátis`}`
                 : ""}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Teste grátis: {plan.trialStarted} até {plan.trialEnds}. Sua função: {plan.roleLabel}.
+              {plan.lifetime
+                ? `Acesso vitalício deste salão. Sua função: ${plan.roleLabel}.`
+                : `Teste grátis: ${plan.trialStarted} até ${plan.trialEnds}. Sua função: ${plan.roleLabel}.`}
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">

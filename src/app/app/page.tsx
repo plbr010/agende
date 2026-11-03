@@ -20,7 +20,7 @@ import {
   upcomingAppointments,
 } from "@/lib/dashboard/summary";
 import { formatDateTime } from "@/lib/workspace/timezone";
-import { MEMBER_ROLE_LABEL, PLAN_LABEL, SUBSCRIPTION_STATUS_LABEL } from "@/lib/workspace/labels";
+import { MEMBER_ROLE_LABEL, PLAN_LABEL, formatWorkspaceSubscriptionStatus } from "@/lib/workspace/labels";
 import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { addDaysIso, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
@@ -180,10 +180,14 @@ export default async function AppPage({
       } : null}
       plan={{
         planLabel: PLAN_LABEL[session.subscription?.plan ?? "solo"],
-        statusLabel: SUBSCRIPTION_STATUS_LABEL[session.subscription?.status ?? "expired"],
+        statusLabel: formatWorkspaceSubscriptionStatus(
+          session.subscription?.status,
+          session.subscription?.lifetime === true,
+        ),
         trialStarted: formatDateTime(session.subscription?.trialStartedAt ?? null, timezone),
         trialEnds: formatDateTime(session.subscription?.trialEndsAt ?? null, timezone),
-        trialDaysRemaining: trialDaysRemaining(session.subscription?.trialEndsAt),
+        trialDaysRemaining: session.subscription?.lifetime ? 0 : trialDaysRemaining(session.subscription?.trialEndsAt),
+        lifetime: session.subscription?.lifetime === true,
         roleLabel: MEMBER_ROLE_LABEL[workspace.role],
         publicPath: `/p/${workspace.slug}`,
         hasClientProfile: session.context.hasClientProfile,
@@ -195,6 +199,7 @@ export default async function AppPage({
         href: "/app/agenda?novo=1",
         label: "Novo horário",
       }}
+      showMasterAdmin={session.context.isPlatformAdmin === true || session.context.isOfficialPlatformOwner === true}
     />
   );
 }
