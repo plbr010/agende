@@ -55,6 +55,7 @@ test("isolated browser e2e uses roles, refuses production and does not invent sa
   const source = readFileSync(script, "utf8");
   assert.match(source, /getByRole/);
   assert.match(source, /client-cta-signup/);
+  assert.match(source, /comecar-client-signup/);
   assert.match(source, /Criar conta de cliente/);
   assert.match(source, /Muriaé/);
   assert.match(source, /Juiz de Fora/);

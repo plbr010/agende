@@ -107,6 +107,14 @@ export function MarketingHeader() {
               >
                 {MARKETING_CTAS.primary.label}
               </MarketingLinkButton>
+              <MarketingLinkButton
+                href={MARKETING_CTAS.secondary.href}
+                variant="rose"
+                className="h-12 w-full rounded-full text-base"
+                onClick={() => setOpen(false)}
+              >
+                {MARKETING_CTAS.secondary.label}
+              </MarketingLinkButton>
             </nav>
           </div>
         </div>
