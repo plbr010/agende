@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import { createElement, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -31,4 +32,7 @@ test("Comece agora in the public header opens the account choice and leaves logi
   assert.doesNotMatch(html, /href="\/comecar"/);
   assert.match(html, /href="\/profissionais"/);
   assert.match(html, /href="\/descobrir"/);
+  const source = readFileSync(new URL("./header.tsx", import.meta.url), "utf8");
+  assert.match(source, /MARKETING_CTAS\.secondary\.href/);
+  assert.match(source, /MARKETING_CTAS\.secondary\.label/);
 });

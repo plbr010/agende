@@ -42,10 +42,10 @@ export function AudienceSplit({
             </span>
             <h2 className="mt-5 font-serif text-3xl text-wine-deep">Sou cliente</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Seu próximo momento de beleza está a poucos cliques. Encontre, escolha e agende.
+              Seu próximo momento de beleza está a poucos cliques. Crie a conta grátis e depois encontre, escolha e agende.
             </p>
-            <MarketingLinkButton href={MARKETING_CTAS.clientDiscover.href} variant="rose" className="mt-6 h-12 rounded-full px-6">
-              Encontrar um salão
+            <MarketingLinkButton href={MARKETING_CTAS.secondary.href} variant="rose" className="mt-6 h-12 rounded-full px-6">
+              Criar conta de cliente
             </MarketingLinkButton>
           </article>
         </div>

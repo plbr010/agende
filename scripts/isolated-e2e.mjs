@@ -185,6 +185,13 @@ try {
       try {
         await page.goto(`${base}/`, { waitUntil: "domcontentloaded", timeout: 20000 });
         await page.getByRole("link", { name: /Sou profissional/i }).first().waitFor();
+        const landingHtml = await page.content();
+        if (/href="\/descobrir"[^>]*>\s*Sou cliente/.test(landingHtml)) {
+          throw new Error("Sou cliente still points to /descobrir");
+        }
+        if (!landingHtml.includes('href="/cadastro?intent=cliente"')) {
+          throw new Error("homepage missing client signup href");
+        }
         record({ name: "landing", result: "PASS", evidence: await shot(page, "landing") });
       } catch (error) {
         record({ name: "landing", result: "FAIL", error: error.message });
@@ -216,6 +223,16 @@ try {
         }
       } catch (error) {
         record({ name: "client-cta-signup", result: "FAIL", error: error.message });
+      }
+
+      try {
+        await page.goto(`${base}/comecar`, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await page.getByRole("link", { name: "Criar conta de cliente", exact: true }).click();
+        await page.waitForURL(/\/cadastro\?intent=cliente/);
+        await page.getByRole("heading", { name: "Criar conta de cliente", exact: true }).waitFor();
+        record({ name: "comecar-client-signup", result: "PASS", evidence: await shot(page, "comecar-client-signup") });
+      } catch (error) {
+        record({ name: "comecar-client-signup", result: "FAIL", error: error.message });
       }
 
       try {
