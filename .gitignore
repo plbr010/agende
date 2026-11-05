@@ -38,6 +38,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# commercial studio (isolated from the SaaS)
+/marketing/video-agende/node_modules/
+/marketing/video-agende/out/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

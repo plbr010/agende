@@ -1,0 +1,28 @@
+{
+  "name": "video-agende",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Comercial isolado do Agendê em Remotion. Não faz parte do runtime do SaaS.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "still": "remotion still src/index.ts AgendeComercial out/agende-comercial.png --frame=80",
+    "stills": "node scripts/render-stills.mjs",
+    "render": "remotion render src/index.ts AgendeComercial out/agende-comercial.mp4",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/timing.test.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.441",
+    "@remotion/transitions": "^4.0.441",
+    "lucide-react": "^1.47.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "^4.0.441"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tsx": "^4.23.13",
+    "typescript": "^5"
+  }
+}
