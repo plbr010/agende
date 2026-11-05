@@ -66,7 +66,12 @@ test("homepage splits client and professional and never lists SaaS prices", () =
   const nav = source("src/lib/marketing/content.ts");
   assert.match(nav, /Para profissionais/);
   assert.match(nav, /Sou cliente/);
+  assert.match(nav, /href: "\/cadastro\?intent=cliente"/);
   assert.doesNotMatch(nav, /href: "\/#planos"/);
+  const hero = source("src/components/marketing/hero.tsx");
+  assert.match(hero, /MARKETING_CTAS\.secondary\.href/);
+  assert.match(hero, /Sou cliente/);
+  assert.doesNotMatch(hero, /clientDiscover/);
   const profissionais = source("src/app/profissionais/page.tsx");
   assert.match(profissionais, /MarketingPricing/);
   assert.match(profissionais, /7 dias grátis/);
