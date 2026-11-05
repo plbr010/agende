@@ -191,6 +191,34 @@ try {
       }
 
       try {
+        const mobile = await browser.newContext({
+          locale: "pt-BR",
+          viewport: { width: 390, height: 844 },
+        });
+        try {
+          const splash = await mobile.newPage();
+          await splash.goto(`${base}/`, { waitUntil: "domcontentloaded", timeout: 20000 });
+          await splash.getByRole("link", { name: /^Sou cliente$/i }).click();
+          await splash.waitForURL(/\/cadastro\?intent=cliente/);
+          await splash.getByRole("heading", { name: "Criar conta de cliente", exact: true }).waitFor();
+          if (new URL(splash.url()).pathname === "/descobrir") {
+            throw new Error("Sou cliente opened the salon directory");
+          }
+          if (await splash.getByRole("heading", { name: "Como você quer usar o Agendê?", exact: true }).count()) {
+            throw new Error("Sou cliente opened the account-type choice");
+          }
+          await splash.getByLabel(/^Nome$/).waitFor();
+          await splash.getByLabel(/^E-mail$/).waitFor();
+          await splash.getByRole("button", { name: "Criar conta de cliente", exact: true }).waitFor();
+          record({ name: "client-cta-signup", result: "PASS", evidence: await shot(splash, "client-cta-signup") });
+        } finally {
+          await mobile.close();
+        }
+      } catch (error) {
+        record({ name: "client-cta-signup", result: "FAIL", error: error.message });
+      }
+
+      try {
         await page.goto(`${base}/cadastro`, { waitUntil: "domcontentloaded", timeout: 20000 });
         const client = page.getByRole("link", { name: /Quero agendar serviços/i });
         const owner = page.getByRole("link", { name: /Tenho meu próprio salão/i });
@@ -210,7 +238,7 @@ try {
       }
 
       try {
-        await page.goto(`${base}/cadastro?intent=client`, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await page.goto(`${base}/cadastro?intent=cliente`, { waitUntil: "domcontentloaded", timeout: 20000 });
         for (const [name,value] of Object.entries({fullName:"Cliente Teste",email:"owned@example.invalid",phone:"123",password:"SyntheticAa9!",confirmPassword:"SyntheticAa9!"})) await page.locator(`input[name=${name}]`).fill(value);
         await page.getByRole("checkbox").check();
         await page.waitForFunction(() => document.querySelector('input[name=termsAccepted]')?.value === "true");

@@ -52,7 +52,7 @@ test("every plan is presented with a free trial and no card in the primary CTA",
   assert.equal(MARKETING_CTAS.primary.label, "Sou profissional");
   assert.equal(MARKETING_CTAS.primary.href, "/profissionais");
   assert.equal(MARKETING_CTAS.secondary.label, "Sou cliente");
-  assert.equal(MARKETING_CTAS.secondary.href, "/descobrir");
+  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente");
   assert.equal(MARKETING_CTAS.professionalSignup.label, "Começar 7 dias grátis");
   assert.equal(MARKETING_CTAS.professionalSignup.href, "/cadastro?intent=professional");
 });
@@ -63,6 +63,13 @@ test("Comece agora opens the existing account-type choice", () => {
   assert.equal(MARKETING_CTAS.login.label, "Entrar");
   assert.equal(MARKETING_CTAS.login.href, "/login");
   assert.equal(MARKETING_CTAS.clientDiscover.href, "/descobrir");
+});
+
+test("Sou cliente opens client signup instead of the salon directory", () => {
+  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente");
+  assert.doesNotMatch(MARKETING_CTAS.secondary.href, /descobrir/);
+  assert.equal(MARKETING_CTAS.clientDiscover.href, "/descobrir");
+  assert.equal(MARKETING_CTAS.headerPrimary.href, "/cadastro");
 });
 
 test("plans differentiate benefits and show annual prices", () => {
