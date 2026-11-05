@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Agendê — anúncio Instagram 4:5</title>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("{{FONT_PLAYFAIR}}") format("truetype");
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("{{FONT_PLAYFAIR_ITALIC}}") format("truetype");
+      font-weight: 400 900;
+      font-style: italic;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("{{FONT_INTER}}") format("truetype");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --cream: #fbf4ee;
+      --blush: #f3c4c2;
+      --peach: #e8b4a0;
+      --rose: #c45d7c;
+      --rose-ink: #9a3d58;
+      --wine: #6b2d42;
+      --wine-deep: #5c1a2e;
+      --paper: #fffaf8;
+      --ink: #4a3140;
+      --muted: #5e4450;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .art {
+      position: relative;
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(1100px 520px at 0% -8%, rgb(243 196 194 / 0.9), transparent 58%),
+        radial-gradient(860px 420px at 100% 0%, rgb(232 180 160 / 0.55), transparent 52%),
+        radial-gradient(720px 380px at 50% 118%, rgb(251 244 238 / 0.94), transparent 46%),
+        var(--cream);
+    }
+
+    .floral {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.92;
+    }
+    .floral-tl { top: -36px; left: -48px; width: 280px; }
+    .floral-br { right: -70px; bottom: -40px; width: 340px; transform: rotate(160deg); }
+
+    .safe {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 72px 72px 64px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 0;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 92px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand img {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      box-shadow: 0 10px 22px -12px rgb(92 26 46 / 0.55);
+    }
+    .brand-name {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 42px;
+      letter-spacing: -0.03em;
+      color: var(--wine-deep);
+      line-height: 1;
+    }
+    .brand-name i {
+      font-style: italic;
+      color: var(--rose-ink);
+    }
+
+    .seal {
+      width: 128px;
+      height: 128px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 32% 28%, #8d3b51, var(--wine-deep) 62%);
+      color: var(--paper);
+      border: 3px solid var(--peach);
+      box-shadow:
+        0 16px 28px -16px rgb(92 26 46 / 0.55),
+        inset 0 0 0 5px rgb(255 250 248 / 0.08);
+      transform: rotate(8deg);
+      font-family: Inter, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      line-height: 1.12;
+      text-transform: uppercase;
+    }
+    .seal span {
+      display: block;
+      max-width: 92px;
+    }
+
+    .copy {
+      padding-top: 22px;
+      padding-right: 36px;
+    }
+    h1 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 600;
+      font-size: 64px;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: var(--wine-deep);
+      max-width: 820px;
+    }
+    .lede {
+      margin-top: 18px;
+      max-width: 720px;
+      font-size: 27px;
+      line-height: 1.32;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .stage {
+      position: relative;
+      margin-top: 10px;
+      height: 656px;
+    }
+
+    .laptop {
+      position: absolute;
+      left: -18px;
+      top: 22px;
+      width: 790px;
+      transform: rotate(-5deg);
+      filter: drop-shadow(0 38px 48px rgb(92 26 46 / 0.32));
+    }
+    .laptop-lid {
+      background: linear-gradient(180deg, #3a1e2b, #2a1520);
+      border-radius: 18px 18px 8px 8px;
+      padding: 12px 12px 8px;
+    }
+    .laptop-camera {
+      width: 8px;
+      height: 8px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      background: #1d1016;
+      box-shadow: inset 0 0 0 2px #4a2836;
+    }
+    .laptop-screen {
+      overflow: hidden;
+      border-radius: 8px;
+      background: #faf3ee;
+      height: 448px;
+    }
+    .laptop-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 0 0;
+      display: block;
+    }
+    .laptop-base {
+      height: 14px;
+      margin: 0 18px;
+      border-radius: 0 0 10px 10px;
+      background: linear-gradient(180deg, #3a1e2b, #1d1016);
+    }
+    .laptop-slot {
+      width: 92px;
+      height: 5px;
+      margin: 3px auto 0;
+      border-radius: 999px;
+      background: #4a2836;
+    }
+
+    .phone {
+      position: absolute;
+      right: 2px;
+      top: 54px;
+      width: 262px;
+      z-index: 3;
+      transform: rotate(7.5deg);
+      filter: drop-shadow(0 34px 40px rgb(92 26 46 / 0.38));
+    }
+    .phone-body {
+      background: #1d1016;
+      border-radius: 38px;
+      padding: 11px 9px 12px;
+      box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    }
+    .phone-notch {
+      position: absolute;
+      left: 50%;
+      top: 18px;
+      z-index: 4;
+      width: 86px;
+      height: 18px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #1d1016;
+    }
+    .phone-screen {
+      overflow: hidden;
+      border-radius: 28px;
+      background: #faf3ee;
+      height: 500px;
+    }
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 0;
+      display: block;
+    }
+
+    .chip {
+      position: absolute;
+      left: -6px;
+      bottom: 4px;
+      z-index: 4;
+      width: 430px;
+      height: 188px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: white;
+      box-shadow: 0 24px 40px -20px rgb(92 26 46 / 0.45);
+      outline: 1px solid #f0e4de;
+      transform: rotate(-3.5deg);
+    }
+    .chip img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      background: white;
+    }
+
+    .footer {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      padding-top: 8px;
+    }
+    .closing {
+      max-width: 820px;
+      font-size: 24px;
+      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .cta {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 520px;
+      height: 72px;
+      padding: 0 36px;
+      border-radius: 999px;
+      background: var(--wine-deep);
+      color: var(--paper);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      box-shadow: 0 18px 32px -18px rgb(92 26 46 / 0.7);
+    }
+    .domain {
+      margin-top: 16px;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--rose-ink);
+    }
+  </style>
+</head>
+<body>
+  <article class="art" aria-label="Anúncio Agendê">
+    <svg class="floral floral-tl" viewBox="0 0 300 380" fill="none" aria-hidden="true">
+      <path d="M36 360c42-78 48-150 28-214 18-48 62-92 118-124" stroke="#c45d7c" stroke-width="1.8" stroke-linecap="round"/>
+      <g transform="translate(70 268) rotate(-72 0 43) scale(1.05)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#e8b4a0"/><path d="M0 66C-11 42-9 20 0 10c9 10 11 32 0 56Z" fill="#fff7f4" opacity="0.38"/></g>
+      <g transform="translate(118 228) rotate(38 0 43) scale(1.15)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#f3c4c2"/></g>
+      <g transform="translate(92 196) rotate(-28 0 43) scale(0.82)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#c45d7c"/></g>
+      <g transform="translate(156 168) rotate(52 0 43) scale(0.95)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#9a3d58"/></g>
+      <circle cx="228" cy="22" r="7" fill="#5c1a2e"/>
+    </svg>
+    <svg class="floral floral-br" viewBox="0 0 300 380" fill="none" aria-hidden="true">
+      <path d="M36 360c42-78 48-150 28-214 18-48 62-92 118-124" stroke="#e8b4a0" stroke-width="1.8" stroke-linecap="round"/>
+      <g transform="translate(70 268) rotate(-72 0 43) scale(1.05)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#f3c4c2"/></g>
+      <g transform="translate(118 228) rotate(38 0 43) scale(1.15)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#e8b4a0"/></g>
+      <g transform="translate(176 108) rotate(24 0 43) scale(0.88)"><path d="M0 86C-22 54-18 18 0 0c18 18 22 54 0 86Z" fill="#c45d7c"/></g>
+      <circle cx="228" cy="22" r="7" fill="#9a3d58"/>
+    </svg>
+
+    <div class="safe">
+      <header class="top">
+        <div class="brand">
+          <img src="{{LOGO_MARK}}" alt="" width="64" height="64" />
+          <p class="brand-name">Agend<i>ê</i></p>
+        </div>
+        <div class="seal" aria-label="{{BADGE}}"><span>{{BADGE}}</span></div>
+      </header>
+
+      <section class="copy">
+        <h1>{{HEADLINE_HTML}}</h1>
+        <p class="lede">{{SUPPORT}}</p>
+      </section>
+
+      <div class="stage">
+        <div class="laptop">
+          <div class="laptop-lid">
+            <div class="laptop-camera"></div>
+            <div class="laptop-screen">
+              <img src="{{DASHBOARD}}" alt="Painel profissional do Agendê" />
+            </div>
+          </div>
+          <div class="laptop-base"><div class="laptop-slot"></div></div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-body">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="{{MOBILE}}" alt="Agenda do Agendê no celular" />
+            </div>
+          </div>
+        </div>
+
+        <div class="chip">
+          <img src="{{SERVICES}}" alt="Cadastro de serviços do Agendê" />
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p class="closing">{{CLOSING}}</p>
+        <p class="cta">{{CTA}}</p>
+        <p class="domain">{{DOMAIN}}</p>
+      </footer>
+    </div>
+  </article>
+</body>
+</html>
