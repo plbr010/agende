@@ -19,7 +19,7 @@ function callback(failSession=false,exchangeError: string|null=null){
  return {get:()=>exports.GET(new Request("https://agende.test/auth/callback?code=owned-test")),calls};
 }
 test("successful confirmation preserves client onboarding and clears pending journey",async()=>{
- const h=callback(),response=await h.get();assert.equal(response.headers.get("location"),"https://agende.test/cliente/perfil?inicio=1");assert.ok(h.calls.includes("clear_pending"));
+ const h=callback(),response=await h.get();assert.equal(response.headers.get("location"),"https://agende.test/cliente/descobrir");assert.ok(h.calls.includes("clear_pending"));
 });
 test("session read failure after exchange redirects to recoverable view without leaking or clearing pending journey",async()=>{
  const h=callback(true),response=await h.get();assert.equal(response.headers.get("location"),"https://agende.test/verificar-email?status=session_unavailable");assert.ok(!h.calls.includes("clear_pending"));assert.ok(h.calls.includes("auth_session_after_confirmation_unavailable"));assert.ok(!JSON.stringify(h.calls).includes("private provider details"));

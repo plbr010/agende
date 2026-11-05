@@ -52,7 +52,7 @@ test("every plan is presented with a free trial and no card in the primary CTA",
   assert.equal(MARKETING_CTAS.primary.label, "Sou profissional");
   assert.equal(MARKETING_CTAS.primary.href, "/profissionais");
   assert.equal(MARKETING_CTAS.secondary.label, "Sou cliente");
-  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente");
+  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente&next=%2Fcliente%2Fdescobrir");
   assert.equal(MARKETING_CTAS.professionalSignup.label, "Começar 7 dias grátis");
   assert.equal(MARKETING_CTAS.professionalSignup.href, "/cadastro?intent=professional");
 });
@@ -66,8 +66,11 @@ test("Comece agora opens the existing account-type choice", () => {
 });
 
 test("Sou cliente opens client signup instead of the salon directory", () => {
-  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente");
-  assert.doesNotMatch(MARKETING_CTAS.secondary.href, /descobrir/);
+  assert.equal(MARKETING_CTAS.secondary.href, "/cadastro?intent=cliente&next=%2Fcliente%2Fdescobrir");
+  const clientEntry = new URL(MARKETING_CTAS.secondary.href, "https://agende.invalid");
+  assert.equal(clientEntry.pathname, "/cadastro");
+  assert.equal(clientEntry.searchParams.get("intent"), "cliente");
+  assert.equal(clientEntry.searchParams.get("next"), "/cliente/descobrir");
   assert.equal(MARKETING_CTAS.clientDiscover.href, "/descobrir");
   assert.equal(MARKETING_CTAS.headerPrimary.href, "/cadastro");
 });

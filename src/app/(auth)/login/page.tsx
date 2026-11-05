@@ -11,7 +11,7 @@ export default async function LoginPage({
 }) {
   const { next, password } = await searchParams;
   const safeNext = sanitizeNextPath(next);
-  const signupHref = safeNext?.includes("/agendar")
+  const signupHref = (safeNext?.includes("/agendar") || safeNext?.startsWith("/cliente"))
     ? `/cadastro?intent=cliente&next=${encodeURIComponent(safeNext)}`
     : safeNext
       ? `/cadastro?next=${encodeURIComponent(safeNext)}`
@@ -45,7 +45,7 @@ export default async function LoginPage({
           O convite continua guardado. Depois de entrar e confirmar o e-mail, você aceita para entrar na equipe. Sem mensalidade.
         </p>
       ) : null}
-      {safeNext?.includes("/agendar") ? (
+      {(safeNext?.includes("/agendar") || safeNext?.startsWith("/cliente")) ? (
         <p role="status" className="mb-4 rounded-2xl bg-metric-blush px-4 py-3 text-sm leading-6">
           Serviço, profissional, dia e horário continuam escolhidos. Depois de entrar, você volta para confirmar. Se o horário for ocupado nesse meio-tempo, avisamos para escolher outro.
         </p>

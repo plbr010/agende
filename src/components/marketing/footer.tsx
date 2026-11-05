@@ -1,3 +1,4 @@
+import { SpecialistWhatsApp } from "@/components/marketing/specialist-whatsapp";
 import { BrandLogo } from "@/components/brand/logo";
 import { MarketingHashLink } from "@/components/marketing/hash-link";
 import { FOOTER_LINKS } from "@/lib/marketing/content";
@@ -9,6 +10,7 @@ export function MarketingFooter() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-sm space-y-3">
             <BrandLogo size="sm" />
+            <SpecialistWhatsApp />
             <p className="text-sm leading-relaxed text-muted-foreground">
               Agenda e agendamento para profissionais e estabelecimentos de
               beleza. Elegante, simples e feito para o celular. 7 dias grátis,

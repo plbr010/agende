@@ -24,7 +24,7 @@ testFiles.push("scripts/prelaunch-upgrade.test.mjs", "scripts/booking-retry-sql.
 testFiles.push("scripts/pilot-booking-activation.test.mjs", "scripts/commercial-booking-resume.test.mjs");
 testFiles.push("scripts/expired-entitlement-cancel.test.mjs");
 testFiles.push("scripts/expired-cancellation-sql.test.mjs");
-testFiles.push("scripts/platform-admin-sql.test.mjs");
+testFiles.push("scripts/platform-admin-sql.test.mjs", "scripts/platform-admin-identity-regression.test.mjs");
 testFiles.push("scripts/launch-final-upgrade.test.mjs");
 testFiles.push("scripts/encrypted-storage-backup.test.mjs");
 testFiles.push("scripts/backup-catalog-compare.test.mjs");

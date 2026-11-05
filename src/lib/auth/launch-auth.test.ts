@@ -259,3 +259,18 @@ test("obfuscated existing-account response never reports a new confirmation emai
  const fresh=actions(null,{user:{identities:[{provider:"email"}]},session:null});
  await assert.rejects(fresh.signUpAction({},signupForm("client")),/redirect:\/verificar-email\?status=sent/);
 });
+
+test("client signup carries discovery through confirmation and clears professional plan",async()=>{
+ const h=actions();const form=signupForm("client");form.set("journey","client");form.set("next","/cliente/descobrir");
+ await assert.rejects(h.signUpAction({},form),/redirect:\/verificar-email/);
+ const call=h.calls.find(c=>c.name==="signup")!.value as {options:{data:{intended_use:string};emailRedirectTo:string}};
+ assert.equal(call.options.data.intended_use,"client");assert.equal(new URL(call.options.emailRedirectTo).searchParams.get("next"),"/cliente/descobrir");
+ assert.equal(h.cookies.has("agende_selected_plan"),false);
+ assert.equal(signupJourney.postConfirmationPath({next:"/cliente/descobrir",destination:"/cliente",journey:"client",hasClientProfile:true,intendedUse:"client"}),"/cliente/descobrir");
+});
+test("password login preserves discovery and refuses an external next destination",async()=>{
+ for(const [next,destination] of [["/cliente/descobrir","/cliente/descobrir"],["https://evil.invalid","/onboarding"]]){
+  const h=actions();const form=new FormData();form.set("email","test@example.invalid");form.set("password","Password123");form.set("next",next);
+  await assert.rejects(h.signInAction({},form),error=>String(error)==="Error: redirect:"+destination);
+ }
+});

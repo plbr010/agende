@@ -1,0 +1,32 @@
+{
+  "base_sha": "dcc545403ef8556f9da2e80a43d286aae12f9e31",
+  "preserved_sha": "daa29b57d074da7e9ca2f165720a076871eec282",
+  "branch": "codex/release-safe-20261105",
+  "migration": {
+    "file": "supabase/migrations/20261105152258_platform_admin_live_identity_guard.sql",
+    "sha256_lf": "b1e3db7f3fd879f001845f7889a04523f513ce0d8e8baec63512d70ba15d06dd",
+    "applied_remotely": false,
+    "grants_existing_admins": false,
+    "changes_lifetime": false,
+    "changes_policies": false
+  },
+  "tests": {
+    "full_passed": 547,
+    "full_failed": 0,
+    "full_skipped": 2,
+    "native_passed": 50,
+    "browser_passed": 22,
+    "build": true,
+    "typecheck": true,
+    "lint_errors": 0,
+    "lint_preexisting_warnings": 2
+  },
+  "preview": {
+    "created": false,
+    "required_backend": "fkpdudnnperufnmdwdlv",
+    "public_whatsapp": "5532998064217",
+    "production_allowed": false,
+    "live_stripe_allowed": false
+  },
+  "recommendation": "NO_GO_REMOTE_UNTIL_EXPLICIT_STAGING_MIGRATION_AND_EXTERNAL_ACCEPTANCE"
+}

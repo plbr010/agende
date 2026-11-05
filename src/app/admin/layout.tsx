@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AdminProvisionPanel } from "@/components/admin/provision-panel";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { requirePlatformAdmin } from "@/lib/admin/guard";
 
@@ -9,11 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { session, provisionPending } = await requirePlatformAdmin("/admin", { allowProvision: true });
+  const { session } = await requirePlatformAdmin("/admin");
 
-  if (provisionPending) {
-    return <AdminProvisionPanel email={session.user.email} />;
-  }
 
   return (
     <AdminShell

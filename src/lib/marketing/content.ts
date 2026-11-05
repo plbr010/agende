@@ -5,7 +5,7 @@ export const MARKETING_NAV = [
 
 export const MARKETING_CTAS = {
   primary: { href: "/profissionais", label: "Sou profissional" },
-  secondary: { href: "/cadastro?intent=cliente", label: "Sou cliente" },
+  secondary: { href: "/cadastro?intent=cliente&next=%2Fcliente%2Fdescobrir", label: "Sou cliente" },
   headerPrimary: { href: "/cadastro", label: "Comece agora" },
   login: { href: "/login", label: "Entrar" },
   professionalSignup: { href: "/cadastro?intent=professional", label: "Começar 7 dias grátis" },

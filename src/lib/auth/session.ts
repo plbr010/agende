@@ -4,6 +4,7 @@ import { isOfficialMasterAdminEmail } from "@/lib/admin/bootstrap";
 import { createClient } from "@/lib/supabase/server";
 import {
   getDefaultDestination,
+  canAccessPath,
   sanitizeNextPath,
   type AuthContext,
 } from "@/lib/auth/redirects";
@@ -19,17 +20,6 @@ async function readPlatformAdminFlag(supabase: SessionClient): Promise<boolean> 
   if (typeof supabase.rpc !== "function") return false;
   try {
     const { data, error } = await supabase.rpc("is_platform_admin");
-    if (error) return false;
-    return data === true;
-  } catch {
-    return false;
-  }
-}
-
-async function readOfficialOwnerFlag(supabase: SessionClient): Promise<boolean> {
-  if (typeof supabase.rpc !== "function") return false;
-  try {
-    const { data, error } = await supabase.rpc("is_official_platform_owner");
     if (error) return false;
     return data === true;
   } catch {
@@ -231,15 +221,14 @@ export async function loadAppSession(): Promise<AppSession | null> {
   }
 
   const officialFromAuth = isOfficialMasterAdminEmail(user.email);
-  const [rpcAdmin, rpcOwner, hold] = await Promise.all([
+  const [rpcAdmin, hold] = await Promise.all([
     readPlatformAdminFlag(supabase),
-    readOfficialOwnerFlag(supabase),
     readPlatformHold(supabase),
   ]);
   // Auth getUser() email is the confirmed identity, not a form field. Keep the
   // menu visible if PostgREST has not loaded the admin RPCs yet.
-  const isOfficialPlatformOwner = rpcOwner || officialFromAuth;
-  const isPlatformAdmin = rpcAdmin;
+  const isOfficialPlatformOwner = officialFromAuth;
+  const isPlatformAdmin = officialFromAuth && rpcAdmin;
 
   const intendedUse = profile?.intended_use ?? "client";
   const context: AuthContext = {
@@ -286,7 +275,7 @@ export async function requireAnonymous(next?: string | null): Promise<void> {
   const session = await loadAppSession();
   const safeNext = sanitizeNextPath(next);
   if (session?.context.emailConfirmed) {
-    if (safeNext?.startsWith("/convite/")) {
+    if (safeNext && canAccessPath(safeNext, session.context)) {
       redirect(safeNext);
     }
     redirect(getDefaultDestination(session.context));

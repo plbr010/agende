@@ -17,8 +17,7 @@ import { formatCount, formatMoney, formatPercent, formatPlan } from "@/lib/admin
 import { loadAdminDashboard } from "@/lib/admin/queries";
 
 export default async function AdminDashboardPage() {
-  const { provisionPending } = await requirePlatformAdmin("/admin", { allowProvision: true });
-  if (provisionPending) return null;
+  await requirePlatformAdmin("/admin");
 
   let dashboard: Awaited<ReturnType<typeof loadAdminDashboard>>;
   try {

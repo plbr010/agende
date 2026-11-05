@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-03T22:21:34.256Z",
+  "checked_at": "2026-11-05T15:37:53.157Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -12,7 +12,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 302,
+      "passed": 309,
       "failed": 0,
       "skipped": 0
     },
@@ -47,13 +47,13 @@
       "skipped": 0
     },
     "platform_mocks": {
-      "passed": 102,
+      "passed": 105,
       "failed": 0,
       "skipped": 0
     }
   },
   "totals": {
-    "passed": 537,
+    "passed": 547,
     "failed": 0,
     "skipped": 2
   },
@@ -736,6 +736,30 @@
       "name": "two native sessions race on the pilot salon and stay isolated from the blocked salon",
       "category": "pglite_pilot_and_cancellation",
       "status": "skipped"
+    },
+    {
+      "file": "scripts/platform-admin-identity-regression.test.mjs",
+      "name": "direct unauthorized access and metadata cannot escalate",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/platform-admin-identity-regression.test.mjs",
+      "name": "email change invalidates the same token and durably revokes the grant",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/platform-admin-identity-regression.test.mjs",
+      "name": "explicit operator regrant is possible but existing session loses access on revocation or unconfirmation",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/platform-admin-identity-regression.test.mjs",
+      "name": "admin identity upgrade preserves existing grants, lifetime, benefits and RLS; existing tokens lose authority",
+      "category": "unit_or_static_contract",
+      "status": "passed"
     },
     {
       "file": "scripts/platform-admin-sql.test.mjs",
@@ -1572,6 +1596,12 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/admin/guard.test.ts",
+      "name": "guard rejects changed identity, stale flags, revoked grants and provider failures without self-provisioning",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/agenda/checkout-message.test.ts",
       "name": "checkout distinguishes total, received and remaining without inventing commission absence",
       "category": "unit_or_static_contract",
@@ -1784,6 +1814,18 @@
     {
       "file": "src/lib/auth/launch-auth.test.ts",
       "name": "obfuscated existing-account response never reports a new confirmation email or overwrites pending state",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "client signup carries discovery through confirmation and clears professional plan",
+      "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/auth/launch-auth.test.ts",
+      "name": "password login preserves discovery and refuses an external next destination",
       "category": "platform_mocks",
       "status": "passed"
     },
@@ -2665,6 +2707,12 @@
     },
     {
       "file": "src/lib/marketing/content.test.ts",
+      "name": "Sou cliente opens client signup instead of the salon directory",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/content.test.ts",
       "name": "plans differentiate benefits and show annual prices",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -2678,6 +2726,18 @@
     {
       "file": "src/lib/marketing/content.test.ts",
       "name": "landing covers the product vision without fake WhatsApp automation",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/whatsapp.test.ts",
+      "name": "commercial WhatsApp validates explicit Brazilian destinations and preserves the exact message",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/whatsapp.test.ts",
+      "name": "commercial button hides missing configuration and renders safe accessible external contact",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

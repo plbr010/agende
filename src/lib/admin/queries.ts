@@ -1,4 +1,5 @@
 import "server-only";
+import { requireReadyPlatformAdmin } from "./guard";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { adminErrorMessage } from "@/lib/admin/errors";
@@ -65,6 +66,7 @@ async function adminRpc<T>(
   schema: z.ZodType<T>,
   fallback: string,
 ): Promise<T> {
+  await requireReadyPlatformAdmin("/admin");
   const supabase = await createClient();
   const result = args === undefined
     ? await supabase.rpc(name)

@@ -80,6 +80,7 @@ test("master admin authorization, reads, holds and audit stay off the public API
 
   await t.test("only the official Auth identity can become master and then operate", async () => {
     await assert.rejects(asService("select public.grant_platform_admin($1)", [outsider]), /not_official_platform_admin/);
+    await asService("select public.grant_platform_admin($1)", [owner]);
     await as(owner, "select public.claim_official_platform_admin()");
     assert.equal((await as(owner, "select public.is_platform_admin() as ok")).rows[0].ok, true);
     assert.equal(
