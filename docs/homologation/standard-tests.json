@@ -1,18 +1,18 @@
 {
-  "checked_at": "2026-11-05T15:37:53.157Z",
+  "checked_at": "2026-11-05T20:02:48.776Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
       "failed": 0,
       "skipped": 0
     },
-    "pglite_sql": {
-      "passed": 69,
+    "unit_or_static_contract": {
+      "passed": 319,
       "failed": 0,
       "skipped": 0
     },
-    "unit_or_static_contract": {
-      "passed": 309,
+    "pglite_sql": {
+      "passed": 69,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 547,
+    "passed": 557,
     "failed": 0,
     "skipped": 2
   },
@@ -129,6 +129,54 @@
       "file": "scripts/action-sql-integration.test.mjs",
       "name": "server actions and SQL integrate workspace, catalog, booking, finance, stock, packages and reviews",
       "category": "pglite_integration_with_mock_auth",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-sql.test.mjs",
+      "name": "all statuses and four global metrics use real fixture records",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-sql.test.mjs",
+      "name": "global metrics do not change with query/filter/page; name and owner search",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-sql.test.mjs",
+      "name": "anonymous, tenant owners, forged claims and revoked identity cannot use cross-tenant read",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-sql.test.mjs",
+      "name": "read-model rollback preserves rows, privileges and policies",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-sql.test.mjs",
+      "name": "salon read model: truthful statuses, paging, isolation and immutable upgrade",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-view.test.mjs",
+      "name": "actual directory renders four metrics, real returned row, escaped names and all filters",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-view.test.mjs",
+      "name": "data outage never renders fabricated zero counters or delinquency",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/admin-salons-view.test.mjs",
+      "name": "unknown status and no payment history remain explicit",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
@@ -1599,6 +1647,18 @@
       "file": "src/lib/admin/guard.test.ts",
       "name": "guard rejects changed identity, stale flags, revoked grants and provider failures without self-provisioning",
       "category": "platform_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/admin/salon-status.test.ts",
+      "name": "trial uses explicit server snapshot time, never negative days or paid trials",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/admin/salon-status.test.ts",
+      "name": "all required statuses remain distinct; unknown state never becomes debt",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {

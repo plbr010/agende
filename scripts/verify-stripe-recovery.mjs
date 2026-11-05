@@ -65,7 +65,10 @@ const reconciledAfterReview = [
   ["20261109120000_commercial_booking_resume.sql", "668e5896b93cfef274a41226ff4e02f6de3b479f1c0bc6f23b8f640834deb499"],
 ];
 // Local security proposal: not evidence of remote application or approval.
-const proposed = [["20261105152258_platform_admin_live_identity_guard.sql", "b1e3db7f3fd879f001845f7889a04523f513ce0d8e8baec63512d70ba15d06dd"]];
+const proposed = [
+  ["20261105152258_platform_admin_live_identity_guard.sql", "b1e3db7f3fd879f001845f7889a04523f513ce0d8e8baec63512d70ba15d06dd"],
+  ["20261105194747_admin_salon_read_model.sql", "eafc535cbbf512af43ed78c588339e316117955081392c83b53b31d80815e622"],
+];
 const reviewedLocalOnly = [...new Set([
   ...previouslyReviewedLocalOnly,
   ...reviewedPlan.pending.map(({ file }) => file),

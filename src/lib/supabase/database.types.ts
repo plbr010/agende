@@ -1827,6 +1827,7 @@ export type Database = {
       admin_list_clients: { Args: { p_query?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       admin_list_professionals: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       admin_list_subscriptions: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
+      admin_salon_overview: { Args: { p_query?: string | null; p_status?: string | null; p_limit?: number; p_offset?: number; p_workspace_id?: string | null }; Returns: Json };
       admin_list_users: { Args: { p_query?: string | null; p_intent?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       admin_list_workspaces: { Args: { p_query?: string | null; p_plan?: string | null; p_status?: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: Json };
       admin_set_account_hold: { Args: { p_subject_type: string | null; p_subject_id: string | null; p_reason: string | null; p_active: boolean | null }; Returns: Json };

@@ -30,10 +30,15 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Visão geral", icon: LayoutDashboard },
-  { href: "/admin/profissionais", label: "Profissionais", icon: Users },
-  { href: "/admin/estabelecimentos", label: "Estabelecimentos", icon: Store },
-  { href: "/admin/clientes", label: "Clientes", icon: UsersRound },
+  { href: "/admin/estabelecimentos", label: "Salões", icon: Store },
   { href: "/admin/assinaturas", label: "Assinaturas", icon: CreditCard },
+] as const;
+
+const SECONDARY_NAV = [
+  { href: "/admin/profissionais", label: "Profissionais", icon: Users },
+  { href: "/admin/clientes", label: "Clientes", icon: UsersRound },
+  { href: "/admin/estabelecimentos/gestao", label: "Gestão administrativa", icon: Store },
+  { href: "/admin/assinaturas/historico", label: "Histórico de cobranças", icon: CreditCard },
   { href: "/admin/agendamentos", label: "Agendamentos", icon: CalendarDays },
   { href: "/admin/suporte", label: "Suporte", icon: LifeBuoy },
 ] as const;
@@ -46,12 +51,13 @@ function isCurrent(pathname: string, href: string) {
 function Navigation({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   return (
     <nav className="grid gap-1" aria-label="Navegação master">
-      {NAV.map((item) => {
-        const current = isCurrent(pathname, item.href);
+      {[...NAV, ...SECONDARY_NAV].map((item, index) => {
+        const current = isCurrent(pathname, item.href) && ![...NAV, ...SECONDARY_NAV].some((other) => other.href.length > item.href.length && isCurrent(pathname, other.href));
         const Icon = item.icon;
         return (
+          <div key={item.href}>
+          {index === NAV.length ? <p className="mt-6 mb-2 px-3 text-xs font-medium tracking-wider text-white/55 uppercase">Mais opções</p> : null}
           <Link
-            key={item.href}
             href={item.href}
             onClick={onNavigate}
             aria-current={current ? "page" : undefined}
@@ -65,6 +71,7 @@ function Navigation({ pathname, onNavigate }: { pathname: string; onNavigate?: (
             <Icon className="size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
           </Link>
+          </div>
         );
       })}
     </nav>
@@ -88,7 +95,7 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const current = NAV.find((item) => isCurrent(pathname, item.href)) ?? NAV[0];
+  const current = [...NAV, ...SECONDARY_NAV].filter((item) => isCurrent(pathname, item.href)).sort((a, b) => b.href.length - a.href.length)[0] ?? NAV[0];
 
   const menu = (
     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
