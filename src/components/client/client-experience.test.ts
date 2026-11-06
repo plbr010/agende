@@ -22,7 +22,8 @@ test("audience split uses the approved client and professional copy", () => {
   assert.match(split, /Mais organização, menos trabalho\./);
   assert.match(split, /Conhecer o Agendê/);
   assert.match(split, /Seu próximo momento de beleza está a poucos cliques\./);
-  assert.match(split, /Encontrar um salão/);
+  assert.match(split, /Criar conta de cliente/);
+  assert.match(split, /href=\{MARKETING_CTAS\.secondary\.href\}/);
   assert.match(split, /relative isolate overflow-hidden/);
   assert.match(split, /relative z-10 mx-auto grid/);
   assert.match(split, /FloralCorner className="[^"]*-left-12/);
