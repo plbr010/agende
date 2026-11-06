@@ -61,6 +61,7 @@ const reconciledAfterReview = [
   ["20261103180000_platform_master_admin.sql", "af6f9d5ecd739ae24f5d06c853dd63c6f78f6145b32f543b74da2252351cee64"],
   ["20261103203000_official_master_admin_identity.sql", "0ad457539586d3904a018b196769fa22518395cce8286476bd3446db8d04ee2d"],
   ["20261103205336_official_lifetime_entitlement.sql", "07fbad0b83b27d5514f2d7880379c67a44c77736d676ab5675ce54343c9fd997"],
+  ["20261106101000_restore_platform_admin_read_rpcs.sql", "8245865c753967e5741ae72964c634ae05fb40924623134a07ebf9d876bd020b"],
 ];
 const reviewedLocalOnly = [...new Set([
   ...previouslyReviewedLocalOnly,
