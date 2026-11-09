@@ -88,7 +88,7 @@ export function SubscriptionOverview({
                 <strong className="font-serif text-2xl text-wine-deep">{plan.price}</strong>
                 {plan.period}
               </p>
-              <p className="text-sm text-muted-foreground">{plan.annualPrice}</p>
+              <p className="text-sm text-muted-foreground">{plan.description}</p>
               {subscription?.plan === plan.id ? (
                 <p className="font-semibold text-primary">Plano atual</p>
               ) : trial ? (

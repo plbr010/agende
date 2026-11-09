@@ -35,6 +35,10 @@ const PRICE_MAP: Record<string, { plan: "solo" | "equipe" | "salao"; interval: "
   "price_1UJogkKii3CCJXtczVBirqG2": { plan: "equipe", interval: "annual" },
   "price_1UIyPDKii3CCJXtcQhJK0sHo": { plan: "salao", interval: "monthly" },
   "price_1UJognKii3CCJXtcCwqEgJMv": { plan: "salao", interval: "annual" },
+  // 2026-11-09 monthly prices (R$ 39,90 / 79,90 / 149,90). The older monthly IDs above stay mapped for existing subscriptions.
+  "price_1UZpKEKii3CCJXtciXFu0ukK": { plan: "solo", interval: "monthly" },
+  "price_1UZpKFKii3CCJXtcAq8ZXIDD": { plan: "equipe", interval: "monthly" },
+  "price_1UZpKGKii3CCJXtcKWmvXShC": { plan: "salao", interval: "monthly" },
 };
 
 const LOOKUP_MAP: Record<string, { plan: "solo" | "equipe" | "salao"; interval: "monthly" | "annual" }> = {

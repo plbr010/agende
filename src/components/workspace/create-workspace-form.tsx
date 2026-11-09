@@ -58,7 +58,7 @@ export function PlanChoiceForm({ defaultPlan = "equipe" }: { defaultPlan?: PlanI
                     <span className="text-sm font-sans text-muted-foreground">{plan.period}</span>
                   </span>
                 </span>
-                <span className="mt-1 block text-sm text-muted-foreground">{plan.seats} · ou {plan.annualPrice}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{plan.seats} · {plan.description}</span>
                 <span className="mt-1 block text-sm text-muted-foreground">{plan.highlights[0]}</span>
               </span>
             </label>

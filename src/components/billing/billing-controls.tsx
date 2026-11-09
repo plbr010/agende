@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PLANS } from "@/lib/marketing/content";
+import { ANNUAL_OFFER_ENABLED } from "@/lib/billing/plans";
 import { billingRedirectSchema } from "@/lib/billing/stripe-contract";
 import { checkoutDisabledReason, checkoutReturnMessage } from "@/lib/billing/presentation";
 import { nextCheckoutAttempt, type CheckoutAttempt } from "@/lib/billing/checkout-attempt";
@@ -24,7 +25,7 @@ export type BillingControlsProps = {
 
 export function BillingControls(props: BillingControlsProps) {
   const router = useRouter();
-  const [interval, setInterval] = useState(props.initialInterval);
+  const [interval, setInterval] = useState<"monthly" | "annual">(ANNUAL_OFFER_ENABLED ? props.initialInterval : "monthly");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const busy = useRef(false);
@@ -59,12 +60,15 @@ export function BillingControls(props: BillingControlsProps) {
       <div>
         <h3 className="font-serif text-2xl text-wine-deep">Assinar o plano</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Escolha Solo, Equipe ou Salão e se prefere pagar todo mês ou o ano. O período restante do teste será respeitado. Assinar não reinicia o teste.
+          {ANNUAL_OFFER_ENABLED
+            ? "Escolha Solo, Equipe ou Salão e se prefere pagar todo mês ou o ano. O período restante do teste será respeitado. Assinar não reinicia o teste."
+            : "Escolha Solo, Equipe ou Salão. A cobrança é mensal e você pode cancelar quando quiser. O período restante do teste será respeitado. Assinar não reinicia o teste."}
         </p>
       </div>
       {returnMessage ? <div role="status" className="rounded-2xl bg-metric-blush p-4">{returnMessage}</div> : null}
       {error ? <p role="alert" className="rounded-xl border border-destructive p-4 text-destructive">{error}</p> : null}
       {pending ? <p role="status">Abrindo o ambiente seguro do Stripe…</p> : null}
+      {ANNUAL_OFFER_ENABLED ? (
       <fieldset disabled={pending || !props.canManage} className="grid gap-2">
         <legend className="mb-2 font-medium">Periodicidade</legend>
         <div className="grid grid-cols-2 gap-2 rounded-full bg-[#fff6f4] p-1 ring-1 ring-[#eadfd8]">
@@ -89,6 +93,7 @@ export function BillingControls(props: BillingControlsProps) {
           ))}
         </div>
       </fieldset>
+      ) : null}
       <div className="grid gap-4 lg:grid-cols-3">
         {PLANS.map((plan) => {
           const reason = checkoutDisabledReason(plan.id, props.usedSeats, props.hasSubscription, props.status, props.canManage);

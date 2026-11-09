@@ -26,21 +26,21 @@ test("plans use the exact public prices and seats", () => {
       {
         name: "Solo",
         seats: "1 profissional",
-        price: "R$ 89,90",
+        price: "R$ 39,90",
         period: "/mês",
         popular: false,
       },
       {
         name: "Equipe",
         seats: "Até 5 profissionais",
-        price: "R$ 169,90",
+        price: "R$ 79,90",
         period: "/mês",
         popular: true,
       },
       {
         name: "Salão",
         seats: "Até 15 profissionais",
-        price: "R$ 299,90",
+        price: "R$ 149,90",
         period: "/mês",
         popular: false,
       },
@@ -75,11 +75,18 @@ test("Sou cliente opens client signup instead of the salon directory", () => {
   assert.equal(MARKETING_CTAS.headerPrimary.href, "/cadastro");
 });
 
-test("plans differentiate benefits and show annual prices", () => {
+test("plans differentiate benefits, lead with online booking and match the Stripe amounts", () => {
   const highlights = PLANS.flatMap((plan) => plan.highlights);
   assert.equal(new Set(highlights).size, highlights.length);
+  assert.deepEqual(PLANS.map((plan) => plan.priceCents), [3990, 7990, 14990]);
+  assert.deepEqual(PLANS.map((plan) => plan.description), [
+    "Para profissionais que trabalham sozinhos.",
+    "Para estabelecimentos com até cinco profissionais.",
+    "Para equipes com até quinze profissionais.",
+  ]);
   for (const plan of PLANS) {
-    assert.ok(plan.annualPrice.includes("/ano"));
+    assert.equal(plan.price, `R$ ${(plan.priceCents / 100).toFixed(2).replace(".", ",")}`);
+    assert.match(plan.highlights[0], /agendamentos online/);
     assert.ok(plan.highlights.length >= 3);
   }
 });

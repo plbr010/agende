@@ -34,7 +34,7 @@ test('Stripe recovery accepts the reviewed inventory and preserves historical ed
   const { run } = fixture(t);
   const result = run();
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /local: 94/);
+  assert.match(result.stdout, /local: 96/);
   assert.match(result.stdout, /remote: 63/);
   assert.match(result.stdout, /Verified against the read-only remote snapshot/);
   assert.match(result.stdout, /stripe-webhook\/index\.ts @ [0-9a-f]{40}/);

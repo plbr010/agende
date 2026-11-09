@@ -90,9 +90,10 @@ test("team signup keeps the invite and never shows a subscription price", () => 
 
 test("owner plan step shows the real prices before the salon name", () => {
   const html = render(createElement(PlanChoiceForm, { defaultPlan: "equipe" }));
-  assert.match(html, /R\$ 89,90/);
-  assert.match(html, /R\$ 169,90/);
-  assert.match(html, /R\$ 299,90/);
+  assert.match(html, /R\$ 39,90/);
+  assert.match(html, /R\$ 79,90/);
+  assert.match(html, /R\$ 149,90/);
+  assert.doesNotMatch(html, /\/ano/);
   assert.match(html, /7 dias/);
   assert.doesNotMatch(html, /Nome do salão/);
 });

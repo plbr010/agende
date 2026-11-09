@@ -89,7 +89,7 @@ function harness(kind, overrides = {}) {
     prices: { list: async ({ lookup_keys: [lookup] }) => {
       const plan = lookup.split('_')[1], annual = lookup.endsWith('annual');
       return { data: [{ id: 'price_test', lookup_key: lookup, currency: 'brl', unit_amount: state.badPrice ? 1 :
-        { solo: [8990, 79900], equipe: [16990, 149900], salao: [29990, 279900] }[plan][annual ? 1 : 0],
+        { solo: [3990, 79900], equipe: [7990, 149900], salao: [14990, 279900] }[plan][annual ? 1 : 0],
         recurring: { interval: annual ? 'year' : 'month', interval_count: 1, usage_type: 'licensed' } }] };
     } },
     subscriptions: { list: () => iterable(state.subscriptions), retrieve: async () => state.current },
@@ -145,8 +145,15 @@ test('billing SDK application identification uses ASCII to avoid provider HTTP 4
   assert.match(options.appInfo.name,/^[\x20-\x7e]+$/);
 });
 
-test('Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers', async () => {
-  for (const plan of ['solo', 'equipe', 'salao']) for (const billingInterval of ['monthly', 'annual']) {
+test('Edge checkout: monthly lookup keys at the 2026-11-09 prices, annual suspended, fixed redirects, seat checks and verified managers', async () => {
+  for (const plan of ['solo', 'equipe', 'salao']) {
+    const annual = harness('stripe-billing');
+    const refused = await annual.billing({ plan, billingInterval: 'annual' });
+    assert.equal(refused.status, 400);
+    assert.equal((await refused.json()).error, 'annual_unavailable');
+    assert.equal(annual.state.calls.some(c => c.name === 'checkout' || c.name === 'acquire_stripe_checkout'), false);
+  }
+  for (const plan of ['solo', 'equipe', 'salao']) for (const billingInterval of ['monthly']) {
     const h = harness('stripe-billing');
     assert.equal((await h.billing({ plan, billingInterval, success_url: 'https://evil.test' })).status, 200);
     const call = h.state.calls.find(c => c.name === 'checkout');
