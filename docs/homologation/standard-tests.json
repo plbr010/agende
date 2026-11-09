@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-05T20:02:48.776Z",
+  "checked_at": "2026-11-09T07:17:07.014Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 319,
+      "passed": 326,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 557,
+    "passed": 564,
     "failed": 0,
     "skipped": 2
   },
@@ -180,6 +180,12 @@
       "status": "passed"
     },
     {
+      "file": "scripts/admin-salons-view.test.mjs",
+      "name": "legacy links keep their filters and are authorized before redirect",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "scripts/atomic-service-sql.test.mjs",
       "name": "prepared one-migration transaction preserves existing catalog and other history",
       "category": "pglite_sql",
@@ -249,6 +255,42 @@
       "file": "scripts/client-phase2-sql.test.mjs",
       "name": "phase2 SQL favorites identity publication idempotency profile and avatar isolation",
       "category": "pglite_sql",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "paused: nobody can book",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "authenticated and anon cannot resume, even with a mistaken grant",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "operator resume grants authenticated only; anon and direct insert stay closed",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "entitled salon accepts one booking and still rejects the overlapping one",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "suspend remains the emergency brake after a resume",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/commercial-booking-resume.test.mjs",
+      "name": "commercial resume reopens booking for entitled salons only, and only for operators",
+      "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
