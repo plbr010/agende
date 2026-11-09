@@ -21,7 +21,7 @@ testFiles.push("scripts/pr84-final-sql.test.mjs", "scripts/pr84-final-upgrade.te
 testFiles.push("scripts/workspace-media-sql.test.mjs", "scripts/profiles-booking-whatsapp-sql.test.mjs");
 testFiles.push("scripts/discovery-sql.test.mjs", "scripts/staging-auth-observer.test.mjs", "scripts/staging-auth-expiry-result.test.mjs", "scripts/client-phase2-sql.test.mjs");
 testFiles.push("scripts/prelaunch-upgrade.test.mjs", "scripts/booking-retry-sql.test.mjs");
-testFiles.push("scripts/pilot-booking-activation.test.mjs", "scripts/commercial-booking-resume.test.mjs");
+testFiles.push("scripts/pilot-booking-activation.test.mjs", "scripts/commercial-booking-resume.test.mjs", "scripts/build-production-rollout.test.mjs");
 testFiles.push("scripts/expired-entitlement-cancel.test.mjs");
 testFiles.push("scripts/expired-cancellation-sql.test.mjs");
 testFiles.push("scripts/platform-admin-sql.test.mjs", "scripts/platform-admin-identity-regression.test.mjs");
