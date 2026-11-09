@@ -9,7 +9,7 @@ test("commercial WhatsApp validates explicit Brazilian destinations and preserve
   assert.equal(url.searchParams.get("text"), SPECIALIST_MESSAGE);
 });
 
-test("commercial button falls back to the official number, hides invalid configuration and renders safe accessible external contact", async () => {
+test("commercial button falls back to the official number when unset or invalid and renders safe accessible external contact", async () => {
   const { createElement } = await import("react");
   const { renderToStaticMarkup } = await import("react-dom/server");
   const { SpecialistWhatsApp } = await import("../../components/marketing/specialist-whatsapp");
@@ -18,7 +18,7 @@ test("commercial button falls back to the official number, hides invalid configu
     delete process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER;
     assert.match(renderToStaticMarkup(createElement(SpecialistWhatsApp)), /wa\.me\/5532998064217/);
     process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER = "invalid";
-    assert.equal(renderToStaticMarkup(createElement(SpecialistWhatsApp)), "");
+    assert.match(renderToStaticMarkup(createElement(SpecialistWhatsApp)), /wa\.me\/5532998064217/);
     process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER = "5532999999999";
     const html = renderToStaticMarkup(createElement(SpecialistWhatsApp));
     assert.match(html, /Fale com um especialista/); assert.match(html, /target="_blank"/);

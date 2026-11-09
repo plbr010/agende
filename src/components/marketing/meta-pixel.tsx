@@ -50,7 +50,8 @@ export function MetaPixel() {
   useEffect(() => {
     rememberAcquisition();
     if (!isPageViewPath(pathname)) return;
-    ensurePixel()?.("track", "PageView");
+    // trackSingle: Meta drops repeated "track PageView" calls on client-side navigation.
+    ensurePixel()?.("trackSingle", META_PIXEL_ID, "PageView");
   }, [pathname]);
   return null;
 }
@@ -67,7 +68,7 @@ export function PixelEvent({ event, onceKey, value }: { event: PixelEventName; o
     } catch {
       // Storage blocked: still report, at worst a duplicate.
     }
-    fbq("track", event, value ? { value, currency: "BRL" } : {});
+    fbq("trackSingle", META_PIXEL_ID, event, value ? { value, currency: "BRL" } : {});
   }, [event, onceKey, value]);
   return null;
 }
