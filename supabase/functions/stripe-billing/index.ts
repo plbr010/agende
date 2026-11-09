@@ -107,6 +107,25 @@ function parseInterval(value: unknown): BillingInterval | null {
   return value === "monthly" || value === "annual" ? value : null;
 }
 
+// Campaign attribution for the Rastreio tracker: its Stripe webhook reads `vid`
+// and `utm_*` from the Checkout Session metadata. client_reference_id stays the
+// workspace id, which stripe-webhook binds by. Unknown keys and unsafe values are
+// dropped; attribution never blocks a checkout.
+const ATTRIBUTION_KEYS = ["vid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "landing"] as const;
+const ATTRIBUTION_VALUE = /^[\p{L}\p{N} ._\-+|:/]{1,100}$/u;
+
+function parseAttribution(value: unknown): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (!value || typeof value !== "object") return result;
+  for (const key of ATTRIBUTION_KEYS) {
+    const raw = (value as Record<string, unknown>)[key];
+    if (typeof raw !== "string" || !ATTRIBUTION_VALUE.test(raw)) continue;
+    if (key === "vid" && !/^rv_[a-f0-9]{16}$/.test(raw)) continue;
+    result[key] = raw;
+  }
+  return result;
+}
+
 function isUuid(value: unknown): value is string {
   return typeof value === "string" &&
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
@@ -257,6 +276,7 @@ async function createCheckout(args: {
   interval: BillingInterval;
   idempotencyKey?: string;
   subscription: Record<string, any>;
+  attribution?: Record<string, string>;
 }) {
   const expected = PRICE_CATALOG[args.plan][args.interval];
   const seats = await usedProfessionalSeats(args.workspaceId);
@@ -301,6 +321,7 @@ async function createCheckout(args: {
   const subscriptionData: Stripe.Checkout.SessionCreateParams.SubscriptionData = {
     billing_mode: { type: "flexible" },
     metadata: {
+      ...args.attribution,
       app: "agende",
       workspace_id: args.workspaceId,
       plan_code: args.plan,
@@ -340,6 +361,7 @@ async function createCheckout(args: {
       integration_identifier: "agende_checkout_xqplmnzr",
       payment_method_collection: "always",
       metadata: {
+        ...args.attribution,
         app: "agende",
         workspace_id: args.workspaceId,
         plan_code: args.plan,
@@ -420,6 +442,7 @@ Deno.serve(async (req: Request) => {
           interval,
           idempotencyKey: typeof body.idempotencyKey === "string" ? body.idempotencyKey : undefined,
           subscription,
+          attribution: parseAttribution(body.attribution),
         });
         return json(200, { url });
       } finally {

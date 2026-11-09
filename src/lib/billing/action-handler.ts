@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ANNUAL_OFFER_ENABLED } from "./plans";
-import { billingIntervalSchema, billingPlanSchema, createStripeBillingQueries, type StripeBillingBackend } from "./stripe-contract";
+import { billingIntervalSchema, billingPlanSchema, createStripeBillingQueries, type CheckoutAttribution, type StripeBillingBackend } from "./stripe-contract";
 
 export const billingActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("checkout"), plan: billingPlanSchema, billingInterval: billingIntervalSchema,
@@ -26,9 +26,10 @@ export function billingErrorMessage(code: string) {
   return messages[code] ?? "Não foi possível abrir a cobrança. Tente novamente em instantes.";
 }
 
-// The workspace comes only from the authenticated server session, never the form.
+// The workspace and the campaign attribution come only from the server (session
+// and first-party cookies), never the form.
 export async function runBillingAction(input: unknown, workspace: { id: string; role: string } | null,
-  backend: StripeBillingBackend): Promise<BillingActionResult> {
+  backend: StripeBillingBackend, attribution?: CheckoutAttribution): Promise<BillingActionResult> {
   if (!workspace || !["owner", "admin"].includes(workspace.role)) {
     return { error: billingErrorMessage("billing_not_authorized") };
   }
@@ -40,7 +41,7 @@ export async function runBillingAction(input: unknown, workspace: { id: string; 
   try {
     const billing = createStripeBillingQueries(backend);
     return parsed.data.action === "checkout"
-      ? await billing.checkout({ ...parsed.data, workspaceId: workspace.id })
+      ? await billing.checkout({ ...parsed.data, workspaceId: workspace.id, attribution })
       : await billing.portal({ workspaceId: workspace.id });
   } catch (error) {
     return { error: billingErrorMessage(error instanceof Error ? error.message : "billing_unavailable") };

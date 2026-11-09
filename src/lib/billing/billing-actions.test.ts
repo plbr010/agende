@@ -18,6 +18,25 @@ test("all six checkout selections reach stripe-billing with authenticated worksp
   }
 });
 
+test("server-side campaign attribution reaches stripe-billing; malformed attribution is dropped, not fatal", async () => {
+  const workspace = { id: "trusted", role: "owner" };
+  const input = { action: "checkout", plan: "solo", billingInterval: "monthly", idempotencyKey: "same-attempt-123456" };
+  const attribution = { vid: "rv_0123456789abcdef", utm_source: "FB", utm_campaign: "Campanha|120200000000000001" };
+  const bodies: object[] = [];
+  const backend = createEdgeBillingBackend(async (_name, { body }) => {
+    bodies.push(body);
+    return { data: { url: "https://checkout.stripe.com/c/pay/cs_test" }, error: null };
+  });
+  assert.ok((await runBillingAction({ ...input, attribution: { vid: "rv_ffffffffffffffff" } }, workspace, backend, attribution)).url);
+  assert.ok((await runBillingAction(input, workspace, backend, { vid: "forged<script>" } as never)).url);
+  assert.ok((await runBillingAction({ action: "portal" }, workspace, backend, attribution)).url);
+  assert.deepEqual(bodies, [
+    { action: "checkout", workspaceId: "trusted", plan: "solo", billingInterval: "monthly", idempotencyKey: "same-attempt-123456", attribution },
+    { action: "checkout", workspaceId: "trusted", plan: "solo", billingInterval: "monthly", idempotencyKey: "same-attempt-123456" },
+    { action: "portal", workspaceId: "trusted" },
+  ]);
+});
+
 test("unauthorized roles, absent workspace and invalid selections never invoke Stripe", async () => {
   const backend = createEdgeBillingBackend(async () => { assert.fail("must not invoke"); });
   for (const role of ["professional", "receptionist", "removed"]) {

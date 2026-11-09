@@ -19,8 +19,8 @@ export function createEdgeBillingBackend(invoke: BillingInvoker): StripeBillingB
     return data;
   }
   return {
-    createCheckout: ({ workspaceId, plan, billingInterval, idempotencyKey }) =>
-      request({ action: "checkout", workspaceId, plan, billingInterval, idempotencyKey }),
+    createCheckout: ({ workspaceId, plan, billingInterval, idempotencyKey, attribution }) =>
+      request({ action: "checkout", workspaceId, plan, billingInterval, idempotencyKey, ...(attribution ? { attribution } : {}) }),
     createPortal: ({ workspaceId }) => request({ action: "portal", workspaceId }),
   };
 }
