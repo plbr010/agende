@@ -6,6 +6,8 @@ import { formatDateTime } from "@/lib/workspace/timezone";
 import { trialDaysRemaining } from "@/lib/billing/plans";
 import { ManagementForm } from "@/components/modules/management-form";
 import { BillingControls } from "./billing-controls";
+import { SubscriptionManager } from "./subscription-manager";
+import type { ManageActionInput, ManageActionResult, SubscriptionState } from "@/lib/billing/manage";
 import type { BillingActionInput, BillingActionResult } from "@/lib/billing/action-handler";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +20,11 @@ export function SubscriptionOverview({
   checkoutReturn,
   billingAction,
   preferredInterval,
+  manageState,
+  manageAction,
 }: {
+  manageState?: SubscriptionState | null;
+  manageAction?: (input: ManageActionInput) => Promise<ManageActionResult>;
   preferredInterval?: "monthly" | "annual" | null;
   canManage: boolean;
   checkoutReturn?: string;
@@ -103,6 +109,10 @@ export function SubscriptionOverview({
             </article>
           ))}
         </section>
+      ) : null}
+
+      {manageState && manageAction ? (
+        <SubscriptionManager state={manageState} timezone={timezone} canManage={canManage} action={manageAction} />
       ) : null}
 
       <section className="agende-panel rounded-[1.5rem] p-5 ring-1 ring-[#f0e4de]">

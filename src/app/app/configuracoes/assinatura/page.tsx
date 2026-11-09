@@ -2,7 +2,10 @@ import { requireActiveWorkspace, requireConfirmedSession } from "@/lib/auth/sess
 import { loadSeatUsage, loadSubscriptionDetail, loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { SubscriptionOverview } from "@/components/billing/subscription-overview";
 import { STRIPE_CAPABILITIES } from "@/lib/billing/stripe-contract";
-import { billingAction } from "@/lib/billing/actions";
+import { billingAction, manageSubscriptionAction } from "@/lib/billing/actions";
+import { loadSubscriptionState } from "@/lib/billing/manage";
+import { createEdgeManageBackend } from "@/lib/billing/edge-adapter";
+import { createClient } from "@/lib/supabase/server";
 import { PixelEvent } from "@/components/marketing/meta-pixel";
 import { PLANS } from "@/lib/marketing/content";
 import { getSelectedInterval } from "@/lib/auth/actions";
@@ -19,6 +22,12 @@ export default async function SubscriptionSettingsPage({ searchParams }: {
     getSelectedInterval(),
   ]);
   const timezone = settings.timezone;
+  const canManage = workspace.role === "owner" || workspace.role === "admin";
+  // Live Stripe state (cancel scheduled, interval) only for managers with a Stripe subscription.
+  const supabase = await createClient();
+  const manageState = canManage && subscription?.hasStripeSubscription
+    ? await loadSubscriptionState(workspace.id, createEdgeManageBackend((name, options) => supabase.functions.invoke(name, options)))
+    : null;
   const query = await searchParams;
 
   const checkoutReturn = typeof query.checkout === "string" ? query.checkout : undefined;
@@ -29,7 +38,8 @@ export default async function SubscriptionSettingsPage({ searchParams }: {
   return <>
     {checkoutReturn === "success" ? <PixelEvent event="Subscribe" onceKey={workspace.id} value={subscribeValue} /> : null}
     <SubscriptionOverview subscription={subscription} seats={seats} timezone={timezone} capabilities={STRIPE_CAPABILITIES}
-      canManage={workspace.role === "owner" || workspace.role === "admin"} preferredInterval={preferredInterval}
+      canManage={canManage} preferredInterval={preferredInterval}
+      manageState={manageState} manageAction={manageSubscriptionAction}
       checkoutReturn={checkoutReturn} billingAction={billingAction} />
   </>;
 }
