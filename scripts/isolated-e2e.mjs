@@ -181,6 +181,33 @@ try {
       }
 
       const page = await context.newPage();
+      try {
+        for (const width of [1280, 390]) {
+          await page.setViewportSize({width,height:844});
+          for (const route of ["/", "/profissionais"]) {
+            await page.goto(base+route,{waitUntil:"domcontentloaded"});
+            const links=page.getByRole("link",{name:"Fale com um especialista",exact:true});
+            if(await links.count()===0)throw Error("missing commercial contact");
+            for(const link of await links.all()) {
+              const href=new URL(await link.getAttribute("href"));
+              if(href.origin!=="https://wa.me"||href.pathname!=="/5532998064217"||!href.searchParams.get("text")?.includes("Conheci o Agendê"))throw Error("invalid contact destination/message");
+              if(await link.getAttribute("target")!=="_blank")throw Error("missing new-tab target");
+            }
+            if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error("horizontal overflow");
+            await links.first().scrollIntoViewIfNeeded();
+            record({name:"commercial-whatsapp-"+width+route,result:"PASS",evidence:await shot(page,"whatsapp-"+width+(route==="/"?"-home":"-commercial"))});
+          }
+        }
+        await page.setViewportSize({width:1280,height:800});
+        await page.goto(base+"/cadastro?intent=professional",{waitUntil:"domcontentloaded"});
+        if(await page.locator('input[name=intendedUse]').inputValue()!=="professional")throw Error("professional signup intent lost");
+        record({name:"professional-signup-separated",result:"PASS",evidence:await shot(page,"professional-signup")});
+        await page.goto(base+"/login?next=%2Fcliente%2Fdescobrir",{waitUntil:"domcontentloaded"});
+        await page.getByRole("link",{name:"Criar conta grátis",exact:true}).click();
+        if(await page.locator('input[name=next]').inputValue()!=="/cliente/descobrir"||await page.locator('input[name=intendedUse]').inputValue()!=="client")throw Error("client return/intent lost");
+        record({name:"login-client-discovery-return",result:"PASS"});
+      } catch(error) {record({name:"integrated-commercial-flow",result:"FAIL",error:error.message});}
+
 
       try {
         await page.goto(`${base}/`, { waitUntil: "domcontentloaded", timeout: 20000 });
@@ -189,7 +216,7 @@ try {
         if (/href="\/descobrir"[^>]*>\s*Sou cliente/.test(landingHtml)) {
           throw new Error("Sou cliente still points to /descobrir");
         }
-        if (!landingHtml.includes('href="/cadastro?intent=cliente"')) {
+        if (!landingHtml.includes('href="/cadastro?intent=cliente&amp;next=%2Fcliente%2Fdescobrir"')) {
           throw new Error("homepage missing client signup href");
         }
         record({ name: "landing", result: "PASS", evidence: await shot(page, "landing") });

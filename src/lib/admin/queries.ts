@@ -1,4 +1,5 @@
 import "server-only";
+import { requireReadyPlatformAdmin } from "./guard";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { adminErrorMessage } from "@/lib/admin/errors";
@@ -65,6 +66,7 @@ async function adminRpc<T>(
   schema: z.ZodType<T>,
   fallback: string,
 ): Promise<T> {
+  await requireReadyPlatformAdmin("/admin");
   const supabase = await createClient();
   const result = args === undefined
     ? await supabase.rpc(name)
@@ -85,6 +87,19 @@ function pageArgs(page: number) {
 
 export async function loadAdminDashboard(): Promise<AdminDashboard> {
   return adminRpc("admin_dashboard_overview", undefined, dashboardSchema, "Não foi possível carregar o painel.");
+}
+
+const salonOverviewSchema = pageSchema.extend({
+  counts: z.object({ total: metric, trial: metric, paid: metric, delinquent: metric, unverified: metric }),
+  as_of: z.string().datetime({ offset: true }),
+});
+export async function loadAdminSalonOverview(input: {
+  query?: string | null; status?: string | null; page?: number; workspaceId?: string;
+}) {
+  return adminRpc("admin_salon_overview", {
+    p_query: input.query ?? null, p_status: input.status ?? null,
+    p_workspace_id: input.workspaceId ?? null, ...pageArgs(input.page ?? 1),
+  }, salonOverviewSchema, "Não foi possível carregar os salões.");
 }
 
 export async function loadAdminProfessionals(input: {

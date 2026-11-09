@@ -19,6 +19,9 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      # Public commercial contact (docs/release/preview.env.example). The isolated
+      # E2E requires the "Fale com um especialista" link on / and /profissionais.
+      NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER: "5532998064217"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

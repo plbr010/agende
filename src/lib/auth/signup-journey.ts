@@ -41,7 +41,7 @@ export function resolveSignupJourney(input: {
   if (intent === "client" || intent === "cliente") return "client";
   if (intent === "equipe" || intent === "team" || intent === "convite") return "team";
   if (intent === "professional" || intent === "profissional" || intent === "owner" || intent === "dono") return "owner";
-  if (input.next?.includes("/agendar")) return "client";
+  if (input.next?.startsWith("/cliente") || input.next?.includes("/agendar")) return "client";
   if (input.plan) return "owner";
   return null;
 }
@@ -60,7 +60,7 @@ export function postConfirmationPath(input: {
 }): string {
   if (input.next) return input.next;
   if (input.journey === "client" && input.intendedUse === "client" && input.hasClientProfile) {
-    return "/cliente/perfil?inicio=1";
+    return "/cliente/descobrir";
   }
   return input.destination;
 }

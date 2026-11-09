@@ -53,7 +53,7 @@ const reviewedRevision = "b6ce86c7e9717839d60c57bfe371e3d8d5915082";
 const reviewedPlan = JSON.parse(execFileSync("git", [
   "show", `${reviewedRevision}:docs/production-readiness/launch-final-migration-plan.json`,
 ], { encoding: "utf8" }));
-// Files that landed after the pinned manifest. Checksums are exact bytes.
+// Files after the pinned manifest. Checksums match Git blob content with LF.
 // Adding a name to the current launch plan does not approve it.
 const reconciledAfterReview = [
   ["20261026180100_expired_entitlement_appointment_cancel.sql", "0e28f1113cd2d27f356eef683cbf3aba239282222047e1b3b9c2e28f424de5dd"],
@@ -62,11 +62,18 @@ const reconciledAfterReview = [
   ["20261103203000_official_master_admin_identity.sql", "0ad457539586d3904a018b196769fa22518395cce8286476bd3446db8d04ee2d"],
   ["20261103205336_official_lifetime_entitlement.sql", "07fbad0b83b27d5514f2d7880379c67a44c77736d676ab5675ce54343c9fd997"],
   ["20261106101000_restore_platform_admin_read_rpcs.sql", "8245865c753967e5741ae72964c634ae05fb40924623134a07ebf9d876bd020b"],
+  ["20261109120000_commercial_booking_resume.sql", "668e5896b93cfef274a41226ff4e02f6de3b479f1c0bc6f23b8f640834deb499"],
+];
+// Local security proposal: not evidence of remote application or approval.
+const proposed = [
+  ["20261105152258_platform_admin_live_identity_guard.sql", "b1e3db7f3fd879f001845f7889a04523f513ce0d8e8baec63512d70ba15d06dd"],
+  ["20261105194747_admin_salon_read_model.sql", "eafc535cbbf512af43ed78c588339e316117955081392c83b53b31d80815e622"],
 ];
 const reviewedLocalOnly = [...new Set([
   ...previouslyReviewedLocalOnly,
   ...reviewedPlan.pending.map(({ file }) => file),
   ...reconciledAfterReview.map(([file]) => file),
+  ...proposed.map(([file]) => file),
 ])].sort();
 assert.deepEqual(
   extra.sort(), reviewedLocalOnly,
@@ -81,8 +88,9 @@ for (const migration of reviewedPlan.pending) {
 for (const [file, sha256] of reconciledAfterReview) {
   assert.match(file, /^\d{14}_[a-z0-9_]+\.sql$/);
   assert.match(sha256, /^[0-9a-f]{64}$/);
-  verify(`supabase/migrations/${file}`, sha256);
+  verify(`supabase/migrations/${file}`, sha256, null, true);
 }
+for (const [file, hash] of proposed) verify(`supabase/migrations/${file}`, hash, null, true);
 const trial = history.find(({ version }) => version === "20260926194038");
 assert.ok(trial, "Applied trial migration must be in the remote snapshot");
 assert.equal(trial.statement_count, 1);

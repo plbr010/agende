@@ -1,3 +1,4 @@
+import { SpecialistWhatsApp } from "@/components/marketing/specialist-whatsapp";
 import { MARKETING_CTAS } from "@/lib/marketing/content";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 
@@ -28,6 +29,7 @@ export function MarketingFinalCta() {
               {MARKETING_CTAS.secondary.label}
             </MarketingLinkButton>
           </div>
+          <SpecialistWhatsApp />
         </div>
       </div>
     </section>

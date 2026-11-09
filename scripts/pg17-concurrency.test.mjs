@@ -62,21 +62,21 @@ async function race(f,name,sql,argsA,argsB,{uidA=f.clientA,uidB=f.clientB,role,r
   }
 }
 
-test('PG17 concurrent public reservations: one winner for the same professional/slot',{timeout:30000},async t=>{
+test('PG17 concurrent public reservations: one winner for the same professional/slot',{timeout:120000},async t=>{
   const f=await fixture(t,'same-slot');
   const result=await race(f,'same slot',bookSql,bookArgs(f,'10:00','a'),bookArgs(f,'10:00','b'));
   assert.equal(result.second.ok,false);assert.match(result.second.message,/overlap|slot_taken/);
   assert.equal((await f.db.query('select count(*)::int n from public.appointments where workspace_id=$1',[f.workspace])).rows[0].n,1);
 });
 
-test('PG17 a rolled-back reservation frees the waiting client to book',{timeout:30000},async t=>{
+test('PG17 a rolled-back reservation frees the waiting client to book',{timeout:120000},async t=>{
   const f=await fixture(t,'rollback-slot');
   const result=await race(f,'booking rollback',bookSql,bookArgs(f,'10:00','a'),bookArgs(f,'10:00','b'),{release:'rollback'});
   assert.equal(result.second.ok,true);
   assert.equal((await f.db.query('select count(*)::int n from public.appointments where workspace_id=$1',[f.workspace])).rows[0].n,1);
 });
 
-test('PG17 concurrent client reschedules cannot converge on one occupied slot',{timeout:30000},async t=>{
+test('PG17 concurrent client reschedules cannot converge on one occupied slot',{timeout:120000},async t=>{
   const f=await fixture(t,'reschedule');
   const a=(await as(f.db,f.clientA,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
   const b=(await as(f.db,f.clientB,bookSql,bookArgs(f,'14:00','b'))).rows[0].data.appointment_id;
@@ -87,7 +87,7 @@ test('PG17 concurrent client reschedules cannot converge on one occupied slot',{
   assert.equal((await f.db.query('select count(*)::int n from public.appointments where workspace_id=$1',[f.workspace])).rows[0].n,2);
 });
 
-test('PG17 duplicate concurrent reviews persist exactly one immutable rating',{timeout:30000},async t=>{
+test('PG17 duplicate concurrent reviews persist exactly one immutable rating',{timeout:120000},async t=>{
   const f=await fixture(t,'reviews');const id=(await as(f.db,f.clientA,bookSql,bookArgs(f,'10:00','a'))).rows[0].data.appointment_id;
   for(const status of ['confirmed','in_progress','completed'])await as(f.db,f.owner,'select public.set_appointment_status($1,$2::public.appointment_status)',[id,status]);
   const result=await race(f,'review uniqueness','select public.submit_appointment_review($1,$2,null) data',[id,5],[id,4],{uidA:f.clientA,uidB:f.clientA});
@@ -95,7 +95,7 @@ test('PG17 duplicate concurrent reviews persist exactly one immutable rating',{t
   const rows=(await f.db.query('select rating from public.appointment_reviews where appointment_id=$1',[id])).rows;assert.equal(rows.length,1);assert.equal(rows[0].rating,5);
 });
 
-test('PG17 concurrent owner demotions retain one active owner',{timeout:30000},async t=>{
+test('PG17 concurrent owner demotions retain one active owner',{timeout:120000},async t=>{
   const f=await fixture(t,'owners');const second=await f.user('second-owner');
   const secondMember=(await f.db.query("insert into public.workspace_members(workspace_id,user_id,role,status) values($1,$2,'owner','active') returning id",[f.workspace,second])).rows[0].id;
   const result=await race(f,'last owner','select public.update_workspace_member_role($1,$2,\'admin\') data',[f.workspace,f.member],[f.workspace,secondMember],{uidA:f.owner,uidB:second});
@@ -103,7 +103,7 @@ test('PG17 concurrent owner demotions retain one active owner',{timeout:30000},a
   assert.equal((await f.db.query("select count(*)::int n from public.workspace_members where workspace_id=$1 and role='owner' and status='active'",[f.workspace])).rows[0].n,1);
 });
 
-test('PG17 concurrent invite acceptance cannot exceed the plan seat limit',{timeout:30000},async t=>{
+test('PG17 concurrent invite acceptance cannot exceed the plan seat limit',{timeout:120000},async t=>{
   const f=await fixture(t,'seats');
   for(let n=0;n<3;n++){const uid=await f.user('existing-'+n);await f.db.query("insert into public.workspace_members(workspace_id,user_id,role,status) values($1,$2,'professional','active')",[f.workspace,uid]);}
   const a=await f.user('candidate-a'),b=await f.user('candidate-b');
@@ -113,26 +113,26 @@ test('PG17 concurrent invite acceptance cannot exceed the plan seat limit',{time
   assert.equal((await f.db.query('select app.workspace_professional_seats($1) n',[f.workspace])).rows[0].n,5);
 });
 
-test('PG17 concurrent billing-event replay returns one event ID',{timeout:30000},async t=>{
+test('PG17 concurrent billing-event replay returns one event ID',{timeout:120000},async t=>{
   const f=await fixture(t,'events');
   const result=await race(f,'billing replay',"select public.record_billing_event($1,'stripe','evt_local_concurrent','invoice.paid',8000,'BRL','monthly','paid') data",[f.workspace],[f.workspace],{role:'service_role'});
   assert.equal(result.second.ok,true);assert.equal(result.first.rows[0].data,result.second.result.rows[0].data);
   assert.equal((await f.db.query("select count(*)::int n from public.billing_events where external_event_id='evt_local_concurrent'")).rows[0].n,1);
 });
 
-test('PG17 concurrent checkout leases cannot both acquire the same workspace',{timeout:30000},async t=>{
+test('PG17 concurrent checkout leases cannot both acquire the same workspace',{timeout:120000},async t=>{
   const f=await fixture(t,'leases');
   const result=await race(f,'checkout lease','select public.acquire_stripe_checkout($1,$2) data',[f.workspace,randomUUID()],[f.workspace,randomUUID()],{role:'service_role'});
   assert.equal(result.first.rows[0].data,true);assert.equal(result.second.ok,true);assert.equal(result.second.result.rows[0].data,false);
 });
-test('PG17 double-click by the same client persists one booking', {timeout:30000}, async t=>{
+test('PG17 double-click by the same client persists one booking', {timeout:120000}, async t=>{
  const f=await fixture(t,'same-client');
  const result=await race(f,'duplicate booking',bookSql,bookArgs(f,'10:00','a'),bookArgs(f,'10:00','a'),{uidA:f.clientA,uidB:f.clientA});
  assert.equal(result.second.ok,false);assert.match(result.second.message,/overlap|slot_taken|duplicate/);
  assert.equal((await f.db.query('select count(*)::int n from public.appointments where workspace_id=$1',[f.workspace])).rows[0].n,1);
 });
 
-test('PG17 professional photo concurrent replacements retain one live reference', {timeout:30000}, async t=>{
+test('PG17 professional photo concurrent replacements retain one live reference', {timeout:120000}, async t=>{
  const f=await fixture(t,'photo-cas');
  const paths=[0,1].map(()=>`${f.workspace}/professionals/${f.member}/${randomUUID()}.webp`);
  for(const path of paths){

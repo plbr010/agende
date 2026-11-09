@@ -5,3 +5,7 @@ supabase/functions/** text eol=lf
 supabase/migrations/20261009*.sql text eol=lf
 supabase/migrations/20261010*.sql text eol=lf
 src/app/shadcn-tailwind.* text eol=lf
+# Every migration is checksum-verified against the applied Supabase history: keep LF.
+supabase/migrations/*.sql text eol=lf
+supabase/tests/*.sql text eol=lf
+docs/**/*.sql text eol=lf

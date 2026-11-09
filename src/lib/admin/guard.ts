@@ -2,39 +2,22 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { loadAppSession, type AppSession } from "@/lib/auth/session";
 import { getDefaultDestination } from "@/lib/auth/redirects";
-
-export type PlatformAdminAccess = {
-  session: AppSession;
-  provisionPending: boolean;
-};
-
-export async function requirePlatformAdmin(
-  path = "/admin",
-  options: { allowProvision?: boolean } = {},
-): Promise<PlatformAdminAccess> {
+import { isOfficialMasterAdminEmail } from "./bootstrap";
+import { createClient } from "@/lib/supabase/server";
+export type PlatformAdminAccess = { session: AppSession; provisionPending: boolean };
+export async function requirePlatformAdmin(path = "/admin"): Promise<PlatformAdminAccess> {
   const session = await loadAppSession();
-  if (!session) {
-    redirect(`/login?next=${encodeURIComponent(path)}`);
-  }
-  if (!session.context.emailConfirmed) {
-    redirect("/verificar-email");
-  }
-  if (session.context.isPlatformAdmin) {
-    return { session, provisionPending: false };
-  }
-  if (session.hold.held) {
-    redirect("/conta-suspensa");
-  }
-  if (options.allowProvision && session.context.isOfficialPlatformOwner) {
-    return { session, provisionPending: true };
-  }
-  redirect(getDefaultDestination(session.context));
+  if (!session) redirect(`/login?next=${encodeURIComponent(path)}`);
+  const client = await createClient();
+  // Revalidate current Auth identity and the private grant on every entry.
+  const { data: { user }, error } = await client.auth.getUser();
+  if (error || !user || user.id !== session.user.id) redirect(`/login?next=${encodeURIComponent(path)}`);
+  if (!user.email_confirmed_at) redirect("/verificar-email");
+  const { data: allowed, error: denied } = await client.rpc("is_platform_admin");
+  if (!denied && allowed === true && isOfficialMasterAdminEmail(user.email)) return { session, provisionPending: false };
+  // Stale administrative flags must not cause a redirect loop back to /admin.
+  redirect(getDefaultDestination({ ...session.context, isPlatformAdmin: false, isOfficialPlatformOwner: false }));
 }
-
 export async function requireReadyPlatformAdmin(path: string): Promise<AppSession> {
-  const access = await requirePlatformAdmin(path, { allowProvision: true });
-  if (access.provisionPending) {
-    redirect("/admin");
-  }
-  return access.session;
+  return (await requirePlatformAdmin(path)).session;
 }

@@ -47,7 +47,7 @@ test("email confirmation returns clients to profile unless a safe destination al
     journey: "client",
     hasClientProfile: true,
     intendedUse: "client",
-  }), "/cliente/perfil?inicio=1");
+  }), "/cliente/descobrir");
   assert.equal(postConfirmationPath({
     next: `/convite/${token}`,
     destination: "/onboarding",

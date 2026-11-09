@@ -1,12 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { adminErrorMessage } from "@/lib/admin/errors";
 import { requirePlatformAdmin } from "@/lib/admin/guard";
 import { sanitizeNextPath } from "@/lib/auth/redirects";
-import { loadAppSession } from "@/lib/auth/session";
 
 function adminReturnPath(raw: string): string {
   const sanitized = sanitizeNextPath(raw);
@@ -23,25 +21,7 @@ function revalidateAdmin(paths: string[]) {
 }
 
 export async function claimPlatformAdminAction(): Promise<AdminActionState> {
-  const session = await loadAppSession();
-  if (!session?.context.emailConfirmed) {
-    return { error: "Entre com uma conta confirmada para ativar o painel master." };
-  }
-  if (session.context.isPlatformAdmin) {
-    redirect("/admin");
-  }
-  if (!session.context.isOfficialPlatformOwner) {
-    return { error: "Esta identidade autenticada não é a conta master autorizada." };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("claim_official_platform_admin");
-  if (error) {
-    return { error: adminErrorMessage(error, "Não foi possível ativar o acesso master.") };
-  }
-
-  revalidateAdmin(["/admin"]);
-  redirect("/admin");
+  return { error: "O acesso administrativo depende de autorização do operador. Entre em contato com o suporte." };
 }
 
 export async function setAccountHoldAction(
