@@ -17,7 +17,9 @@ export function SubscriptionOverview({
   canManage,
   checkoutReturn,
   billingAction,
+  preferredInterval,
 }: {
+  preferredInterval?: "monthly" | "annual" | null;
   canManage: boolean;
   checkoutReturn?: string;
   billingAction: (input: BillingActionInput) => Promise<BillingActionResult>;
@@ -110,7 +112,11 @@ export function SubscriptionOverview({
           hasCustomer={subscription?.hasStripeCustomer ?? false}
           hasSubscription={subscription?.hasStripeSubscription ?? false}
           status={subscription?.status}
-          initialInterval={subscription?.billingInterval ?? "monthly"}
+          initialInterval={
+            subscription?.hasStripeSubscription
+              ? subscription.billingInterval
+              : preferredInterval ?? subscription?.billingInterval ?? "monthly"
+          }
           capabilities={capabilities}
           checkoutReturn={checkoutReturn}
           action={billingAction}

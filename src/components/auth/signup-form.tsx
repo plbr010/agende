@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { signUpAction, type ActionState } from "@/lib/auth/actions";
-import type { PlanId } from "@/lib/billing/plans";
+import type { BillingIntervalId, PlanId } from "@/lib/billing/plans";
 import { PLANS } from "@/lib/marketing/content";
 import type { SignupJourney } from "@/lib/auth/signup-journey";
 import { formatPhoneBr } from "@/lib/validation/phone";
@@ -28,10 +28,12 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export function SignupForm({
   next,
   plan,
+  interval = "monthly",
   journey,
 }: {
   next?: string | null;
   plan?: PlanId | null;
+  interval?: BillingIntervalId;
   journey: SignupJourney;
 }) {
   const [state, action, pending] = useActionState(signUpAction, initial);
@@ -47,6 +49,7 @@ export function SignupForm({
     <PortugueseForm action={action} className="space-y-5" onReset={(event) => event.preventDefault()}>
       {next ? <input type="hidden" name="next" value={next} /> : null}
       {plan && intent === "professional" ? <input type="hidden" name="plan" value={plan} /> : null}
+      {plan && intent === "professional" ? <input type="hidden" name="billingInterval" value={interval} /> : null}
       <input type="hidden" name="intendedUse" value={intent} />
       <input type="hidden" name="journey" value={journey} />
       <input type="hidden" name="termsAccepted" value={terms ? "true" : "false"} />
@@ -63,7 +66,7 @@ export function SignupForm({
           <p className="text-[0.7rem] font-medium tracking-[0.16em] text-[var(--rose-ink)] uppercase">Conta profissional</p>
           {selectedPlan ? (
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              O plano selecionado vale só para a conta profissional. Plano <strong className="text-wine-deep">{selectedPlan.name}</strong> · {selectedPlan.seats} · {selectedPlan.price}{selectedPlan.period}. Depois do e-mail, você confirma o plano e cadastra o estabelecimento. São 7 dias grátis, sem cartão.
+              O plano selecionado vale só para a conta profissional. Plano <strong className="text-wine-deep">{selectedPlan.name}</strong> · {selectedPlan.seats} · {interval === "annual" ? `${selectedPlan.annualPrice} (equivale a ${selectedPlan.annualMonthlyEquivalent}, pago à vista)` : `${selectedPlan.price}${selectedPlan.period}`}. Depois do e-mail, você confirma o plano e cadastra o estabelecimento. São 7 dias grátis, sem cartão: nada é cobrado antes de o teste acabar.
             </p>
           ) : (
             <p className="mt-1 text-sm leading-6 text-muted-foreground">

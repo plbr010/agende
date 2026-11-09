@@ -14,23 +14,23 @@ const PRICE_CATALOG: Record<Plan, Record<BillingInterval, {
 }>> = {
   solo: {
     monthly: { lookupKey: "agende_solo_monthly", amountCents: 3990, stripeInterval: "month", maxProfessionals: 1 },
-    annual: { lookupKey: "agende_solo_annual", amountCents: 79900, stripeInterval: "year", maxProfessionals: 1 },
+    annual: { lookupKey: "agende_solo_annual", amountCents: 39900, stripeInterval: "year", maxProfessionals: 1 },
   },
   equipe: {
     monthly: { lookupKey: "agende_equipe_monthly", amountCents: 7990, stripeInterval: "month", maxProfessionals: 5 },
-    annual: { lookupKey: "agende_equipe_annual", amountCents: 149900, stripeInterval: "year", maxProfessionals: 5 },
+    annual: { lookupKey: "agende_equipe_annual", amountCents: 79900, stripeInterval: "year", maxProfessionals: 5 },
   },
   salao: {
     monthly: { lookupKey: "agende_salao_monthly", amountCents: 14990, stripeInterval: "month", maxProfessionals: 15 },
-    annual: { lookupKey: "agende_salao_annual", amountCents: 279900, stripeInterval: "year", maxProfessionals: 15 },
+    annual: { lookupKey: "agende_salao_annual", amountCents: 149900, stripeInterval: "year", maxProfessionals: 15 },
   },
 };
 
-// Prices of 2026-11-09: Solo 39,90, Equipe 79,90, Salão 149,90 per month.
-// The old annual prices cost more than 12 new monthly payments, so new annual
-// checkouts are suspended until new annual prices are approved. Existing
-// subscriptions keep their Stripe price and are never migrated here.
-const ANNUAL_CHECKOUT_ENABLED = false;
+// Prices of 2026-11-09: Solo 39,90, Equipe 79,90, Salão 149,90 per month and
+// R$ 399 / 799 / 1.499 per year (12 months for 10 monthly payments), charged
+// upfront and renewed yearly. Existing subscriptions keep their Stripe price
+// and are never migrated here.
+const ANNUAL_CHECKOUT_ENABLED = true;
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const PRODUCTION_BACKEND = SUPABASE_URL && new URL(SUPABASE_URL).hostname.replace(/\.$/, "") === "wohimauqgywshbbejjcl.supabase.co";

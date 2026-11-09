@@ -1,7 +1,7 @@
 import {writeFileSync,mkdirSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
 
-export const plans={solo:{monthly:39.90,annual:799},equipe:{monthly:79.90,annual:1499},salao:{monthly:149.90,annual:2799}};
+export const plans={solo:{monthly:39.90,annual:399},equipe:{monthly:79.90,annual:799},salao:{monthly:149.90,annual:1499}};
 export const defaults={fx_brl_per_usd:5.50,foreign_cost_reserve:.05,annual_share:.20,mix:{solo:.40,equipe:.40,salao:.20},card_percent:.0399,billing_percent:.007,card_fixed_brl:.50,tax_mode:'illustrative_anexo_v',risk_reserve:.03,support_per_salon_brl:10,advertising_brl:1000,owner_compensation_brl:2000,accounting_brl:300,domain_reserve_brl:10,backup_equipment_reserve_brl:50,appointments_per_month:400,staff_per_salon:4,auth_mau_per_salon:36,emails_per_salon:10,email_active_days:26,email_peak_factor:2,dynamic_requests_per_salon:5000,cdn_requests_per_salon:13000,queries_per_dynamic_request:3,bytes_per_query:2048,bytes_per_appointment_with_indexes_audit:8192,retention_months:12};
 const round=x=>Math.round(x*100)/100;
 function settings(input){const o={...defaults,...input};if(Math.abs(Object.values(o.mix).reduce((a,b)=>a+b,0)-1)>1e-9)throw new Error('mix_must_sum_to_one');if(o.annual_share<0||o.annual_share>1)throw new Error('invalid_annual_share');return o;}

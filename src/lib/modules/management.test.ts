@@ -30,7 +30,7 @@ test("plan selection is limited to the catalog and remaining days never go negat
   for (const plan of PLANS) assert.equal(planSchema.parse(plan.id), plan.id);
   assert.equal(planSchema.safeParse("premium").success, false);
   assert.equal(planSchema.safeParse(null).success, false);
-  assert.deepEqual(PLANS.map(p => p.annualPrice), ["R$ 799/ano", "R$ 1.499/ano", "R$ 2.799/ano"]);
+  assert.deepEqual(PLANS.map(p => p.annualPrice), ["R$ 399/ano", "R$ 799/ano", "R$ 1.499/ano"]);
   assert.equal(trialDaysRemaining("2026-09-08T00:00:00Z", Date.parse("2026-09-01T00:00:00Z")), 7);
   assert.equal(trialDaysRemaining("2026-09-08T00:00:00Z", Date.parse("2026-09-09T00:00:00Z")), 0);
 });

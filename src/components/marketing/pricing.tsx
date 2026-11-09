@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MARKETING_CTAS, PLANS } from "@/lib/marketing/content";
-import { ANNUAL_OFFER_ENABLED, TRIAL_COPY, planSignupHref } from "@/lib/billing/plans";
+import { ANNUAL_OFFER_ENABLED, ANNUAL_PREPAID_COPY, ANNUAL_SAVINGS_COPY, TRIAL_COPY, planSignupHref } from "@/lib/billing/plans";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 import { cn } from "@/lib/utils";
 
@@ -48,8 +48,16 @@ export function MarketingPricing({
               )}
             >
               Anual
+              <span className={cn("ml-2 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold", annual ? "bg-white/20" : "bg-accent text-accent-foreground")}>
+                2 meses grátis
+              </span>
             </button>
           </div>
+          ) : null}
+          {ANNUAL_OFFER_ENABLED ? (
+            <p className="mx-auto max-w-xl rounded-2xl bg-accent/60 px-4 py-3 text-sm font-medium text-accent-foreground">
+              {ANNUAL_SAVINGS_COPY}
+            </p>
           ) : null}
         </div>
 
@@ -88,7 +96,9 @@ export function MarketingPricing({
               </p>
               {ANNUAL_OFFER_ENABLED ? (
                 <p className={cn("mt-2 text-sm", plan.popular ? "text-primary-foreground/75" : "text-muted-foreground")}>
-                  {annual ? `ou ${plan.price}${plan.period}` : `ou ${plan.annualPrice}`}
+                  {annual
+                    ? `Equivale a ${plan.annualMonthlyEquivalent}, pago à vista uma vez por ano`
+                    : `ou ${plan.annualPrice} no anual`}
                 </p>
               ) : null}
               <ul className={cn("mt-6 space-y-2 text-sm", plan.popular ? "text-primary-foreground/90" : "text-muted-foreground")}>
@@ -98,11 +108,11 @@ export function MarketingPricing({
                 ))}
               </ul>
               <MarketingLinkButton
-                href={planSignupHref(plan.id)}
+                href={planSignupHref(plan.id, annual ? "annual" : "monthly")}
                 variant={plan.popular ? "secondary" : "default"}
                 className="mt-8 h-12 min-h-12 w-full rounded-full text-base"
               >
-                Começar com {plan.name}
+                Começar com {plan.name}{annual ? " anual" : ""}
               </MarketingLinkButton>
             </article>
           ))}
@@ -110,6 +120,11 @@ export function MarketingPricing({
         {showTrialNote ? (
           <>
             <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">{TRIAL_COPY}</p>
+            {annual ? (
+              <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-muted-foreground">
+                {ANNUAL_PREPAID_COPY} A cobrança só acontece depois dos 7 dias grátis.
+              </p>
+            ) : null}
             <p className="mt-3 text-center text-sm">
               <a href={MARKETING_CTAS.professionalSignup.href} className="underline underline-offset-4">
                 Prefere decidir o plano depois? Começar 7 dias grátis

@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {cohortCash,economics,minimumForNet,effectiveTax,infrastructure} from './commercial-model.mjs';
 const solo={mix:{solo:1,equipe:0,salao:0}};
-test('annual Solo cash is 799 once, while revenue recognition is 799/12',()=>{
-  const cash=cohortCash(1,{...solo,annual_share:1});assert.equal(cash[0].gross_cash_brl,799);assert.equal(cash[0].economic_mrr_brl,66.58);
+test('annual Solo cash is 399 once, while revenue recognition is 399/12',()=>{
+  const cash=cohortCash(1,{...solo,annual_share:1});assert.equal(cash[0].gross_cash_brl,399);assert.equal(cash[0].economic_mrr_brl,33.25);
   assert.ok(cash.slice(1).every(m=>m.gross_cash_brl===0));assert.equal(cash.at(-1).annual_revenue_not_yet_earned_brl,0);
 });
 test('monthly Solo uses the published 39.90 and twelve monthly cash charges',()=>{
