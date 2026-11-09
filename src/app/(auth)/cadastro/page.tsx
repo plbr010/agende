@@ -6,18 +6,19 @@ import { CLIENT_JOURNEY, JourneySteps, OWNER_JOURNEY, TEAM_JOURNEY } from "@/com
 import { requireAnonymous } from "@/lib/auth/session";
 import { sanitizeNextPath } from "@/lib/auth/redirects";
 import { extractInviteToken, resolveSignupJourney } from "@/lib/auth/signup-journey";
-import { parsePlanId } from "@/lib/billing/plans";
+import { parseBillingIntervalId, parsePlanId } from "@/lib/billing/plans";
 import { createClient } from "@/lib/supabase/server";
 import { parseInvitePeek, type InvitePeek } from "@/lib/workspace/public";
 
 export default async function CadastroPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; plan?: string; intent?: string; opcoes?: string }>;
+  searchParams: Promise<{ next?: string; plan?: string; intent?: string; opcoes?: string; periodo?: string }>;
 }) {
-  const { next, plan: planParam, intent: intentParam, opcoes } = await searchParams;
+  const { next, plan: planParam, intent: intentParam, opcoes, periodo } = await searchParams;
   const safeNext = sanitizeNextPath(next);
   const plan = parsePlanId(planParam);
+  const interval = parseBillingIntervalId(periodo) ?? "monthly";
   const journey = resolveSignupJourney({
     intent: intentParam,
     plan: planParam,
@@ -29,6 +30,7 @@ export default async function CadastroPage({
   const options = new URLSearchParams({ opcoes: "1" });
   if (safeNext) options.set("next", safeNext);
   if (plan) options.set("plan", plan);
+  if (plan && interval === "annual") options.set("periodo", "anual");
 
   if (!journey) {
     return <SignupChooser next={safeNext} plan={plan} />;
@@ -85,7 +87,7 @@ export default async function CadastroPage({
           presetLink={safeNext}
         />
       ) : (
-        <SignupForm next={safeNext} plan={ownerJourney ? plan : null} journey={journey} />
+        <SignupForm next={safeNext} plan={ownerJourney ? plan : null} interval={interval} journey={journey} />
       )}
       <p className="text-sm text-muted-foreground">
         <Link href={`/cadastro?${options.toString()}`} className="inline-flex min-h-11 items-center underline underline-offset-4">

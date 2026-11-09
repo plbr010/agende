@@ -1,6 +1,6 @@
 "use server";
 
-import { parsePlanId, planSchema, type PlanId } from "@/lib/billing/plans";
+import { parseBillingIntervalId, parsePlanId, planSchema, type BillingIntervalId, type PlanId } from "@/lib/billing/plans";
 import { parseSignupJourney, type SignupJourney } from "@/lib/auth/signup-journey";
 
 import { cookies } from "next/headers";
@@ -17,6 +17,7 @@ const PENDING_NEXT_COOKIE = "agende_pending_next";
 const PENDING_INTENT_COOKIE = "agende_pending_intent";
 const RESEND_AT_COOKIE = "agende_resend_at";
 const SELECTED_PLAN_COOKIE = "agende_selected_plan";
+const SELECTED_INTERVAL_COOKIE = "agende_selected_interval";
 const PENDING_JOURNEY_COOKIE = "agende_pending_journey";
 const RESEND_COOLDOWN_MS = 60_000;
 
@@ -79,6 +80,12 @@ export async function getSelectedPlan(): Promise<PlanId | null> {
   return parsePlanId(store.get(SELECTED_PLAN_COOKIE)?.value);
 }
 
+/** Billing period picked on the public plans page; only a default for checkout. */
+export async function getSelectedInterval(): Promise<BillingIntervalId | null> {
+  const store = await cookies();
+  return parseBillingIntervalId(store.get(SELECTED_INTERVAL_COOKIE)?.value);
+}
+
 async function setPendingJourney(journey: SignupJourney) {
   const store = await cookies();
   store.set(PENDING_JOURNEY_COOKIE, journey, {
@@ -102,15 +109,18 @@ export async function clearPendingJourney() {
   store.delete(PENDING_JOURNEY_COOKIE);
 }
 
-async function setSelectedPlanCookie(plan: PlanId) {
+async function setSelectedPlanCookie(plan: PlanId, interval?: BillingIntervalId) {
   const store = await cookies();
-  store.set(SELECTED_PLAN_COOKIE, plan, {
+  const options = {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "lax" as const,
     secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: 60 * 60 * 24 * 14,
-  });
+  };
+  store.set(SELECTED_PLAN_COOKIE, plan, options);
+  // Choosing the plan again during onboarding keeps the period picked on the plans page.
+  if (interval) store.set(SELECTED_INTERVAL_COOKIE, interval, options);
 }
 
 export type ActionState = {
@@ -190,10 +200,11 @@ export async function signUpAction(
   await setPendingJourney(journey);
   const selectedPlan = parsePlanId(formData.get("plan"));
   if (journey === "owner" && selectedPlan && input.intendedUse === "professional") {
-    await setSelectedPlanCookie(selectedPlan);
+    await setSelectedPlanCookie(selectedPlan, parseBillingIntervalId(formData.get("billingInterval")) ?? "monthly");
   } else {
     const store = await cookies();
     store.delete(SELECTED_PLAN_COOKIE);
+    store.delete(SELECTED_INTERVAL_COOKIE);
   }
   redirect(`/verificar-email?status=sent`);
 }

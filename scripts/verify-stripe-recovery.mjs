@@ -65,6 +65,7 @@ const reconciledAfterReview = [
   ["20261109120000_commercial_booking_resume.sql", "668e5896b93cfef274a41226ff4e02f6de3b479f1c0bc6f23b8f640834deb499"],
   ["20261109130000_restore_november_entitlement_guards.sql", "14fb7dc2ad6e01ba27109a8f441ea7ffc24d58f298c92caa70d91cb189d6f0e4"],
   ["20261109150000_plan_prices_20261109.sql", "cffa946f2796d399a83baa0542a08bb333d90309a1f66de99f9a319f1541c007"],
+  ["20261109170000_annual_plan_prices_20261109.sql", "98b7dbf5167f12d2d10bd46de296b26e32f73d61d9b375b7ae0fc1b82842dce9"],
 ];
 // Local security proposal: not evidence of remote application or approval.
 const proposed = [

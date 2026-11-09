@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { PLANS } from "@/lib/marketing/content";
-import { ANNUAL_OFFER_ENABLED } from "@/lib/billing/plans";
+import { ANNUAL_OFFER_ENABLED, ANNUAL_PREPAID_COPY, ANNUAL_SAVINGS_COPY } from "@/lib/billing/plans";
 import { billingRedirectSchema } from "@/lib/billing/stripe-contract";
 import { checkoutDisabledReason, checkoutReturnMessage } from "@/lib/billing/presentation";
 import { nextCheckoutAttempt, type CheckoutAttempt } from "@/lib/billing/checkout-attempt";
@@ -61,7 +61,7 @@ export function BillingControls(props: BillingControlsProps) {
         <h3 className="font-serif text-2xl text-wine-deep">Assinar o plano</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           {ANNUAL_OFFER_ENABLED
-            ? "Escolha Solo, Equipe ou Salão e se prefere pagar todo mês ou o ano. O período restante do teste será respeitado. Assinar não reinicia o teste."
+            ? "Escolha Solo, Equipe ou Salão e se prefere pagar todo mês ou o ano. Durante o teste nada é cobrado: a primeira cobrança acontece quando os 7 dias acabam. Assinar não reinicia o teste."
             : "Escolha Solo, Equipe ou Salão. A cobrança é mensal e você pode cancelar quando quiser. O período restante do teste será respeitado. Assinar não reinicia o teste."}
         </p>
       </div>
@@ -88,10 +88,13 @@ export function BillingControls(props: BillingControlsProps) {
                 onChange={() => setInterval(value)}
                 className="sr-only"
               />
-              {value === "monthly" ? "Mensal" : "Anual"}
+              {value === "monthly" ? "Mensal" : "Anual · 2 meses grátis"}
             </label>
           ))}
         </div>
+        {interval === "annual" ? (
+          <p className="mt-2 text-sm text-muted-foreground">{ANNUAL_SAVINGS_COPY} {ANNUAL_PREPAID_COPY}</p>
+        ) : null}
       </fieldset>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-3">
@@ -103,9 +106,14 @@ export function BillingControls(props: BillingControlsProps) {
                 <h4 className="font-serif text-2xl text-wine-deep">{plan.name}</h4>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.seats}</p>
               </div>
-              <p className="font-serif text-3xl text-wine-deep">
-                {interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}
-              </p>
+              <div>
+                <p className="font-serif text-3xl text-wine-deep">
+                  {interval === "annual" ? plan.annualPrice : `${plan.price}${plan.period}`}
+                </p>
+                {interval === "annual" ? (
+                  <p className="mt-1 text-sm text-muted-foreground">Equivale a {plan.annualMonthlyEquivalent} · pago à vista</p>
+                ) : null}
+              </div>
               <ul className="grid gap-1 text-sm text-muted-foreground">
                 {plan.highlights.map((item) => (
                   <li key={item}>{item}</li>

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-09T07:17:07.014Z",
+  "checked_at": "2026-11-09T10:28:01.475Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 326,
+      "passed": 329,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 564,
+    "passed": 567,
     "failed": 0,
     "skipped": 2
   },
@@ -252,6 +252,12 @@
       "status": "passed"
     },
     {
+      "file": "scripts/build-production-rollout.test.mjs",
+      "name": "production rollout bundles every pending migration once, in version order, with pinned checksums",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "scripts/client-phase2-sql.test.mjs",
       "name": "phase2 SQL favorites identity publication idempotency profile and avatar isolation",
       "category": "pglite_sql",
@@ -295,13 +301,13 @@
     },
     {
       "file": "scripts/commercial-model.test.mjs",
-      "name": "annual Solo cash is 799 once, while revenue recognition is 799/12",
+      "name": "annual Solo cash is 399 once, while revenue recognition is 399/12",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
     {
       "file": "scripts/commercial-model.test.mjs",
-      "name": "monthly Solo uses the published 89.90 and twelve monthly cash charges",
+      "name": "monthly Solo uses the published 39.90 and twelve monthly cash charges",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -768,6 +774,12 @@
       "status": "passed"
     },
     {
+      "file": "scripts/november-entitlement-guards.test.mjs",
+      "name": "restore migration brings back lifetime entitlement and the master-panel hold after an out-of-order rollout",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "scripts/pilot-booking-activation.test.mjs",
       "name": "default posture blocks both fictional salons before any exception",
       "category": "pglite_pilot_and_cancellation",
@@ -1069,7 +1081,7 @@
     },
     {
       "file": "scripts/stripe-edge.test.mjs",
-      "name": "Edge checkout: six existing lookup keys, fixed redirects, seat checks and verified managers",
+      "name": "Edge checkout: six lookup keys at the 2026-11-09 prices, trial kept for annual, fixed redirects, seat checks and verified managers",
       "category": "stripe_mocks",
       "status": "passed"
     },
@@ -1345,7 +1357,7 @@
     },
     {
       "file": "src/components/billing/billing-controls.test.ts",
-      "name": "billing component renders exact monthly and annual prices",
+      "name": "billing component renders the 2026-11-09 monthly and annual prices",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -1549,7 +1561,13 @@
     },
     {
       "file": "src/components/marketing/pricing.test.ts",
-      "name": "pricing cards keep monthly prices, annual prices and plan-specific signup links",
+      "name": "pricing cards open on monthly prices with the Mensal | Anual toggle and plan-specific signup links",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/components/marketing/pricing.test.ts",
+      "name": "annual prices are 10 monthly payments and the equivalents are exact to the cent",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
@@ -2815,7 +2833,7 @@
     },
     {
       "file": "src/lib/marketing/content.test.ts",
-      "name": "plans differentiate benefits and show annual prices",
+      "name": "plans differentiate benefits, lead with online booking and match the Stripe amounts",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
