@@ -4,6 +4,7 @@ import { parseBillingIntervalId, parsePlanId, planSchema, type BillingIntervalId
 import { parseSignupJourney, type SignupJourney } from "@/lib/auth/signup-journey";
 
 import { cookies } from "next/headers";
+import { ACQUISITION_COOKIE, parseAcquisitionCookie } from "@/lib/marketing/meta-pixel";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getDefaultDestination, sanitizeNextPath } from "@/lib/auth/redirects";
@@ -167,6 +168,7 @@ export async function signUpAction(
     ? `${origin}/auth/callback?next=${encodeURIComponent(next)}`
     : `${origin}/auth/callback`;
 
+  const acquisition = parseAcquisitionCookie((await cookies()).get(ACQUISITION_COOKIE)?.value);
   const { data, error } = await supabase.auth.signUp({
     email: input.email,
     password: input.password,
@@ -178,6 +180,8 @@ export async function signUpAction(
         intended_use: input.intendedUse,
         terms_accepted: true,
         privacy_accepted: true,
+        // First-touch campaign (utm_*) for commercial attribution only.
+        ...(acquisition ? { acquisition } : {}),
       },
     },
   });

@@ -6,6 +6,7 @@ import { loadAppSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { getDefaultDestination } from "@/lib/auth/redirects";
 import { Button } from "@/components/ui/button";
+import { PixelEvent } from "@/components/marketing/meta-pixel";
 
 const copy: Record<string, { title: string; body: string }> = {
   sent: {
@@ -68,6 +69,9 @@ export default async function VerificarEmailPage({
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
+      {key === "sent" && !teamJourney && !clientJourney && pendingEmail ? (
+        <PixelEvent event="CompleteRegistration" onceKey="professional" />
+      ) : null}
       <JourneySteps
         steps={teamJourney ? TEAM_JOURNEY : clientJourney ? CLIENT_JOURNEY : OWNER_JOURNEY}
         current={teamJourney ? 3 : 2}

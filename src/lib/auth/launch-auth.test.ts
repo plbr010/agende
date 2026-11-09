@@ -8,6 +8,7 @@ import * as plans from "../billing/plans";
 import * as redirects from "./redirects";
 import * as signup from "../validation/signup";
 import * as signupJourney from "./signup-journey";
+import * as metaPixel from "../marketing/meta-pixel";
 import * as email from "../validation/email";
 import * as sessionProfile from "./session-profile";
 import * as bootstrap from "../admin/bootstrap";
@@ -103,6 +104,7 @@ function actions(error: { code?: string; message: string; status?: number } | nu
     "@/lib/http/origin": { getRequestOrigin: async () => "https://agende.test" },
     "@/lib/validation/email": email, "@/lib/validation/signup": signup,
     "@/lib/auth/signup-journey": signupJourney,
+    "@/lib/marketing/meta-pixel": metaPixel,
     "@/lib/supabase/server": { createClient: async () => ({ auth: {
       signUp: async (value: unknown) => { calls.push({ name: "signup", value }); return { data: signupData, error }; },
       signInWithPassword: async (value: unknown) => { calls.push({ name: "login", value }); return { error }; },
@@ -213,6 +215,7 @@ test("confirmation routes exchange valid tokens, preserve safe destinations and 
         } }) },
         "@/lib/auth/redirects": redirects,
         "@/lib/auth/signup-journey": signupJourney,
+        "@/lib/marketing/meta-pixel": metaPixel,
         "@/lib/auth/actions": { getPendingJourney: async () => null, clearPendingJourney: async () => {} },
         "@/lib/auth/session": { loadAppSession: async () => ({ context: {
           emailConfirmed: true, intendedUse: "client", hasWorkspace: false, hasClientProfile: true,
