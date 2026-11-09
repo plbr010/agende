@@ -64,13 +64,15 @@ const admin = createClient(SUPABASE_URL, ADMIN_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
-type StripeOperation = "customers_read" | "customers_write" | "prices_read" | "subscriptions_read" | "checkout_sessions_read" | "checkout_sessions_write" | "customer_portal_write";
+type StripeOperation = "customers_read" | "customers_write" | "prices_read" | "subscriptions_read" | "subscriptions_write" | "invoices_read" | "checkout_sessions_read" | "checkout_sessions_write" | "customer_portal_write";
 class StripeOperationError extends Error {
   constructor(public operation: StripeOperation, public reason: string, public parameter?: string, public providerType?: string, public providerStatus?: number, public hint?: string) { super("stripe_operation_failed"); }
 }
 async function stripeRequest<T>(operation: StripeOperation, run: () => Promise<T>): Promise<T> {
   try { return await run(); } catch (error) {
     const e = error as { type?: string; statusCode?: number; code?: string; param?: string; message?: string };
+    // Declined card on an immediate charge (switch to annual): the change is not applied.
+    if (e.type === "StripeCardError" || e.code === "card_declined") throw new Error("payment_declined");
     const reason = e.statusCode === 403 ? "permission_missing" : e.statusCode === 401 ? "credentials_rejected"
       : ["parameter_unknown", "parameter_missing", "parameter_invalid_empty", "email_invalid", "resource_missing", "invalid_api_version", "account_invalid", "url_invalid", "api_key_expired", "livemode_mismatch"].includes(e.code ?? "") ? e.code! : "provider_request_failed";
     const parameter = ["email", "name", "metadata", "metadata[app]", "metadata[workspace_id]", "integration_identifier", "origin_context", "customer", "line_items", "success_url", "cancel_url", "return_url", "payment_method_collection", "subscription_data[billing_mode][type]"].includes(e.param ?? "") ? e.param : undefined;
@@ -395,6 +397,132 @@ async function createPortal(stripe: Stripe, externalCustomerId: string | null) {
   return session.url;
 }
 
+// ---- Self-service on an existing subscription (no Portal) ----
+// Switch monthly -> annual on the same plan, and cancel at period end (or undo it).
+// Plan changes and annual -> monthly are not offered here.
+const MANAGEABLE_STATUSES = new Set(["trialing", "active"]);
+
+function stringId(value: unknown): string | null {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && typeof (value as { id?: unknown }).id === "string") return (value as { id: string }).id;
+  return null;
+}
+
+async function loadManagedSubscription(stripe: Stripe, subscription: Record<string, any>) {
+  const id = subscription.external_subscription_id;
+  if (subscription.billing_provider !== "stripe" || !id) throw new Error("subscription_missing");
+  const current = await stripeRequest("subscriptions_read", () => stripe.subscriptions.retrieve(id));
+  if (current.metadata?.app && current.metadata.app !== "agende") throw new Error("subscription_missing");
+  const items = current.items?.data ?? [];
+  if (items.length !== 1) throw new Error("subscription_unsupported");
+  return { current, item: items[0] };
+}
+
+function subscriptionInterval(item: Stripe.SubscriptionItem): BillingInterval | null {
+  const recurring = item.price?.recurring;
+  if (recurring?.interval_count !== 1) return null;
+  return recurring.interval === "month" ? "monthly" : recurring.interval === "year" ? "annual" : null;
+}
+
+function subscriptionPlan(current: Stripe.Subscription, item: Stripe.SubscriptionItem): Plan | null {
+  const key = item.price?.lookup_key ?? "";
+  for (const plan of Object.keys(PRICE_CATALOG) as Plan[]) {
+    if (PRICE_CATALOG[plan].monthly.lookupKey === key || PRICE_CATALOG[plan].annual.lookupKey === key) return plan;
+  }
+  // Prices replaced by a newer one lose their lookup_key; the subscription metadata keeps the plan.
+  return parsePlan(current.metadata?.plan_code);
+}
+
+function toIsoSeconds(value: unknown): string | null {
+  return typeof value === "number" && Number.isFinite(value) ? new Date(value * 1000).toISOString() : null;
+}
+
+function subscriptionState(current: Stripe.Subscription, item: Stripe.SubscriptionItem) {
+  const interval = subscriptionInterval(item);
+  const plan = subscriptionPlan(current, item);
+  const manageable = MANAGEABLE_STATUSES.has(current.status);
+  const scheduled = Boolean(current.cancel_at_period_end || current.cancel_at);
+  return {
+    status: current.status,
+    plan,
+    interval,
+    trialEnd: current.status === "trialing" ? toIsoSeconds(current.trial_end) : null,
+    currentPeriodEnd: toIsoSeconds(item.current_period_end),
+    cancelScheduled: scheduled,
+    cancelAt: current.cancel_at ? toIsoSeconds(current.cancel_at) : scheduled ? toIsoSeconds(item.current_period_end) : null,
+    canSwitchToAnnual: manageable && interval === "monthly" && Boolean(plan) && !scheduled,
+    canCancel: manageable && !scheduled,
+    canResume: manageable && Boolean(current.cancel_at_period_end),
+  };
+}
+
+function annualSwitchParams(current: Stripe.Subscription, item: Stripe.SubscriptionItem, annualPriceId: string) {
+  const trialing = current.status === "trialing";
+  // Trial: nothing is charged now; the annual price applies when the trial ends.
+  // Active monthly: Stripe credits the unused part of the month and charges the year
+  // now, prorated up to the subscription anniversary (flexible billing keeps the
+  // anchor day; billing_cycle_anchor cannot be forced on this update).
+  return {
+    items: [{ id: item.id, price: annualPriceId, quantity: 1 }],
+    proration_behavior: trialing ? "none" as const : "always_invoice" as const,
+  };
+}
+
+async function previewAnnualSwitch(stripe: Stripe, subscription: Record<string, any>) {
+  const { current, item } = await loadManagedSubscription(stripe, subscription);
+  const state = subscriptionState(current, item);
+  if (!state.canSwitchToAnnual || !state.plan) throw new Error("switch_unavailable");
+  const annual = await resolvePrice(stripe, state.plan, "annual");
+  const annualAmount = annual.unit_amount ?? 0;
+  if (current.status === "trialing") {
+    return { plan: state.plan, amountDueCents: 0, annualAmountCents: annualAmount, yearChargeCents: 0, creditCents: 0,
+      chargesAt: state.trialEnd, renewsAt: null };
+  }
+  const preview = await stripeRequest("invoices_read", () => stripe.invoices.createPreview({
+    customer: stringId(current.customer)!,
+    subscription: current.id,
+    subscription_details: annualSwitchParams(current, item, annual.id),
+  }));
+  const lines = preview.lines?.data ?? [];
+  const credit = lines.filter((line) => line.amount < 0).reduce((sum, line) => sum - line.amount, 0);
+  const yearCharge = lines.filter((line) => line.amount > 0).reduce((sum, line) => sum + line.amount, 0);
+  const renewsAt = lines.filter((line) => line.amount > 0).reduce((max, line) => Math.max(max, line.period?.end ?? 0), 0);
+  return {
+    plan: state.plan,
+    amountDueCents: Math.max(0, preview.amount_due ?? 0),
+    annualAmountCents: annualAmount,
+    yearChargeCents: yearCharge,
+    creditCents: credit,
+    chargesAt: null,
+    renewsAt: toIsoSeconds(renewsAt || null),
+  };
+}
+
+async function switchToAnnual(stripe: Stripe, subscription: Record<string, any>, idempotencyKey: string) {
+  const { current, item } = await loadManagedSubscription(stripe, subscription);
+  const state = subscriptionState(current, item);
+  if (!state.canSwitchToAnnual || !state.plan) throw new Error("switch_unavailable");
+  const annual = await resolvePrice(stripe, state.plan, "annual");
+  const updated = await stripeRequest("subscriptions_write", () => stripe.subscriptions.update(current.id, {
+    ...annualSwitchParams(current, item, annual.id),
+    // A declined card leaves the subscription monthly instead of half-switched.
+    payment_behavior: "error_if_incomplete",
+    metadata: { billing_interval: "annual", plan_code: state.plan! },
+  }, { idempotencyKey: `agende_switch_annual_${current.id}_${idempotencyKey}` }));
+  return subscriptionState(updated, updated.items.data[0]);
+}
+
+async function setCancelAtPeriodEnd(stripe: Stripe, subscription: Record<string, any>, cancel: boolean) {
+  const { current, item } = await loadManagedSubscription(stripe, subscription);
+  const state = subscriptionState(current, item);
+  if (cancel ? !state.canCancel : !state.canResume) throw new Error(cancel ? "cancel_unavailable" : "resume_unavailable");
+  // Ends with the paid period (or the trial): no refund and no new charge.
+  const updated = await stripeRequest("subscriptions_write", () => stripe.subscriptions.update(current.id, {
+    cancel_at_period_end: cancel,
+  }));
+  return subscriptionState(updated, updated.items.data[0]);
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -455,6 +583,26 @@ Deno.serve(async (req: Request) => {
       return json(200, { url });
     }
 
+    if (body.action === "status") {
+      if (!subscription.external_subscription_id) return json(200, { subscription: null });
+      const { current, item } = await loadManagedSubscription(stripe, subscription);
+      return json(200, { subscription: subscriptionState(current, item) });
+    }
+
+    if (body.action === "preview_annual") {
+      return json(200, { preview: await previewAnnualSwitch(stripe, subscription) });
+    }
+
+    if (body.action === "switch_annual") {
+      const key = typeof body.idempotencyKey === "string" && /^[A-Za-z0-9-]{16,100}$/.test(body.idempotencyKey) ? body.idempotencyKey : null;
+      if (!key) return json(400, { error: "invalid_request" });
+      return json(200, { subscription: await switchToAnnual(stripe, subscription, key) });
+    }
+
+    if (body.action === "cancel" || body.action === "resume") {
+      return json(200, { subscription: await setCancelAtPeriodEnd(stripe, subscription, body.action === "cancel") });
+    }
+
     return json(400, { error: "billing_action_invalid" });
   } catch (error) {
     if (error instanceof StripeOperationError) {
@@ -479,6 +627,12 @@ Deno.serve(async (req: Request) => {
       "stripe_catalog_mismatch",
       "trial_ending_soon",
       "checkout_in_progress",
+      "subscription_missing",
+      "subscription_unsupported",
+      "switch_unavailable",
+      "cancel_unavailable",
+      "resume_unavailable",
+      "payment_declined",
     ];
     const status =
       message === "auth_required" || message === "auth_invalid" ? 401 :

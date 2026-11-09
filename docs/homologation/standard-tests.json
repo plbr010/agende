@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-09T18:11:40.158Z",
+  "checked_at": "2026-11-09T19:15:59.708Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 339,
+      "passed": 344,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 578,
+    "passed": 583,
     "failed": 0,
     "skipped": 2
   },
@@ -2300,6 +2300,36 @@
     {
       "file": "src/lib/billing/checkout-attempt.test.ts",
       "name": "checkout retries reuse a key; A to B to A starts a fresh attempt",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/manage.test.ts",
+      "name": "manage actions reach stripe-billing with the trusted workspace only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/manage.test.ts",
+      "name": "professionals, missing workspace and invalid input never reach Stripe",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/manage.test.ts",
+      "name": "a declined card on the annual switch explains that nothing changed",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/manage.test.ts",
+      "name": "subscription state loads from Stripe and degrades to null",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/manage.test.ts",
+      "name": "manager shows switch and cancel for a monthly plan, and undo when cancellation is scheduled",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

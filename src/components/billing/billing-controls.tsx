@@ -150,7 +150,7 @@ export function BillingControls(props: BillingControlsProps) {
       </div>
       {props.hasCustomer ? (
         <p className="text-sm text-muted-foreground">
-          No Portal você pode consultar faturas, atualizar o cartão e cancelar a assinatura ao fim do período.
+          No Portal você pode consultar faturas e atualizar o cartão.
         </p>
       ) : null}
     </section>
