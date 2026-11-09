@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { MetaPixel } from "@/components/marketing/meta-pixel";
 import "./globals.css";
 
 const inter = localFont({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <TooltipProvider>
           {children}
           <Toaster />
+          <MetaPixel />
         </TooltipProvider>
       </body>
     </html>

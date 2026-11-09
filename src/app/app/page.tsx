@@ -25,6 +25,7 @@ import { loadWorkspaceSettings } from "@/lib/workspace/queries";
 import { addDaysIso, todayInTimeZone } from "@/lib/time/timezone";
 import { formatCentsToReais } from "@/lib/validation/money";
 import { trialDaysRemaining } from "@/lib/billing/plans";
+import { PixelEvent } from "@/components/marketing/meta-pixel";
 
 function monthHref(month: string, setup?: string): string {
   const params = new URLSearchParams();
@@ -155,7 +156,11 @@ export default async function AppPage({
     },
   ];
 
+  const trialJustStarted = setup === "1" && workspace.role === "owner" && session.subscription?.status === "trialing";
+
   return (
+    <>
+    {trialJustStarted ? <PixelEvent event="StartTrial" onceKey={workspace.id} /> : null}
     <ProfessionalDashboard
       firstName={firstName}
       salonName={workspace.name}
@@ -201,5 +206,6 @@ export default async function AppPage({
       }}
       showMasterAdmin={session.context.isPlatformAdmin === true || session.context.isOfficialPlatformOwner === true}
     />
+    </>
   );
 }
