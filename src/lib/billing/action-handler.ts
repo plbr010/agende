@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ANNUAL_OFFER_ENABLED } from "./plans";
 import { billingIntervalSchema, billingPlanSchema, createStripeBillingQueries, type StripeBillingBackend } from "./stripe-contract";
 
 export const billingActionSchema = z.discriminatedUnion("action", [
@@ -20,6 +21,7 @@ export function billingErrorMessage(code: string) {
     trial_ending_soon: "Seu teste termina em poucos minutos. Aguarde o fim para assinar sem antecipar a cobrança.",
     billing_customer_missing: "Ainda não existe um cliente Stripe para este negócio.",
     billing_customer_deleted: "O cadastro de cobrança está indisponível. Entre em contato com o suporte.",
+    annual_unavailable: "O plano anual está temporariamente indisponível. Escolha a cobrança mensal.",
   };
   return messages[code] ?? "Não foi possível abrir a cobrança. Tente novamente em instantes.";
 }
@@ -32,6 +34,9 @@ export async function runBillingAction(input: unknown, workspace: { id: string; 
   }
   const parsed = billingActionSchema.safeParse(input);
   if (!parsed.success) return { error: "Selecione um plano e uma periodicidade válidos." };
+  if (parsed.data.action === "checkout" && parsed.data.billingInterval === "annual" && !ANNUAL_OFFER_ENABLED) {
+    return { error: billingErrorMessage("annual_unavailable") };
+  }
   try {
     const billing = createStripeBillingQueries(backend);
     return parsed.data.action === "checkout"

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MARKETING_CTAS, PLANS } from "@/lib/marketing/content";
-import { TRIAL_COPY, planSignupHref } from "@/lib/billing/plans";
+import { ANNUAL_OFFER_ENABLED, TRIAL_COPY, planSignupHref } from "@/lib/billing/plans";
 import { MarketingLinkButton } from "@/components/marketing/link-button";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,8 @@ export function MarketingPricing({
   id?: string;
   showTrialNote?: boolean;
 }) {
-  const [annual, setAnnual] = useState(false);
+  const [annualSelected, setAnnual] = useState(false);
+  const annual = ANNUAL_OFFER_ENABLED && annualSelected;
 
   return (
     <section id={id} className="scroll-mt-32">
@@ -22,8 +23,9 @@ export function MarketingPricing({
           <p className="text-[0.7rem] font-medium tracking-[0.2em] text-primary uppercase">Planos para profissionais</p>
           <h2 className="font-serif text-3xl leading-tight tracking-tight sm:text-4xl">Escolha o tamanho do seu estúdio.</h2>
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Solo, Equipe até 5 ou Equipe até 15. Todos incluem 7 dias grátis, sem cartão para começar.
+            Solo, Equipe até 5 ou Salão até 15. Todos incluem agendamento online e 7 dias grátis, sem cartão para começar.
           </p>
+          {ANNUAL_OFFER_ENABLED ? (
           <div className="mx-auto flex w-fit items-center rounded-full bg-white p-1 ring-1 ring-[#f0e4de]" role="group" aria-label="Periodicidade">
             <button
               type="button"
@@ -48,6 +50,7 @@ export function MarketingPricing({
               Anual
             </button>
           </div>
+          ) : null}
         </div>
 
         <div className="mt-10 grid items-stretch gap-4 lg:grid-cols-3 lg:gap-5">
@@ -72,6 +75,9 @@ export function MarketingPricing({
               <p className={cn("mt-1 text-sm", plan.popular ? "text-primary-foreground/80" : "text-muted-foreground")}>
                 {plan.seats}
               </p>
+              <p className={cn("mt-3 text-sm leading-6", plan.popular ? "text-primary-foreground/90" : "text-foreground")}>
+                {plan.description}
+              </p>
               <p className="mt-6 flex flex-wrap items-end gap-1">
                 <span className="font-serif text-4xl leading-none tracking-tight sm:text-5xl">
                   {annual ? plan.annualPrice.replace("/ano", "") : plan.price}
@@ -80,9 +86,11 @@ export function MarketingPricing({
                   {annual ? "/ano" : plan.period}
                 </span>
               </p>
-              <p className={cn("mt-2 text-sm", plan.popular ? "text-primary-foreground/75" : "text-muted-foreground")}>
-                {annual ? `ou ${plan.price}${plan.period}` : `ou ${plan.annualPrice}`}
-              </p>
+              {ANNUAL_OFFER_ENABLED ? (
+                <p className={cn("mt-2 text-sm", plan.popular ? "text-primary-foreground/75" : "text-muted-foreground")}>
+                  {annual ? `ou ${plan.price}${plan.period}` : `ou ${plan.annualPrice}`}
+                </p>
+              ) : null}
               <ul className={cn("mt-6 space-y-2 text-sm", plan.popular ? "text-primary-foreground/90" : "text-muted-foreground")}>
                 <li>7 dias grátis, sem cartão</li>
                 {plan.highlights.map((item) => (

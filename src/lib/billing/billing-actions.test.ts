@@ -5,8 +5,16 @@ import { runBillingAction } from "./action-handler";
 import { billingRedirectSchema } from "./stripe-contract";
 import { checkoutDisabledReason, checkoutReturnMessage } from "./presentation";
 
-test("all six checkout selections reach stripe-billing with authenticated workspace and no redirect input", async () => {
-  for (const role of ["owner", "admin"]) for (const plan of ["solo", "equipe", "salao"]) for (const billingInterval of ["monthly", "annual"]) {
+test("annual checkout is refused before Stripe while the annual offer is suspended", async () => {
+  const backend = createEdgeBillingBackend(async () => { assert.fail("must not invoke"); });
+  for (const plan of ["solo", "equipe", "salao"]) {
+    const result = await runBillingAction({ action: "checkout", plan, billingInterval: "annual", idempotencyKey: "same-attempt-123456" }, { id: "trusted", role: "owner" }, backend);
+    assert.match(result.error!, /anual está temporariamente indisponível/);
+  }
+});
+
+test("all three monthly checkout selections reach stripe-billing with authenticated workspace and no redirect input", async () => {
+  for (const role of ["owner", "admin"]) for (const plan of ["solo", "equipe", "salao"]) for (const billingInterval of ["monthly"]) {
     const backend = createEdgeBillingBackend(async (name, { body }) => {
       assert.equal(name, "stripe-billing");
       assert.deepEqual(body, { action: "checkout", workspaceId: "trusted", plan, billingInterval, idempotencyKey: "same-attempt-123456" });

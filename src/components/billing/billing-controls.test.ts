@@ -16,11 +16,13 @@ function render(props: Partial<BillingControlsProps> = {}) {
     back: noop, forward: noop, refresh: noop, push: noop, replace: noop, prefetch: noop, bfcacheId: "test",
   } }, createElement(BillingControls, { ...defaults, ...props })));
 }
-test("billing component renders exact monthly and annual prices", () => {
+test("billing component renders the 2026-11-09 monthly prices and no annual offer", () => {
   const monthly = render();
-  for (const price of ["89,90", "169,90", "299,90"]) assert.ok(monthly.includes(price));
+  for (const price of ["R$ 39,90/mês", "R$ 79,90/mês", "R$ 149,90/mês"]) assert.ok(monthly.includes(price), price);
+  assert.doesNotMatch(monthly, /\/ano|Anual|Periodicidade/);
+  // An existing annual subscriber opening the page still gets monthly checkout buttons only.
   const annual = render({ initialInterval: "annual" });
-  for (const price of ["799/ano", "1.499/ano", "2.799/ano"]) assert.ok(annual.includes(price));
+  assert.doesNotMatch(annual, /\/ano|Assinar (Solo|Equipe|Salão) anual/);
   assert.equal((monthly.match(/Assinar (Solo|Equipe|Salão) mensal/g) ?? []).length, 3);
 });
 test("portal is only rendered for a manager with a Stripe customer", () => {
