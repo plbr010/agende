@@ -27,13 +27,16 @@ export default function ProfissionaisPage() {
               Organize a agenda e deixe as clientes marcarem sozinhas.
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              7 dias grátis, sem cartão. Depois, Solo, Equipe até 5 ou Equipe até 15 — com os valores reais do Agendê.
+              Seu link de agendamento funcionando 24 horas. Teste 7 dias grátis, sem cartão. Planos a partir de R$ 39,90/mês.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <MarketingLinkButton href={MARKETING_CTAS.professionalSignup.href} className="h-12 rounded-full px-6">
                 Começar 7 dias grátis
               </MarketingLinkButton>
-              <MarketingLinkButton href="#planos" variant="outline" className="h-12 rounded-full bg-white/80 px-6">
+              <MarketingLinkButton href="/demo" variant="outline" className="h-12 rounded-full bg-white/80 px-6">
+                Ver demonstração
+              </MarketingLinkButton>
+              <MarketingLinkButton href="#planos" variant="ghost" className="h-12 rounded-full px-6">
                 Ver planos
               </MarketingLinkButton>
             </div>
