@@ -9,14 +9,14 @@ test("commercial WhatsApp validates explicit Brazilian destinations and preserve
   assert.equal(url.searchParams.get("text"), SPECIALIST_MESSAGE);
 });
 
-test("commercial button hides missing configuration and renders safe accessible external contact", async () => {
+test("commercial button falls back to the official number, hides invalid configuration and renders safe accessible external contact", async () => {
   const { createElement } = await import("react");
   const { renderToStaticMarkup } = await import("react-dom/server");
   const { SpecialistWhatsApp } = await import("../../components/marketing/specialist-whatsapp");
   const before = process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER;
   try {
     delete process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER;
-    assert.equal(renderToStaticMarkup(createElement(SpecialistWhatsApp)), "");
+    assert.match(renderToStaticMarkup(createElement(SpecialistWhatsApp)), /wa\.me\/5532998064217/);
     process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER = "invalid";
     assert.equal(renderToStaticMarkup(createElement(SpecialistWhatsApp)), "");
     process.env.NEXT_PUBLIC_AGENDE_WHATSAPP_NUMBER = "5532999999999";
