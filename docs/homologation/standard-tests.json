@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-09T10:28:01.475Z",
+  "checked_at": "2026-11-09T18:11:40.158Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 329,
+      "passed": 339,
       "failed": 0,
       "skipped": 0
     },
@@ -42,7 +42,7 @@
       "skipped": 0
     },
     "stripe_mocks": {
-      "passed": 16,
+      "passed": 17,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 567,
+    "passed": 578,
     "failed": 0,
     "skipped": 2
   },
@@ -1082,6 +1082,12 @@
     {
       "file": "scripts/stripe-edge.test.mjs",
       "name": "Edge checkout: six lookup keys at the 2026-11-09 prices, trial kept for annual, fixed redirects, seat checks and verified managers",
+      "category": "stripe_mocks",
+      "status": "passed"
+    },
+    {
+      "file": "scripts/stripe-edge.test.mjs",
+      "name": "Edge checkout carries Rastreio visitor id and UTMs in metadata while client_reference_id stays the workspace",
       "category": "stripe_mocks",
       "status": "passed"
     },
@@ -2257,6 +2263,12 @@
     },
     {
       "file": "src/lib/billing/billing-actions.test.ts",
+      "name": "server-side campaign attribution reaches stripe-billing; malformed attribution is dropped, not fatal",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/billing/billing-actions.test.ts",
       "name": "unauthorized roles, absent workspace and invalid selections never invoke Stripe",
       "category": "unit_or_static_contract",
       "status": "passed"
@@ -2850,6 +2862,60 @@
       "status": "passed"
     },
     {
+      "file": "src/lib/marketing/meta-pixel.test.ts",
+      "name": "pixel reports only from the production deployment",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/meta-pixel.test.ts",
+      "name": "page views cover marketing pages and never private or token-bearing paths",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/meta-pixel.test.ts",
+      "name": "acquisition keeps safe utm values and the marketing landing path only",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/meta-pixel.test.ts",
+      "name": "acquisition cookie parsing drops unknown keys and malformed input",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/rastreio.test.ts",
+      "name": "Rastreio loads the tracker from its own deployment over HTTPS",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/rastreio.test.ts",
+      "name": "visitor id accepts only the t.js format, raw or URL-encoded",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/rastreio.test.ts",
+      "name": "checkout attribution merges the visitor id with the first-touch UTMs",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/seo.test.ts",
+      "name": "site origin falls back to production and strips paths",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/seo.test.ts",
+      "name": "sitemap lists only public pages",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
       "file": "src/lib/marketing/whatsapp.test.ts",
       "name": "commercial WhatsApp validates explicit Brazilian destinations and preserves the exact message",
       "category": "unit_or_static_contract",
@@ -2857,7 +2923,7 @@
     },
     {
       "file": "src/lib/marketing/whatsapp.test.ts",
-      "name": "commercial button hides missing configuration and renders safe accessible external contact",
+      "name": "commercial button falls back to the official number when unset or invalid and renders safe accessible external contact",
       "category": "unit_or_static_contract",
       "status": "passed"
     },

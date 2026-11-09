@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { MetaPixel } from "@/components/marketing/meta-pixel";
+import { Rastreio } from "@/components/marketing/rastreio";
 import "./globals.css";
 
 const inter = localFont({
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           <Toaster />
           <MetaPixel />
+          <Rastreio />
         </TooltipProvider>
       </body>
     </html>

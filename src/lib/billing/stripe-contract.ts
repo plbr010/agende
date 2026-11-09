@@ -9,11 +9,27 @@ export const BILLING_INTERNAL_PATHS = {
   portalReturn: "/app/configuracoes/assinatura",
 } as const;
 
+// Campaign attribution read server-side from first-party cookies, never from the
+// form. It ends up in Stripe metadata (values capped at 500 chars; ours are ≤100).
+const attributionValue = z.string().regex(/^[\p{L}\p{N} ._\-+|:/]{1,100}$/u);
+export const checkoutAttributionSchema = z.object({
+  vid: z.string().regex(/^rv_[a-f0-9]{16}$/).optional(),
+  utm_source: attributionValue.optional(),
+  utm_medium: attributionValue.optional(),
+  utm_campaign: attributionValue.optional(),
+  utm_content: attributionValue.optional(),
+  utm_term: attributionValue.optional(),
+  landing: attributionValue.optional(),
+});
+export type CheckoutAttribution = z.infer<typeof checkoutAttributionSchema>;
+
 export const createCheckoutInputSchema = z.object({
   workspaceId: z.string().min(1),
   plan: billingPlanSchema,
   billingInterval: billingIntervalSchema,
   idempotencyKey: z.string().trim().min(16).max(100),
+  // Attribution is best effort: a malformed value is dropped, never blocks the checkout.
+  attribution: checkoutAttributionSchema.optional().catch(undefined),
 });
 
 export const createPortalInputSchema = z.object({

@@ -164,6 +164,26 @@ test('Edge checkout: six lookup keys at the 2026-11-09 prices, trial kept for an
   assert.equal((await harness('stripe-billing', { badPrice: true }).billing()).status, 409);
 });
 
+test('Edge checkout carries Rastreio visitor id and UTMs in metadata while client_reference_id stays the workspace', async () => {
+  const h = harness('stripe-billing');
+  const attribution = { vid: 'rv_0123456789abcdef', utm_source: 'FB', utm_campaign: 'Campanha|120200000000000001',
+    utm_medium: 'Conjunto|120200000000000002', utm_content: 'Anúncio|120200000000000003', utm_term: 'Instagram_Feed', landing: '/' };
+  assert.equal((await h.billing({ attribution: { ...attribution, app: 'evil', workspace_id: 'evil', extra: 'x' } })).status, 200);
+  const call = h.state.calls.find(c => c.name === 'checkout');
+  assert.equal(call.args.client_reference_id, wid);
+  for (const metadata of [call.args.metadata, call.args.subscription_data.metadata]) {
+    assert.equal(metadata.app, 'agende');
+    assert.equal(metadata.workspace_id, wid);
+    assert.equal(metadata.extra, undefined);
+    for (const [key, value] of Object.entries(attribution)) assert.equal(metadata[key], value);
+  }
+  const unsafe = harness('stripe-billing');
+  assert.equal((await unsafe.billing({ attribution: { vid: 'rv_bad', utm_source: '<script>', utm_term: 'x'.repeat(101) } })).status, 200);
+  const metadata = unsafe.state.calls.find(c => c.name === 'checkout').args.metadata;
+  assert.deepEqual(Object.keys(metadata).sort(), ['app', 'billing_interval', 'manager_email', 'plan_code', 'workspace_id']);
+  assert.equal((await harness('stripe-billing').billing({ attribution: 'nope' })).status, 200);
+});
+
 test('Webhook maps all six sandbox lookup keys and renewal periods instead of stale metadata', async () => {
   for (const plan of ['solo', 'equipe', 'salao']) for (const interval of ['monthly', 'annual']) {
     const current = snapshot('active', `agende_${plan}_${interval}`);
