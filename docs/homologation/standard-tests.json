@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-09T19:15:59.708Z",
+  "checked_at": "2026-11-10T22:25:44.532Z",
   "groups": {
     "pglite_integration_with_mock_auth": {
       "passed": 12,
@@ -7,7 +7,7 @@
       "skipped": 0
     },
     "unit_or_static_contract": {
-      "passed": 344,
+      "passed": 345,
       "failed": 0,
       "skipped": 0
     },
@@ -53,7 +53,7 @@
     }
   },
   "totals": {
-    "passed": 583,
+    "passed": 584,
     "failed": 0,
     "skipped": 2
   },
@@ -2930,6 +2930,12 @@
     {
       "file": "src/lib/marketing/rastreio.test.ts",
       "name": "checkout attribution merges the visitor id with the first-touch UTMs",
+      "category": "unit_or_static_contract",
+      "status": "passed"
+    },
+    {
+      "file": "src/lib/marketing/rastreio.test.ts",
+      "name": "sign-up clicks on this site are reported; other links are not",
       "category": "unit_or_static_contract",
       "status": "passed"
     },
