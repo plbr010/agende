@@ -30,3 +30,19 @@ export function checkoutAttribution(cookies: { visitor?: string; acquisition?: s
   if (vid) result.vid = vid;
   return Object.keys(result).length ? result : undefined;
 }
+
+/**
+ * A click that leads to the sign-up (`/cadastro` on this site) is the closest thing
+ * Agendê has to "started checkout". t.js only counts links to other sites, so the
+ * page reports these itself; returns the destination URL, or null for any other link.
+ */
+export function signupClickDestination(href: string | null | undefined, origin: string): string | null {
+  if (!href) return null;
+  try {
+    const url = new URL(href, origin);
+    if (url.origin !== origin) return null;
+    return url.pathname === "/cadastro" || url.pathname.startsWith("/cadastro/") ? url.href : null;
+  } catch {
+    return null;
+  }
+}

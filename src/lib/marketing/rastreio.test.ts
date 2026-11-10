@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { checkoutAttribution, parseVisitorId, RASTREIO_SCRIPT_SRC } from "./rastreio";
+import { checkoutAttribution, parseVisitorId, RASTREIO_SCRIPT_SRC, signupClickDestination } from "./rastreio";
 import { checkoutAttributionSchema } from "../billing/stripe-contract";
 
 test("Rastreio loads the tracker from its own deployment over HTTPS", () => {
@@ -29,4 +29,13 @@ test("checkout attribution merges the visitor id with the first-touch UTMs", () 
   assert.deepEqual(checkoutAttribution({ visitor: "rv_0123456789abcdef" }), { vid: "rv_0123456789abcdef" });
   assert.equal(checkoutAttribution({}), undefined);
   assert.equal(checkoutAttribution({ visitor: "bad", acquisition: "not-json" }), undefined);
+});
+
+test("sign-up clicks on this site are reported; other links are not", () => {
+  const origin = "https://agendeapp.online";
+  assert.equal(signupClickDestination("/cadastro?intent=professional", origin), "https://agendeapp.online/cadastro?intent=professional");
+  assert.equal(signupClickDestination("https://agendeapp.online/cadastro", origin), "https://agendeapp.online/cadastro");
+  for (const href of [null, "", "/profissionais", "/cadastros", "/login?next=/cadastro", "https://evil.example/cadastro", "javascript:alert(1)"]) {
+    assert.equal(signupClickDestination(href, origin), null);
+  }
 });
