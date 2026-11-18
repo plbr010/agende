@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#5b1637"/>
+    <stop offset="0.55" stop-color="#8f2f57"/>
+    <stop offset="1" stop-color="#d18a92"/>
+  </linearGradient>
+  <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#fff7f2"/>
+    <stop offset="1" stop-color="#f5dfd8"/>
+  </linearGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-opacity=".25"/></filter>
+</defs>
+<rect width="1200" height="1200" rx="70" fill="url(#bg)"/>
+<circle cx="1080" cy="130" r="160" fill="#ffffff" opacity=".07"/>
+<circle cx="130" cy="1090" r="220" fill="#ffffff" opacity=".06"/>
+<text x="90" y="135" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#ffd8d8" letter-spacing="4">PARA PROFISSIONAIS DA BELEZA</text>
+<text x="90" y="245" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="800" fill="#ffffff">KIT AGENDA</text>
+<text x="90" y="330" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="800" fill="#ffd2c5">LUCRATIVA</text>
+<text x="92" y="390" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#fff7f2">Organize sua rotina e pare de trabalhar no improviso.</text>
+<g filter="url(#shadow)">
+  <rect x="90" y="480" width="1020" height="520" rx="42" fill="url(#card)"/>
+</g>
+<g transform="translate(145 545)">
+  <rect width="390" height="390" rx="28" fill="#ffffff"/>
+  <rect x="38" y="45" width="314" height="45" rx="10" fill="#7b2148"/>
+  <rect x="38" y="120" width="150" height="98" rx="18" fill="#f2d9d2"/>
+  <rect x="205" y="120" width="147" height="98" rx="18" fill="#f2d9d2"/>
+  <rect x="38" y="240" width="314" height="105" rx="18" fill="#f9ece7"/>
+  <circle cx="88" cy="289" r="20" fill="#b64b70"/>
+  <rect x="124" y="276" width="185" height="16" rx="8" fill="#a77a85"/>
+  <rect x="124" y="305" width="138" height="14" rx="7" fill="#c7a1aa"/>
+  <text x="195" y="82" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#fff">AGENDA</text>
+</g>
+<g transform="translate(590 545)">
+  <text x="0" y="35" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" fill="#641b3b">7 MÓDULOS + 7 MATERIAIS</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#5f4a50">
+    <text x="0" y="105">✓ Mensagens prontas de WhatsApp</text>
+    <text x="0" y="160">✓ 30 ideias de posts</text>
+    <text x="0" y="215">✓ Planilha de horários</text>
+    <text x="0" y="270">✓ Planilha de precificação</text>
+    <text x="0" y="325">✓ Checklists e desafio de 7 dias</text>
+  </g>
+  <rect x="0" y="365" width="430" height="72" rx="36" fill="#7b2148"/>
+  <text x="215" y="413" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#fff">ACESSO COMPLETO</text>
+</g>
+<text x="600" y="1080" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#fff4ef">Organize • Divulgue • Atenda</text>
+</svg>
